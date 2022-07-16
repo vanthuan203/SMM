@@ -11,18 +11,18 @@ public class Vps {
     private String vps;
     private String urlapi;
     private String token;
-    private String option;
+    private String vpsoption;
     private Integer state;
 
     public Vps() {
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String option, Integer state) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
         this.token = token;
-        this.option = option;
+        this.vpsoption = vpsoption;
         this.state = state;
     }
 
@@ -33,7 +33,7 @@ public class Vps {
                 ", vps='" + vps + '\'' +
                 ", urlapi='" + urlapi + '\'' +
                 ", token='" + token + '\'' +
-                ", option='" + option + '\'' +
+                ", vpsoption='" + vpsoption + '\'' +
                 ", state=" + state +
                 '}';
     }
@@ -71,11 +71,11 @@ public class Vps {
     }
 
     public String getOption() {
-        return option;
+        return vpsoption;
     }
 
-    public void setOption(String option) {
-        this.option = option;
+    public void setOption(String vpsoption) {
+        this.vpsoption = vpsoption;
     }
 
     public Integer getState() {
