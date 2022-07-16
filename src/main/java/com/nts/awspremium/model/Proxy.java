@@ -11,15 +11,19 @@ public class Proxy {
     private String proxy;
     private Integer state;
     private Long timeget;
+    private String ipv4;
+    private Integer running;
 
     public Proxy() {
     }
 
-    public Proxy(Integer id, String proxy, Integer state, Long timeget) {
+    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running) {
         this.id = id;
         this.proxy = proxy;
         this.state = state;
         this.timeget = timeget;
+        this.ipv4 = ipv4;
+        this.running = running;
     }
 
     @Override
@@ -29,6 +33,8 @@ public class Proxy {
                 ", proxy='" + proxy + '\'' +
                 ", state=" + state +
                 ", timeget=" + timeget +
+                ", ipv4='" + ipv4 + '\'' +
+                ", running=" + running +
                 '}';
     }
 
@@ -62,5 +68,21 @@ public class Proxy {
 
     public void setTimeget(Long timeget) {
         this.timeget = timeget;
+    }
+
+    public Integer getRunning() {
+        return running;
+    }
+
+    public void setRunning(Integer running) {
+        this.running = running;
+    }
+
+    public String getIpv4() {
+        return ipv4;
+    }
+
+    public void setIpv4(String ipv4) {
+        this.ipv4 = ipv4;
     }
 }

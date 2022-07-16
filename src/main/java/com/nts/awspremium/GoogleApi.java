@@ -15,14 +15,14 @@ import java.util.List;
 public class GoogleApi {
     public static String getVideoBuChannelId(String channelid){
 
-        List<String> videosID = new ArrayList<>();
+        ArrayList videosID = new ArrayList<String>();
         try {
                 OkHttpClient client = new OkHttpClient().newBuilder()
                         .build();
                 MediaType mediaType = MediaType.parse("application/json");
                 RequestBody body = RequestBody.create(mediaType, "");
                 Request request = new Request.Builder()
-                        .url("https://backend.simplesolution.co/UserDataApi/channelVideosNonKey/"+channelid)
+                        .url("https://backend.simplesolution.co/UserDataApi/channelVideosInfoNonKey?list_video=S7ElVoYZN0g"+channelid)
                         .method("GET", body)
                         .addHeader("Content-Type", "application/json")
                         .build();

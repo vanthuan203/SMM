@@ -1,5 +1,7 @@
 package com.nts.awspremium.model;
 
+import org.json.simple.JSONObject;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,13 +12,13 @@ public class Admin {
     private Long id;
     private String username;
     private String password;
-    private int role;
+    private String role;
     private String token;
 
     public Admin() {
     }
 
-    public Admin(String username, String password, int role, String token) {
+    public Admin(String username, String password, String role, String token) {
         this.username = username;
         this.password = password;
         this.role = role;
@@ -32,6 +34,17 @@ public class Admin {
                 ", role=" + role +
                 ", token='" + token + '\'' +
                 '}';
+    }
+
+    public JSONObject getJsonObj() {
+        JSONObject obj = new JSONObject();
+        obj.put("username", username);
+        obj.put("role", role);
+        obj.put("enabled", 1);
+        obj.put("balance", 0);
+        obj.put("id", id);
+        return obj;
+
     }
 
     public Long getId() {
@@ -58,11 +71,11 @@ public class Admin {
         this.password = password;
     }
 
-    public int getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(int role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

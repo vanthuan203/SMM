@@ -1,13 +1,8 @@
 package com.nts.awspremium.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nts.awspremium.StringUtils;
-import com.nts.awspremium.model.Account;
-import com.nts.awspremium.model.Proxy;
-import com.nts.awspremium.model.ResponseObject;
-import com.nts.awspremium.repositories.AccountRepository;
-import com.nts.awspremium.repositories.AdminRepository;
-import com.nts.awspremium.repositories.ProxyRepository;
+import com.nts.awspremium.model.*;
+import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +23,14 @@ public class AccountController {
 
     @Autowired
     private ProxyRepository proxyRepository;
+
+    @Autowired
+    private HistoryRepository historyRepository;
+
+    @Autowired
+    private ProxyHistoryRepository proxyHistoryRepository;
+    @Autowired
+    private IpV4Repository ipV4Repository;
 
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
@@ -96,40 +99,32 @@ public class AccountController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<Account> accountbyVps=accountRepository.getaccountByVps(vps);
-            if(accountbyVps.size()==0){
-                List<Account> accounts=accountRepository.getAccount();
-                if(accounts.size()==0){
+            Long idbyVps=accountRepository.getaccountByVps(vps);
+            if(idbyVps==null){
+                Long id=accountRepository.getAccount();
+                List<Account> account=accountRepository.findAccountById(id);
+                if(account.size()==0){
                     resp.put("status","fail");
                     resp.put("message", "Hết tài khoản thỏa mãn!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }else{
                     try{
-                        List<Proxy> proxy;
-                        if(accounts.get(0).getProxy().length()==0 || accounts.get(0).getProxy()==null){
-                            proxy=proxyRepository.getProxyTimeGetNull();
-                            if(proxy.size()==0){
-                                proxy=proxyRepository.getProxy();
-                            }
-                        }else{
-                            proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(accounts.get(0).getProxy()));
-                            if(proxy.size()==0){
-                                proxy=proxyRepository.getProxy(StringUtils.getProxyhost(accounts.get(0).getProxy()));
-                            }
+                        if(account.get(0).getRunning()==1){
+                            resp.put("status", "fail");
+                            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        accounts.get(0).setProxy(proxy.get(0).getProxy());
-                        accounts.get(0).setVps(vps);
-                        accounts.get(0).setRunning(1);
-                        accountRepository.save(accounts.get(0));
-                        proxy.get(0).setTimeget(System.currentTimeMillis());
-                        proxyRepository.save(proxy.get(0));
+                        account.get(0).setVps(vps);
+                        account.get(0).setRunning(1);
+                        accountRepository.save(account.get(0));
 
                         resp.put("status","true");
-                        resp.put("username",accounts.get(0).getUsername());
-                        resp.put("password",accounts.get(0).getPassword());
-                        resp.put("recover",accounts.get(0).getRecover());
-                        resp.put("cookie",accounts.get(0).getCookie());
-                        resp.put("proxy",accounts.get(0).getProxy());
+                        resp.put("username",account.get(0).getUsername());
+                        resp.put("endtrial",account.get(0).getEndtrial());
+                        //resp.put("password",account.get(0).getId());
+                        //resp.put("recover",account.get(0));
+                        resp.put("cookie",account.get(0).getCookie());
+                        resp.put("encodefinger",account.get(0).getEncodefinger());
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
                         resp.put("status", "fail");
@@ -139,31 +134,21 @@ public class AccountController {
                 }
             }else{
                 try{
-                    List<Proxy> proxy;
-                    if(accountbyVps.get(0).getProxy().length()==0 || accountbyVps.get(0).getProxy()==null){
-                        proxy=proxyRepository.getProxyTimeGetNull();
-                        if(proxy.size()==0){
-                            proxy=proxyRepository.getProxy();
-                        }
-                    }else{
-                        proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(accountbyVps.get(0).getProxy()));
-                        if(proxy.size()==0){
-                            proxy=proxyRepository.getProxy(StringUtils.getProxyhost(accountbyVps.get(0).getProxy()));
-                        }
+                    List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
+                    if(accountbyVps.get(0).getRunning()==1){
+                        resp.put("status", "fail");
+                        resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    accountbyVps.get(0).setProxy(proxy.get(0).getProxy());
                     accountbyVps.get(0).setVps(vps);
                     accountbyVps.get(0).setRunning(1);
                     accountRepository.save(accountbyVps.get(0));
-                    proxy.get(0).setTimeget(System.currentTimeMillis());
-                    proxyRepository.save(proxy.get(0));
-
                     resp.put("status","true");
                     resp.put("username",accountbyVps.get(0).getUsername());
-                    resp.put("password",accountbyVps.get(0).getPassword());
-                    resp.put("recover",accountbyVps.get(0).getRecover());
+                    resp.put("endtrial",accountbyVps.get(0).getEndtrial());
+                    //resp.put("recover",accountbyVps.get(0).getRecover());
                     resp.put("cookie",accountbyVps.get(0).getCookie());
-                    resp.put("proxy",accountbyVps.get(0).getProxy());
+                    resp.put("encodefinger",accountbyVps.get(0).getEncodefinger());
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }catch (Exception e){
                     resp.put("status", "fail");
@@ -178,44 +163,163 @@ public class AccountController {
         }
 
     }
-    @GetMapping(value = "/checkendtrial",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkendtrial(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
-        JSONObject resp=new JSONObject();
-        try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            List<Account> accounts=accountRepository.findAccountByUsername(username);
-            if(accounts.size()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }
-            List<Account> accountcheck=accountRepository.checkEndTrial(username);
-            if(accountcheck.size()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username : "+username+" hết hạn premium!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+
+    @GetMapping(value = "/getbuffh", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getbuffh(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Tên vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Long idbyVps=accountRepository.getaccountByVpsbuffh(vps);
+            if(idbyVps==null){
+                Long id=accountRepository.getAccountbuffh();
+                List<Account> account=accountRepository.findAccountById(id);
+                if(account.size()==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Hết tài khoản thỏa mãn!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }else{
+                    try{
+                        if(account.get(0).getRunning()==1){
+                            resp.put("status", "fail");
+                            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                        account.get(0).setVps(vps);
+                        account.get(0).setRunning(1);
+                        accountRepository.save(account.get(0));
+
+                        resp.put("status","true");
+                        resp.put("username",account.get(0).getUsername());
+                        resp.put("endtrial",account.get(0).getEndtrial());
+                        //resp.put("password",account.get(0).getId());
+                        //resp.put("recover",account.get(0));
+                        resp.put("cookie",account.get(0).getCookie());
+                        resp.put("encodefinger",account.get(0).getEncodefinger());
+                        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                    }catch(Exception e){
+                        resp.put("status", "fail");
+                        resp.put("message", e.getMessage());
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                    }
+                }
             }else{
-                resp.put("status","true");
-                resp.put("message", "Username : "+username+" còn hạn premium!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                try{
+                    List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
+                    if(accountbyVps.get(0).getRunning()==1){
+                        resp.put("status", "fail");
+                        resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    accountbyVps.get(0).setVps(vps);
+                    accountbyVps.get(0).setRunning(1);
+                    accountRepository.save(accountbyVps.get(0));
+                    resp.put("status","true");
+                    resp.put("username",accountbyVps.get(0).getUsername());
+                    resp.put("endtrial",accountbyVps.get(0).getEndtrial());
+                    //resp.put("recover",accountbyVps.get(0).getRecover());
+                    resp.put("cookie",accountbyVps.get(0).getCookie());
+                    resp.put("encodefinger",accountbyVps.get(0).getEncodefinger());
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }catch (Exception e){
+                    resp.put("status", "fail");
+                    resp.put("message", e.getMessage());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                }
             }
         }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message",e.getMessage());
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
 
     }
+
+
+    @GetMapping(value = "/checkendtrial",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkendtrial(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (username.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            List<Account> accounts = accountRepository.findAccountByUsername(username);
+            if (accounts.size() == 0) {
+                resp.put("status", "fail");
+                resp.put("fail", "trial");
+                resp.put("message", "Username không tồn tại!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<Account> accountcheck = accountRepository.checkEndTrial(username);
+            if (accountcheck.size() == 0) {
+                resp.put("status", "fail");
+                resp.put("fail", "trial");
+                resp.put("message", "Username : " + username + " hết hạn premium!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } else {
+                resp.put("status", "true");
+                resp.put("message", "Username : " + username + " còn hạn premium!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getinfo",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
+            JSONObject resp=new JSONObject();
+            try{
+                Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+                if(checktoken==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Token expired");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+                }
+                if(username.length()==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Username không được để trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+                }
+                List<Account> accounts=accountRepository.getInfo(username);
+                if(accounts.size()==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Username không tồn tại!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }else{
+                    resp.put("status","true");
+                    //resp.put("username",accounts.get(0).getUsername());
+                    resp.put("password",accounts.get(0).getPassword());
+                    resp.put("recover",accounts.get(0).getRecover());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }catch (Exception e){
+                resp.put("status","fail");
+                resp.put("message",e.getMessage());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+    }
+
     @PostMapping(value = "/updatecookie", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatecookie(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
         JSONObject resp=new JSONObject();
@@ -307,26 +411,54 @@ public class AccountController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            List<Account> accounts=accountRepository.findAccountByUsername(username);
-            if(accounts.size()==0){
+            List<History> histories=historyRepository.get(username);
+            if(histories.size()==0){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
                 List<Proxy> proxy;
-                if(accounts.get(0).getProxy().length()==0 || accounts.get(0).getProxy()==null){
-                    proxy=proxyRepository.getProxyTimeGetNull();
-                    if(proxy.size()==0){
+                if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
+                    //proxy=proxyRepository.getProxyTimeGetNull();
+                    //if(proxy.size()==0){
                         proxy=proxyRepository.getProxy();
-                    }
+                    //}
                 }else{
-                    proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(accounts.get(0).getProxy()));
-                    if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(accounts.get(0).getProxy()));
-                    }
+                    //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    //if(proxy.size()==0){
+                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    //}
                 }
-                accounts.get(0).setProxy(proxy.get(0).getProxy());
-                accountRepository.save(accounts.get(0));
+                List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
+                if(proxys.get(0).getRunning()>=1){
+                    proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
+                    proxyRepository.save(proxys.get(0));
+                }
+
+                ProxyHistory proxyHistory =new ProxyHistory();
+                proxyHistory.setId(System.currentTimeMillis());
+                proxyHistory.setProxy(histories.get(0).getProxy());
+                proxyHistory.setIpv4(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                proxyHistory.setState(0);
+                proxyHistoryRepository.save(proxyHistory);
+
+                ProxyHistory proxyHistoryNew =new ProxyHistory();
+                proxyHistoryNew.setId(System.currentTimeMillis());
+                proxyHistoryNew.setProxy(proxy.get(0).getProxy());
+                proxyHistoryNew.setIpv4(proxy.get(0).getIpv4());
+                proxyHistoryNew.setState(1);
+                proxyHistoryRepository.save(proxyHistoryNew);
+
+
+                IpV4 ipV4=new IpV4();
+                ipV4.setId(System.currentTimeMillis());
+                ipV4.setIpv4(proxy.get(0).getIpv4());
+                ipV4.setState(1);
+                ipV4Repository.save(ipV4);
+
+                histories.get(0).setProxy(proxy.get(0).getProxy());
+                historyRepository.save(histories.get(0));
+                proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
                 proxy.get(0).setTimeget(System.currentTimeMillis());
                 proxyRepository.save(proxy.get(0));
                 resp.put("status","true");
@@ -375,4 +507,32 @@ public class AccountController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/resetaccountbyvps",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetAccountByVps(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (vps.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Vps không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            accountRepository.resetAccountByVps(vps);
+            resp.put("status", "true");
+            resp.put("message", "Update thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

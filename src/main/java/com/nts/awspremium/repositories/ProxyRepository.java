@@ -7,15 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
-    @Query(value = "SELECT * FROM proxy where state=1 order by timeget asc limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<10 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy();
 
-    @Query(value = "SELECT * FROM proxy where state=1 and (timeget is null or timeget=0) order by rand() asc limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<10 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyTimeGetNull();
 
-    @Query(value = "SELECT * FROM proxy where state=1 and proxy NOT LIKE ?1 order by timeget asc limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where proxy NOT LIKE ?1 and proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<10  group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy(String proxy);
 
-    @Query(value = "SELECT * FROM proxy where state=1 and (timeget is null or timeget=0) and proxy NOT LIKE ? order by rand() asc limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where proxy NOT LIKE ?1 and proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<10  group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyTimeGetNull(String proxy);
+
+    @Query(value = "SELECT * FROM proxy where proxy=?1 limit 1",nativeQuery = true)
+    public List<Proxy> findProxy(String proxy);
 }
