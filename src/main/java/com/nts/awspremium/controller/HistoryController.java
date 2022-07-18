@@ -96,6 +96,11 @@ public class HistoryController {
             }
             List<History> historyendtrial=historyRepository.checkEndTrial(username);
             if(historyendtrial.size()==0){
+                if(histories.size()>0){
+                    histories.get(0).setRunning(0);
+                    histories.get(0).setVps("");
+                    historyRepository.save(histories.get(0));
+                }
                 resp.put("status", "fail");
                 resp.put("fail", "trial");
                 resp.put("message", "Hết hạn endtrial!");
