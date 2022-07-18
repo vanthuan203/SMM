@@ -153,8 +153,8 @@ public class AccountController {
     }
 
 
-    @GetMapping(value = "/getbuffh", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getbuffh(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
+    @GetMapping(value = "/getlogin", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getlogin(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
         if(checktoken==0){
@@ -162,15 +162,8 @@ public class AccountController {
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
-        if (vps.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Tên vps không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         try {
-            Long idbyVps=accountRepository.getaccountByVpsbuffh(vps);
-            if(idbyVps==null){
-                Long id=accountRepository.getAccountbuffh();
+                Long id=accountRepository.getAccountNeedLogin();
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
@@ -183,16 +176,15 @@ public class AccountController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        account.get(0).setVps(vps);
+                        //account.get(0).setVps("");
                         account.get(0).setRunning(1);
                         accountRepository.save(account.get(0));
 
                         resp.put("status","true");
                         resp.put("username",account.get(0).getUsername());
-                        resp.put("endtrial",account.get(0).getEndtrial());
-                        //resp.put("password",account.get(0).getId());
-                        //resp.put("recover",account.get(0));
-                        resp.put("cookie",account.get(0).getCookie());
+                        resp.put("password",account.get(0).getId());
+                        resp.put("recover",account.get(0).getRecover());
+                        //resp.put("cookie",account.get(0).getCookie());
                         resp.put("encodefinger",account.get(0).getEncodefinger());
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
@@ -201,30 +193,6 @@ public class AccountController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
                     }
                 }
-            }else{
-                try{
-                    List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    if(accountbyVps.get(0).getRunning()==1){
-                        resp.put("status", "fail");
-                        resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
-                    accountbyVps.get(0).setVps(vps);
-                    accountbyVps.get(0).setRunning(1);
-                    accountRepository.save(accountbyVps.get(0));
-                    resp.put("status","true");
-                    resp.put("username",accountbyVps.get(0).getUsername());
-                    resp.put("endtrial",accountbyVps.get(0).getEndtrial());
-                    //resp.put("recover",accountbyVps.get(0).getRecover());
-                    resp.put("cookie",accountbyVps.get(0).getCookie());
-                    resp.put("encodefinger",accountbyVps.get(0).getEncodefinger());
-                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-                }catch (Exception e){
-                    resp.put("status", "fail");
-                    resp.put("message", e.getMessage());
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-                }
-            }
         }catch (Exception e){
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
