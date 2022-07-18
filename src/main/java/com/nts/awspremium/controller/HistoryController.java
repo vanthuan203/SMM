@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/history")
 public class HistoryController {
@@ -151,6 +151,9 @@ public class HistoryController {
                                 proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
                             //}
                         }
+                    }
+                    if(histories.size()==0){
+                        histories=historyRepository.get(username);
                     }
                     histories.get(0).setProxy(proxy.get(0).getProxy());
                     historyRepository.save(histories.get(0));

@@ -13,17 +13,21 @@ public class Vps {
     private String token;
     private String vpsoption;
     private Integer state;
+    private Integer running;
+    private Long timecheck;
 
     public Vps() {
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
         this.token = token;
         this.vpsoption = vpsoption;
         this.state = state;
+        this.running = running;
+        this.timecheck = timecheck;
     }
 
     @Override
@@ -35,6 +39,8 @@ public class Vps {
                 ", token='" + token + '\'' +
                 ", vpsoption='" + vpsoption + '\'' +
                 ", state=" + state +
+                ", running=" + running +
+                ", timecheck=" + timecheck +
                 '}';
     }
 
@@ -70,11 +76,11 @@ public class Vps {
         this.token = token;
     }
 
-    public String getOption() {
+    public String getVpsoption() {
         return vpsoption;
     }
 
-    public void setOption(String vpsoption) {
+    public void setVpsoption(String vpsoption) {
         this.vpsoption = vpsoption;
     }
 
@@ -84,5 +90,21 @@ public class Vps {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public Integer getRunning() {
+        return running;
+    }
+
+    public void setRunning(Integer running) {
+        this.running = running;
+    }
+
+    public Long getTimecheck() {
+        return timecheck;
+    }
+
+    public void setTimecheck(Long timecheck) {
+        this.timecheck = timecheck;
     }
 }

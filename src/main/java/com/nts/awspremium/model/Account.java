@@ -19,7 +19,6 @@ public class Account {
     private String vps;
     private String proxy;
     private Integer running;
-    private String listvideo;
     public Account() {
     }
 
@@ -147,12 +146,5 @@ public class Account {
         this.running = running;
     }
 
-    public String getListvideo() {
-        return listvideo;
-    }
-
-    public void setListvideo(String listvideo) {
-        this.listvideo = listvideo;
-    }
 }
 
