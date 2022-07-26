@@ -28,6 +28,12 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT * FROM history where vps=?1",nativeQuery = true)
     public List<History> findHistoriesByVps(String vps);
 
+    @Query(value = "SELECT count(*) FROM history where vps=?1 and running=1",nativeQuery = true)
+    public Integer getrunningbyVps(String vps);
+
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM AccPremium.history where running=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
+
+    @Query(value = "SELECT vps,1 as time,count(*) as total FROM AccPremium.historysum where round((UNIX_TIMESTAMP()-id/1000)/60/60) <24 group by vps",nativeQuery = true)
+    public List<VpsRunning> getvpsview();
 }

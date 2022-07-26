@@ -15,11 +15,12 @@ public class Vps {
     private Integer state;
     private Integer running;
     private Long timecheck;
-
+    private Integer threads;
+    private Integer vpsreset;
     public Vps() {
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
@@ -28,6 +29,8 @@ public class Vps {
         this.state = state;
         this.running = running;
         this.timecheck = timecheck;
+        this.threads = threads;
+        this.vpsreset = vpsreset;
     }
 
     @Override
@@ -41,7 +44,25 @@ public class Vps {
                 ", state=" + state +
                 ", running=" + running +
                 ", timecheck=" + timecheck +
+                ", threads=" + threads +
+                ", vpsreset=" + vpsreset +
                 '}';
+    }
+
+    public Integer getVpsreset() {
+        return vpsreset;
+    }
+
+    public void setVpsreset(Integer vpsreset) {
+        this.vpsreset = vpsreset;
+    }
+
+    public Integer getThreads() {
+        return threads;
+    }
+
+    public void setThreads(Integer threads) {
+        this.threads = threads;
     }
 
     public Integer getId() {

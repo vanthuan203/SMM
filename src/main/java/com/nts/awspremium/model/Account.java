@@ -19,10 +19,11 @@ public class Account {
     private String vps;
     private String proxy;
     private Integer running;
+    private Long timecheck;
     public Account() {
     }
 
-    public Account(String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, Integer running) {
+    public Account(String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, Integer running, Long timecheck) {
         this.username = username;
         this.password = password;
         this.recover = recover;
@@ -34,20 +35,34 @@ public class Account {
         this.vps = vps;
         this.proxy = proxy;
         this.running = running;
+        this.timecheck = timecheck;
     }
 
     @Override
     public String toString() {
         return "Account{" +
-                "username='" + username + '\'' +
+                "id=" + id +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", recover='" + recover + '\'' +
                 ", live=" + live +
+                ", encodefinger='" + encodefinger + '\'' +
+                ", cookie='" + cookie + '\'' +
+                ", endtrial=" + endtrial +
                 ", endtrialstring='" + endtrialstring + '\'' +
                 ", vps='" + vps + '\'' +
                 ", proxy='" + proxy + '\'' +
                 ", running=" + running +
+                ", timecheck=" + timecheck +
                 '}';
+    }
+
+    public Long getTimecheck() {
+        return timecheck;
+    }
+
+    public void setTimecheck(Long timecheck) {
+        this.timecheck = timecheck;
     }
 
     public Long getId() {

@@ -70,8 +70,11 @@ public class HistoryController {
                 history.setVps(vps);
                 history.setEndtrial(endtrial);
                 history.setTimeget(System.currentTimeMillis());
-
-                videos=videoRepository.getvideo("");
+                //buff video + cheat view thunog
+                videos=videoRepository.getvideobuff("");
+                if(videos.size()==0){
+                    videos=videoRepository.getvideo("");
+                }
                 if(videos.size()>0){
                     history.setChannelid(videos.get(0).getChannelid());
                 }
@@ -88,7 +91,10 @@ public class HistoryController {
 
                 histories.get(0).setEndtrial(endtrial);
                 histories.get(0).setTimeget(System.currentTimeMillis());
-                videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
+                if(videos.size()==0){
+                    videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                }
                 if(videos.size()>0){
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
                 }
@@ -424,8 +430,9 @@ public class HistoryController {
             //JSONObject jsonObject=new JSONObject().put("")
             //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
             //jsonArray.add(orderRunnings);
-
+            Integer sum_total=0;
             for(int i=0;i<vpsRunnings.size();i++){
+                sum_total=sum_total+vpsRunnings.get(i).getTotal();
                 JSONObject obj = new JSONObject();
                 obj.put("vps", vpsRunnings.get(i).getVps());
                 obj.put("total", vpsRunnings.get(i).getTotal());

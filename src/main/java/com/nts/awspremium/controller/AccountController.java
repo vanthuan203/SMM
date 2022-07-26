@@ -46,6 +46,9 @@ public class AccountController {
         try{
             Integer count= accountRepository.findUsername(newaccount.getUsername().trim());
             String datestring=newaccount.getEndtrialstring();
+            if(datestring.contains("Free trial ends ")){
+                datestring=datestring.replace("Free trial ends ","");
+            }
             String MMM = datestring.substring(0,3);
             String date=datestring.replace(MMM,StringUtils.convertMMMtoMM(datestring)+"");
             Long endtrial= StringUtils.getLongTimeFromString(date,"MM dd, yyyy");
@@ -104,6 +107,7 @@ public class AccountController {
                         }
                         account.get(0).setVps(vps);
                         account.get(0).setRunning(1);
+                        account.get(0).setTimecheck(System.currentTimeMillis());
                         accountRepository.save(account.get(0));
 
                         resp.put("status","true");
@@ -130,6 +134,7 @@ public class AccountController {
                     }
                     accountbyVps.get(0).setVps(vps);
                     accountbyVps.get(0).setRunning(1);
+                    accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
                     accountRepository.save(accountbyVps.get(0));
                     resp.put("status","true");
                     resp.put("username",accountbyVps.get(0).getUsername());
@@ -182,7 +187,7 @@ public class AccountController {
 
                         resp.put("status","true");
                         resp.put("username",account.get(0).getUsername());
-                        resp.put("password",account.get(0).getId());
+                        resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
                         //resp.put("cookie",account.get(0).getCookie());
                         resp.put("encodefinger",account.get(0).getEncodefinger());
@@ -242,6 +247,73 @@ public class AccountController {
         }
     }
 
+    @GetMapping(value = "/countgmails",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> countgmails(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+
+
+            Integer allgmail = accountRepository.getCountGmails();
+                resp.put("counts", allgmail);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "/checkaccount",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (username.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (vps.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Vps không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            Integer accounts = accountRepository.findUsername(username);
+            if (accounts == 0) {
+                resp.put("status", "fail");
+                resp.put("fail", "nouser");
+                resp.put("message", "Username không tồn tại!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+            Integer accountcheck = accountRepository.checkAcountByVps(username,vps);
+            if (accountcheck == 0) {
+                resp.put("status", "fail");
+                resp.put("fail", "nouser");
+                resp.put("message", "Yều cầu lấy tài khoản khác");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } else {
+                accountRepository.updatetimecheck(System.currentTimeMillis(),username);
+                resp.put("status", "true");
+                resp.put("message", "Check time user thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping(value = "/getinfo",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getinfo(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
             JSONObject resp=new JSONObject();
@@ -465,7 +537,32 @@ public class AccountController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @PostMapping(value = "/resetaccnotinvps",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetaccnotinvps(@RequestBody  String listacc,@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "")  String vps) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (vps.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "vps không đươc để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            accountRepository.updateListAccount(vps,listacc);
+            resp.put("status", "true");
+            resp.put("message", listacc);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping(value = "/resetaccountbyvps",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetAccountByVps(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();

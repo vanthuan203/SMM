@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/channel")
 public class ChannelController {
@@ -384,6 +384,7 @@ public class ChannelController {
                 obj.put("max_threads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insert_date", orderRunnings.get(i).getInsertdate());
                 obj.put("view_percent", orderRunnings.get(i).getViewpercent());
+                //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 jsonArray.add(obj);
             }
@@ -416,6 +417,35 @@ public class ChannelController {
         try{
             channelRepository.deleteChannelById(channelid);
             videoRepository.deleteAllByChannelId(channelid);
+            resp.put("channel","");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "updatesingle",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatesingle(@RequestHeader(defaultValue = "") String Authorization,@org.springframework.web.bind.annotation.RequestBody ChannelOrder channelOrder){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Channel> channels=channelRepository.getChannelById(channelOrder.getChannel_id().trim());
+            channels.get(0).setMaxthreads(channelOrder.getMax_thread());
+            channels.get(0).setEnabled(channelOrder.getEnabled());
+            channels.get(0).setViewpercent(channelOrder.getView_percent());
+            channels.get(0).setHomerate(channelOrder.getHome_rate());
+            channels.get(0).setSuggestrate(channelOrder.getSuggest_rate());
+            channels.get(0).setSearchrate(channelOrder.getSearch_rate());
+            channels.get(0).setDirectrate(channelOrder.getDirect_rate());
+            channelRepository.save(channels.get(0));
             resp.put("channel","");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
