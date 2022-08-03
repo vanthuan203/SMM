@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(path = "/proxy")
 public class ProxyController {
@@ -28,12 +30,30 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            Integer proxyCheck=proxyRepository.checkproxynull(proxy.getProxy().trim());
+            if(proxyCheck>0){
+                resp.put("status","true");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }
             Proxy proxynew =new Proxy();
             proxynew.setProxy(proxy.getProxy().trim());
             proxynew.setIpv4(proxy.getIpv4().trim());
             proxynew.setState(1);
             proxynew.setRunning(0);
             proxyRepository.save(proxynew);
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value="/deleteproxyhisthan24h",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> deleteProxyHisThan24h(){
+        JSONObject resp = new JSONObject();
+        try{
+            proxyRepository.deleteProxyHisThan24h();
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){

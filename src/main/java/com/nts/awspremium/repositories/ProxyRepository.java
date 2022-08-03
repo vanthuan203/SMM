@@ -2,8 +2,10 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.Proxy;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
@@ -21,4 +23,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Query(value = "SELECT * FROM proxy where proxy=?1 limit 1",nativeQuery = true)
     public List<Proxy> findProxy(String proxy);
+    @Query(value = "SELECT count(*) FROM proxy where proxy=?1",nativeQuery = true)
+    public Integer checkproxynull(String proxy);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM AccPremium.proxyhistory where round((UNIX_TIMESTAMP()-id/1000)/60/60) >24",nativeQuery = true)
+    public Integer deleteProxyHisThan24h();
 }

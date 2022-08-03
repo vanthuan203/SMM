@@ -15,4 +15,6 @@ public interface OrderRunningRepository extends JpaRepository<Channel,Long> {
     public List<OrderRunning> getOrderRunning();
     @Query(value = "Select channel.channelid,channel.title,count(*) as total,maxthreads,viewpercent,insertdate,enabled from channel left join history on history.channelid=channel.channelid and running=1   group by channelid",nativeQuery = true)
     public List<OrderRunning> getOrder();
+    @Query(value = "Select channel.channelid,channel.title,count(*) as total,maxthreads,viewpercent,insertdate,enabled from channel left join history on history.channelid=channel.channelid and running=1 where channel.channelid=?1  group by channelid",nativeQuery = true)
+    public List<OrderRunning> getOrderByChannelid(String channelid);
 }

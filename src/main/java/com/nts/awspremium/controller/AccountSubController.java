@@ -10,12 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(path ="/gmails")
+@RequestMapping(path ="/sub")
 
-public class AccountController {
+public class AccountSubController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -45,16 +45,9 @@ public class AccountController {
         }
         try{
             Integer count= accountRepository.findUsername(newaccount.getUsername().trim());
-            String datestring=newaccount.getEndtrialstring();
-            if(datestring.contains("Free trial ends ")){
-                datestring=datestring.replace("Free trial ends ","");
-            }
-            String MMM = datestring.substring(0,3);
-            String date=datestring.replace(MMM,StringUtils.convertMMMtoMM(datestring)+"");
-            Long endtrial= StringUtils.getLongTimeFromString(date,"MM dd, yyyy");
             if(count>0){
                 if(update==1) {
-                    accountRepository.updateAccount(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),newaccount.getEncodefinger(),newaccount.getCookie(),endtrial, newaccount.getEndtrialstring(), newaccount.getUsername());
+                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),newaccount.getEncodefinger(),newaccount.getCookie(),newaccount.getUsername());
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -64,7 +57,7 @@ public class AccountController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }
             }else{
-                accountRepository.insertAccount(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),newaccount.getEncodefinger(),newaccount.getCookie(),endtrial, newaccount.getEndtrialstring());
+                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),newaccount.getEncodefinger(),newaccount.getCookie(), newaccount.getRunning(), newaccount.getVps());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

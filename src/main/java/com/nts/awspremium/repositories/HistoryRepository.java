@@ -36,4 +36,9 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
 
     @Query(value = "SELECT vps,1 as time,count(*) as total FROM AccPremium.historysum where round((UNIX_TIMESTAMP()-id/1000)/60/60) <24 group by vps",nativeQuery = true)
     public List<VpsRunning> getvpsview();
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM AccPremium.historysum where round((UNIX_TIMESTAMP()-id/1000)/60/60) >24 ",nativeQuery = true)
+    public Integer deleteAllViewThan24h();
 }

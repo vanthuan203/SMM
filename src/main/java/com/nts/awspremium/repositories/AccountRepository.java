@@ -21,8 +21,20 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8)",nativeQuery = true)
+    public void insertAccountSub(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,endtrial=?6,endtrialstring=?7,vps='',running=0 where username=?8",nativeQuery = true)
     public void updateAccount(String password,String recover,Integer live,String encodefinger,String cookie,Long endtrial,String endtrialstring,String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
+    public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,String username);
+
+
     @Query(value = "Select * from AccPremium.account where username=?1 limit 1",nativeQuery = true)
     public List<Account> findAccountByUsername(String username);
     @Query(value = "Select * from account where id=?1 limit 1",nativeQuery = true)
@@ -43,12 +55,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT count(*) FROM account where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and username=?1",nativeQuery = true)
     public Integer checkEndTrial(String username);
 
-    @Query(value = "SELECT count(*) FROM account where live=1",nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM account where live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
     public Integer getCountGmails();
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='' where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE account SET running=0,vps='' where vps like ?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
 
     @Modifying

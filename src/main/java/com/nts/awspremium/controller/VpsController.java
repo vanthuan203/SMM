@@ -97,7 +97,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vps1 =vpsRepository.findVPS(vps);
+            List<Vps> vps1 =vpsRepository.findVPS("%"+vps.trim()+"%");
             if(vps1.size()>0){
                 resp.put("status", "fail");
                 resp.put("message", "Vps đã tồn tại");
@@ -137,7 +137,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vpscheck =vpsRepository.findVPS(vps);
+            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
 
             if(vpscheck.size()>0){
                 if(vpscheck.get(0).getVpsoption().equals("Pending")){
@@ -147,6 +147,8 @@ public class VpsController {
                     if(vpscheck.get(0).getVpsreset()>0){
                         vpscheck.get(0).setVpsreset(0);
                     }
+                    vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                    vpsRepository.save(vpscheck.get(0));
                     //resp.put("message", "Vps thêm thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -187,6 +189,50 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "checkresetvps",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkresetvps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
+
+            if(vpscheck.size()>0){
+
+                resp.put("status", "true");
+                resp.put("vpsreset",vpscheck.get(0).getVpsreset());
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                if(vpscheck.get(0).getVpsreset()>0){
+                    vpscheck.get(0).setVpsreset(0);
+                }
+                vpsRepository.save(vpscheck.get(0));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+            }else{
+
+                resp.put("status", "fail");
+                resp.put("vpsreset","NULL");
+                //resp.put("message", "Vps thêm thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PostMapping(value = "update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
         JSONObject resp=new JSONObject();
@@ -197,23 +243,41 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vpsupdate =vpsRepository.findVPS(vps.getVps());
-            if(vpsupdate.size()>0){
-                vpsupdate.get(0).setThreads(vps.getThreads());
-                vpsupdate.get(0).setVpsoption(vps.getVpsoption());
-                vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat")?"accpremium-env.ap-southeast-1.elasticbeanstalk.com":vps.getVpsoption().contains("Pending")?"":"cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
-                vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat")?"1":vps.getVpsoption().contains("Pending")?"":"0");
-                vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
-                vpsupdate.get(0).setVpsreset(vps.getVpsreset());
-                vpsRepository.save(vpsupdate.get(0));
-                resp.put("status", "success");
-                //resp.put("message", vps.getJSonObj());
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                resp.put("status","fail");
-                resp.put("message", "Không tìm thấy VPS");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            String[] vpsArr=vps.getVps().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<vpsArr.length;i++){
+                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                if(vpsupdate.size()>0) {
+                    vpsupdate.get(0).setThreads(vps.getThreads());
+                    vpsupdate.get(0).setVpsoption(vps.getVpsoption());
+                    vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat") ? "accpremium-env.ap-southeast-1.elasticbeanstalk.com" : vps.getVpsoption().contains("Pending") ? "" : "cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
+                    vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
+                    vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
+                    vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsRepository.save(vpsupdate.get(0));
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", vpsupdate.get(0).getId());
+                    obj.put("vps", vpsupdate.get(0).getVps());
+                    obj.put("vpsoption",  vps.getVpsoption());
+                    obj.put("state",   vpsupdate.get(0).getState());
+                    obj.put("timecheck",  System.currentTimeMillis());
+                    obj.put("threads",  vps.getThreads());
+                    obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
+                    obj.put("view24h",0);
+                    if(vpsArr.length==1){
+                        resp.put("account",obj);
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    jsonArray.add(obj);
+                    //resp.put("status", "success");
+                }
+
             }
+
+            resp.put("accounts",jsonArray);
+                //resp.put("message", vps.getJSonObj());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
@@ -247,14 +311,27 @@ public class VpsController {
                     }
                 }
             }*/
-            historyRepository.deletenamevpsByVps(vps);
-            vpsRepository.deleteByVps(vps);
+            String[] vpsArr=vps.split(",");
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<vpsArr.length;i++){
 
-            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-            Request request = null;
-            request = new Request.Builder().url("http://accpremiumpostget-env.ap-southeast-1.elasticbeanstalk.com/gmails/resetaccountbyvps?vps=" + vps).get().addHeader("Authorization", "1").build();
-            Response response = client.newCall(request).execute();
-            resp.put("vps","");
+                historyRepository.deletenamevpsByVps(vpsArr[i].trim());
+                vpsRepository.deleteByVps(vpsArr[i].trim());
+
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+                Request request = null;
+                request = new Request.Builder().url("http://accpremiumpostget-env.ap-southeast-1.elasticbeanstalk.com/gmails/resetaccountbyvps?vps=" + vpsArr[i].trim()).get().addHeader("Authorization", "1").build();
+                Response response = client.newCall(request).execute();
+                if(vpsArr.length==1){
+                    resp.put("vps",vpsArr[i].trim());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                JSONObject obj=new JSONObject();
+                obj.put("vps",vpsArr[i].trim());
+                jsonArray.add(obj);
+
+            }
+            resp.put("vps","Fdfdfd");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");

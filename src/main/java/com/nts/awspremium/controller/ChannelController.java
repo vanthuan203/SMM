@@ -231,7 +231,7 @@ public class ChannelController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
-                resp.put("status", "true");
+                resp.put("channel", "true");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         resp.put("status", "fail");
@@ -437,17 +437,37 @@ public class ChannelController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Channel> channels=channelRepository.getChannelById(channelOrder.getChannel_id().trim());
-            channels.get(0).setMaxthreads(channelOrder.getMax_thread());
-            channels.get(0).setEnabled(channelOrder.getEnabled());
-            channels.get(0).setViewpercent(channelOrder.getView_percent());
-            channels.get(0).setHomerate(channelOrder.getHome_rate());
-            channels.get(0).setSuggestrate(channelOrder.getSuggest_rate());
-            channels.get(0).setSearchrate(channelOrder.getSearch_rate());
-            channels.get(0).setDirectrate(channelOrder.getDirect_rate());
-            channelRepository.save(channels.get(0));
-            resp.put("channel","");
+            String[] channelIdArr=channelOrder.getChannel_id().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<channelIdArr.length;i++){
+                List<Channel> channels=channelRepository.getChannelById(channelIdArr[i].trim());
+                channels.get(0).setMaxthreads(channelOrder.getMax_thread());
+                channels.get(0).setEnabled(channelOrder.getEnabled());
+                channels.get(0).setViewpercent(channelOrder.getView_percent());
+                channels.get(0).setHomerate(channelOrder.getHome_rate());
+                channels.get(0).setSuggestrate(channelOrder.getSuggest_rate());
+                channels.get(0).setSearchrate(channelOrder.getSearch_rate());
+                channels.get(0).setDirectrate(channelOrder.getDirect_rate());
+                channelRepository.save(channels.get(0));
+                List<OrderRunning> orderRunningbyVps=orderRunningRepository.getOrderByChannelid(channelIdArr[i].trim());
+                JSONObject obj = new JSONObject();
+                obj.put("channel_id", channelIdArr[i].trim());
+                obj.put("channel_title", channels.get(0).getTitle());
+                obj.put("total", orderRunningbyVps.get(0).getTotal());
+                obj.put("max_threads", channelOrder.getMax_thread());
+                //obj.put("insert_date", channelOrder.getin);
+                obj.put("view_percent", channelOrder.getView_percent());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("enabled", channelOrder.getEnabled());
+                jsonArray.add(obj);
+                if(channelIdArr.length==1){
+                    resp.put("channel",obj);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }
+            resp.put("channels",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
         }catch (Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());

@@ -450,4 +450,17 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(path = "deleteviewthan24h",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> deleteAllViewThan24h(){
+        JSONObject resp = new JSONObject();
+        try{
+            historyRepository.deleteAllViewThan24h();
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
