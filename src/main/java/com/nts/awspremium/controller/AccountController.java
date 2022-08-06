@@ -552,6 +552,11 @@ public class AccountController {
                 resp.put("message", "vps không đươc để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
+            if (listacc.length() ==0  || listacc.isEmpty()) {
+                resp.put("status", "fail");
+                resp.put("message", "vps không đươc để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
             accountRepository.updateListAccount(vps,listacc);
             resp.put("status", "true");
             resp.put("message", listacc);
