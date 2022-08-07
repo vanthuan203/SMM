@@ -34,7 +34,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0' where username=?2",nativeQuery = true)
+    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0',running=1 where username=?2",nativeQuery = true)
     public void updateTaskSub(Long endtrial,String username);
 
     @Modifying

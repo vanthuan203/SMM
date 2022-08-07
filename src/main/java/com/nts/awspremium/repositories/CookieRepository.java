@@ -22,4 +22,8 @@ public interface CookieRepository extends JpaRepository<Cookie,Long> {
 
     @Query(value = "SELECT cookie FROM cookie WHERE username=?1 limit 1",nativeQuery = true)
     public String findCookieSub(String username);
+    @Query(value = "SELECT cookie FROM cookie WHERE id=?1 limit 1",nativeQuery = true)
+    public String findCookieSubById(Long id);
+    @Query(value = "SELECT id FROM cookie WHERE username=?1 limit 1",nativeQuery = true)
+    public Long findIdSubByUsername(String username);
 }

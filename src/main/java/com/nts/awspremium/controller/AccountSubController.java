@@ -103,6 +103,10 @@ public class AccountSubController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }else{
                     try{
+                        Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(account.get(0).getUsername().trim());
+                        String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+                        Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
+                        String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                         Thread.sleep(3);
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
@@ -120,8 +124,8 @@ public class AccountSubController {
                         //resp.put("endtrial",account.get(0).getEndtrial());
                         resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
-                        resp.put("cookie",cookieRepository.findCookieSub(account.get(0).getUsername().trim()));
-                        resp.put("encodefinger",encodefingerRepository.findEncodefingerSub(account.get(0).getUsername().trim()));
+                        resp.put("cookie",cookieSub);
+                        resp.put("encodefinger",encodefingerSub);
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
                         resp.put("status", "fail");
@@ -134,6 +138,12 @@ public class AccountSubController {
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
                     Thread.sleep(3);
                     Integer accountcheck=accountRepository.checkAccountById(idbyVps);
+
+                    Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
+                    String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+
+                    Long idCookieSub= cookieRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
+                    String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                     if(accountcheck==0){
                         resp.put("status", "fail");
                         resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
@@ -147,8 +157,8 @@ public class AccountSubController {
                     resp.put("username",accountbyVps.get(0).getUsername());
                     resp.put("password",accountbyVps.get(0).getPassword());
                     resp.put("recover",accountbyVps.get(0).getRecover());
-                    resp.put("cookie",cookieRepository.findCookieSub(accountbyVps.get(0).getUsername().trim()));
-                    resp.put("encodefinger",encodefingerRepository.findEncodefingerSub(accountbyVps.get(0).getUsername().trim()));
+                    resp.put("cookie",cookieSub);
+                    resp.put("encodefinger",encodefingerSub);
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }catch (Exception e){
                     resp.put("status", "fail");
@@ -535,13 +545,6 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
-            if (accountcheck == 0) {
-                resp.put("status", "fail");
-                resp.put("fail", "nouser");
-                resp.put("message", "Yêu cầu lấy tài khoản khác");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
             Integer accounts=accountRepository.findUsername(username.trim());
             if(accounts==0){
                 resp.put("status","fail");
@@ -549,6 +552,13 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
             List<Account> acccheckvpsnull=accountRepository.findAccountByUsername(username);
+            Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
+            if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length()!=0) {
+                resp.put("status", "fail");
+                resp.put("fail", "nouser");
+                resp.put("message", "Yêu cầu lấy tài khoản khác");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             if (acccheckvpsnull.get(0).getVps().length()!=0){
                 accountRepository.updateTaskSub(running,username.trim());
                 resp.put("status","true");
