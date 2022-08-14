@@ -35,6 +35,8 @@ public class AccountSubController {
     private CookieRepository cookieRepository;
     @Autowired
     private EncodefingerRepository encodefingerRepository;
+    @Autowired
+    private VpsRepository vpsRepository;
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
                                                  @RequestParam(defaultValue = "1") Integer update){
@@ -432,9 +434,18 @@ public class AccountSubController {
             }else{
                 Integer cookie=accountRepository.getCookieAccSub(username.trim());
                 if(cookie>0){
+                    Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(username.trim());
+                    String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+
+                    Long idCookieSub= cookieRepository.findIdSubByUsername(username.trim());
+                    String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
+                    String account=accountRepository.getInfo(username.trim());
+                    String[] accountinfo=account.split(",");
                     resp.put("status","true");
-                    //resp.put("username",accounts.get(0).getUsername());
-                    resp.put("cookie",cookieRepository.findCookieSub(username.trim()));
+                    resp.put("password",accountinfo[0]);
+                    resp.put("recover",accountinfo[1]);
+                    resp.put("encodefinger",encodefingerSub);
+                    resp.put("cookie",cookieSub);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
                     resp.put("status","fail");
@@ -551,6 +562,7 @@ public class AccountSubController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
+
             List<Account> acccheckvpsnull=accountRepository.findAccountByUsername(username);
             Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
             if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length()!=0) {
@@ -560,7 +572,7 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if (acccheckvpsnull.get(0).getVps().length()!=0){
-                accountRepository.updateTaskSub(running,username.trim());
+                accountRepository.updateTaskSub(running,System.currentTimeMillis(),username.trim());
                 resp.put("status","true");
                 resp.put("message", "Update "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -570,6 +582,7 @@ public class AccountSubController {
                 acccheckvpsnull.get(0).setRunning(1);
                 acccheckvpsnull.get(0).setLive(1);
                 acccheckvpsnull.get(0).setVps(vps.trim());
+                acccheckvpsnull.get(0).setTimecheck(System.currentTimeMillis());
                 accountRepository.save(acccheckvpsnull.get(0));
                 resp.put("status","true");
                 resp.put("message", "Update "+username+" thành công!");
@@ -613,6 +626,25 @@ public class AccountSubController {
 
 
     }
+
+    @GetMapping(value = "/updatethreadsuberror",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> updatethreadsuberror(){
+        JSONObject resp=new JSONObject();
+        try{
+            accountRepository.updateThreadSubError();
+            resp.put("status","true");
+            resp.put("message", "Update thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+/*
     @GetMapping(value = "/getproxy",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> getproxy(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
@@ -638,7 +670,7 @@ public class AccountSubController {
                 if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
                     //proxy=proxyRepository.getProxyTimeGetNull();
                     //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy();
+                        //proxy=proxyRepository.getProxy();
                     //}
                 }else{
                     //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
@@ -687,6 +719,8 @@ public class AccountSubController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+
+ */
     @GetMapping(value = "/updatelive",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> reset(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();

@@ -35,7 +35,7 @@ public class VpsSubController {
     ResponseEntity<String> getlist(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
         try{
-            List<Vps> vps=vpsRepository.getListVPS();
+            List<Vps> vps=vpsRepository.getListVPSSub();
             if(vps.size()==0){
                 resp.put("status","fail");
                 resp.put("message", "Vps trống");
@@ -172,8 +172,6 @@ public class VpsSubController {
                 resp.put("threads",vpscheck.get(0).getRunning()==0?threads:vpscheck.get(0).getRunning());
 
 
-
-                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
                 }
@@ -238,7 +236,6 @@ public class VpsSubController {
 
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
-                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
                 }
@@ -258,8 +255,97 @@ public class VpsSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    //cron tab
+    @GetMapping(value = "resetvpsbytimecheck",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetvpsbytimecheck(){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetVPSByTimecheck();
+            //accountRepository.resetAccountSubByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "checktimevps",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checktimevps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "")  String username){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
 
+        try{
+            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
+            if(username.trim().length()!=0){
+                accountRepository.updatetimecheck(System.currentTimeMillis(),username.trim());
+            }
+            if(vpscheck.size()>0){
+                resp.put("status", "true");
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpsRepository.save(vpscheck.get(0));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+
+                resp.put("status", "fail");
+                resp.put("vpsreset","NULL");
+                //resp.put("message", "Vps thêm thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "checkvpsdie",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkvpsdie(){
+        JSONObject resp=new JSONObject();
+        try{
+            String vpsdie="";
+            List<Vps> vpsList =vpsRepository.findVPSDie();
+            if(vpsList.size()>0){
+                for(int i=0;i<vpsList.size();i++){
+                    if(i==0){
+                        vpsdie=vpsList.get(i).getVps().substring(vpsList.get(i).getVps().indexOf("-")+1,vpsList.get(i).getVps().length());
+                    }else{
+                        vpsdie=vpsdie+","+ vpsList.get(i).getVps().substring(vpsList.get(i).getVps().indexOf("-")+1,vpsList.get(i).getVps().length());
+                    }
+
+                }
+                resp.put("status", vpsdie);
+
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request = null;
+
+                request = new Request.Builder().url("https://maker.ifttt.com/trigger/vps_warning/with/key/eh3Ut1_iinzl4yCeH5-BC2d21WpaAKdzXTWzVfXurdc?value1=" + vpsdie+"&value2="+vpsList.size()).get().build();
+
+                Response response = client.newCall(request).execute();
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+
+                resp.put("status", "true");
+                //resp.put("message", "Vps thêm thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping(value = "update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
         JSONObject resp=new JSONObject();

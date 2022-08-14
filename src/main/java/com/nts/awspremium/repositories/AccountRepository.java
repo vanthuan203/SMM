@@ -34,8 +34,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0',running=1 where username=?2",nativeQuery = true)
-    public void updateTaskSub(Long endtrial,String username);
+    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0',running=1,timecheck=?2 where username=?3",nativeQuery = true)
+    public void updateTaskSub(Long endtrial,Long timecheck,String username);
 
     @Modifying
     @Transactional
@@ -46,7 +46,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
     public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,String username);
-
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET endtrial=0  where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=10 and endtrial=1",nativeQuery = true)
+    public void updateThreadSubError();
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET running=1,vps=?2,timecheck=?3 where id=?4",nativeQuery = true)
@@ -124,6 +127,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET vps='',running=0 where vps=?1 and INSTR(?2,username)=0",nativeQuery = true)
     public Integer updateListAccount(String vps,String listacc);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=12",nativeQuery = true)
+    public Integer resetAccountSubByTimecheck();
 
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timecheck)/1000)/60) as time,count(*) as total FROM account where endtrial=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();

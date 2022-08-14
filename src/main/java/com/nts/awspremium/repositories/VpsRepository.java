@@ -11,10 +11,21 @@ import java.util.List;
 public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "select * from vps order by vpsoption desc,timecheck asc",nativeQuery = true)
     public List<Vps> getListVPS();
+    @Query(value = "select * from vps order by CAST(SUBSTRING(vps,position('-' in vps),length(vps)) AS UNSIGNED) desc",nativeQuery = true)
+    public List<Vps> getListVPSSub();
+
     @Query(value = "select * from vps where vps like ?1",nativeQuery = true)
     public List<Vps> findVPS(String vps);
+
+    @Query(value = "SELECT * FROM AccSub.vps where round((UNIX_TIMESTAMP()-timecheck/1000)/60) >=5 order by CAST(SUBSTRING(vps,position('-' in vps),length(vps)) AS UNSIGNED) desc;",nativeQuery = true)
+    public List<Vps> findVPSDie();
     @Modifying
     @Transactional
     @Query(value = "DELETE  from vps where vps=?1",nativeQuery = true)
     public void deleteByVps(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE vps set vpsreset=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15",nativeQuery = true)
+    public void resetVPSByTimecheck();
 }

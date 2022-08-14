@@ -208,13 +208,12 @@ public class VpsController {
             List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
 
             if(vpscheck.size()>0){
-
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
-                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
                 }
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 

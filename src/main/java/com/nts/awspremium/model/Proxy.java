@@ -13,29 +13,27 @@ public class Proxy {
     private Long timeget;
     private String ipv4;
     private Integer running;
+    private String typeproxy;
 
     public Proxy() {
     }
 
-    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running) {
+    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy) {
         this.id = id;
         this.proxy = proxy;
         this.state = state;
         this.timeget = timeget;
         this.ipv4 = ipv4;
         this.running = running;
+        this.typeproxy = typeproxy;
     }
 
-    @Override
-    public String toString() {
-        return "Proxy{" +
-                "id=" + id +
-                ", proxy='" + proxy + '\'' +
-                ", state=" + state +
-                ", timeget=" + timeget +
-                ", ipv4='" + ipv4 + '\'' +
-                ", running=" + running +
-                '}';
+    public String getTypeproxy() {
+        return typeproxy;
+    }
+
+    public void setTypeproxy(String typeproxy) {
+        this.typeproxy = typeproxy;
     }
 
     public Integer getId() {

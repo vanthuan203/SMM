@@ -39,6 +39,7 @@ public class ProxyController {
             proxynew.setProxy(proxy.getProxy().trim());
             proxynew.setIpv4(proxy.getIpv4().trim());
             proxynew.setState(1);
+            proxynew.setTypeproxy(proxy.getTypeproxy().trim());
             proxynew.setRunning(0);
             proxyRepository.save(proxynew);
             resp.put("status","true");
@@ -54,6 +55,25 @@ public class ProxyController {
         JSONObject resp = new JSONObject();
         try{
             proxyRepository.deleteProxyHisThan24h();
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value="/deleteproxybyipv4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> deleteproxybyipv4(@RequestParam(defaultValue = "")  String ipv4,@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            proxyRepository.deleteProxyByIpv4(ipv4.trim());
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){

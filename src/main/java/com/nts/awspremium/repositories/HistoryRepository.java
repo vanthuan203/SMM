@@ -31,6 +31,9 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT count(*) FROM history where vps=?1 and running=1",nativeQuery = true)
     public Integer getrunningbyVps(String vps);
 
+    @Query(value = "SELECT count(*) FROM history where typeproxy=?1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and round((UNIX_TIMESTAMP()-timeget/1000)/60/60)<12;",nativeQuery = true)
+    public Integer countAccountByTypeProxy(String typeproxy);
+
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM AccPremium.history where running=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
 

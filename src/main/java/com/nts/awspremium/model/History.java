@@ -15,10 +15,11 @@ public class History {
     private String channelid;
     private Long endtrial;
     private Long timeget;
+    private String typeproxy;
     public History() {
     }
 
-    public History(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long endtrial, Long timeget) {
+    public History(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long endtrial, Long timeget, String typeproxy) {
         this.id = id;
         this.username = username;
         this.listvideo = listvideo;
@@ -28,6 +29,15 @@ public class History {
         this.channelid = channelid;
         this.endtrial = endtrial;
         this.timeget = timeget;
+        this.typeproxy = typeproxy;
+    }
+
+    public String getTypeproxy() {
+        return typeproxy;
+    }
+
+    public void setTypeproxy(String typeproxy) {
+        this.typeproxy = typeproxy;
     }
 
     @Override
@@ -42,6 +52,7 @@ public class History {
                 ", channelid='" + channelid + '\'' +
                 ", endtrial=" + endtrial +
                 ", timeget=" + timeget +
+                ", typeproxy='" + typeproxy + '\'' +
                 '}';
     }
 

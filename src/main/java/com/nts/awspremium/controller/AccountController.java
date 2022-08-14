@@ -452,12 +452,12 @@ public class AccountController {
                 if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
                     //proxy=proxyRepository.getProxyTimeGetNull();
                     //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy();
+                        proxy=proxyRepository.getProxy("",histories.get(0).getTypeproxy().trim());
                     //}
                 }else{
                     //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
                     //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),histories.get(0).getTypeproxy().trim());
                     //}
                 }
                 List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
@@ -480,11 +480,6 @@ public class AccountController {
                 proxyHistoryNew.setState(1);
                 proxyHistoryRepository.save(proxyHistoryNew);
 
-                IpV4 ipV4=new IpV4();
-                ipV4.setId(System.currentTimeMillis());
-                ipV4.setIpv4(proxy.get(0).getIpv4());
-                ipV4.setState(1);
-                ipV4Repository.save(ipV4);
 
                 histories.get(0).setProxy(proxy.get(0).getProxy());
                 historyRepository.save(histories.get(0));
