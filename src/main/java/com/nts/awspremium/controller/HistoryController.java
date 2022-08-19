@@ -80,12 +80,14 @@ public class HistoryController {
                 }
                 historyRepository.save(history);
             }else{
+                /*
                 if(!histories.get(0).getVps().trim().equals(vps.trim()) && (histories.get(0).getVps().length()!=0)){
                     resp.put("status","fail");
                     resp.put("fail", "nouser");
                     resp.put("message", "Tài khoản đã được vps khác sử dụng!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                 */
                 histories.get(0).setRunning(1);
                 histories.get(0).setVps(vps);
 
@@ -99,18 +101,6 @@ public class HistoryController {
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
                 }
                 historyRepository.save(histories.get(0));
-            }
-            List<History> historyendtrial=historyRepository.checkEndTrial(username);
-            if(historyendtrial.size()==0){
-                if(histories.size()>0){
-                    histories.get(0).setRunning(0);
-                    histories.get(0).setVps("");
-                    historyRepository.save(histories.get(0));
-                }
-                resp.put("status", "fail");
-                resp.put("fail", "trial");
-                resp.put("message", "Hết hạn endtrial!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if(videos.size()==0){
                 resp.put("status","fail");
@@ -155,20 +145,20 @@ public class HistoryController {
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }
                     if(histories.size()==0){
-                          if(countproxyVutr>countAccountVutr){
-                              proxy=proxyRepository.getProxy("Vutr");
-                          }else if(countproxyTera>countAccountTera){
+                          if(countproxyTera>countAccountTera){
                               proxy=proxyRepository.getProxy("Tera");
+                          }else if(countproxyVutr>countAccountVutr){
+                              proxy=proxyRepository.getProxy("Vutr");
                           }
                         //}
                     }else{
                         if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
                             //proxy=proxyRepository.getProxyTimeGetNull();
                             //if(proxy.size()==0){
-                            if(countproxyVutr>countAccountVutr){
-                                proxy=proxyRepository.getProxy("Vutr");
-                            }else if(countproxyTera>countAccountTera){
+                            if( countproxyTera>countAccountTera){
                                 proxy=proxyRepository.getProxy("Tera");
+                            }else if(countproxyVutr>countAccountVutr){
+                                proxy=proxyRepository.getProxy("Vutr");
                             }
                             //}
                         }else{
@@ -214,32 +204,22 @@ public class HistoryController {
                     proxy.get(0).setTimeget(System.currentTimeMillis());
                     proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
                     proxyRepository.save(proxy.get(0));
+                    try{
+                        ProxyHistory proxyHistory =new ProxyHistory();
+                        proxyHistory.setId(System.currentTimeMillis());
+                        proxyHistory.setProxy(proxy.get(0).getProxy());
+                        proxyHistory.setState(1);
+                        proxyHistory.setIpv4(proxy.get(0).getIpv4());
+                        proxyHistoryRepository.save(proxyHistory);
+                    }catch (Exception e){
 
-                    ProxyHistory proxyHistory =new ProxyHistory();
-                    proxyHistory.setId(System.currentTimeMillis());
-                    proxyHistory.setProxy(proxy.get(0).getProxy());
-                    proxyHistory.setState(1);
-                    proxyHistory.setIpv4(proxy.get(0).getIpv4());
-                    proxyHistoryRepository.save(proxyHistory);
-
-
-
-                    HistorySum historySum=new HistorySum();
-                    historySum.setId(System.currentTimeMillis());
-                    historySum.setUsername(username);
-                    historySum.setVideoid(videos.get(0).getVideoid());
-                    historySum.setChannelid(videos.get(0).getChannelid());
-                    historySum.setVps(vps);
-                    historySum.setProxy(proxy.get(0).getProxy());
-                    historySumRepository.save(historySum);
-
+                    }
                 }catch (Exception e){
                     resp.put("status","fail1");
                     resp.put("fail","proxy");
                     resp.put("message",e.getMessage());
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
                 }
-
                 resp.put("ref", ref);
                 resp.put("channel_id", channels.get(0).getChannelid());
                 //resp.put("title", channels.get(0).getTitle());
@@ -357,6 +337,7 @@ public class HistoryController {
             else{
                 //histories.get(0).setProxy(proxy);
                 histories.get(0).setRunning(0);
+                histories.get(0).setVps("");
                 historyRepository.save(histories.get(0));
                 List<Proxy> proxys=proxyRepository.findProxy(proxy);
                 if(proxys.get(0).getRunning()>=1){
@@ -400,7 +381,6 @@ public class HistoryController {
                 proxyRepository.save(proxys.get(0));
             }
             historyRepository.resetThreadByUsername(username);
-            historySumRepository.DelHistoryError(username,videoid);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

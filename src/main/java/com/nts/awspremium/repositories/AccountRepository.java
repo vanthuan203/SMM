@@ -103,6 +103,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET running=0,vps='' where vps like ?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET running=0,vps='' where username=?1",nativeQuery = true)
+    public Integer resetAccountByUsername(String username);
 
     @Modifying
     @Transactional
@@ -118,6 +122,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET cookie=?1,running=1,live=1 where username=?2",nativeQuery = true)
     public Integer updatecookie(String cookie,String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET cookie=?1,running=0,live=1,vps='' where username=?2",nativeQuery = true)
+    public Integer updatecookieloginlocal(String cookie,String username);
 
     @Modifying
     @Transactional

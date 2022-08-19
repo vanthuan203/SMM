@@ -144,9 +144,6 @@ public class VpsController {
                     resp.put("status", "true");
                     resp.put("option","Pending");
                     resp.put("vpsreset",vpscheck.get(0).getVpsreset());
-                    if(vpscheck.get(0).getVpsreset()>0){
-                        vpscheck.get(0).setVpsreset(0);
-                    }
                     vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                     vpsRepository.save(vpscheck.get(0));
                     //resp.put("message", "Vps thêm thành công!");
@@ -159,9 +156,6 @@ public class VpsController {
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
-                if(vpscheck.get(0).getVpsreset()>0){
-                    vpscheck.get(0).setVpsreset(0);
-                }
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
@@ -212,9 +206,12 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
+                    vpsRepository.save(vpscheck.get(0));
+                    vpsRepository.save(vpscheck.get(0));
                 }
-                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
-                vpsRepository.save(vpscheck.get(0));
+                //vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+
+
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
             }else{

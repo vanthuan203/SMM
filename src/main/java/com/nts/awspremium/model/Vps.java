@@ -17,10 +17,20 @@ public class Vps {
     private Long timecheck;
     private Integer threads;
     private Integer vpsreset;
+    private Integer timereset;
+    private Integer dayreset;
     public Vps() {
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset) {
+    public Integer getDayreset() {
+        return dayreset;
+    }
+
+    public void setDayreset(Integer dayreset) {
+        this.dayreset = dayreset;
+    }
+
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
@@ -31,22 +41,16 @@ public class Vps {
         this.timecheck = timecheck;
         this.threads = threads;
         this.vpsreset = vpsreset;
+        this.timereset = timereset;
+        this.dayreset = dayreset;
     }
 
-    @Override
-    public String toString() {
-        return "Vps{" +
-                "id=" + id +
-                ", vps='" + vps + '\'' +
-                ", urlapi='" + urlapi + '\'' +
-                ", token='" + token + '\'' +
-                ", vpsoption='" + vpsoption + '\'' +
-                ", state=" + state +
-                ", running=" + running +
-                ", timecheck=" + timecheck +
-                ", threads=" + threads +
-                ", vpsreset=" + vpsreset +
-                '}';
+    public Integer getTimereset() {
+        return timereset;
+    }
+
+    public void setTimereset(Integer timereset) {
+        this.timereset = timereset;
     }
 
     public Integer getVpsreset() {

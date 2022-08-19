@@ -19,6 +19,10 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Query(value = "SELECT * FROM AccSub.vps where round((UNIX_TIMESTAMP()-timecheck/1000)/60) >=5 order by CAST(SUBSTRING(vps,position('-' in vps),length(vps)) AS UNSIGNED) desc;",nativeQuery = true)
     public List<Vps> findVPSDie();
+
+    @Query(value = "SELECT timereset FROM vps WHERE id=(select max(id) from vps)",nativeQuery = true)
+    public Integer findTimeIdMax();
+
     @Modifying
     @Transactional
     @Query(value = "DELETE  from vps where vps=?1",nativeQuery = true)

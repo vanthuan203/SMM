@@ -57,7 +57,6 @@ public class AccountSubController {
                     if(accountcheck.get(0).getLive()!=1){
                         cookieRepository.updateCookieSub(newaccount.getCookie(),newaccount.getUsername());
                     }
-                    //encodefingerRepository.updateEncodefingerSub(newaccount.getEncodefinger(), newaccount.getUsername());
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -814,5 +813,34 @@ public class AccountSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping(value = "/resetaccountbyusername",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (username.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            accountRepository.resetAccountByUsername(username.trim());
+            resp.put("status", "true");
+            resp.put("message", "Reset Account thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 }

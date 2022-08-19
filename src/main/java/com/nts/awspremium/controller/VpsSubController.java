@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.model.Account;
 import com.nts.awspremium.model.Admin;
 import com.nts.awspremium.model.Vps;
 import com.nts.awspremium.model.VpsRunning;
@@ -14,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -163,13 +167,26 @@ public class VpsSubController {
         try{
             List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
 
+            Integer resetSub=0;
+
+            Date date=new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DATE, 1); //minus number would decrement the days
+
             if(vpscheck.size()>0){
+                if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
+                    resetSub=1;
+                    vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                }
                 resp.put("status", "true");
                 //resp.put("option",vpscheck.get(0).getVpsoption());
                 resp.put("countuser",vpscheck.get(0).getThreads()==0?countuser:vpscheck.get(0).getThreads());
                 resp.put("numbersub",vpscheck.get(0).getState()==0?numbersub:vpscheck.get(0).getState());
                 resp.put("resetacc",vpscheck.get(0).getVpsoption().equals("Yes")?1:0);
                 resp.put("threads",vpscheck.get(0).getRunning()==0?threads:vpscheck.get(0).getRunning());
+                resp.put("timeresetsub",resetSub);
+
 
 
                 if(vpscheck.get(0).getVpsreset()>0){
@@ -191,12 +208,15 @@ public class VpsSubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
             }else{
+                Integer gettime= vpsRepository.findTimeIdMax();
                 Vps vpsnew=new Vps();
                 vpsnew.setVps(vps);
                 vpsnew.setState(numbersub);
                 vpsnew.setRunning(threads);
                 vpsnew.setVpsoption("No");
                 vpsnew.setVpsreset(0);
+                vpsnew.setTimereset(gettime==23?0:(gettime+1));
+                vpsnew.setDayreset(cal.getTime().getDate());
                 vpsnew.setThreads(countuser);
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
@@ -205,6 +225,7 @@ public class VpsSubController {
                 resp.put("numbersub",numbersub);
                 resp.put("resetacc",0);
                 resp.put("threads",threads);
+                resp.put("timeresetsub",resetSub);
                 //resp.put("message", "Vps thêm thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
@@ -285,23 +306,45 @@ public class VpsSubController {
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-
         try{
             List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
-            if(username.trim().length()!=0){
-                accountRepository.updatetimecheck(System.currentTimeMillis(),username.trim());
-            }
-            if(vpscheck.size()>0){
-                resp.put("status", "true");
+            if(vpscheck.size()>0) {
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-
-                resp.put("status", "fail");
-                resp.put("vpsreset","NULL");
-                //resp.put("message", "Vps thêm thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            if(username.length()>0){
+                Integer accounts=accountRepository.findUsername(username.trim());
+                if(accounts==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Username không tồn tại!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }
+                List<Account> acccheckvpsnull=accountRepository.findAccountByUsername(username);
+                Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
+                if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length()!=0) {
+                    resp.put("status", "fail");
+                    resp.put("fail", "nouser");
+                    resp.put("message", "Yêu cầu lấy tài khoản khác");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                if (acccheckvpsnull.get(0).getVps().length()!=0){
+                    acccheckvpsnull.get(0).setTimecheck(System.currentTimeMillis());
+                    accountRepository.save(acccheckvpsnull.get(0));
+                    resp.put("status","true");
+                    resp.put("message", "Update "+username+"  thành công!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }else{
+                    acccheckvpsnull.get(0).setVps(vps.trim());
+                    acccheckvpsnull.get(0).setTimecheck(System.currentTimeMillis());
+                    accountRepository.save(acccheckvpsnull.get(0));
+                    resp.put("status","true");
+                    resp.put("message", "Update "+username+" thành công!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }
+            }else {
+                resp.put("status","true");
+                resp.put("message", "Update timevps thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
         }catch(Exception e){
             resp.put("status","fail");
