@@ -30,6 +30,11 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15 and round((UNIX_TIMESTAMP()-timecheck/1000)/60)<30 ",nativeQuery = true)
     public void resetVPSByTimecheck();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE vps set vpsreset=2 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=30",nativeQuery = true)
+    public void resetVPSAndUnrarToolByTimecheck();
 }

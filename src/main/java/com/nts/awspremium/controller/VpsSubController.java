@@ -60,12 +60,6 @@ public class VpsSubController {
                     Integer totalacc=0;
                     Integer totalacclive=0;
                     Integer totalacctasksub=0;
-                    for(int j=0;j<vpsRunnings.size();j++){
-                        if(vps.get(i).getVps().equals(vpsRunnings.get(j).getVps())){
-                           total=vpsRunnings.get(j).getTotal();
-                           vpsRunnings.remove(j);
-                        }
-                    }
 
                     for(int k=0;k<accByVps.size();k++){
                         if(vps.get(i).getVps().equals(accByVps.get(k).getVps())){
@@ -80,12 +74,6 @@ public class VpsSubController {
                             accLiveByVps.remove(k);
                         }
                     }
-                    for(int k=0;k<accTaskSubByVps.size();k++){
-                        if(vps.get(i).getVps().equals(accTaskSubByVps.get(k).getVps())){
-                            totalacctasksub=accTaskSubByVps.get(k).getTotal();
-                            accTaskSubByVps.remove(k);
-                        }
-                    }
                     JSONObject obj = new JSONObject();
                     obj.put("id", vps.get(i).getId());
                     obj.put("vps", vps.get(i).getVps());
@@ -93,10 +81,13 @@ public class VpsSubController {
                     obj.put("acccountlive", totalacclive);
                     obj.put("acccounttasksub", totalacctasksub);
                     obj.put("vpsoption",  vps.get(i).getVpsoption());
+                    obj.put("vpsreset",  vps.get(i).getVpsreset());
                     obj.put("state",  vps.get(i).getState());
                     obj.put("timecheck",  vps.get(i).getTimecheck());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("running",  vps.get(i).getRunning());
+                    obj.put("timereset",vps.get(i).getTimereset());
+                    obj.put("dayreset",vps.get(i).getDayreset());
                     obj.put("total",total);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);
@@ -175,7 +166,10 @@ public class VpsSubController {
             cal.add(Calendar.DATE, 1); //minus number would decrement the days
 
             if(vpscheck.size()>0){
-                if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
+                if(date.getDate()>vpscheck.get(0).getDayreset()){
+                    resetSub=1;
+                    vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                }else if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
                     resetSub=1;
                     vpscheck.get(0).setDayreset(cal.getTime().getDate());
                 }
@@ -292,6 +286,23 @@ public class VpsSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "resetvpsandunrartoolbytimecheck",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetvpsandunrartoolbytimecheck(){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetVPSAndUnrarToolByTimecheck();
+            //accountRepository.resetAccountSubByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "checktimevps",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> checktimevps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "")  String username){
         JSONObject resp=new JSONObject();
@@ -404,6 +415,7 @@ public class VpsSubController {
             for(int i=0;i<vpsArr.length;i++){
                 List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
+
                     vpsupdate.get(0).setThreads(vps.getThreads());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
                     vpsupdate.get(0).setState(vps.getState());
@@ -415,11 +427,14 @@ public class VpsSubController {
                     obj.put("id", vpsupdate.get(0).getId());
                     obj.put("vps", vpsupdate.get(0).getVps());
                     obj.put("vpsoption",  vps.getVpsoption());
+                    obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("state",   vpsupdate.get(0).getState());
                     obj.put("timecheck",  System.currentTimeMillis());
                     obj.put("running",vps.getRunning());
-                    obj.put("threads",  vps.getThreads());
-                    obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
+                    obj.put("threads",vps.getThreads());
+                    obj.put("timereset",  vpsupdate.get(0).getTimereset());
+                    obj.put("dayreset",  vpsupdate.get(0).getDayreset());
+                    obj.put("total",0);
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
                         resp.put("account",obj);
@@ -440,6 +455,162 @@ public class VpsSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value = "updatethread",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatethread(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            String[] vpsArr=vps.getVps().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<vpsArr.length;i++){
+                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                if(vpsupdate.size()>0) {
+                    vpsupdate.get(0).setRunning(vps.getRunning());
+                    vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsRepository.save(vpsupdate.get(0));
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", vpsupdate.get(0).getId());
+                    obj.put("vps", vpsupdate.get(0).getVps());
+                    obj.put("vpsoption",  vpsupdate.get(0).getVpsoption());
+                    obj.put("vpsreset",  vpsupdate.get(0).getVpsreset());
+                    obj.put("state",   vpsupdate.get(0).getState());
+                    obj.put("timecheck",  System.currentTimeMillis());
+                    obj.put("running",vps.getRunning());
+                    obj.put("threads",  vpsupdate.get(0).getThreads());
+                    obj.put("timereset",  vpsupdate.get(0).getTimereset());
+                    obj.put("dayreset",  vpsupdate.get(0).getDayreset());
+                    obj.put("total",0);
+                    obj.put("view24h",0);
+                    if(vpsArr.length==1){
+                        resp.put("account",obj);
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    jsonArray.add(obj);
+                    //resp.put("status", "success");
+                }
+
+            }
+
+            resp.put("accounts",jsonArray);
+            //resp.put("message", vps.getJSonObj());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "updatesub",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatesub(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            String[] vpsArr=vps.getVps().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<vpsArr.length;i++){
+                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                if(vpsupdate.size()>0) {
+                    vpsupdate.get(0).setState(vps.getState());
+                    vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsRepository.save(vpsupdate.get(0));
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", vpsupdate.get(0).getId());
+                    obj.put("vps", vpsupdate.get(0).getVps());
+                    obj.put("vpsoption",  vpsupdate.get(0).getVpsoption());
+                    obj.put("vpsreset",  vps.getVpsreset());
+                    obj.put("state",   vps.getState());
+                    obj.put("timecheck",  System.currentTimeMillis());
+                    obj.put("running",vpsupdate.get(0).getRunning());
+                    obj.put("threads",  vpsupdate.get(0).getThreads());
+                    obj.put("timereset",  vpsupdate.get(0).getTimereset());
+                    obj.put("dayreset",  vpsupdate.get(0).getDayreset());
+                    obj.put("total",0);
+                    obj.put("view24h",0);
+                    if(vpsArr.length==1){
+                        resp.put("account",obj);
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    jsonArray.add(obj);
+                    //resp.put("status", "success");
+                }
+
+            }
+
+            resp.put("accounts",jsonArray);
+            //resp.put("message", vps.getJSonObj());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "updaterestart",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updaterestart(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            String[] vpsArr=vps.getVps().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<vpsArr.length;i++){
+                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                if(vpsupdate.size()>0) {
+                    vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsRepository.save(vpsupdate.get(0));
+
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", vpsupdate.get(0).getId());
+                    obj.put("vps", vpsupdate.get(0).getVps());
+                    obj.put("vpsoption",   vpsupdate.get(0).getVpsoption());
+                    obj.put("vpsreset",  vps.getVpsreset());
+                    obj.put("state",    vpsupdate.get(0).getState());
+                    obj.put("timecheck",  System.currentTimeMillis());
+                    obj.put("running",vpsupdate.get(0).getRunning());
+                    obj.put("threads",  vpsupdate.get(0).getThreads());
+                    obj.put("timereset",  vpsupdate.get(0).getTimereset());
+                    obj.put("dayreset",  vpsupdate.get(0).getDayreset());
+                    obj.put("total",0);
+                    obj.put("view24h",0);
+                    if(vpsArr.length==1){
+                        resp.put("account",obj);
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    jsonArray.add(obj);
+                    //resp.put("status", "success");
+                }
+
+            }
+
+            resp.put("accounts",jsonArray);
+            //resp.put("message", vps.getJSonObj());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping(path = "delete",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
         JSONObject resp = new JSONObject();
