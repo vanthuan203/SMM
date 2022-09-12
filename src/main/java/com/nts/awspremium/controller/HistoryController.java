@@ -33,7 +33,7 @@ public class HistoryController {
     @Autowired
     private IpV4Repository ipV4Repository;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Long endtrial){
+    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Long endtrial,@RequestParam(defaultValue = "0") Long test){
         JSONObject resp=new JSONObject();
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
         if(checktoken==0){
@@ -73,7 +73,11 @@ public class HistoryController {
                 //buff video + cheat view thunog
                 videos=videoRepository.getvideobuff("");
                 if(videos.size()==0){
-                    videos=videoRepository.getvideo("");
+                    if(test==0){
+                        videos=videoRepository.getvideo("");
+                    }else{
+                        videos=videoRepository.getvideotest("");
+                    }
                 }
                 if(videos.size()>0){
                     history.setChannelid(videos.get(0).getChannelid());
@@ -95,7 +99,12 @@ public class HistoryController {
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
                 if(videos.size()==0){
-                    videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    if(test==0){
+                        videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    }else{
+                        videos=videoRepository.getvideotest(histories.get(0).getListvideo());
+                    }
+
                 }
                 if(videos.size()>0){
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -135,51 +144,13 @@ public class HistoryController {
                 }
                 ref = arrRefs.get(new Random().nextInt(arrRefs.size()));
                 try{
-                    Integer countproxyVutr= proxyRepository.countProxyByTypeProxy("Vutr");
-                    Integer countproxyTera= proxyRepository.countProxyByTypeProxy("Tera");
-                    Integer countAccountVutr= historyRepository.countAccountByTypeProxy("Vutr");
-                    Integer countAccountTera= historyRepository.countAccountByTypeProxy("Tera");
-                    if(countproxyVutr>countAccountVutr && countproxyTera>countAccountTera && histories.size()==0){
-                        resp.put("status","fail");
-                        resp.put("message","Không còn proxy để sử dụng!");
-                        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-                    }
                     if(histories.size()==0){
-                          if(countproxyTera>countAccountTera){
-                              proxy=proxyRepository.getProxy("Tera");
-                          }else if(countproxyVutr>countAccountVutr){
-                              proxy=proxyRepository.getProxy("Vutr");
-                          }
-                        //}
+                        proxy=proxyRepository.getProxy();
                     }else{
                         if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                            //proxy=proxyRepository.getProxyTimeGetNull();
-                            //if(proxy.size()==0){
-                            if( countproxyTera>countAccountTera){
-                                proxy=proxyRepository.getProxy("Tera");
-                            }else if(countproxyVutr>countAccountVutr){
-                                proxy=proxyRepository.getProxy("Vutr");
-                            }
-                            //}
+                            proxy=proxyRepository.getProxy();
                         }else{
-                            if(histories.get(0).getTypeproxy().equals("Vutr")){
-                                if(countproxyVutr>=countAccountVutr){
-                                    proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),"Vutr");
-                                }else if (countproxyTera>countAccountTera){
-                                    proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),"Tera");
-                                }
-
-                            }else if(histories.get(0).getTypeproxy().equals("Tera")){
-                                if(countproxyTera>=countAccountTera){
-                                    proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),"Tera");
-                                }else if(countproxyVutr>countAccountVutr){
-                                    proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),"Vutr");
-                                }
-                            }
-                            //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                            //if(proxy.size()==0){
-                            //proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                            //}
+                            proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
                         }
                     }
                     if(proxy==null){
@@ -187,7 +158,6 @@ public class HistoryController {
                             histories=historyRepository.get(username);
                         }
                         histories.get(0).setProxy("");
-                        histories.get(0).setTypeproxy("");
                         historyRepository.save(histories.get(0));
                             resp.put("status","fail");
                             resp.put("message","Không còn proxy để sử dụng!");
@@ -197,9 +167,7 @@ public class HistoryController {
                         histories=historyRepository.get(username);
                     }
                     histories.get(0).setProxy(proxy.get(0).getProxy().trim());
-                    histories.get(0).setTypeproxy(proxy.get(0).getTypeproxy().trim());
                     historyRepository.save(histories.get(0));
-
 
                     proxy.get(0).setTimeget(System.currentTimeMillis());
                     proxy.get(0).setRunning(proxy.get(0).getRunning()+1);

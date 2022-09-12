@@ -49,10 +49,12 @@ public class VpsController {
                 List<VpsRunning> vpsview=historyRepository.getvpsview();
                 for(int i=0;i<vps.size();i++){
                     Integer total=0;
+                    String time="";
                     Integer totalview=0;
                     for(int j=0;j<vpsRunnings.size();j++){
                         if(vps.get(i).getVps().equals(vpsRunnings.get(j).getVps())){
                            total=vpsRunnings.get(j).getTotal();
+                           time=vpsRunnings.get(j).getTime();
                            vpsRunnings.remove(j);
                         }
                     }
@@ -66,7 +68,9 @@ public class VpsController {
                     obj.put("id", vps.get(i).getId());
                     obj.put("vps", vps.get(i).getVps());
                     obj.put("vpsoption",  vps.get(i).getVpsoption());
+                    obj.put("vpsreset",  vps.get(i).getVpsreset());
                     obj.put("state",  vps.get(i).getState());
+                    obj.put("timegettask",time);
                     obj.put("timecheck",  vps.get(i).getTimecheck());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("total",total);
@@ -206,12 +210,10 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
-                    vpsRepository.save(vpscheck.get(0));
-                    vpsRepository.save(vpscheck.get(0));
+
                 }
-                //vpscheck.get(0).setTimecheck(System.currentTimeMillis());
-
-
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
             }else{
@@ -259,6 +261,7 @@ public class VpsController {
                     obj.put("state",   vpsupdate.get(0).getState());
                     obj.put("timecheck",  System.currentTimeMillis());
                     obj.put("threads",  vps.getThreads());
+                    obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){

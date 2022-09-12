@@ -123,6 +123,8 @@ public class AccountController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
+
+
             Long idbyVps=accountRepository.getaccountByVps(vps);
             if(idbyVps==null){
                 Long id=accountRepository.getAccount();
@@ -315,6 +317,28 @@ public class AccountController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/countgmailsbyendtrial",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> countgmailsbyendtrial(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+
+
+            Integer allgmail = accountRepository.getCountGmailsByEndtrial();
+            resp.put("counts", allgmail);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping(value = "/checkaccount",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
@@ -462,8 +486,8 @@ public class AccountController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-
-                accountRepository.updatecookieloginlocal(account.getCookie(),username);
+                cookieRepository.updateCookieSub(account.getCookie(),username.trim());
+                accountRepository.updatecookieloginlocal(username.trim());
                 resp.put("status","true");
                 resp.put("message", "Update cookie "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -543,12 +567,12 @@ public class AccountController {
                 if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
                     //proxy=proxyRepository.getProxyTimeGetNull();
                     //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy("",histories.get(0).getTypeproxy().trim());
+                        proxy=proxyRepository.getProxy();
                     //}
                 }else{
                     //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
                     //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()),histories.get(0).getTypeproxy().trim());
+                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
                     //}
                 }
                 List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
@@ -556,13 +580,6 @@ public class AccountController {
                     proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
                     proxyRepository.save(proxys.get(0));
                 }
-
-                ProxyHistory proxyHistory =new ProxyHistory();
-                proxyHistory.setId(System.currentTimeMillis());
-                proxyHistory.setProxy(histories.get(0).getProxy());
-                proxyHistory.setIpv4(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                proxyHistory.setState(0);
-                proxyHistoryRepository.save(proxyHistory);
 
                 ProxyHistory proxyHistoryNew =new ProxyHistory();
                 proxyHistoryNew.setId(System.currentTimeMillis());
@@ -673,6 +690,22 @@ public class AccountController {
 
             resp.put("status", "true");
             resp.put("message", "Update thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping(value = "/resetAccountByTimecheck",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetAccountByTimecheck() {
+        JSONObject resp = new JSONObject();
+        try {
+            accountRepository.resetAccountByTimecheck();
+            resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         }catch (Exception e){

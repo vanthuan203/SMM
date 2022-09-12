@@ -49,6 +49,42 @@ public class ChannelController {
                   new ResponseObject("true","Token không hợp lệ!",resultJson)
           );
     }
+
+    @GetMapping("/test")
+    ResponseEntity<String> test(@RequestParam(defaultValue = "") String channelid) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        OkHttpClient clientchannel = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+        Request requestchannel = null;
+
+        requestchannel = new Request.Builder().url("https://www.googleapis.com/youtube/v3/channels?part=snippet&id="+channelid.trim()+"&key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY").get().build();
+
+        Response responsechannel = clientchannel.newCall(requestchannel).execute();
+
+        String resultJsonChannel = responsechannel.body().string();
+
+        Object objchannel = new JSONParser().parse(resultJsonChannel);
+
+        JSONObject jsonObjectChannel = (JSONObject) objchannel;
+        JSONArray itemsChannel= (JSONArray) jsonObjectChannel.get("items");
+        JSONObject itemChannel=(JSONObject) itemsChannel.get(0);
+        JSONObject snippetObj=(JSONObject) itemChannel.get("snippet");
+        /*
+        JSONArray jsonArrayChannel = (JSONArray) jsonObjectChannel.get("items");
+        for (Object item : jsonArrayChannel) {
+            JSONObject channel = (JSONObject) item;
+            JSONObject id = (JSONObject) channel.get("snippet");
+        }
+
+
+         */
+        resp.put("status", "fail");
+        resp.put("message", snippetObj.get("title"));
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+
+
     @PostMapping(value = "/ordermanual", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> ordermanual(@org.springframework.web.bind.annotation.RequestBody ChannelOrder channelOrder, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -71,17 +107,23 @@ public class ChannelController {
 
                     Request requestchannel = null;
 
-                    requestchannel = new Request.Builder().url("https://backend.simplesolution.co/UserDataApi/getChannelInfo/" + channellist[index].trim()).get().build();
+                    requestchannel = new Request.Builder().url("https://www.googleapis.com/youtube/v3/channels?part=snippet&id="+channellist[index].trim()+"&key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY").get().build();
 
                     Response responsechannel = clientchannel.newCall(requestchannel).execute();
 
                     String resultJsonChannel = responsechannel.body().string();
 
                     Object objchannel = new JSONParser().parse(resultJsonChannel);
+
                     JSONObject jsonObjectChannel = (JSONObject) objchannel;
+                    JSONArray itemsChannel= (JSONArray) jsonObjectChannel.get("items");
+                    JSONObject itemChannel=(JSONObject) itemsChannel.get(0);
+                    JSONObject snippetObj=(JSONObject) itemChannel.get("snippet");
+
+
                     Channel channel = new Channel();
                     channel.setChannelid(channellist[index].trim());
-                    channel.setTitle(jsonObjectChannel.get("title").toString());
+                    channel.setTitle(snippetObj.get("title").toString());
                     channel.setEnabled(channelOrder.getEnabled());
                     channel.setDirectrate(channelOrder.getDirect_rate());
                     channel.setHomerate(channelOrder.getHome_rate());
@@ -101,7 +143,7 @@ public class ChannelController {
 
                         Request request = null;
 
-                        request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/search?key=AIzaSyAStTN9Ldm9tS--vF8lCj_sZqErX-NoIqk&channelId=" + channellist[index].trim() + "&part=id&maxResults=50&kind=video" +
+                        request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/search?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&channelId=" + channellist[index].trim() + "&part=id&maxResults=50&kind=video" +
                                 (pageToken.length() == 0 ? "" : "&pageToken=" + pageToken)).get().build();
 
                         Response response = client.newCall(request).execute();
@@ -168,21 +210,28 @@ public class ChannelController {
                 List<Channel> channels = channelRepository.getChannelById(channelOrder.getChannel_id());
                 if (channels.size() == 0) {
 
-                    OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+                    OkHttpClient clientchannel = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
-                    Request request = null;
+                    Request requestchannel = null;
 
-                    request = new Request.Builder().url("https://backend.simplesolution.co/UserDataApi/getChannelInfo/" + channelOrder.getChannel_id().trim()).get().build();
+                    requestchannel = new Request.Builder().url("https://www.googleapis.com/youtube/v3/channels?part=snippet&id="+channelOrder.getChannel_id().trim()+"&key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY").get().build();
 
-                    Response response = client.newCall(request).execute();
+                    Response responsechannel = clientchannel.newCall(requestchannel).execute();
 
-                    String resultJson = response.body().string();
+                    String resultJsonChannel = responsechannel.body().string();
 
-                    Object obj = new JSONParser().parse(resultJson);
-                    JSONObject jsonObject = (JSONObject) obj;
+                    Object objchannel = new JSONParser().parse(resultJsonChannel);
+
+                    JSONObject jsonObjectChannel = (JSONObject) objchannel;
+                    JSONArray itemsChannel= (JSONArray) jsonObjectChannel.get("items");
+                    JSONObject itemChannel=(JSONObject) itemsChannel.get(0);
+                    JSONObject snippetObj=(JSONObject) itemChannel.get("snippet");
+
+
                     Channel channel = new Channel();
                     channel.setChannelid(channelOrder.getChannel_id());
-                    channel.setTitle(jsonObject.get("title").toString());
+                    //channel.setTitle("title");
+                    channel.setTitle(snippetObj.get("title").toString());
                     channel.setEnabled(channelOrder.getEnabled());
                     channel.setDirectrate(channelOrder.getDirect_rate());
                     channel.setHomerate(channelOrder.getHome_rate());

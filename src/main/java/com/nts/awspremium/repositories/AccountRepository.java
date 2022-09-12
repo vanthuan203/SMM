@@ -93,6 +93,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Query(value = "SELECT count(*) FROM account where live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
     public Integer getCountGmails();
+
+    @Query(value = "SELECT count(*) FROM account where  round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
+    public Integer getCountGmailsByEndtrial();
+
     @Query(value = "SELECT count(*) FROM account ",nativeQuery = true)
     public Integer getCountGmailsSub();
     @Query(value = "SELECT count(*) FROM account where live=1 ",nativeQuery = true)
@@ -125,8 +129,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET cookie=?1,running=0,live=1,vps='' where username=?2",nativeQuery = true)
-    public Integer updatecookieloginlocal(String cookie,String username);
+    @Query(value = "UPDATE account SET running=0,live=1,vps='' where username=?1",nativeQuery = true)
+    public Integer updatecookieloginlocal(String username);
 
     @Modifying
     @Transactional
@@ -141,6 +145,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=12",nativeQuery = true)
     public Integer resetAccountSubByTimecheck();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=24 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and running=1",nativeQuery = true)
+    public Integer resetAccountByTimecheck();
 
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timecheck)/1000)/60) as time,count(*) as total FROM account where endtrial=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
