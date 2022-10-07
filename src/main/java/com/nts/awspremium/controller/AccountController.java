@@ -49,6 +49,7 @@ public class AccountController {
         }
         try{
             Integer count= accountRepository.findUsername(newaccount.getUsername().trim());
+            /*
             String datestring=newaccount.getEndtrialstring();
             if(datestring.contains("Free trial ends ")){
                 datestring=datestring.replace("Free trial ends ","");
@@ -56,9 +57,10 @@ public class AccountController {
             String MMM = datestring.substring(0,3);
             String date=datestring.replace(MMM,StringUtils.convertMMMtoMM(datestring)+"");
             Long endtrial= StringUtils.getLongTimeFromString(date,"MM dd, yyyy");
+            */
             if(count>0){
                 if(update==1) {
-                    accountRepository.updateAccount(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",endtrial, newaccount.getEndtrialstring(), newaccount.getUsername());
+                    accountRepository.updateAccount(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getEndtrial(),"", newaccount.getUsername());
                     cookieRepository.updateCookieSub(newaccount.getCookie(),newaccount.getUsername());
                     //encodefingerRepository.updateEncodefingerSub(newaccount.getEncodefinger(),newaccount.getUsername());
                     resp.put("status","true");
@@ -70,7 +72,7 @@ public class AccountController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }
             }else{
-                accountRepository.insertAccount(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","",endtrial, newaccount.getEndtrialstring());
+                accountRepository.insertAccount(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getEndtrial(),"");
                 cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
                 encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
                 resp.put("status","true");
@@ -99,7 +101,7 @@ public class AccountController {
             cookieRepository.updateCookieSub(newaccount.getCookie(),newaccount.getUsername());
             encodefingerRepository.updateEncodefingerSub(newaccount.getEncodefinger(),newaccount.getUsername());
             resp.put("status","true");
-            resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
+            resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");

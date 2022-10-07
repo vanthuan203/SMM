@@ -20,10 +20,12 @@ public class Account {
     private String proxy;
     private Integer running;
     private Long timecheck;
+    private  String date;
     public Account() {
     }
 
-    public Account(String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, Integer running, Long timecheck) {
+    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, Integer running, Long timecheck, String date) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.recover = recover;
@@ -36,33 +38,7 @@ public class Account {
         this.proxy = proxy;
         this.running = running;
         this.timecheck = timecheck;
-    }
-
-    @Override
-    public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", recover='" + recover + '\'' +
-                ", live=" + live +
-                ", encodefinger='" + encodefinger + '\'' +
-                ", cookie='" + cookie + '\'' +
-                ", endtrial=" + endtrial +
-                ", endtrialstring='" + endtrialstring + '\'' +
-                ", vps='" + vps + '\'' +
-                ", proxy='" + proxy + '\'' +
-                ", running=" + running +
-                ", timecheck=" + timecheck +
-                '}';
-    }
-
-    public Long getTimecheck() {
-        return timecheck;
-    }
-
-    public void setTimecheck(Long timecheck) {
-        this.timecheck = timecheck;
+        this.date = date;
     }
 
     public Long getId() {
@@ -161,5 +137,20 @@ public class Account {
         this.running = running;
     }
 
+    public Long getTimecheck() {
+        return timecheck;
+    }
+
+    public void setTimecheck(Long timecheck) {
+        this.timecheck = timecheck;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }
 

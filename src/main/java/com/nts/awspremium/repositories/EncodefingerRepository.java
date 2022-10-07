@@ -27,4 +27,7 @@ public interface EncodefingerRepository extends JpaRepository<Encodefinger,Long>
     public String findEncodefingerSubById(Long id);
     @Query(value = "SELECT id FROM encodefinger WHERE username=?1 limit 1",nativeQuery = true)
     public Long findIdSubByUsername(String username);
+
+    @Query(value = "SELECT id FROM AccSub.encodefinger order by rand() limit 1",nativeQuery = true)
+    public Long getRandomIdSub();
 }

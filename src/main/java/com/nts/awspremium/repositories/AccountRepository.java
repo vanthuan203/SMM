@@ -24,12 +24,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8)",nativeQuery = true)
-    public void insertAccountSub(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps);
+    @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps,date) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8,?9)",nativeQuery = true)
+    public void insertAccountSub(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,endtrial=?6,endtrialstring=?7,vps='',running=0 where username=?8",nativeQuery = true)
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,endtrial=?6,endtrialstring=?7 where username=?8",nativeQuery = true)
     public void updateAccount(String password,String recover,Integer live,String encodefinger,String cookie,Long endtrial,String endtrialstring,String username);
 
     @Modifying
@@ -50,6 +50,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET endtrial=0  where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=10 and endtrial=1",nativeQuery = true)
     public void updateThreadSubError();
+
+    @Modifying
+    @Transactional
+    @Query(value = "Update account SET vps='',running=0,live=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=8 and live=0",nativeQuery = true)
+    public void updateAccSubDieToLiveByTimecheck();
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET running=1,vps=?2,timecheck=?3 where id=?4",nativeQuery = true)
@@ -150,6 +155,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=24 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and running=1",nativeQuery = true)
     public Integer resetAccountByTimecheck();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET vps='',running=0,live=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=8 and live=0",nativeQuery = true)
+    public Integer resetLoginAccountSubByTimecheck();
 
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timecheck)/1000)/60) as time,count(*) as total FROM account where endtrial=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();

@@ -66,7 +66,7 @@ public class AccountSubController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }
             }else{
-                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","", newaccount.getRunning(), newaccount.getVps());
+                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
                 cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
                 encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
                 resp.put("status","true");
@@ -79,6 +79,45 @@ public class AccountSubController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/getencodefinger", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getencodefinger(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            Long idFinger= encodefingerRepository.getRandomIdSub();
+            String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idFinger);
+            int check_getfinger=0;
+            while (check_getfinger<=3){
+                if(encodefingerSub.length()<50){
+                    idFinger= encodefingerRepository.getRandomIdSub();
+                    encodefingerSub= encodefingerRepository.findEncodefingerSubById(idFinger);
+                    check_getfinger++;
+                }else {
+                    break;
+                }
+            }
+            if(encodefingerSub.length()>50){
+                resp.put("status","true");
+                resp.put("encodefinger",encodefingerSub);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }else{
+                resp.put("status", "fail");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
@@ -106,6 +145,16 @@ public class AccountSubController {
                     try{
                         Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+                        int check_getfinger=0;
+                        while (check_getfinger<=3){
+                            if(encodefingerSub.length()<50){
+                                Long idFinger= encodefingerRepository.getRandomIdSub();
+                                encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+                                check_getfinger++;
+                            }else {
+                                break;
+                            }
+                        }
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                         Thread.sleep(3);
@@ -142,7 +191,16 @@ public class AccountSubController {
 
                     Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
                     String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
-
+                    int check_getfinger=0;
+                    while (check_getfinger<=3){
+                        if(encodefingerSub.length()<50){
+                            Long idFinger= encodefingerRepository.getRandomIdSub();
+                            encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+                            check_getfinger++;
+                        }else {
+                            break;
+                        }
+                    }
                     Long idCookieSub= cookieRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
                     String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                     if(accountcheck==0){
@@ -687,9 +745,9 @@ public class AccountSubController {
 
 
     }
-/*
+
     @GetMapping(value = "/getproxy",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxy(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getproxy(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
         try{
             Integer checktoken= adminRepository.FindAdminByToken(Authorization);
@@ -698,64 +756,13 @@ public class AccountSubController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            List<History> histories=historyRepository.get(username);
-            if(histories.size()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
-                List<Proxy> proxy;
-                if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                    //proxy=proxyRepository.getProxyTimeGetNull();
-                    //if(proxy.size()==0){
-                        //proxy=proxyRepository.getProxy();
-                    //}
-                }else{
-                    //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    //}
-                }
-                List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
-                if(proxys.get(0).getRunning()>=1){
-                    proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
-                    proxyRepository.save(proxys.get(0));
-                }
+            List<Proxy> proxyList =proxyRepository.getProxySub();
+            proxyList.get(0).setTimeget(System.currentTimeMillis());
+            proxyRepository.save(proxyList.get(0));
+            resp.put("status","true");
+            resp.put("proxy",proxyList.get(0).getProxy());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
-                ProxyHistory proxyHistory =new ProxyHistory();
-                proxyHistory.setId(System.currentTimeMillis());
-                proxyHistory.setProxy(histories.get(0).getProxy());
-                proxyHistory.setIpv4(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                proxyHistory.setState(0);
-                proxyHistoryRepository.save(proxyHistory);
-
-                ProxyHistory proxyHistoryNew =new ProxyHistory();
-                proxyHistoryNew.setId(System.currentTimeMillis());
-                proxyHistoryNew.setProxy(proxy.get(0).getProxy());
-                proxyHistoryNew.setIpv4(proxy.get(0).getIpv4());
-                proxyHistoryNew.setState(1);
-                proxyHistoryRepository.save(proxyHistoryNew);
-
-                IpV4 ipV4=new IpV4();
-                ipV4.setId(System.currentTimeMillis());
-                ipV4.setIpv4(proxy.get(0).getIpv4());
-                ipV4.setState(1);
-                ipV4Repository.save(ipV4);
-
-                histories.get(0).setProxy(proxy.get(0).getProxy());
-                historyRepository.save(histories.get(0));
-                proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
-                proxy.get(0).setTimeget(System.currentTimeMillis());
-                proxyRepository.save(proxy.get(0));
-                resp.put("status","true");
-                resp.put("proxy",proxy.get(0).getProxy());
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }
         }catch (Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
@@ -763,7 +770,6 @@ public class AccountSubController {
         }
     }
 
- */
     @GetMapping(value = "/updatelive",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> reset(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
@@ -792,6 +798,7 @@ public class AccountSubController {
                     accounts.get(0).setLive(live);
                     accounts.get(0).setRunning(0);
                     accounts.get(0).setEndtrial(0L);
+                    accounts.get(0).setVps("");
                 }
                 accountRepository.save(accounts.get(0));
                 resp.put("status", "true");
@@ -885,6 +892,34 @@ public class AccountSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "/resetLoginAccountSubByTimecheck",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetAccountByTimecheck() {
+        JSONObject resp = new JSONObject();
+        try {
+            accountRepository.resetLoginAccountSubByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/updateAccSubDieToLiveByTimecheck",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> updateAccSubDieToLiveByTimecheck() {
+        JSONObject resp = new JSONObject();
+        try {
+            accountRepository.updateAccSubDieToLiveByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
 }
