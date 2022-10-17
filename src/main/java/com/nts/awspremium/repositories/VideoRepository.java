@@ -11,11 +11,14 @@ import java.util.List;
 public interface VideoRepository extends JpaRepository<Video,Long> {
     @Query(value="SELECT * FROM video where INSTR(?1,videoid)=0 order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideo1(String listvideo);
-    @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 group by channelid having total<maxthreads) as t) and channelid!='UCoxzZ-HayM5Y9_9h5GDWmgQ' order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 group by channelid having total<maxthreads) as t) and channelid!='UCh8e2NuO3aREXt7pTGjx6ow' order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideo(String listvideo);
 
-    @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 group by channelid having total<maxthreads) as t) and channelid='UCoxzZ-HayM5Y9_9h5GDWmgQ' order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 group by channelid having total<maxthreads) as t) and channelid='UCh8e2NuO3aREXt7pTGjx6ow' order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideotest(String listvideo);
+
+    @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 group by channelid having total<maxthreads) as t) and channelid=?2 order by rand() limit 1",nativeQuery = true)
+    public List<Video> getvideobychannel(String listvideo,String channelid);
     @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads from channel left join history on history.channelid=channel.channelid and running=1 where enabled=2 group by channelid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideobuff(String listvideo);
     @Modifying

@@ -17,6 +17,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "select * from vps where vps like ?1",nativeQuery = true)
     public List<Vps> findVPS(String vps);
 
+    @Query(value = "select state from vps where vps like ?1",nativeQuery = true)
+    public Integer getState(String vps);
+
     @Query(value = "SELECT * FROM vps where round((UNIX_TIMESTAMP()-timecheck/1000)/60) >=5 order by CAST(SUBSTRING(vps,position('-' in vps),length(vps)) AS UNSIGNED) desc;",nativeQuery = true)
     public List<Vps> findVPSDie();
 

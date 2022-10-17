@@ -12,8 +12,17 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<5 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy();
 
+    @Query(value = "select * from proxy where state=1 order by timeget asc,rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyUpdate();
+
+    @Query(value = "select * from proxy where state=1 and proxy NOT LIKE ?1 order by timeget asc,rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyUpdate(String proxy);
+
     @Query(value = "select * from proxy order by timeget asc limit 1",nativeQuery = true)
     public List<Proxy> getProxySub();
+
+    @Query(value = "select * from proxy where state=1  order by timeget asc limit 1",nativeQuery = true)
+    public List<Proxy> getProxyV4();
 
     @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<5 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyTimeGetNull();

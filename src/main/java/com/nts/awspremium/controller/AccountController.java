@@ -127,7 +127,7 @@ public class AccountController {
         try {
 
 
-            Long idbyVps=accountRepository.getaccountByVps(vps);
+            Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
             if(idbyVps==null){
                 Long id=accountRepository.getAccount();
                 List<Account> account=accountRepository.findAccountById(id);
@@ -148,7 +148,7 @@ public class AccountController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        account.get(0).setVps(vps);
+                        account.get(0).setVps(vps.trim());
                         account.get(0).setRunning(1);
                         account.get(0).setTimecheck(System.currentTimeMillis());
                         accountRepository.save(account.get(0));
@@ -156,8 +156,8 @@ public class AccountController {
                         resp.put("status","true");
                         resp.put("username",account.get(0).getUsername());
                         resp.put("endtrial",account.get(0).getEndtrial());
-                        //resp.put("password",account.get(0).getId());
-                        //resp.put("recover",account.get(0));
+                        resp.put("password",account.get(0).getPassword());
+                        resp.put("recover",account.get(0).getRecover());
                         resp.put("cookie",cookieSub);
                         resp.put("encodefinger",encodefingerSub);
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -183,15 +183,16 @@ public class AccountController {
                         resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    accountbyVps.get(0).setVps(vps);
+                    accountbyVps.get(0).setVps(vps.trim());
                     accountbyVps.get(0).setRunning(1);
                     accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
                     accountRepository.save(accountbyVps.get(0));
                     resp.put("status","true");
                     resp.put("username",accountbyVps.get(0).getUsername());
                     resp.put("endtrial",accountbyVps.get(0).getEndtrial());
-                    //resp.put("recover",accountbyVps.get(0).getRecover());
+                    resp.put("recover",accountbyVps.get(0).getRecover());
                     resp.put("cookie",cookieSub);
+                    resp.put("password",accountbyVps.get(0).getPassword());
                     resp.put("encodefinger",encodefingerSub);
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }catch (Exception e){
@@ -375,7 +376,7 @@ public class AccountController {
                 resp.put("message", "Hết hạn endtrial!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            Integer accountcheck = accountRepository.checkAcountByVps(username,vps);
+            Integer accountcheck = accountRepository.checkAcountByVps(username,"%"+vps.trim()+"%");
             if (accountcheck == 0) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
@@ -500,7 +501,6 @@ public class AccountController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @GetMapping(value = "/update",produces = "application/hal_json;charset=utf8")
@@ -566,34 +566,15 @@ public class AccountController {
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
                 List<Proxy> proxy;
+
                 if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                    //proxy=proxyRepository.getProxyTimeGetNull();
-                    //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy();
-                    //}
+                    proxy=proxyRepository.getProxyUpdate();
                 }else{
-                    //proxy=proxyRepository.getProxyTimeGetNull(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    //if(proxy.size()==0){
-                        proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    //}
+                   proxy=proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
                 }
-                List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
-                if(proxys.get(0).getRunning()>=1){
-                    proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
-                    proxyRepository.save(proxys.get(0));
-                }
-
-                ProxyHistory proxyHistoryNew =new ProxyHistory();
-                proxyHistoryNew.setId(System.currentTimeMillis());
-                proxyHistoryNew.setProxy(proxy.get(0).getProxy());
-                proxyHistoryNew.setIpv4(proxy.get(0).getIpv4());
-                proxyHistoryNew.setState(1);
-                proxyHistoryRepository.save(proxyHistoryNew);
-
 
                 histories.get(0).setProxy(proxy.get(0).getProxy());
                 historyRepository.save(histories.get(0));
-                proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
                 proxy.get(0).setTimeget(System.currentTimeMillis());
                 proxyRepository.save(proxy.get(0));
                 resp.put("status","true");
@@ -662,7 +643,7 @@ public class AccountController {
                 resp.put("message", "vps không đươc để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            accountRepository.updateListAccount(vps,listacc);
+            accountRepository.updateListAccount("%"+vps.trim()+"%",listacc);
             resp.put("status", "true");
             resp.put("message", listacc);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

@@ -253,6 +253,9 @@ public class VpsController {
                     vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
                     vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    if(vps.getVpsreset()==2){
+                        vpsupdate.get(0).setState(2);
+                    }
                     vpsRepository.save(vpsupdate.get(0));
 
                     JSONObject obj = new JSONObject();
@@ -328,6 +331,60 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/checkDelAccLocal",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkDelAccLocal(@RequestHeader(defaultValue = "") String Authorization,@RequestParam String vps) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "vps không được để trống!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            resp.put("state", vpsRepository.getState("%"+vps.trim()+"%"));
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/updateStateDelAccLocal",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> UpdateStateDelAccLocal(@RequestHeader(defaultValue = "") String Authorization,@RequestParam String vps) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "vps không được để trống!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<Vps> vpsList =vpsRepository.findVPS("%"+vps.trim()+"%");
+            vpsList.get(0).setState(1);
+            vpsRepository.save(vpsList.get(0));
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }

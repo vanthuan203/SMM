@@ -51,11 +51,6 @@ public class HistoryController {
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (endtrial== 0) {
-            resp.put("status", "fail");
-            resp.put("message", "endtrial không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         try{
 
             List<History> histories=historyRepository.get(username);
@@ -66,7 +61,7 @@ public class HistoryController {
                 history.setUsername(username);
                 history.setListvideo("");
                 history.setProxy("");
-                history.setRunning(1);
+                history.setRunning(0);
                 history.setVps(vps);
                 history.setEndtrial(endtrial);
                 history.setTimeget(System.currentTimeMillis());
@@ -76,6 +71,7 @@ public class HistoryController {
                     if(test==0){
                         videos=videoRepository.getvideo("");
                     }else{
+
                         videos=videoRepository.getvideotest("");
                     }
                 }
@@ -92,19 +88,20 @@ public class HistoryController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
-                histories.get(0).setRunning(1);
+                histories.get(0).setRunning(0);
                 histories.get(0).setVps(vps);
 
-                histories.get(0).setEndtrial(endtrial);
+                //histories.get(0).setEndtrial(endtrial);
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
                 if(videos.size()==0){
                     if(test==0){
                         videos=videoRepository.getvideo(histories.get(0).getListvideo());
                     }else{
+
                         videos=videoRepository.getvideotest(histories.get(0).getListvideo());
                     }
-
+                    //videos = videoRepository.getvideo(histories.get(0).getListvideo());
                 }
                 if(videos.size()>0){
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -144,13 +141,14 @@ public class HistoryController {
                 }
                 ref = arrRefs.get(new Random().nextInt(arrRefs.size()));
                 try{
+
                     if(histories.size()==0){
-                        proxy=proxyRepository.getProxy();
+                        proxy=proxyRepository.getProxyUpdate();
                     }else{
                         if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                            proxy=proxyRepository.getProxy();
+                            proxy=proxyRepository.getProxyUpdate();
                         }else{
-                            proxy=proxyRepository.getProxy(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                            proxy=proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
                         }
                     }
                     if(proxy==null){
@@ -170,8 +168,9 @@ public class HistoryController {
                     historyRepository.save(histories.get(0));
 
                     proxy.get(0).setTimeget(System.currentTimeMillis());
-                    proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                    //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
                     proxyRepository.save(proxy.get(0));
+                    /*
                     try{
                         ProxyHistory proxyHistory =new ProxyHistory();
                         proxyHistory.setId(System.currentTimeMillis());
@@ -179,9 +178,9 @@ public class HistoryController {
                         proxyHistory.setState(1);
                         proxyHistory.setIpv4(proxy.get(0).getIpv4());
                         proxyHistoryRepository.save(proxyHistory);
-                    }catch (Exception e){
-
+                    }catch (Exception e) {
                     }
+                    */
                 }catch (Exception e){
                     resp.put("status","fail1");
                     resp.put("fail","proxy");
@@ -247,6 +246,7 @@ public class HistoryController {
                 }else{
                     histories.get(0).setListvideo(histories.get(0).getListvideo()+","+videoid);
                 }
+                histories.get(0).setRunning(1);
                 historyRepository.save(histories.get(0));
                 resp.put("status", "true");
                 resp.put("message", "Update hitory thành công!");
@@ -307,11 +307,6 @@ public class HistoryController {
                 histories.get(0).setRunning(0);
                 histories.get(0).setVps("");
                 historyRepository.save(histories.get(0));
-                List<Proxy> proxys=proxyRepository.findProxy(proxy);
-                if(proxys.get(0).getRunning()>=1){
-                    proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
-                    proxyRepository.save(proxys.get(0));
-                }
                 resp.put("status", "true");
                 resp.put("message", "Update hitory thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -342,12 +337,6 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<History> histories =historyRepository.get(username);
-            List<Proxy> proxys=proxyRepository.findProxy(histories.get(0).getProxy());
-            if(proxys.get(0).getRunning()>=1){
-                proxys.get(0).setRunning(proxys.get(0).getRunning()-1);
-                proxyRepository.save(proxys.get(0));
-            }
             historyRepository.resetThreadByUsername(username);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
@@ -375,16 +364,6 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<History> histories=historyRepository.findHistoriesByVps(vps);
-            if(histories.size()>0){
-                for (int i = 0; i < histories.size(); i++) {
-                    List<Proxy> proxies=proxyRepository.findProxy(histories.get(i).getProxy());
-                    if(proxies.size()>0 && proxies.get(0).getRunning()>0){
-                        proxies.get(0).setRunning(proxies.get(0).getRunning()-1);
-                        proxyRepository.save(proxies.get(0));
-                    }
-                }
-            }
             historyRepository.deletenamevpsByVps(vps);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
