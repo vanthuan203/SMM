@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path ="/gmails")
@@ -126,9 +128,9 @@ public class AccountController {
         }
         try {
 
-
             Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
             if(idbyVps==null){
+                Thread.sleep((long)(Math.random() * 10000));
                 Long id=accountRepository.getAccount();
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
@@ -170,7 +172,7 @@ public class AccountController {
             }else{
                 try{
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    Thread.sleep(3);
+                    Thread.sleep(5);
                     Integer accountcheck=accountRepository.checkAccountById(idbyVps);
 
                     Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
@@ -346,6 +348,7 @@ public class AccountController {
     ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         try {
+            Thread.sleep((long)(Math.random() * 10000));
             Integer checktoken = adminRepository.FindAdminByToken(Authorization);
             if (checktoken == 0) {
                 resp.put("status", "fail");
@@ -362,28 +365,29 @@ public class AccountController {
                 resp.put("message", "Vps không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            Integer accounts = accountRepository.findUsername(username);
-            if (accounts == 0) {
+
+            Long id_username = accountRepository.findIdByUsername(username);
+            if (id_username==null) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            Integer checkEndTrial=accountRepository.checkEndTrial(username);
+            Integer checkEndTrial=accountRepository.checkEndTrialByID(id_username);
             if(checkEndTrial==0){
                 resp.put("status", "fail");
                 resp.put("fail", "trial");
                 resp.put("message", "Hết hạn endtrial!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            Integer accountcheck = accountRepository.checkAcountByVps(username,"%"+vps.trim()+"%");
+            Integer accountcheck = accountRepository.checkIdByVps(id_username,"%"+vps.trim()+"%");
             if (accountcheck == 0) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
                 resp.put("message", "Yều cầu lấy tài khoản khác");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                accountRepository.updatetimecheck(System.currentTimeMillis(),username);
+                accountRepository.updateTimecheckById(System.currentTimeMillis(),id_username);
                 resp.put("status", "true");
                 resp.put("message", "Check time user thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

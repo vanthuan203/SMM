@@ -15,6 +15,10 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
     public Integer findUsername(String username);
+
+    @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
+    public Long findIdByUsername(String username);
+
     @Query(value = "Select count(*) from account where username=?1 and vps=?2 limit 1",nativeQuery = true)
     public Integer findUsernameByVps(String username,String vps);
     @Modifying
@@ -73,6 +77,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer getCookieAccSub(String username);
     @Query(value = "Select count(*) from account where username=?1 and vps like ?2 limit 1",nativeQuery = true)
     public Integer checkAcountByVps(String username,String vps);
+
+    @Query(value = "Select count(*) from account where id=?1 and vps like ?2 limit 1",nativeQuery = true)
+    public Integer checkIdByVps(Long id,String vps);
+
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand()  limit 1",nativeQuery = true)
     public Long getAccount();
 
@@ -95,6 +103,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Long getaccountByVpsbuffh(String vps);
     @Query(value = "SELECT count(*) FROM account where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and username=?1",nativeQuery = true)
     public Integer checkEndTrial(String username);
+
+    @Query(value = "SELECT count(*) FROM account where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and id=?1",nativeQuery = true)
+    public Integer checkEndTrialByID(Long id);
 
     @Query(value = "SELECT count(*) FROM account where live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
     public Integer getCountGmails();
@@ -141,6 +152,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET timecheck=?1,running=1 where username=?2",nativeQuery = true)
     public Integer updatetimecheck(Long timecheck,String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET timecheck=?1,running=1 where id=?2",nativeQuery = true)
+    public Integer updateTimecheckById(Long timecheck,Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET vps='',running=0 where vps like ?1 and INSTR(?2,username)=0",nativeQuery = true)
