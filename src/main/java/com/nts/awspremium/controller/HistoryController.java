@@ -52,7 +52,6 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-
             List<History> histories=historyRepository.get(username);
             List<Video> videos;
             if(histories.size()==0){
@@ -63,45 +62,22 @@ public class HistoryController {
                 history.setProxy("");
                 history.setRunning(0);
                 history.setVps(vps);
-                history.setEndtrial(endtrial);
                 history.setTimeget(System.currentTimeMillis());
-                //buff video + cheat view thunog
                 videos=videoRepository.getvideobuff("");
                 if(videos.size()==0){
-                    if(test==0){
-                        videos=videoRepository.getvideo("");
-                    }else{
-
-                        videos=videoRepository.getvideotest("");
-                    }
+                    videos=videoRepository.getvideotest("");
                 }
                 if(videos.size()>0){
                     history.setChannelid(videos.get(0).getChannelid());
                 }
                 historyRepository.save(history);
             }else{
-                /*
-                if(!histories.get(0).getVps().trim().equals(vps.trim()) && (histories.get(0).getVps().length()!=0)){
-                    resp.put("status","fail");
-                    resp.put("fail", "nouser");
-                    resp.put("message", "Tài khoản đã được vps khác sử dụng!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                 */
                 histories.get(0).setRunning(0);
                 histories.get(0).setVps(vps);
-
-                //histories.get(0).setEndtrial(endtrial);
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
                 if(videos.size()==0){
-                    if(test==0){
                         videos=videoRepository.getvideo(histories.get(0).getListvideo());
-                    }else{
-
-                        videos=videoRepository.getvideotest(histories.get(0).getListvideo());
-                    }
-                    //videos = videoRepository.getvideo(histories.get(0).getListvideo());
                 }
                 if(videos.size()>0){
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -114,7 +90,7 @@ public class HistoryController {
                 resp.put("message", "Không còn video để view!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-                //List<Account> account=accountRepository.findAccountByUsername(username);
+
                 List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
                 List<Proxy> proxy=null;
                 String ref = "";
@@ -170,17 +146,7 @@ public class HistoryController {
                     proxy.get(0).setTimeget(System.currentTimeMillis());
                     //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
                     proxyRepository.save(proxy.get(0));
-                    /*
-                    try{
-                        ProxyHistory proxyHistory =new ProxyHistory();
-                        proxyHistory.setId(System.currentTimeMillis());
-                        proxyHistory.setProxy(proxy.get(0).getProxy());
-                        proxyHistory.setState(1);
-                        proxyHistory.setIpv4(proxy.get(0).getIpv4());
-                        proxyHistoryRepository.save(proxyHistory);
-                    }catch (Exception e) {
-                    }
-                    */
+
                 }catch (Exception e){
                     resp.put("status","fail1");
                     resp.put("fail","proxy");
@@ -232,6 +198,7 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            //Thread.sleep((long)(Math.random() * 20000));
             List<History> histories =historyRepository.get(username);
             if(histories.size()==0){
                 resp.put("status", "fail");
@@ -239,8 +206,6 @@ public class HistoryController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                //histories.get(0).setProxy(proxy);
-                //histories.get(0).setRunning(0);
                 if(histories.get(0).getListvideo().length()==0){
                     histories.get(0).setListvideo(videoid);
                 }else{

@@ -115,6 +115,7 @@ public class AccountController {
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
+
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
         if(checktoken==0){
             resp.put("status","fail");
@@ -130,7 +131,7 @@ public class AccountController {
 
             Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
             if(idbyVps==null){
-                Thread.sleep((long)(Math.random() * 10000));
+                //Thread.sleep((long)(Math.random() * 10000));
                 Long id=accountRepository.getAccount();
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
@@ -143,7 +144,7 @@ public class AccountController {
                         String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
-                        Thread.sleep(3);
+                        Thread.sleep(2);
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
                             resp.put("status", "fail");
@@ -172,7 +173,7 @@ public class AccountController {
             }else{
                 try{
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    Thread.sleep(5);
+                    Thread.sleep(2);
                     Integer accountcheck=accountRepository.checkAccountById(idbyVps);
 
                     Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
@@ -208,7 +209,6 @@ public class AccountController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-
     }
 
 
@@ -348,7 +348,7 @@ public class AccountController {
     ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         try {
-            Thread.sleep((long)(Math.random() * 10000));
+            //Thread.sleep((long)(Math.random() * 10000));
             Integer checktoken = adminRepository.FindAdminByToken(Authorization);
             if (checktoken == 0) {
                 resp.put("status", "fail");
