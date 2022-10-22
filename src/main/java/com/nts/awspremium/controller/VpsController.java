@@ -191,12 +191,6 @@ public class VpsController {
     @GetMapping(value = "checkresetvps",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> checkresetvps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Vps không để trống");

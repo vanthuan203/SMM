@@ -33,10 +33,9 @@ public class HistoryController {
     @Autowired
     private IpV4Repository ipV4Repository;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Long endtrial,@RequestParam(defaultValue = "0") Long test){
+    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Long endtrial,@RequestParam(defaultValue = "0") Integer test){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
+        if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -52,121 +51,112 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<History> histories=historyRepository.get(username);
+            Long  historieId=historyRepository.getId(username);
             List<Video> videos;
-            if(histories.size()==0){
+            if(historieId==null){
                 History history=new History();
                 history.setId(System.currentTimeMillis());
                 history.setUsername(username);
                 history.setListvideo("");
-                history.setProxy("");
                 history.setRunning(0);
                 history.setVps(vps);
                 history.setTimeget(System.currentTimeMillis());
-                videos=videoRepository.getvideobuff("");
-                if(videos.size()==0){
-                    videos=videoRepository.getvideotest("");
+                if(test==2){
+                    videos=videoRepository.getvideobuff("");
+                }else{
+                    videos=videoRepository.getvideo("");
                 }
                 if(videos.size()>0){
                     history.setChannelid(videos.get(0).getChannelid());
+                }else{
+                    historyRepository.save(history);
+                    resp.put("status", "fail");
+                    resp.put("fail", "video");
+                    resp.put("message", "Không còn video để view!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                List<Proxy> proxy = null;
+                proxy = proxyRepository.getProxyUpdate();
+                if (proxy == null) {
+                    history.setProxy("");
+                    historyRepository.save(history);
+                    resp.put("status", "fail");
+                    resp.put("message", "Không còn proxy để sử dụng!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                } else {
+                    history.setProxy(proxy.get(0).getProxy().trim());
                 }
                 historyRepository.save(history);
-            }else{
-                histories.get(0).setRunning(0);
-                histories.get(0).setVps(vps);
-                histories.get(0).setTimeget(System.currentTimeMillis());
-                videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
-                if(videos.size()==0){
-                        videos=videoRepository.getvideo(histories.get(0).getListvideo());
-                }
-                if(videos.size()>0){
-                    histories.get(0).setChannelid(videos.get(0).getChannelid());
-                }
-                historyRepository.save(histories.get(0));
-            }
-            if(videos.size()==0){
-                resp.put("status","fail");
-                resp.put("fail","video");
-                resp.put("message", "Không còn video để view!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
+                proxy.get(0).setTimeget(System.currentTimeMillis());
+                //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                proxyRepository.save(proxy.get(0));
 
-                List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
-                List<Proxy> proxy=null;
-                String ref = "";
-                boolean isPremium = false;
-                if (new Random().nextInt(100) < channels.get(0).getPremiumrate()) {
-                    isPremium = true;
-                }
-                boolean isMobile = false;
-                if (new Random().nextInt(100) < channels.get(0).getMobilerate()) {
-                    isMobile = true;
-                }
-                List<String> arrRefs = new ArrayList<>();
-                for (int i = 0; i < channels.get(0).getHomerate(); i++) {
-                    arrRefs.add("home");
-                }
-                for (int i = 0; i < channels.get(0).getSearchrate(); i++) {
-                    arrRefs.add("search");
-                }
-                for (int i = 0; i < channels.get(0).getSuggestrate(); i++) {
-                    arrRefs.add("suggest");
-                }
-                for (int i = 0; i < channels.get(0).getDirectrate(); i++) {
-                    arrRefs.add("direct");
-                }
-                ref = arrRefs.get(new Random().nextInt(arrRefs.size()));
-                try{
-
-                    if(histories.size()==0){
-                        proxy=proxyRepository.getProxyUpdate();
-                    }else{
-                        if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                            proxy=proxyRepository.getProxyUpdate();
-                        }else{
-                            proxy=proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
-                        }
-                    }
-                    if(proxy==null){
-                        if(histories.size()==0){
-                            histories=historyRepository.get(username);
-                        }
-                        histories.get(0).setProxy("");
-                        historyRepository.save(histories.get(0));
-                            resp.put("status","fail");
-                            resp.put("message","Không còn proxy để sử dụng!");
-                            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-                    }
-                    if(histories.size()==0){
-                        histories=historyRepository.get(username);
-                    }
-                    histories.get(0).setProxy(proxy.get(0).getProxy().trim());
-                    historyRepository.save(histories.get(0));
-
-                    proxy.get(0).setTimeget(System.currentTimeMillis());
-                    //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
-                    proxyRepository.save(proxy.get(0));
-
-                }catch (Exception e){
-                    resp.put("status","fail1");
-                    resp.put("fail","proxy");
-                    resp.put("message",e.getMessage());
-                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-                }
-                resp.put("ref", ref);
-                resp.put("channel_id", channels.get(0).getChannelid());
+                //resp.put("ref", ref);
+                resp.put("channel_id", videos.get(0).getChannelid());
                 //resp.put("title", channels.get(0).getTitle());
-                resp.put("isPremium", isPremium ? 1 : 0);
-                resp.put("isMobile", isMobile ? "Mobile" : "PC");
+                //resp.put("isPremium", isPremium ? 1 : 0);
+                //resp.put("isMobile", isMobile ? "Mobile" : "PC");
                 resp.put("status", "true");
-                resp.put("video_id",videos.get(0).getVideoid());
+                resp.put("video_id", videos.get(0).getVideoid());
                 resp.put("video_title", videos.get(0).getTitle());
                 //resp.put("username", username);
                 resp.put("proxy", proxy.get(0).getProxy());
                 resp.put("video_duration", videos.get(0).getDuration());
                 //resp.put("password", account.get(0).getPassword());
                 //resp.put("recover", account.get(0).getRecover());
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                List<History> histories=historyRepository.getHistoriesById(historieId);
+                histories.get(0).setRunning(0);
+                histories.get(0).setVps(vps);
+                histories.get(0).setTimeget(System.currentTimeMillis());
+                if(test==2){
+                    videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
+                }else{
+                    videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                }
+                if(videos.size()>0){
+                    histories.get(0).setChannelid(videos.get(0).getChannelid());
+                }else{
+                    historyRepository.save(histories.get(0));
+                    resp.put("status", "fail");
+                    resp.put("fail", "video");
+                    resp.put("message", "Không còn video để view!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                List<Proxy> proxy = null;
+                if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
+                    proxy = proxyRepository.getProxyUpdate();
+                } else {
+                    proxy = proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                }
+                if (proxy == null){
+                    histories.get(0).setProxy("");
+                    historyRepository.save(histories.get(0));
+                    resp.put("status", "fail");
+                    resp.put("message", "Không còn proxy để sử dụng!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }else{
+                    histories.get(0).setProxy(proxy.get(0).getProxy().trim());
+                }
+                historyRepository.save(histories.get(0));
+                proxy.get(0).setTimeget(System.currentTimeMillis());
+                //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                proxyRepository.save(proxy.get(0));
+                //resp.put("ref", ref);
+                resp.put("channel_id", videos.get(0).getChannelid());
+                //resp.put("title", channels.get(0).getTitle());
+                //resp.put("isPremium", isPremium ? 1 : 0);
+                //resp.put("isMobile", isMobile ? "Mobile" : "PC");
+                resp.put("status", "true");
+                resp.put("video_id", videos.get(0).getVideoid());
+                resp.put("video_title", videos.get(0).getTitle());
+                //resp.put("username", username);
+                resp.put("proxy", proxy.get(0).getProxy());
+                resp.put("video_duration", videos.get(0).getDuration());
+                //resp.put("password", account.get(0).getPassword());
+                //resp.put("recover", account.get(0).getRecover());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
 
         }catch (Exception e){
@@ -176,13 +166,11 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(value = "/updatevideoid",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
                                   @RequestParam(defaultValue = "") String videoid){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
+        if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -199,13 +187,14 @@ public class HistoryController {
         }
         try{
             //Thread.sleep((long)(Math.random() * 20000));
-            List<History> histories =historyRepository.get(username);
-            if(histories.size()==0){
+            Long  historieId=historyRepository.getId(username);
+            if(historieId==null){
                 resp.put("status", "fail");
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
+                List<History> histories =historyRepository.getHistoriesById(historieId);
                 if(histories.get(0).getListvideo().length()==0){
                     histories.get(0).setListvideo(videoid);
                 }else{
@@ -229,8 +218,7 @@ public class HistoryController {
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
                                   @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String proxy){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
+        if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -261,13 +249,14 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<History> histories =historyRepository.get(username);
-            if(histories.size()==0){
+            Long  historieId=historyRepository.getId(username);
+            if(historieId==null){
                 resp.put("status", "fail");
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
+                List<History> histories =historyRepository.getHistoriesById(historieId);
                 //histories.get(0).setProxy(proxy);
                 histories.get(0).setRunning(0);
                 histories.get(0).setVps("");
@@ -285,8 +274,7 @@ public class HistoryController {
     @GetMapping(value = "delthreadbyusername",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delthreadbyusername(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String videoid){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
+        if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -302,7 +290,8 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            historyRepository.resetThreadByUsername(username);
+            Long  historieId=historyRepository.getId(username);
+            historyRepository.resetThreadById(historieId);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -317,8 +306,7 @@ public class HistoryController {
     @GetMapping(value = "delnamebyvps",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delnamebyvps(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String vps){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
+        if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -329,7 +317,17 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            historyRepository.deletenamevpsByVps(vps);
+            List<Long> ListId=historyRepository.getHistoryIdbyVps(vps.trim());
+            if(ListId.size()!=0){
+                for(int i=0;i<ListId.size();i++){
+                    historyRepository.resetThreadById(ListId.get(i));
+                }
+                resp.put("status", "true");
+                resp.put("message", "Update running thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            //historyRepository.deletenamevpsByVps(ListId);
+            //historyRepository.deletenamevpsByVps(ListId);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

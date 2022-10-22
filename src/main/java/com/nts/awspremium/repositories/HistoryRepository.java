@@ -14,22 +14,37 @@ import java.util.List;
 public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT * FROM history where username=?1 order by id desc limit 1",nativeQuery = true)
     public List<History> get(String username);
+
+    @Query(value = "SELECT * FROM history where id=?1 limit 1",nativeQuery = true)
+    public List<History> getHistoriesById(Long id);
+
+    @Query(value = "SELECT id FROM history where username=?1 limit 1",nativeQuery = true)
+    public Long getId(String username);
+
     @Query(value = "SELECT * FROM history where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24)>=1 and username=?1 limit 1",nativeQuery = true)
     public List<History> checkEndTrial(String username);
     @Modifying
     @Transactional
     @Query(value = "UPDATE history SET running=0,vps='' where username=?1",nativeQuery = true)
     public Integer resetThreadByUsername(String username);
+
     @Modifying
     @Transactional
-    @Query(value = "UPDATE history SET vps='',running=0 where vps=?1",nativeQuery = true)
-    public Integer deletenamevpsByVps(String vps);
+    @Query(value = "UPDATE history SET running=0,vps='' where id=?1",nativeQuery = true)
+    public Integer resetThreadById(Long id);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history SET vps='',running=0 where INSTR(?1,id)",nativeQuery = true)
+    public Integer deletenamevpsByVps(String listId);
 
     @Query(value = "SELECT * FROM history where vps=?1",nativeQuery = true)
     public List<History> findHistoriesByVps(String vps);
 
     @Query(value = "SELECT count(*) FROM history where vps=?1 and running=1",nativeQuery = true)
     public Integer getrunningbyVps(String vps);
+
+    @Query(value = "SELECT id FROM history where vps=?1 and running=1",nativeQuery = true)
+    public List<Long> getHistoryIdbyVps(String vps);
 
     @Query(value = "SELECT count(*) FROM history where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and round((UNIX_TIMESTAMP()-timeget/1000)/60/60)<12;",nativeQuery = true)
     public Integer countAccountByProxy();
