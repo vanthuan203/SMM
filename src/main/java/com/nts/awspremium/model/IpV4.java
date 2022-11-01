@@ -1,33 +1,24 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="ipv4")
 public class IpV4 {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String ipv4;
     private Integer state;
-
+    private Long timecheck;
     public IpV4() {
     }
 
-    public IpV4(long id, String ipv4, Integer state) {
+    public IpV4(long id, String ipv4, Integer state, Long timecheck) {
         this.id = id;
         this.ipv4 = ipv4;
         this.state = state;
-    }
-
-    @Override
-    public String toString() {
-        return "IpV4{" +
-                "id=" + id +
-                ", ipv4='" + ipv4 + '\'' +
-                ", state=" + state +
-                '}';
+        this.timecheck = timecheck;
     }
 
     public long getId() {
@@ -52,5 +43,13 @@ public class IpV4 {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public Long getTimecheck() {
+        return timecheck;
+    }
+
+    public void setTimecheck(Long timecheck) {
+        this.timecheck = timecheck;
     }
 }

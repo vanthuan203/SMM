@@ -1,15 +1,15 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "historyview")
+@Entity
 public class HistoryView {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String username;
+    private String videoid;
     private String channelid;
     private Integer duration;
     private Long time;
@@ -17,8 +17,10 @@ public class HistoryView {
     public HistoryView() {
     }
 
-    public HistoryView(Long id, String channelid, Integer duration, Long time) {
+    public HistoryView(Long id, String username, String videoid, String channelid, Integer duration, Long time) {
         this.id = id;
+        this.username = username;
+        this.videoid = videoid;
         this.channelid = channelid;
         this.duration = duration;
         this.time = time;
@@ -30,6 +32,22 @@ public class HistoryView {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getVideoid() {
+        return videoid;
+    }
+
+    public void setVideoid(String videoid) {
+        this.videoid = videoid;
     }
 
     public String getChannelid() {

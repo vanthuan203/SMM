@@ -10,6 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.*;
+
+import static java.lang.Thread.sleep;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/history")
@@ -27,7 +30,7 @@ public class HistoryController {
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
-    private HistorySumRepository historySumRepository;
+    private HistoryViewRepository historyViewRepository;
     @Autowired
     private ProxyHistoryRepository proxyHistoryRepository;
     @Autowired
@@ -216,7 +219,7 @@ public class HistoryController {
 
     @GetMapping(value = "/update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
-                                  @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String proxy){
+                                  @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String proxy,@RequestParam(defaultValue = "") String channelid,@RequestParam(defaultValue = "0") Integer duration){
         JSONObject resp=new JSONObject();
         if(!Authorization.equals("1")){
             resp.put("status","fail");
@@ -249,6 +252,26 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            try{
+                HistoryView historyView=new HistoryView();
+                historyView.setChannelid(channelid.trim());
+                historyView.setVideoid(videoid.trim());
+                historyView.setUsername(username.trim());
+                historyView.setTime(System.currentTimeMillis());
+                historyView.setDuration(duration);
+                historyViewRepository.save(historyView);
+            }catch (Exception e){
+                try{
+                    sleep(200);
+                    HistoryView historyView=new HistoryView();
+                    historyView.setChannelid(channelid.trim());
+                    historyView.setVideoid(videoid.trim());
+                    historyView.setUsername(username.trim());
+                    historyView.setTime(System.currentTimeMillis());
+                    historyView.setDuration(duration);
+                    historyViewRepository.save(historyView);
+                }catch (Exception f){}
+            }
             Long  historieId=historyRepository.getId(username);
             if(historieId==null){
                 resp.put("status", "fail");
