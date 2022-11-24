@@ -23,13 +23,14 @@ public class ProxyAPI {
             }
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
             conn.setRequestMethod("GET");
+            conn.setConnectTimeout(4000);
             conn.connect();
 
             int code = conn.getResponseCode();
             //String contents = conn.getResponseMessage();
             conn.disconnect();
             System.out.println(code);
-            if (code == 200) {
+            if (code == 200 || code == 429) {
                 return true;
             } else {
                 return false;

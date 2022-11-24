@@ -155,8 +155,8 @@ public class VpsController {
                 }
                 resp.put("status", "true");
                 resp.put("option",vpscheck.get(0).getVpsoption());
-                resp.put("urlapi",vpscheck.get(0).getUrlapi());
-                resp.put("token",vpscheck.get(0).getToken());
+                //resp.put("urlapi",vpscheck.get(0).getUrlapi());
+                //resp.put("token",vpscheck.get(0).getToken());
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
@@ -204,10 +204,10 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
-                    //vpsRepository.save(vpscheck.get(0));
                 }
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
+
 
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 

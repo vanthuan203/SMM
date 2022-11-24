@@ -18,13 +18,23 @@ public class Account {
     private String endtrialstring;
     private String vps;
     private String proxy;
+    private String proxy2;
     private Integer running;
     private Long timecheck;
     private  String date;
+    private String geo;
     public Account() {
     }
 
-    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, Integer running, Long timecheck, String date) {
+    public String getProxy2() {
+        return proxy2;
+    }
+
+    public void setProxy2(String proxy2) {
+        this.proxy2 = proxy2;
+    }
+
+    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -36,9 +46,11 @@ public class Account {
         this.endtrialstring = endtrialstring;
         this.vps = vps;
         this.proxy = proxy;
+        this.proxy2 = proxy2;
         this.running = running;
         this.timecheck = timecheck;
         this.date = date;
+        this.geo = geo;
     }
 
     public Long getId() {
@@ -151,6 +163,14 @@ public class Account {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getGeo() {
+        return geo;
+    }
+
+    public void setGeo(String geo) {
+        this.geo = geo;
     }
 }
 

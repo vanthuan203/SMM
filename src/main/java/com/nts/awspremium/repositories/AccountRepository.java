@@ -19,6 +19,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdByUsername(String username);
 
+    @Query(value = "Select proxy,proxy2 from account where id=?1 limit 1",nativeQuery = true)
+    public String findProxyByIdSub(Long id);
+
     @Query(value = "Select count(*) from account where username=?1 and vps=?2 limit 1",nativeQuery = true)
     public Integer findUsernameByVps(String username,String vps);
     @Modifying
@@ -64,10 +67,18 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "UPDATE account SET running=1,vps=?2,timecheck=?3 where id=?4",nativeQuery = true)
     public void updateAccountGetByVPS(Integer running,String vps,Long timecheck ,Integer id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET proxy=?1 where id=?2",nativeQuery = true)
+    public void updateProxyAccount(String proxy,Long id);
+
     @Query(value = "Select * from account where username=?1 limit 1",nativeQuery = true)
     public List<Account> findAccountByUsername(String username);
     @Query(value = "Select * from account where id=?1 limit 1",nativeQuery = true)
     public List<Account> findAccountById(Long id);
+
+    @Query(value = "Select id from account where proxy='' order by rand() limit ?1",nativeQuery = true)
+    public List<Long> getAccountByLimit(Integer limit);
 
     @Query(value = "Select count(*) from account where id=?1 and running=0",nativeQuery = true)
     public Integer checkAccountById(Long id);
@@ -92,6 +103,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Query(value = "SELECT id  FROM account where live=0 and running=0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSubNeedLogin();
+
+    @Query(value = "SELECT id  FROM account where live!=1 and live!=2 and live!=5 and running=0 order by rand()  limit 1",nativeQuery = true)
+    public Long getAccountSubByWhere();
 
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountByVps(String vps);
@@ -121,12 +135,17 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer getCountGmailsFullSub24h();
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='' where vps like ?1",nativeQuery = true)
+    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where vps like ?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='' where username=?1",nativeQuery = true)
-    public Integer resetAccountByUsername(String username);
+    @Query(value = "UPDATE account SET running=0,vps='',live=?1,proxy='',proxy2='' where username=?2",nativeQuery = true)
+    public Integer resetAccountByUsername(Integer live,String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET proxy=?1,proxy2=?2 where id=?3",nativeQuery = true)
+    public Integer updateProxyById(String proxy,String proxy2,Long id);
 
     @Modifying
     @Transactional

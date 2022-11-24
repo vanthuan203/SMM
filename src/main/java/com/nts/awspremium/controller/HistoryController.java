@@ -189,6 +189,18 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+
+                HistoryView historyView = new HistoryView();
+                historyView.setVideoid(videoid.trim());
+                historyView.setTime(System.currentTimeMillis());
+                try {
+                    historyViewRepository.save(historyView);
+                } catch (Exception e) {
+                    try {
+                        historyViewRepository.save(historyView);
+                    } catch (Exception f) {
+                    }
+                }
             //Thread.sleep((long)(Math.random() * 20000));
             Long  historieId=historyRepository.getId(username);
             if(historieId==null){
@@ -252,26 +264,7 @@ public class HistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            try{
-                HistoryView historyView=new HistoryView();
-                historyView.setChannelid(channelid.trim());
-                historyView.setVideoid(videoid.trim());
-                historyView.setUsername(username.trim());
-                historyView.setTime(System.currentTimeMillis());
-                historyView.setDuration(duration);
-                historyViewRepository.save(historyView);
-            }catch (Exception e){
-                try{
-                    sleep(200);
-                    HistoryView historyView=new HistoryView();
-                    historyView.setChannelid(channelid.trim());
-                    historyView.setVideoid(videoid.trim());
-                    historyView.setUsername(username.trim());
-                    historyView.setTime(System.currentTimeMillis());
-                    historyView.setDuration(duration);
-                    historyViewRepository.save(historyView);
-                }catch (Exception f){}
-            }
+
             Long  historieId=historyRepository.getId(username);
             if(historieId==null){
                 resp.put("status", "fail");
