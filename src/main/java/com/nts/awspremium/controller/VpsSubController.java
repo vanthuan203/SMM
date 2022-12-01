@@ -166,12 +166,14 @@ public class VpsSubController {
             cal.add(Calendar.DATE, 1); //minus number would decrement the days
 
             if(vpscheck.size()>0){
-                if(date.getDate()>vpscheck.get(0).getDayreset()){
+                if(date.getDate()>vpscheck.get(0).getDayreset() && date.getMonth()==cal.getTime().getMonth()){
+                    //System.out.println(date.getDate());
                     resetSub=1;
-                    vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                    //vpscheck.get(0).setDayreset(cal.getTime().getDate());
                 }else if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
                     resetSub=1;
-                    vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                    //System.out.println("2");
+                    //vpscheck.get(0).setDayreset(cal.getTime().getDate());
                 }
                 resp.put("status", "true");
                 //resp.put("option",vpscheck.get(0).getVpsoption());
@@ -229,6 +231,74 @@ public class VpsSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping(value = "timeresetsub",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> timeresetsub(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired ");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
+            Date date=new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.DATE, 1); //minus number would decrement the days
+
+            if(vpscheck.size()>0){
+                if(date.getDate()>vpscheck.get(0).getDayreset() && date.getMonth()==cal.getTime().getMonth() ){
+                    if(date.getDate()>vpscheck.get(0).getDayreset()-1){
+                        vpscheck.get(0).setDayreset(date.getDate());
+                    }else{
+                        vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                    }
+                }else if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
+                    vpscheck.get(0).setDayreset(cal.getTime().getDate());
+                }
+                resp.put("status", "true");
+                vpsRepository.save(vpscheck.get(0));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+            }else{
+                resp.put("status", "fail");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping(value = "test",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> test(){
+        JSONObject resp=new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        try{
+
+            Date date=new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.HOUR, 20); //minus number would decrement the days
+            resp.put("status",cal.getTime().getHours());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping(value = "checkresetvps",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> checkresetvps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){

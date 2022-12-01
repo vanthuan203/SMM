@@ -1,49 +1,28 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "historysum")
 @Entity
 public class HistorySum {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
-    private String vps;
-    private String channelid;
     private String videoid;
-    private String proxy;
+    private String channelid;
+    private Integer duration;
+    private Long time;
     public HistorySum() {
     }
 
-    public HistorySum(Long id, String username, String vps, String channelid, String videoid,String proxy ) {
+    public HistorySum(Long id, String username, String videoid, String channelid, Integer duration, Long time) {
         this.id = id;
         this.username = username;
-        this.vps = vps;
-        this.channelid = channelid;
         this.videoid = videoid;
-        this.proxy = proxy;
-    }
-
-    @Override
-    public String toString() {
-        return "HistorySum{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", vps='" + vps + '\'' +
-                ", channelid='" + channelid + '\'' +
-                ", videoid='" + videoid + '\'' +
-                ", proxy='" + proxy + '\'' +
-                '}';
-    }
-
-    public String getProxy() {
-        return proxy;
-    }
-
-    public void setProxy(String proxy) {
-        this.proxy = proxy;
+        this.channelid = channelid;
+        this.duration = duration;
+        this.time = time;
     }
 
     public Long getId() {
@@ -62,12 +41,12 @@ public class HistorySum {
         this.username = username;
     }
 
-    public String getVps() {
-        return vps;
+    public String getVideoid() {
+        return videoid;
     }
 
-    public void setVps(String vps) {
-        this.vps = vps;
+    public void setVideoid(String videoid) {
+        this.videoid = videoid;
     }
 
     public String getChannelid() {
@@ -78,11 +57,19 @@ public class HistorySum {
         this.channelid = channelid;
     }
 
-    public String getVideoid() {
-        return videoid;
+    public Integer getDuration() {
+        return duration;
     }
 
-    public void setVideoid(String videoid) {
-        this.videoid = videoid;
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
     }
 }

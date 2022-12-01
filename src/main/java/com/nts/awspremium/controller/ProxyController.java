@@ -136,7 +136,7 @@ public class ProxyController {
     }
 
     @GetMapping(value = "/getproxysub", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps) {
+    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
         JSONObject resp = new JSONObject();
         try{
             if(vps.length()==0){
@@ -162,7 +162,7 @@ public class ProxyController {
             Long id=accountRepository.findIdByUsername(username);
             String proxy =accountRepository.findProxyByIdSub(id);
             String[] proxysub={"",""};
-            if(proxy.length()<6){
+            if(proxy.length()>0){
                 proxysub[0]= ipV4Repository.getIpv4ByVps(20,"%"+vps.trim()+"%");
                 ipV4Repository.updateUserCountByIpv4(proxysub[0]);
                 proxysub[1]= ipV4Repository.getIpv4ByVps(30,"%"+vps.trim()+"%");
@@ -173,12 +173,24 @@ public class ProxyController {
             }
             System.out.println(ipV4Repository.checkProxyLive("%"+proxysub[0]+"%"));
             List<Proxy> proxyGet=null;
-            if(ipV4Repository.checkProxyLive("%"+proxysub[0]+"%")!=0 && ((1<=minutes && minutes<16) || (21<=minutes && minutes<36) || (41<=minutes &&minutes<56))){
-                proxyGet=proxyRepository.getProxySubByIpv4T1("%"+proxysub[0]+"%");
-            }else if(proxyGet==null && (ipV4Repository.checkProxyLive("%"+proxysub[1]+"%")!=0 && (26>minutes || minutes>=31))){
-                proxyGet=proxyRepository.getProxySubByIpv4T2("%"+proxysub[1]+"%");
-            }else if(proxyGet==null){
-                proxyGet=proxyRepository.getProxySub();
+            if(proxyfail.length()!=0){
+                if((1<=minutes && minutes<16) || (21<=minutes && minutes<36) || (41<=minutes &&minutes<56)){
+                    proxyGet=proxyRepository.getProxySubT1();
+                }else{
+                    proxyGet=proxyRepository.getProxySubT2();
+                }
+            }else{
+                if(ipV4Repository.checkProxyLive("%"+proxysub[0]+"%")!=0 && ((1<=minutes && minutes<16) || (21<=minutes && minutes<36) || (41<=minutes &&minutes<56))){
+                    proxyGet=proxyRepository.getProxySubByIpv4T1("%"+proxysub[0]+"%");
+                }else if(proxyGet==null && (ipV4Repository.checkProxyLive("%"+proxysub[1]+"%")!=0 && (26>minutes || minutes>=31))){
+                    proxyGet=proxyRepository.getProxySubByIpv4T2("%"+proxysub[1]+"%");
+                }else if(proxyGet==null){
+                    if((1<=minutes && minutes<16) || (21<=minutes && minutes<36) || (41<=minutes &&minutes<56)){
+                        proxyGet=proxyRepository.getProxySubT1();
+                    }else{
+                        proxyGet=proxyRepository.getProxySubT2();
+                    }
+                }
             }
             if(proxyGet==null){
                 resp.put("status","fail");

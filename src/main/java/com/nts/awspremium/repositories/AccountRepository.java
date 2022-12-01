@@ -31,9 +31,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps,date,geo) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8,?9,?10)",nativeQuery = true)
+    public void insertAccountBuffh(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date,String geo);
+    @Modifying
+    @Transactional
     @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps,date) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8,?9)",nativeQuery = true)
     public void insertAccountSub(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date);
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,endtrial=?6,endtrialstring=?7 where username=?8",nativeQuery = true)
@@ -53,6 +56,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
     public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
+    public void updateAccountBuffh(String password,String recover,Integer live,String encodefinger,String cookie,String username);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET endtrial=0  where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=10 and endtrial=1",nativeQuery = true)

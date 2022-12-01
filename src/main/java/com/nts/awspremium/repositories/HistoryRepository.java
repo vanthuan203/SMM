@@ -17,9 +17,11 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
 
     @Query(value = "SELECT * FROM history where id=?1 limit 1",nativeQuery = true)
     public List<History> getHistoriesById(Long id);
-
     @Query(value = "SELECT id FROM history where username=?1 limit 1",nativeQuery = true)
     public Long getId(String username);
+
+    @Query(value = "SELECT id FROM AccPremium.history where username = (select username from historyview where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)< 28800  order by sum(duration) asc limit 1 )",nativeQuery = true)
+    public Long getIdAccBuff();
 
     @Query(value = "SELECT * FROM history where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24)>=1 and username=?1 limit 1",nativeQuery = true)
     public List<History> checkEndTrial(String username);
@@ -27,6 +29,11 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Transactional
     @Query(value = "UPDATE history SET running=0,vps='' where username=?1",nativeQuery = true)
     public Integer resetThreadByUsername(String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history SET running=0,vps='' where vps like ?1",nativeQuery = true)
+    public Integer resetThreadByVps(String vps);
 
     @Modifying
     @Transactional

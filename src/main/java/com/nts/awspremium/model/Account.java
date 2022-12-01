@@ -23,7 +23,16 @@ public class Account {
     private Long timecheck;
     private  String date;
     private String geo;
+    private Integer timebuff;
     public Account() {
+    }
+
+    public Integer getTimebuff() {
+        return timebuff;
+    }
+
+    public void setTimebuff(Integer timebuff) {
+        this.timebuff = timebuff;
     }
 
     public String getProxy2() {
@@ -34,7 +43,7 @@ public class Account {
         this.proxy2 = proxy2;
     }
 
-    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo) {
+    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -51,6 +60,7 @@ public class Account {
         this.timecheck = timecheck;
         this.date = date;
         this.geo = geo;
+        this.timebuff = timebuff;
     }
 
     public Long getId() {
