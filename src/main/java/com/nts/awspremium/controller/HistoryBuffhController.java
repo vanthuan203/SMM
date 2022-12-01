@@ -145,6 +145,7 @@ public class HistoryBuffhController {
 
                 HistoryView historyView = new HistoryView();
                 historyView.setVideoid(videoid.trim());
+                historyView.setUsername(username.trim());
                 historyView.setTime(System.currentTimeMillis());
                 historyView.setChannelid(channelid);
                 historyView.setDuration(duration);
@@ -230,11 +231,12 @@ public class HistoryBuffhController {
                 List<History> histories =historyRepository.getHistoriesById(historieId);
                 //histories.get(0).setProxy(proxy);
                 histories.get(0).setRunning(0);
-                histories.get(0).setVps("");
+                //histories.get(0).setVps("");
                 historyRepository.save(histories.get(0));
 
                 HistorySum historySum = new HistorySum();
                 historySum.setVideoid(videoid.trim());
+                historySum.setUsername(username);
                 historySum.setTime(System.currentTimeMillis());
                 historySum.setChannelid(channelid);
                 historySum.setDuration(duration);
@@ -277,7 +279,7 @@ public class HistoryBuffhController {
         }
         try{
             Long  historieId=historyRepository.getId(username);
-            historyRepository.resetThreadById(historieId);
+            historyRepository.resetThreadBuffhById(historieId);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

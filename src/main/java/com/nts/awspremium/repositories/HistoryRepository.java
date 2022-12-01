@@ -39,6 +39,12 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Transactional
     @Query(value = "UPDATE history SET running=0,vps='' where id=?1",nativeQuery = true)
     public Integer resetThreadById(Long id);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history SET running=0 where id=?1",nativeQuery = true)
+    public Integer resetThreadBuffhById(Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE history SET vps='',running=0 where INSTR(?1,id)",nativeQuery = true)
