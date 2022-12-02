@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -37,17 +39,12 @@ public class HistoryBuffhController {
     @Autowired
     private IpV4Repository ipV4Repository;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Long endtrial,@RequestParam(defaultValue = "0") Integer test){
+    ResponseEntity<String> get(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Integer test){
         JSONObject resp=new JSONObject();
         if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
-        if (username.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Username không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         if (vps.length() == 0) {
             resp.put("status", "fail");
@@ -55,7 +52,7 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            Long  historieId=historyRepository.getIdAccBuff();
+            Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
             List<Video> videos;
             if(historieId==null){
                 resp.put("status", "fail");
@@ -66,8 +63,10 @@ public class HistoryBuffhController {
                 histories.get(0).setRunning(0);
                 //histories.get(0).setVps(vps);
                 histories.get(0).setTimeget(System.currentTimeMillis());
-                if(test==2){
-                    videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
+                if(test==1){
+                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),2);
+                }else if(test==2){
+                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),3);
                 }else{
                     videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
                 }
@@ -80,13 +79,24 @@ public class HistoryBuffhController {
                     resp.put("message", "Không còn video để view!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                //add thong tin channel
+                List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
+
                 List<Proxy> proxy = null;
                 if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                    proxy = proxyRepository.getProxyUpdate();
+                    if(histories.get(0).getGeo().indexOf("vn")>=0){
+                        proxy = proxyRepository.getProxyBuff("%vn%");
+                    }else{
+                        proxy = proxyRepository.getProxyBuff("%ngoai%");
+                    }
                 } else {
-                    proxy = proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    if(histories.get(0).getGeo().indexOf("vn")>=0){
+                        proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }else{
+                        proxy = proxyRepository.getProxyBuffByIpv4("%ngoai%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }
                 }
-                if (proxy == null){
+                if (proxy.size()==0){
                     histories.get(0).setProxy("");
                     historyRepository.save(histories.get(0));
                     resp.put("status", "fail");
@@ -107,7 +117,8 @@ public class HistoryBuffhController {
                 resp.put("status", "true");
                 resp.put("video_id", videos.get(0).getVideoid());
                 resp.put("video_title", videos.get(0).getTitle());
-                //resp.put("username", username);
+                resp.put("geo",histories.get(0).getGeo());
+                resp.put("username", histories.get(0).getUsername());
                 resp.put("proxy", proxy.get(0).getProxy());
                 resp.put("video_duration", videos.get(0).getDuration());
                 //resp.put("password", account.get(0).getPassword());
@@ -187,7 +198,7 @@ public class HistoryBuffhController {
 
     @GetMapping(value = "/update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
-                                  @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String proxy,@RequestParam(defaultValue = "") String channelid,@RequestParam(defaultValue = "0") Integer duration){
+                                  @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String channelid,@RequestParam(defaultValue = "0") Integer duration){
         JSONObject resp=new JSONObject();
         if(!Authorization.equals("1")){
             resp.put("status","fail");
@@ -200,25 +211,11 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         if (videoid.length() == 0) {
-            List<History> histories =historyRepository.get(username);
-            if(histories.size()==0){
-                resp.put("status", "fail");
-                resp.put("message", "Không tìm thấy username!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-            else{
-                histories.get(0).setRunning(0);
-                historyRepository.save(histories.get(0));
-                resp.put("status", "true");
-                resp.put("message", "Update hitory thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-        }
-        if (proxy.length() == 0) {
             resp.put("status", "fail");
-            resp.put("message", "Proxy không để trống");
+            resp.put("message", "Videoid không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+
         try{
 
             Long  historieId=historyRepository.getId(username);

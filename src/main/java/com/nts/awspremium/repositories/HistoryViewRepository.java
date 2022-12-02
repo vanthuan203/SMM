@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
 public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Modifying
     @Transactional
-    @Query(value = "UPDATE FROM historyview set duration=?1  where username=?2 and videoid=?3",nativeQuery = true)
+    @Query(value = "UPDATE historyview set duration=?1  where username=?2 and videoid=?3",nativeQuery = true)
     public void updateduration(Integer duration,String username,String videoid);
 }

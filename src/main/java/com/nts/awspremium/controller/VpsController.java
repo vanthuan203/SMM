@@ -46,7 +46,7 @@ public class VpsController {
                 //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
                 //jsonArray.add(orderRunnings);
                 List<VpsRunning> vpsRunnings=historyRepository.getvpsrunning();
-                List<VpsRunning> vpsview=historyRepository.getvpsview();
+                //List<VpsRunning> vpsview=historyRepository.getvpsview();
                 for(int i=0;i<vps.size();i++){
                     Integer total=0;
                     String time="";
@@ -58,12 +58,15 @@ public class VpsController {
                            vpsRunnings.remove(j);
                         }
                     }
+                    /*
                     for(int k=0;k<vpsview.size();k++){
                         if(vps.get(i).getVps().equals(vpsview.get(k).getVps())){
                             totalview=vpsview.get(k).getTotal();
                             vpsview.remove(k);
                         }
                     }
+
+                     */
                     JSONObject obj = new JSONObject();
                     obj.put("id", vps.get(i).getId());
                     obj.put("vps", vps.get(i).getVps());

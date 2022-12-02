@@ -81,10 +81,12 @@ public class AccountBuffhController {
                 history.setId(System.currentTimeMillis());
                 history.setUsername(newaccount.getUsername());
                 history.setListvideo("");
+                history.setChannelid("");
                 history.setProxy("");
                 history.setRunning(0);
                 history.setVps("");
                 history.setTimeget(0L);
+                history.setGeo(newaccount.getGeo());
                 historyRepository.save(history);
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
@@ -122,7 +124,7 @@ public class AccountBuffhController {
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "0") Integer test){
         JSONObject resp = new JSONObject();
 
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
@@ -141,7 +143,14 @@ public class AccountBuffhController {
             Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
             if(idbyVps==null){
                 //Thread.sleep((long)(Math.random() * 10000));
-                Long id=accountRepository.getAccount();
+                Long id=-0L;
+                if(test==1){
+                    id=accountRepository.getAccountBuffh("vn");
+                }else if(test==2){
+                    id=accountRepository.getAccountBuffh("ngoai");
+                }else{
+                    id=accountRepository.getAccountBuffh();
+                }
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
@@ -168,17 +177,32 @@ public class AccountBuffhController {
                         //Save vps to history
                         Long historieId= historyRepository.getId(account.get(0).getUsername().trim());
                         List<History> histories=historyRepository.getHistoriesById(historieId);
-                        histories.get(0).setProxy(vps);
-                        historyRepository.save(histories.get(0));
+                        if(histories.size()==0){
+                            History history=new History();
+                            history.setId(System.currentTimeMillis());
+                            history.setUsername(account.get(0).getUsername().trim());
+                            history.setListvideo("");
+                            history.setChannelid("");
+                            history.setProxy("");
+                            history.setRunning(0);
+                            history.setVps(vps);
+                            history.setTimeget(0L);
+                            history.setGeo(account.get(0).getGeo());
+                            historyRepository.save(history);
+                        }else{
+                            histories.get(0).setVps(vps);
+                            historyRepository.save(histories.get(0));
+                        }
+
 
 
                         resp.put("status","true");
                         resp.put("username",account.get(0).getUsername());
-                        resp.put("endtrial",account.get(0).getEndtrial());
+                        //resp.put("endtrial",account.get(0).getEndtrial());
                         resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
                         resp.put("cookie",cookieSub);
-                        resp.put("encodefinger",encodefingerSub);
+                        //resp.put("encodefinger",encodefingerSub);
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
                         resp.put("status", "fail");

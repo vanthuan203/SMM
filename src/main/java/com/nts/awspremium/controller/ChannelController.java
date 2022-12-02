@@ -385,7 +385,7 @@ public class ChannelController {
                         while (i.hasNext()) {
                             try {
                                 JSONObject video = (JSONObject) i.next();
-                                if(Duration.parse(video.get("duration").toString()).getSeconds()<3600){
+                                if(Duration.parse(video.get("duration").toString()).getSeconds()<1800){
                                     continue;
                                 }
                                 Video videos = new Video();
