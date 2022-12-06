@@ -210,6 +210,8 @@ public class ProxyController {
 
     }
 
+
+
     @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkproxylist(@RequestParam(defaultValue = "1") Integer cron) {
         List<String> proxys= ipV4Repository.getListIpv4(cron);

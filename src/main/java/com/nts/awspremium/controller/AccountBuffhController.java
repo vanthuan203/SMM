@@ -153,7 +153,7 @@ public class AccountBuffhController {
                 if(test==1){
                     id=accountRepository.getAccountBuffh("vn");
                 }else if(test==2){
-                    id=accountRepository.getAccountBuffh("ngoai");
+                    id=accountRepository.getAccountBuffh("us");
                 }else{
                     id=accountRepository.getAccountBuffh();
                 }
@@ -630,14 +630,27 @@ public class AccountBuffhController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-                List<Proxy> proxy;
-
-                if(histories.get(0).getProxy().length()==0 || histories.get(0).getProxy()==null){
-                    proxy=proxyRepository.getProxyUpdate();
-                }else{
-                   proxy=proxyRepository.getProxyUpdate(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                List<Proxy> proxy = null;
+                if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
+                    if(histories.get(0).getGeo().indexOf("vn")>=0){
+                        proxy = proxyRepository.getProxyBuff("%vn%");
+                    }else{
+                        proxy = proxyRepository.getProxyBuff("%us%");
+                    }
+                } else {
+                    if(histories.get(0).getGeo().indexOf("vn")>=0){
+                        proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }else{
+                        proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }
                 }
-
+                if (proxy.size()==0) {
+                    //histories.get(0).setProxy("");
+                    //historyRepository.save(histories.get(0));
+                    resp.put("status", "fail");
+                    resp.put("message", "Không còn proxy để sử dụng!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 histories.get(0).setProxy(proxy.get(0).getProxy());
                 historyRepository.save(histories.get(0));
                 proxy.get(0).setTimeget(System.currentTimeMillis());

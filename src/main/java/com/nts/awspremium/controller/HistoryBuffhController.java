@@ -88,13 +88,13 @@ public class HistoryBuffhController {
                     if(histories.get(0).getGeo().indexOf("vn")>=0){
                         proxy = proxyRepository.getProxyBuff("%vn%");
                     }else{
-                        proxy = proxyRepository.getProxyBuff("%ngoai%");
+                        proxy = proxyRepository.getProxyBuff("%us%");
                     }
                 } else {
                     if(histories.get(0).getGeo().indexOf("vn")>=0){
                         proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
                     }else{
-                        proxy = proxyRepository.getProxyBuffByIpv4("%ngoai%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
                     }
                 }
                 if (proxy.size()==0){
