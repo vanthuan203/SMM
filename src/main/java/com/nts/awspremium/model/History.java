@@ -17,10 +17,11 @@ public class History {
     private Long timeget;
     private String typeproxy;
     private String geo;
+    private String videoid;
     public History() {
     }
 
-    public History(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long endtrial, Long timeget, String typeproxy, String geo) {
+    public History(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long endtrial, Long timeget, String typeproxy, String geo, String videoid) {
         this.id = id;
         this.username = username;
         this.listvideo = listvideo;
@@ -32,6 +33,15 @@ public class History {
         this.timeget = timeget;
         this.typeproxy = typeproxy;
         this.geo = geo;
+        this.videoid = videoid;
+    }
+
+    public String getVideoid() {
+        return videoid;
+    }
+
+    public void setVideoid(String videoid) {
+        this.videoid = videoid;
     }
 
     public String getGeo() {

@@ -23,7 +23,7 @@ public interface VideoRepository extends JpaRepository<Video,Long> {
     public List<Video> getvideobuff(String listvideo);
 
     @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and videoid not in \n" +
-            "(select videoid from historyview where round((UNIX_TIMESTAMP()-time/1000)/60)<60  group by videoid having 40<=count(*)) and \n" +
+            "(select videoid from history where round((UNIX_TIMESTAMP()-timeget/1000)/60)<60 and running=1  group by videoid having 50<=count(videoid)) and \n" +
             "channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads \n" +
             "from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 \n" +
             "group by channelid having total<maxthreads) as t) \n" +
@@ -32,7 +32,7 @@ public interface VideoRepository extends JpaRepository<Video,Long> {
     public List<Video> getvideobuffh(String listvideo);
 
     @Query(value = "SELECT * FROM video where INSTR(?1,videoid)=0 and videoid not in \n" +
-            "(select videoid from historyview where round((UNIX_TIMESTAMP()-time/1000)/60)<60  group by videoid having 40<=count(*)) and \n" +
+            "(select videoid from history where round((UNIX_TIMESTAMP()-timeget/1000)/60)<60 and running=1  group by videoid having 50<=count(videoid)) and \n" +
             "channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads \n" +
             "from channel left join history on history.channelid=channel.channelid and running=1 where enabled=?2 \n" +
             "group by channelid having total<maxthreads) as t) \n" +

@@ -20,7 +20,7 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT id FROM history where username=?1 limit 1",nativeQuery = true)
     public Long getId(String username);
 
-    @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and username not in (select username from historyview where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 28800  order by sum(duration) asc) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0 and username not in (select username from historyview where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 28800  order by sum(duration) asc) order by timeget,rand() limit 1",nativeQuery = true)
     public Long getIdAccBuff(String vps);
 
     @Query(value = "SELECT * FROM history where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24)>=1 and username=?1 limit 1",nativeQuery = true)
@@ -37,13 +37,18 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE history SET running=0,videoid='' where vps like ?1",nativeQuery = true)
+    public Integer resetThreadBuffhByVps(String vps);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE history SET running=0,vps='' where id=?1",nativeQuery = true)
     public Integer resetThreadById(Long id);
 
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE history SET running=0 where id=?1",nativeQuery = true)
+    @Query(value = "UPDATE history SET running=0,videoid='' where id=?1",nativeQuery = true)
     public Integer resetThreadBuffhById(Long id);
     @Modifying
     @Transactional

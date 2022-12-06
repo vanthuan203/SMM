@@ -77,17 +77,23 @@ public class AccountBuffhController {
                 accountRepository.insertAccountBuffh(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","",0,"",newaccount.getDate(),newaccount.getGeo());
                 cookieRepository.insertCookieBuffh(newaccount.getUsername(), newaccount.getCookie());
                 //encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
-                History history=new History();
-                history.setId(System.currentTimeMillis());
-                history.setUsername(newaccount.getUsername());
-                history.setListvideo("");
-                history.setChannelid("");
-                history.setProxy("");
-                history.setRunning(0);
-                history.setVps("");
-                history.setTimeget(0L);
-                history.setGeo(newaccount.getGeo());
-                historyRepository.save(history);
+
+                Long historieId= historyRepository.getId(newaccount.getUsername().trim());
+                List<History> histories=historyRepository.getHistoriesById(historieId);
+                if(histories.size()==0){
+                    History history=new History();
+                    history.setId(System.currentTimeMillis());
+                    history.setUsername(newaccount.getUsername());
+                    history.setListvideo("");
+                    history.setChannelid("");
+                    history.setProxy("");
+                    history.setRunning(0);
+                    history.setVideoid("");
+                    history.setVps("");
+                    history.setTimeget(0L);
+                    history.setGeo(newaccount.getGeo());
+                    historyRepository.save(history);
+                }
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -230,6 +236,27 @@ public class AccountBuffhController {
                     accountbyVps.get(0).setRunning(1);
                     accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
                     accountRepository.save(accountbyVps.get(0));
+
+                    //Save vps to history
+                    Long historieId= historyRepository.getId(accountbyVps.get(0).getUsername().trim());
+                    List<History> histories=historyRepository.getHistoriesById(historieId);
+                    if(histories.size()==0){
+                        History history=new History();
+                        history.setId(System.currentTimeMillis());
+                        history.setUsername(accountbyVps.get(0).getUsername().trim());
+                        history.setListvideo("");
+                        history.setChannelid("");
+                        history.setProxy("");
+                        history.setRunning(0);
+                        history.setVps(vps);
+                        history.setTimeget(0L);
+                        history.setGeo(accountbyVps.get(0).getGeo());
+                        historyRepository.save(history);
+                    }else{
+                        histories.get(0).setVps(vps);
+                        historyRepository.save(histories.get(0));
+                    }
+
                     resp.put("status","true");
                     resp.put("username",accountbyVps.get(0).getUsername());
                     resp.put("endtrial",accountbyVps.get(0).getEndtrial());

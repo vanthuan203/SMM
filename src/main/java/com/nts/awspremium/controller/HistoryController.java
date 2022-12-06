@@ -337,6 +337,7 @@ public class HistoryController {
             List<Long> ListId=historyRepository.getHistoryIdbyVps(vps.trim());
             if(ListId.size()!=0){
                 for(int i=0;i<ListId.size();i++){
+                    //Mai nho sua lai
                     historyRepository.resetThreadById(ListId.get(i));
                 }
                 resp.put("status", "true");
