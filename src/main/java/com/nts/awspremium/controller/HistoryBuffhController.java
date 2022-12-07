@@ -142,6 +142,7 @@ public class HistoryBuffhController {
         if(!Authorization.equals("1")){
             resp.put("status","fail");
             resp.put("message", "Token expired");
+
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         if (username.length() == 0) {
@@ -155,7 +156,7 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-
+/*
                 HistoryView historyView = new HistoryView();
                 historyView.setVideoid(videoid.trim());
                 historyView.setUsername(username.trim());
@@ -170,6 +171,8 @@ public class HistoryBuffhController {
                     } catch (Exception f) {
                     }
                 }
+
+ */
             //Thread.sleep((long)(Math.random() * 20000));
             Long  historieId=historyRepository.getId(username);
             if(historieId==null){
@@ -248,7 +251,7 @@ public class HistoryBuffhController {
                     } catch (Exception f) {
                     }
                 }
-                historyViewRepository.updateduration(duration,username,videoid);
+                //historyViewRepository.updateduration(duration,username,videoid);
                 resp.put("status", "true");
                 resp.put("message", "Update hitory thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -280,7 +283,7 @@ public class HistoryBuffhController {
         try{
             Long  historieId=historyRepository.getId(username);
             historyRepository.resetThreadBuffhById(historieId);
-            historyViewRepository.deleteHistoryView(username,videoid);
+            //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

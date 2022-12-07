@@ -20,7 +20,7 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT id FROM history where username=?1 limit 1",nativeQuery = true)
     public Long getId(String username);
 
-    @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0 and username not in (select username from historyview where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 28800  order by sum(duration) asc) order by timeget,rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0 and username not in (select username from historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 30000  order by sum(duration) asc) order by timeget,rand() limit 1",nativeQuery = true)
     public Long getIdAccBuff(String vps);
 
     @Query(value = "SELECT * FROM history where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24)>=1 and username=?1 limit 1",nativeQuery = true)
