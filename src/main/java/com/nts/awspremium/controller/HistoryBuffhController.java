@@ -53,11 +53,15 @@ public class HistoryBuffhController {
         }
         try{
             Long  historieId=null;
+            /*
             if(test==0){
                 historieId=historyRepository.getIdAccBuffCongchieu("%"+vps.trim()+"%");
             }else{
                 historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
             }
+
+             */
+            historieId=historyRepository.getIdAccBuffCongchieu("%"+vps.trim()+"%");
             List<Video> videos;
             if(historieId==null){
                 resp.put("status", "fail");
@@ -67,6 +71,7 @@ public class HistoryBuffhController {
                 List<History> histories=historyRepository.getHistoriesById(historieId);
                 //histories.get(0).setVps(vps);
                 histories.get(0).setTimeget(System.currentTimeMillis());
+                /*
                 if(test==1){
                     videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),2);
                 }else if(test==2){
@@ -75,6 +80,9 @@ public class HistoryBuffhController {
                     videos=videoRepository.getvideo(histories.get(0).getListvideo());
                     //videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
                 }
+
+                 */
+                videos=videoRepository.getvideo(histories.get(0).getListvideo());
                 if(videos.size()>0){
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
