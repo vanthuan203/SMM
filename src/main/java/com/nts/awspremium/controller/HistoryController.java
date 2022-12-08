@@ -118,6 +118,7 @@ public class HistoryController {
                     videos=videoRepository.getvideobuff(histories.get(0).getListvideo());
                 }else{
                     videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    System.out.println(videos.get(0).getVideoid());
                 }
                 if(videos.size()>0){
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -141,6 +142,7 @@ public class HistoryController {
                     resp.put("message", "Không còn proxy để sử dụng!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
+                    System.out.println(proxy.get(0).getProxy());
                     histories.get(0).setProxy(proxy.get(0).getProxy().trim());
                 }
                 historyRepository.save(histories.get(0));

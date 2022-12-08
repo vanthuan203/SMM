@@ -52,7 +52,12 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
+            Long  historieId=null;
+            if(test==0){
+                historieId=historyRepository.getIdAccBuffCongchieu("%"+vps.trim()+"%");
+            }else{
+                historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
+            }
             List<Video> videos;
             if(historieId==null){
                 resp.put("status", "fail");
@@ -67,7 +72,8 @@ public class HistoryBuffhController {
                 }else if(test==2){
                     videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),3);
                 }else{
-                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
+                    videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    //videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
                 }
                 if(videos.size()>0){
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
@@ -75,6 +81,7 @@ public class HistoryBuffhController {
                 }else{
                     historyRepository.save(histories.get(0));
                     resp.put("status", "fail");
+                    resp.put("username",histories.get(0).getUsername());
                     resp.put("fail", "video");
                     resp.put("message", "Không còn video để view!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -286,6 +293,24 @@ public class HistoryBuffhController {
             //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping(value = "delthreadcron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> delthreadcron(){
+        JSONObject resp=new JSONObject();
+        try{
+
+            historyRepository.resetThreadcron();
+            //historyViewRepository.deleteHistoryView(username,videoid);
+            resp.put("status", "true");
+            resp.put("message", "Reset thread error thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status", "fail");
