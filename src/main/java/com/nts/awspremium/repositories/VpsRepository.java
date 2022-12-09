@@ -9,7 +9,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface VpsRepository extends JpaRepository<Vps,Integer> {
-    @Query(value = "select * from vps order by vpsoption desc,timecheck asc",nativeQuery = true)
+    @Query(value = "select * from vps order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
     public List<Vps> getListVPS();
     @Query(value = "select * from vps order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
     public List<Vps> getListVPSSub();

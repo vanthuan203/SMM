@@ -156,6 +156,15 @@ public class VpsController {
                     //resp.put("message", "Vps thêm thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if(vpscheck.get(0).getVpsoption().equals("Buffh")){
+                    resp.put("status", "true");
+                    resp.put("option","Test0");
+                    resp.put("vpsreset",vpscheck.get(0).getVpsreset());
+                    vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                    vpsRepository.save(vpscheck.get(0));
+                    //resp.put("message", "Vps thêm thành công!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 resp.put("status", "true");
                 resp.put("option",vpscheck.get(0).getVpsoption());
                 //resp.put("urlapi",vpscheck.get(0).getUrlapi());
