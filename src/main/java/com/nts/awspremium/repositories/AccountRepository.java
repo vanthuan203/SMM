@@ -144,6 +144,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT count(*) FROM account where  round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
     public Integer getCountGmailsByEndtrial();
 
+    @Query(value = "SELECT count(*) FROM account where live=1",nativeQuery = true)
+    public Integer getCountGmailLiveBuffh();
+
+    @Query(value = "SELECT count(*) FROM account",nativeQuery = true)
+    public Integer getCountGmailBuffh();
+
     @Query(value = "SELECT count(*) FROM account ",nativeQuery = true)
     public Integer getCountGmailsSub();
     @Query(value = "SELECT count(*) FROM account where live=1 ",nativeQuery = true)

@@ -703,7 +703,6 @@ public class ChannelController {
         }
         try{
             List<OrderRunning> orderRunnings=orderRunningRepository.getOrderRunning();
-
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
 
@@ -742,7 +741,8 @@ public class ChannelController {
         }
         try{
             List<OrderRunning> orderRunnings=orderRunningRepository.getOrder();
-
+            List<String> timeBuff =channelRepository.getTimeBuffChannel();
+            //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
 
@@ -760,6 +760,13 @@ public class ChannelController {
                 obj.put("view_percent", orderRunnings.get(i).getViewpercent());
                 //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
+                for(int j=0;j<timeBuff.size();j++){
+                    if(orderRunnings.get(i).getChannelId().equals(timeBuff.get(j).split(",")[0])){
+                        obj.put("view_need", timeBuff.get(j).split(",")[1]);
+                        obj.put("view_total", timeBuff.get(j).split(",")[2]);
+                        break;
+                    }
+                }
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");

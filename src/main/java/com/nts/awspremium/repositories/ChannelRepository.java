@@ -12,6 +12,9 @@ import java.util.List;
 public interface ChannelRepository extends JpaRepository<Channel,Long> {
     @Query(value = "SELECT * FROM channel WHERE channelid=?1",nativeQuery = true)
     public List<Channel> getChannelById(String channelid);
+
+    @Query(value = "SELECT channelid,sum(duration) as total,count(*) as view FROM AccPremium.historysum where channelid in (select channel.channelid from channel) group by channelid",nativeQuery = true)
+    public List<String> getTimeBuffChannel();
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM channel WHERE channelid=?1",nativeQuery = true)

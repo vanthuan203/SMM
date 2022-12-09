@@ -380,7 +380,7 @@ public class AccountBuffhController {
             }
 
 
-            Integer allgmail = accountRepository.getCountGmails();
+            Integer allgmail = accountRepository.getCountGmailLiveBuffh();
                 resp.put("counts", allgmail);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
@@ -402,7 +402,7 @@ public class AccountBuffhController {
             }
 
 
-            Integer allgmail = accountRepository.getCountGmailsByEndtrial();
+            Integer allgmail = accountRepository.getCountGmailBuffh();
             resp.put("counts", allgmail);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

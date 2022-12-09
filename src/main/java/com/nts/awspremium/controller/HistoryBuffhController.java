@@ -62,12 +62,13 @@ public class HistoryBuffhController {
 
              */
             Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
-            List<Video> videos;
+
             if(historieId==null){
                 resp.put("status", "fail");
                 resp.put("message", "Không còn user phù hợp !");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }else{
+                List<Video> videos=null;
                 List<History> histories=historyRepository.getHistoriesById(historieId);
                 //histories.get(0).setVps(vps);
                 histories.get(0).setTimeget(System.currentTimeMillis());
@@ -80,8 +81,7 @@ public class HistoryBuffhController {
                     videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),1);
                     //videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
                 }
-
-                videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                //videos=videoRepository.getvideo(histories.get(0).getListvideo());
                 if(videos.size()>0){
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
