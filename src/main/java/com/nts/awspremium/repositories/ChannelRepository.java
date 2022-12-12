@@ -15,6 +15,11 @@ public interface ChannelRepository extends JpaRepository<Channel,Long> {
 
     @Query(value = "SELECT channelid,sum(duration) as total,count(*) as view FROM AccPremium.historysum where channelid in (select channel.channelid from channel) group by channelid",nativeQuery = true)
     public List<String> getTimeBuffChannel();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE channel SET enabled=0 where channelid=?1",nativeQuery = true)
+    public void updateChannelBuffhDone(String channelid);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM channel WHERE channelid=?1",nativeQuery = true)

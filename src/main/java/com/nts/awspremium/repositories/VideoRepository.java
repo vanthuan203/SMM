@@ -27,7 +27,7 @@ public interface VideoRepository extends JpaRepository<Video,Long> {
             "channelid in (select channelid from (select channel.channelid,count(*) as total,maxthreads \n" +
             "from channel left join history on history.channelid=channel.channelid and running=1 where enabled=1 \n" +
             "group by channelid having total<maxthreads) as t) \n" +
-            "and channelid not in (select channelid from historyview where duration!=0 and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by channelid \n" +
+            "and channelid not in (select channelid from historysum where duration!=0 and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by channelid \n" +
             "having sum(duration)> 3500000  order by sum(duration) asc )  order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideobuffh(String listvideo);
 

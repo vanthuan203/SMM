@@ -780,6 +780,58 @@ public class ChannelController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "getorderdone",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getorderdone(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<OrderRunning> orderRunnings=orderRunningRepository.getOrderDone();
+            List<String> timeBuff =channelRepository.getTimeBuffChannel();
+            //System.out.println(timeBuff.get(0).split(",")[0]);
+            //String a=orderRunnings.toString();
+            JSONArray jsonArray= new JSONArray();
+
+            //JSONObject jsonObject=new JSONObject().put("")
+            //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
+            //jsonArray.add(orderRunnings);
+
+            for(int i=0;i<orderRunnings.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("channel_id", orderRunnings.get(i).getChannelId());
+                obj.put("channel_title", orderRunnings.get(i).getTitle());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("max_threads", orderRunnings.get(i).getMaxthreads());
+                obj.put("insert_date", orderRunnings.get(i).getInsertdate());
+                obj.put("view_percent", orderRunnings.get(i).getViewpercent());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("enabled", orderRunnings.get(i).getEnabled());
+                for(int j=0;j<timeBuff.size();j++){
+                    if(orderRunnings.get(i).getChannelId().equals(timeBuff.get(j).split(",")[0])){
+                        obj.put("view_need", timeBuff.get(j).split(",")[1]);
+                        obj.put("view_total", timeBuff.get(j).split(",")[2]);
+                        break;
+                    }
+                }
+                jsonArray.add(obj);
+            }
+            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
+
+            resp.put("total",orderRunnings.size());
+            resp.put("channels",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @DeleteMapping(path = "delete",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String channelid){
         JSONObject resp = new JSONObject();
@@ -806,6 +858,26 @@ public class ChannelController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping(path = "updatechanneldonecron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatechanneldonecron(){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try{
+            List<OrderRunning> list_done =orderRunningRepository.getOrderFullBuffh();
+            for(int i=0;i<list_done.size();i++){
+               channelRepository.updateChannelBuffhDone(list_done.get(i).getChannelId().trim());
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(path = "updatesingle",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatesingle(@RequestHeader(defaultValue = "") String Authorization,@org.springframework.web.bind.annotation.RequestBody ChannelOrder channelOrder){
