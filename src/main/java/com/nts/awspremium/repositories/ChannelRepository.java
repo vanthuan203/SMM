@@ -16,6 +16,9 @@ public interface ChannelRepository extends JpaRepository<Channel,Long> {
     @Query(value = "SELECT channelid,sum(duration) as total,count(*) as view FROM AccPremium.historysum where channelid in (select channel.channelid from channel) group by channelid",nativeQuery = true)
     public List<String> getTimeBuffChannel();
 
+    @Query(value = "SELECT channelid,sum(duration) as total,count(*) as view FROM AccPremium.historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and channelid in (select channel.channelid from channel) group by channelid",nativeQuery = true)
+    public List<String> getTimeBuff24hChannel();
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE channel SET enabled=0 where channelid=?1",nativeQuery = true)

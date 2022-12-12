@@ -54,6 +54,7 @@ public class ProxyController {
             proxynew.setProxy(proxy.getProxy().trim());
             proxynew.setIpv4(proxy.getIpv4().trim());
             proxynew.setState(1);
+            proxynew.setTimeget(0L);
             proxynew.setTypeproxy(proxy.getTypeproxy().trim());
             proxynew.setRunning(0);
             proxyRepository.save(proxynew);

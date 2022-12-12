@@ -742,6 +742,7 @@ public class ChannelController {
         try{
             List<OrderRunning> orderRunnings=orderRunningRepository.getOrder();
             List<String> timeBuff =channelRepository.getTimeBuffChannel();
+            List<String> timeBuff24h =channelRepository.getTimeBuff24hChannel();
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -764,6 +765,13 @@ public class ChannelController {
                     if(orderRunnings.get(i).getChannelId().equals(timeBuff.get(j).split(",")[0])){
                         obj.put("view_need", timeBuff.get(j).split(",")[1]);
                         obj.put("view_total", timeBuff.get(j).split(",")[2]);
+                        break;
+                    }
+                }
+                for(int j=0;j<timeBuff24h.size();j++){
+                    if(orderRunnings.get(i).getChannelId().equals(timeBuff24h.get(j).split(",")[0])){
+                        obj.put("like_rate", timeBuff24h.get(j).split(",")[1]);
+                        obj.put("comment_rate", timeBuff24h.get(j).split(",")[2]);
                         break;
                     }
                 }
