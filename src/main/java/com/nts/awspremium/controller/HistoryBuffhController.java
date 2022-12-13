@@ -136,7 +136,21 @@ public class HistoryBuffhController {
                 resp.put("geo",histories.get(0).getGeo());
                 resp.put("username", histories.get(0).getUsername());
                 resp.put("proxy", proxy.get(0).getProxy());
-                resp.put("video_duration", videos.get(0).getDuration());
+                Random ran=new Random();
+                if(videos.get(0).getDuration()<3600){
+                    if(videos.get(0).getDuration()>1920){
+                        resp.put("video_duration", 1900+ran.nextInt(60));
+                    }else{
+                        resp.put("video_duration", videos.get(0).getDuration());
+                    }
+                }else{
+                    if(videos.get(0).getDuration()>3780){
+                        resp.put("video_duration", 3780+ran.nextInt(60));
+                    }else{
+                        resp.put("video_duration", videos.get(0).getDuration());
+                    }
+                }
+                //resp.put("video_duration", videos.get(0).getDuration());
                 //resp.put("password", account.get(0).getPassword());
                 //resp.put("recover", account.get(0).getRecover());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
