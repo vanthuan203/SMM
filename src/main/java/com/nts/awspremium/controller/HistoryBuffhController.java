@@ -28,6 +28,9 @@ public class HistoryBuffhController {
     private AccountRepository accountRepository;
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private VideoBuffhRepository videoBuffhRepository;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
@@ -51,8 +54,11 @@ public class HistoryBuffhController {
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        try{
-            //Long  historieId=null;
+        Random ran=new Random();
+        Integer ranver=ran.nextInt(10000);
+        if(ranver>3000){
+            try{
+                //Long  historieId=null;
             /*
             if(test==0){
                 historieId=historyRepository.getIdAccBuffCongchieu("%"+vps.trim()+"%");
@@ -61,107 +67,220 @@ public class HistoryBuffhController {
             }
 
              */
-            Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
+                Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
 
-            if(historieId==null){
-                resp.put("status", "fail");
-                resp.put("message", "Không còn user phù hợp !");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                List<Video> videos=null;
-                List<History> histories=historyRepository.getHistoriesById(historieId);
-                //histories.get(0).setVps(vps);
-                histories.get(0).setTimeget(System.currentTimeMillis());
-
-                if(test==1){
-                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),2);
-                }else if(test==2){
-                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),3);
-                }else{
-                    videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),1);
-                    //videos=videoRepository.getvideobuffh(histories.get(0).getListvideo());
-                }
-                //videos=videoRepository.getvideo(histories.get(0).getListvideo());
-                if(videos.size()>0){
-                    histories.get(0).setVideoid(videos.get(0).getVideoid());
-                    histories.get(0).setChannelid(videos.get(0).getChannelid());
-                }else{
-                    historyRepository.save(histories.get(0));
+                if(historieId==null){
                     resp.put("status", "fail");
-                    resp.put("username",histories.get(0).getUsername());
-                    resp.put("fail", "video");
-                    resp.put("message", "Không còn video để view!");
+                    resp.put("message", "Không còn user phù hợp !");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }else{
+                    List<Video> videos=null;
+                    List<History> histories=historyRepository.getHistoriesById(historieId);
+                    //histories.get(0).setVps(vps);
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+
+                    if(test==1){
+                        videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),2);
+                    }else if(test==2){
+                        videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),3);
+                    }else{
+                        videos=videoRepository.getvideobuffh(histories.get(0).getListvideo(),1);
+                    }
+                    //videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    if(videos.size()>0){
+                        histories.get(0).setVideoid(videos.get(0).getVideoid());
+                        histories.get(0).setChannelid(videos.get(0).getChannelid());
+                    }else{
+                        historyRepository.save(histories.get(0));
+                        resp.put("status", "fail");
+                        resp.put("username",histories.get(0).getUsername());
+                        resp.put("fail", "video");
+                        resp.put("message", "Không còn video để view!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+
+                    //add thong tin channel
+                    List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
+
+                    List<Proxy> proxy = null;
+                    if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
+                        if(histories.get(0).getGeo().indexOf("vn")>=0){
+                            proxy = proxyRepository.getProxyBuff("%vn%");
+                        }else{
+                            proxy = proxyRepository.getProxyBuff("%us%");
+                        }
+                    } else {
+                        if(histories.get(0).getGeo().indexOf("vn")>=0){
+                            proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }else{
+                            proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }
+                    }
+                    if (proxy.size()==0){
+                        histories.get(0).setProxy("");
+                        historyRepository.save(histories.get(0));
+                        resp.put("status", "fail");
+                        resp.put("message", "Không còn proxy để sử dụng!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }else{
+                        histories.get(0).setProxy(proxy.get(0).getProxy().trim());
+                    }
+                    histories.get(0).setRunning(1);
+                    historyRepository.save(histories.get(0));
+                    proxy.get(0).setTimeget(System.currentTimeMillis());
+                    //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                    proxyRepository.save(proxy.get(0));
+                    //resp.put("ref", ref);
+                    resp.put("channel_id", videos.get(0).getChannelid());
+                    //resp.put("title", channels.get(0).getTitle());
+                    //resp.put("isPremium", isPremium ? 1 : 0);
+                    //resp.put("isMobile", isMobile ? "Mobile" : "PC");
+                    resp.put("status", "true");
+                    resp.put("video_id", videos.get(0).getVideoid());
+                    resp.put("video_title", videos.get(0).getTitle());
+                    resp.put("geo",histories.get(0).getGeo());
+                    resp.put("username", histories.get(0).getUsername());
+                    resp.put("proxy", proxy.get(0).getProxy());
+                    if(videos.get(0).getDuration()<3600){
+                        if(videos.get(0).getDuration()>1920){
+                            resp.put("video_duration", 1850+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getDuration()<7200){
+                        if(videos.get(0).getDuration()>3780){
+                            resp.put("video_duration", 3710+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else{
+                        if(videos.get(0).getDuration()>7350){
+                            resp.put("video_duration", 7280+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }
+                    //resp.put("video_duration", videos.get(0).getDuration());
+                    //resp.put("password", account.get(0).getPassword());
+                    //resp.put("recover", account.get(0).getRecover());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
 
-                //add thong tin channel
-                List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
-
-                List<Proxy> proxy = null;
-                if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                    if(histories.get(0).getGeo().indexOf("vn")>=0){
-                        proxy = proxyRepository.getProxyBuff("%vn%");
-                    }else{
-                        proxy = proxyRepository.getProxyBuff("%us%");
-                    }
-                } else {
-                    if(histories.get(0).getGeo().indexOf("vn")>=0){
-                        proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    }else{
-                        proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
-                    }
-                }
-                if (proxy.size()==0){
-                    histories.get(0).setProxy("");
-                    historyRepository.save(histories.get(0));
-                    resp.put("status", "fail");
-                    resp.put("message", "Không còn proxy để sử dụng!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }else{
-                    histories.get(0).setProxy(proxy.get(0).getProxy().trim());
-                }
-                histories.get(0).setRunning(1);
-                historyRepository.save(histories.get(0));
-                proxy.get(0).setTimeget(System.currentTimeMillis());
-                //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
-                proxyRepository.save(proxy.get(0));
-                //resp.put("ref", ref);
-                resp.put("channel_id", videos.get(0).getChannelid());
-                //resp.put("title", channels.get(0).getTitle());
-                //resp.put("isPremium", isPremium ? 1 : 0);
-                //resp.put("isMobile", isMobile ? "Mobile" : "PC");
-                resp.put("status", "true");
-                resp.put("video_id", videos.get(0).getVideoid());
-                resp.put("video_title", videos.get(0).getTitle());
-                resp.put("geo",histories.get(0).getGeo());
-                resp.put("username", histories.get(0).getUsername());
-                resp.put("proxy", proxy.get(0).getProxy());
-                Random ran=new Random();
-                if(videos.get(0).getDuration()<3600){
-                    if(videos.get(0).getDuration()>1920){
-                        resp.put("video_duration", 1900+ran.nextInt(60));
-                    }else{
-                        resp.put("video_duration", videos.get(0).getDuration());
-                    }
-                }else{
-                    if(videos.get(0).getDuration()>3780){
-                        resp.put("video_duration", 3780+ran.nextInt(60));
-                    }else{
-                        resp.put("video_duration", videos.get(0).getDuration());
-                    }
-                }
-                //resp.put("video_duration", videos.get(0).getDuration());
-                //resp.put("password", account.get(0).getPassword());
-                //resp.put("recover", account.get(0).getRecover());
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }catch (Exception e){
+                resp.put("status","fail");
+                resp.put("fail","sum");
+                resp.put("message",e.getMessage());
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
+        }else{
+            try{
+                Long  historieId=historyRepository.getIdAccBuff("%"+vps.trim()+"%");
 
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("fail","sum");
-            resp.put("message",e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+                if(historieId==null){
+                    resp.put("status", "fail");
+                    resp.put("message", "Không còn user phù hợp !");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }else{
+                    List<VideoBuffh> videos=null;
+                    List<History> histories=historyRepository.getHistoriesById(historieId);
+                    //histories.get(0).setVps(vps);
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+
+                    if(test==1){
+                        videos=videoBuffhRepository.getvideobuffhVer2(histories.get(0).getListvideo(),2);
+                    }else if(test==2){
+                        videos=videoBuffhRepository.getvideobuffhVer2(histories.get(0).getListvideo(),3);
+                    }else{
+                        videos=videoBuffhRepository.getvideobuffhVer2(histories.get(0).getListvideo(),1);
+                    }
+                    //videos=videoRepository.getvideo(histories.get(0).getListvideo());
+                    if(videos.size()>0){
+                        histories.get(0).setVideoid(videos.get(0).getVideoid());
+                        histories.get(0).setChannelid(videos.get(0).getChannelid());
+                    }else{
+                        historyRepository.save(histories.get(0));
+                        resp.put("status", "fail");
+                        resp.put("username",histories.get(0).getUsername());
+                        resp.put("fail", "video");
+                        resp.put("message", "Không còn video để view!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+
+                    //add thong tin channel
+                    List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
+
+                    List<Proxy> proxy = null;
+                    if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
+                        if(histories.get(0).getGeo().indexOf("vn")>=0){
+                            proxy = proxyRepository.getProxyBuff("%vn%");
+                        }else{
+                            proxy = proxyRepository.getProxyBuff("%us%");
+                        }
+                    } else {
+                        if(histories.get(0).getGeo().indexOf("vn")>=0){
+                            proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }else{
+                            proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }
+                    }
+                    if (proxy.size()==0){
+                        histories.get(0).setProxy("");
+                        historyRepository.save(histories.get(0));
+                        resp.put("status", "fail");
+                        resp.put("message", "Không còn proxy để sử dụng!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }else{
+                        histories.get(0).setProxy(proxy.get(0).getProxy().trim());
+                    }
+                    histories.get(0).setRunning(1);
+                    historyRepository.save(histories.get(0));
+                    proxy.get(0).setTimeget(System.currentTimeMillis());
+                    //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                    proxyRepository.save(proxy.get(0));
+                    //resp.put("ref", ref);
+                    resp.put("channel_id", videos.get(0).getChannelid());
+                    //resp.put("title", channels.get(0).getTitle());
+                    //resp.put("isPremium", isPremium ? 1 : 0);
+                    //resp.put("isMobile", isMobile ? "Mobile" : "PC");
+                    resp.put("status", "true");
+                    resp.put("video_id", videos.get(0).getVideoid());
+                    resp.put("video_title", videos.get(0).getVideotitle());
+                    resp.put("geo",histories.get(0).getGeo());
+                    resp.put("username", histories.get(0).getUsername());
+                    resp.put("proxy", proxy.get(0).getProxy());
+                    if(videos.get(0).getDuration()<3600){
+                        if(videos.get(0).getDuration()>1920){
+                            resp.put("video_duration", 1850+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getDuration()<7200){
+                        if(videos.get(0).getDuration()>3780){
+                            resp.put("video_duration", 3710+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else{
+                        if(videos.get(0).getDuration()>7350){
+                            resp.put("video_duration", 7280+ran.nextInt(60));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }
+                    //resp.put("video_duration", videos.get(0).getDuration());
+                    //resp.put("password", account.get(0).getPassword());
+                    //resp.put("recover", account.get(0).getRecover());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+
+            }catch (Exception e){
+                resp.put("status","fail");
+                resp.put("fail","sum");
+                resp.put("message",e.getMessage());
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+            }
         }
+
     }
     @GetMapping(value = "/updatevideoid",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,

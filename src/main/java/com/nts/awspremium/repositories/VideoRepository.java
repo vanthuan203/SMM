@@ -40,6 +40,7 @@ public interface VideoRepository extends JpaRepository<Video,Long> {
             "having sum(duration)> 3500000  order by sum(duration) asc )  order by rand() limit 1",nativeQuery = true)
     public List<Video> getvideobuffh(String listvideo,Integer enabled);
 
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM video where channelid=?1",nativeQuery = true)
