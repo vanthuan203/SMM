@@ -14,13 +14,14 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum where videoid in (select videobuffh.videoid from videobuffh) group by videoid",nativeQuery = true)
     public List<String> getTimeBuffVideo();
 
-    @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum where videoid in (select videobuffh.videoid from videobuffh) group by videoid limit ?1",nativeQuery = true)
-    public List<String> getTimeBuffVideo(Integer limit);
+    @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum where videoid=?1 limit 1",nativeQuery = true)
+    public String getTimeBuffByVideoId(String videoid);
 
     @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and videoid in (select videobuffh.videoid from videobuffh) group by videoid",nativeQuery = true)
     public List<String> getTimeBuff24hVideo();
-    @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and videoid in (select videobuffh.videoid from videobuffh) group by videoid limit 1",nativeQuery = true)
-    public List<String> getTimeBuff24hVideo(Integer limit);
+    @Query(value = "SELECT videoid,sum(duration) as total,count(*) as view FROM historysum \n" +
+            "where  round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and videoid=?1 limit 1",nativeQuery = true)
+    public String getTimeBuff24hByVideoId(String videoid);
     @Query(value = "SELECT * from videobuffh where videoid=?1",nativeQuery = true)
     public List<VideoBuffh> getVideoBuffhById(String vidoeid);
     @Query(value = "SELECT * FROM videobuffh where INSTR(?1,videoid)=0 and videoid not in \n" +

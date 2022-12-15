@@ -312,7 +312,7 @@ public class VideoBuffhController {
 
         Request request1 = null;
 
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
         Response response1 = client1.newCall(request1).execute();
 
@@ -422,7 +422,7 @@ public class VideoBuffhController {
 
         Request request1 = null;
 
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw&fields=items(id,contentDetails(duration))&part=contentDetails&id=" + listvideo).get().build();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,contentDetails(duration))&part=contentDetails&id=" + listvideo).get().build();
 
         Response response1 = client1.newCall(request1).execute();
 
@@ -754,7 +754,7 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getorderbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "1000") Integer key){
+    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -764,9 +764,9 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder(key);
-            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo(key);
-            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(key);
+            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder();
+            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo();
+            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -823,6 +823,71 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "getorderfilterbuffh",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getorderfilterbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrderFilter("%"+key+"%");
+            //System.out.println(timeBuff.get(0).split(",")[0]);
+            //String a=orderRunnings.toString();
+            JSONArray jsonArray= new JSONArray();
+
+            //JSONObject jsonObject=new JSONObject().put("")
+            //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
+            //jsonArray.add(orderRunnings);
+
+            for(int i=0;i<orderRunnings.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("videoid", orderRunnings.get(i).getVideoId());
+                obj.put("videotitle", orderRunnings.get(i).getVideoTitle());
+                obj.put("viewstart", orderRunnings.get(i).getViewStart());
+                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
+                obj.put("insertdate", orderRunnings.get(i).getInsertDate());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("timebuff", orderRunnings.get(i).getTimeBuff());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("duration", orderRunnings.get(i).getDuration());
+                obj.put("optionbuff", orderRunnings.get(i).getOptionBuff());
+                obj.put("mobilerate", orderRunnings.get(i).getMobileRate());
+                obj.put("searchrate", orderRunnings.get(i).getSearchRate());
+                obj.put("suggestrate", orderRunnings.get(i).getSuggestRate());
+                obj.put("directrate", orderRunnings.get(i).getDirectRate());
+                obj.put("homerate", orderRunnings.get(i).getHomeRate());
+                obj.put("likerate", orderRunnings.get(i).getLikeRate());
+                obj.put("commentrate", orderRunnings.get(i).getCommentRate());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("enabled", orderRunnings.get(i).getEnabled());
+
+                String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(orderRunnings.get(i).getVideoId().trim());
+                obj.put("timebuffhtotal", timeBuff.split(",")[1]);
+                obj.put("viewtotal", timeBuff.split(",")[2]);
+
+                String timeBuff24h =videoBuffhRepository.getTimeBuff24hByVideoId(orderRunnings.get(i).getVideoId().trim());
+                obj.put("timebuffh24h", timeBuff24h.split(",")[1]);
+                obj.put("view24h", timeBuff24h.split(",")[2]);
+
+                jsonArray.add(obj);
+            }
+            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
+
+            resp.put("total",orderRunnings.size());
+            resp.put("videobuff",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping(path = "delete",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String videoid){
         JSONObject resp = new JSONObject();
