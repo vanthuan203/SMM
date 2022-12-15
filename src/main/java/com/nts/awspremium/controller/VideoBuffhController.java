@@ -312,7 +312,7 @@ public class VideoBuffhController {
 
         Request request1 = null;
 
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
         Response response1 = client1.newCall(request1).execute();
 
