@@ -56,7 +56,7 @@ public class HistoryBuffhController {
         }
         Random ran=new Random();
         Integer ranver=ran.nextInt(10000);
-        if(ranver>3000){
+        if(ranver>5000){
             try{
                 //Long  historieId=null;
             /*
@@ -337,7 +337,7 @@ public class HistoryBuffhController {
                 //histories.get(0).setRunning(1);
                 historyRepository.save(histories.get(0));
                 resp.put("status", "true");
-                resp.put("message", "Update hitory thành công!");
+                resp.put("message", "Update videoid vào history thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         }catch (Exception e){
@@ -376,30 +376,35 @@ public class HistoryBuffhController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                List<History> histories =historyRepository.getHistoriesById(historieId);
+                //List<History> histories =historyRepository.getHistoriesById(historieId);
                 //histories.get(0).setProxy(proxy);
-                histories.get(0).setRunning(0);
-                histories.get(0).setVideoid("");
+                //histories.get(0).setRunning(0);
+                //histories.get(0).setVideoid("");
                 //histories.get(0).setVps("");
-                historyRepository.save(histories.get(0));
-
-                HistorySum historySum = new HistorySum();
-                historySum.setVideoid(videoid.trim());
-                historySum.setUsername(username);
-                historySum.setTime(System.currentTimeMillis());
-                historySum.setChannelid(channelid);
-                historySum.setDuration(duration);
-                try {
-                    historySumRepository.save(historySum);
-                } catch (Exception e) {
+                //historyRepository.save(histories.get(0));
+                Integer check_duration= historyRepository.checkDurationBuffhByTimechekc(username,(long)(duration));
+                if(check_duration>0){
+                    HistorySum historySum = new HistorySum();
+                    historySum.setVideoid(videoid.trim());
+                    historySum.setUsername(username);
+                    historySum.setTime(System.currentTimeMillis());
+                    historySum.setChannelid(channelid);
+                    historySum.setDuration(duration);
                     try {
                         historySumRepository.save(historySum);
-                    } catch (Exception f) {
+                    } catch (Exception e) {
+                        try {
+                            historySumRepository.save(historySum);
+                        } catch (Exception f) {
+                        }
                     }
+                    resp.put("status", "true");
+                    resp.put("message", "Update duration thành công!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 //historyViewRepository.updateduration(duration,username,videoid);
-                resp.put("status", "true");
-                resp.put("message", "Update hitory thành công!");
+                resp.put("status", "fail");
+                resp.put("message", "Không update duration !");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         }catch (Exception e){
@@ -445,7 +450,6 @@ public class HistoryBuffhController {
     ResponseEntity<String> delthreadcron(){
         JSONObject resp=new JSONObject();
         try{
-
             historyRepository.resetThreadcron();
             //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");
