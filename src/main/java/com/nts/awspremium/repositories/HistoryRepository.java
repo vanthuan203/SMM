@@ -69,8 +69,8 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT count(*) FROM history where vps=?1 and running=1",nativeQuery = true)
     public Integer getrunningbyVps(String vps);
 
-    @Query(value = "SELECT count(*) FROM history where username=?1 and round((UNIX_TIMESTAMP()-timeget/1000)>duration)",nativeQuery = true)
-    public Integer checkDurationBuffhByTimechekc(String username,Long duration);
+    @Query(value = "SELECT count(*) FROM history where username=?1 and round((UNIX_TIMESTAMP()-timeget/1000))>duration",nativeQuery = true)
+    public Integer checkDurationBuffhByTimecheck(String username,Long duration);
 
     @Query(value = "SELECT id FROM history where vps=?1 and running=1",nativeQuery = true)
     public List<Long> getHistoryIdbyVps(String vps);

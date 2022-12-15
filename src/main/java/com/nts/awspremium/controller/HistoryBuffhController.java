@@ -382,7 +382,7 @@ public class HistoryBuffhController {
                 //histories.get(0).setVideoid("");
                 //histories.get(0).setVps("");
                 //historyRepository.save(histories.get(0));
-                Integer check_duration= historyRepository.checkDurationBuffhByTimechekc(username,(long)(duration));
+                Integer check_duration= historyRepository.checkDurationBuffhByTimecheck(username.trim(),(long)(duration));
                 if(check_duration>0){
                     HistorySum historySum = new HistorySum();
                     historySum.setVideoid(videoid.trim());

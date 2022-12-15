@@ -754,7 +754,7 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getorderbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "1000") Integer key){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -764,9 +764,9 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder();
-            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo();
-            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder(key);
+            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo(key);
+            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(key);
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
