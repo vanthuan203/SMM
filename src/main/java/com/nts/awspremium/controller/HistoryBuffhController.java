@@ -334,7 +334,7 @@ public class HistoryBuffhController {
                 }else{
                     histories.get(0).setListvideo(histories.get(0).getListvideo()+","+videoid);
                 }
-                histories.get(0).setRunning(1);
+                //histories.get(0).setRunning(1);
                 historyRepository.save(histories.get(0));
                 resp.put("status", "true");
                 resp.put("message", "Update hitory thành công!");
@@ -346,7 +346,6 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @GetMapping(value = "/update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
