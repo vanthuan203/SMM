@@ -920,9 +920,9 @@ public class VideoBuffhController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try{
-            List<OrderRunning> list_done =orderRunningRepository.getOrderFullBuffh();
+            List<OrderBuffhRunning> list_done =orderBuffhRunningRepository.getOrderFullBuffh();
             for(int i=0;i<list_done.size();i++){
-               channelRepository.updateChannelBuffhDone(list_done.get(i).getChannelId().trim());
+               videoBuffhRepository.updateVideoBuffhDone(list_done.get(i).getVideoId().trim(),System.currentTimeMillis());
             }
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
