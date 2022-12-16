@@ -1,7 +1,7 @@
 package com.nts.awspremium.repositories;
 
-import com.nts.awspremium.model.Video;
 import com.nts.awspremium.model.VideoBuffh;
+import com.nts.awspremium.model.VideoBuffhHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
+public interface VideoBuffhHistoryRepository extends JpaRepository<VideoBuffhHistory,Long> {
 
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo();
@@ -21,8 +21,8 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     public List<String> getTimeBuff24hVideo();
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and videobuffh.videoid=?1 group by videobuffh.videoid order by insertdate desc limit 1",nativeQuery = true)
     public String getTimeBuff24hByVideoId(String videoid);
-    @Query(value = "SELECT * from videobuffh where enabled!=0 and videoid=?1",nativeQuery = true)
-    public List<VideoBuffh> getVideoBuffhById(String vidoeid);
+    @Query(value = "SELECT * from videobuffhhistory",nativeQuery = true)
+    public List<VideoBuffhHistory> getVideoBuffhHistories();
 
     @Query(value = "SELECT count(*) from videobuffh where videoid=?1 and enabled!=0",nativeQuery = true)
     public Integer getCountVideoId(String vidoeid);

@@ -8,7 +8,6 @@ public interface OrderBuffhRunning {
     Integer getTimeBuff();
     Integer getViewStart();
     Long getInsertDate();
-
     Integer getEnabled();
     String getNote();
     Long getDuration();
