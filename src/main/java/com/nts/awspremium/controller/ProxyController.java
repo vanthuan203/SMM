@@ -346,7 +346,7 @@ public class ProxyController {
 
                 Request requestchannel = null;
 
-                requestchannel = new Request.Builder().url("https://maker.ifttt.com/trigger/noti_proxy_phim_error/with/key/fwentilQadKm7AhNm53u4BCM8OF7BYmOOO0JgPE8qoS?value1="+list_check+"&value2="+sum_error.toString()+"&value3=check_ae_nhe").get().build();
+                requestchannel = new Request.Builder().url("https://maker.ifttt.com/trigger/noti_proxy_buffh_error/with/key/fwentilQadKm7AhNm53u4BCM8OF7BYmOOO0JgPE8qoS?value1="+list_check+"&value2="+sum_error.toString()+"&value3=check_ae_nhe").get().build();
 
                 Response responsechannel = clientchannel.newCall(requestchannel).execute();
             }
