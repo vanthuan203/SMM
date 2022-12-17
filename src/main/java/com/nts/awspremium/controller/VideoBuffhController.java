@@ -327,6 +327,36 @@ public class VideoBuffhController {
         }
     }
 
+    @GetMapping(path = "getcounttimebufforder",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getcounttimebufforder() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            Integer counttimeorder =videoBuffhRepository.getCountTimeBuffOrder();
+            resp.put("totaltimeorder",counttimeorder);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "getcounttimebuffedorder",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getcounttimebuffedorder() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            Integer counttimeorder =videoBuffhRepository.getCountTimeBuffedOrder();
+            resp.put("totaltimebuffedorder",counttimeorder);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "getorderfilterbuffh",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getorderfilterbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key){
         JSONObject resp = new JSONObject();
@@ -370,12 +400,25 @@ public class VideoBuffhController {
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
 
                 String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(orderRunnings.get(i).getVideoId().trim());
-                obj.put("timebuffhtotal", timeBuff.split(",")[1]);
-                obj.put("viewtotal", timeBuff.split(",")[2]);
+                if(timeBuff==null){
+                    obj.put("timebuffhtotal", 0);
+                    obj.put("viewtotal", 0);
+                }else{
+                    obj.put("timebuffhtotal", timeBuff.split(",")[1]);
+                    obj.put("viewtotal", timeBuff.split(",")[2]);
+                }
+
 
                 String timeBuff24h =videoBuffhRepository.getTimeBuff24hByVideoId(orderRunnings.get(i).getVideoId().trim());
-                obj.put("timebuffh24h", timeBuff24h.split(",")[1]);
-                obj.put("view24h", timeBuff24h.split(",")[2]);
+
+                if(timeBuff24h==null){
+                    obj.put("timebuffh24h", 0);
+                    obj.put("view24h",0);
+                }else{
+                    obj.put("timebuffh24h", timeBuff24h.split(",")[1]);
+                    obj.put("view24h", timeBuff24h.split(",")[2]);
+                }
+
 
                 jsonArray.add(obj);
             }
@@ -403,7 +446,7 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrderFilter("%"+key+"%");
+            List<VideoBuffhHistory> orderRunnings=videoBuffhHistoryRepository.getOrderHistoryFilter("%"+key+"%");
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -414,33 +457,29 @@ public class VideoBuffhController {
 
             for(int i=0;i<orderRunnings.size();i++){
                 JSONObject obj = new JSONObject();
-                obj.put("videoid", orderRunnings.get(i).getVideoId());
-                obj.put("videotitle", orderRunnings.get(i).getVideoTitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewStart());
+                obj.put("videoid", orderRunnings.get(i).getVideoid());
+                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
+                obj.put("viewstart", orderRunnings.get(i).getViewstart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
-                obj.put("insertdate", orderRunnings.get(i).getInsertDate());
-                obj.put("total", orderRunnings.get(i).getTotal());
-                obj.put("timebuff", orderRunnings.get(i).getTimeBuff());
+                obj.put("insertdate", orderRunnings.get(i).getInsertdate());
+                //obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("timebuff", orderRunnings.get(i).getTimebuff());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("duration", orderRunnings.get(i).getDuration());
-                obj.put("optionbuff", orderRunnings.get(i).getOptionBuff());
-                obj.put("mobilerate", orderRunnings.get(i).getMobileRate());
-                obj.put("searchrate", orderRunnings.get(i).getSearchRate());
-                obj.put("suggestrate", orderRunnings.get(i).getSuggestRate());
-                obj.put("directrate", orderRunnings.get(i).getDirectRate());
-                obj.put("homerate", orderRunnings.get(i).getHomeRate());
-                obj.put("likerate", orderRunnings.get(i).getLikeRate());
-                obj.put("commentrate", orderRunnings.get(i).getCommentRate());
+                obj.put("optionbuff", orderRunnings.get(i).getOptionbuff());
+                obj.put("mobilerate", orderRunnings.get(i).getMobilerate());
+                obj.put("searchrate", orderRunnings.get(i).getSearchrate());
+                obj.put("suggestrate", orderRunnings.get(i).getSuggestrate());
+                obj.put("directrate", orderRunnings.get(i).getDirectrate());
+                obj.put("homerate", orderRunnings.get(i).getHomerate());
+                obj.put("likerate", orderRunnings.get(i).getLikerate());
+                obj.put("commentrate", orderRunnings.get(i).getCommentrate());
+                obj.put("enddate", orderRunnings.get(i).getEnddate());
+                obj.put("cancel", orderRunnings.get(i).getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
-
-                String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(orderRunnings.get(i).getVideoId().trim());
-                obj.put("timebuffhtotal", timeBuff.split(",")[1]);
-                obj.put("viewtotal", timeBuff.split(",")[2]);
-
-                String timeBuff24h =videoBuffhRepository.getTimeBuff24hByVideoId(orderRunnings.get(i).getVideoId().trim());
-                obj.put("timebuffh24h", timeBuff24h.split(",")[1]);
-                obj.put("view24h", timeBuff24h.split(",")[2]);
+                obj.put("timebuffhtotal", orderRunnings.get(i).getTimebuffend());
+                obj.put("viewtotal", orderRunnings.get(i).getViewbuffend());
 
                 jsonArray.add(obj);
             }

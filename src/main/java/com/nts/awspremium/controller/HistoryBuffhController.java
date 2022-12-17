@@ -446,6 +446,44 @@ public class HistoryBuffhController {
     }
 
 
+    @GetMapping(value = "gettimebuff7day",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> gettimebuff7day(){
+        JSONObject resp=new JSONObject();
+        try{
+            List<String> time7day=historySumRepository.Gettimebuff7day();
+            JSONArray jsonArray=new JSONArray();
+            Integer maxtime=0;
+            Integer maxview=0;
+
+            for(int i=0;i<time7day.size();i++){
+                System.out.println(time7day.get(i).split(",")[1]);
+                if(maxtime<Integer.parseInt(time7day.get(i).split(",")[1])){
+                    maxtime=Integer.parseInt(time7day.get(i).split(",")[1]);
+                }
+                if(maxview<Integer.parseInt(time7day.get(i).split(",")[2])){
+                    maxview=Integer.parseInt(time7day.get(i).split(",")[2]);
+                }
+            }
+            for(int i=0;i<time7day.size();i++){
+                JSONObject obj=new JSONObject();
+                obj.put("date", time7day.get(i).split(",")[0]);
+                obj.put("time", time7day.get(i).split(",")[1]);
+                obj.put("view", time7day.get(i).split(",")[2]);
+                obj.put("maxtime", maxtime.toString());
+                obj.put("maxview",maxview.toString());
+
+                jsonArray.add(obj);
+            }
+            resp.put("time7day", jsonArray);
+
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "delthreadcron",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delthreadcron(){
         JSONObject resp=new JSONObject();

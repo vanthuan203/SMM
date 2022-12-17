@@ -1,10 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
-import com.nts.awspremium.repositories.AdminRepository;
-import com.nts.awspremium.repositories.HistoryRepository;
-import com.nts.awspremium.repositories.ProxyRepository;
-import com.nts.awspremium.repositories.VpsRepository;
+import com.nts.awspremium.repositories.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,6 +27,8 @@ public class VpsController {
     private HistoryRepository historyRepository;
     @Autowired
     private ProxyRepository proxyRepository;
+    @Autowired
+    private AccountRepository accountRepository;
     @GetMapping(value = "list",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getlist(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
@@ -46,16 +45,24 @@ public class VpsController {
                 //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
                 //jsonArray.add(orderRunnings);
                 List<VpsRunning> vpsRunnings=historyRepository.getvpsrunning();
+                List<VpsRunning> accByVps=accountRepository.getCountAccByVps();
                 //List<VpsRunning> vpsview=historyRepository.getvpsview();
                 for(int i=0;i<vps.size();i++){
                     Integer total=0;
                     String time="";
                     Integer totalview=0;
+                    Integer totalacc=0;
                     for(int j=0;j<vpsRunnings.size();j++){
                         if(vps.get(i).getVps().equals(vpsRunnings.get(j).getVps())){
                            total=vpsRunnings.get(j).getTotal();
                            time=vpsRunnings.get(j).getTime();
                            vpsRunnings.remove(j);
+                        }
+                    }
+                    for(int k=0;k<accByVps.size();k++){
+                        if(vps.get(i).getVps().equals(accByVps.get(k).getVps())){
+                            totalacc=accByVps.get(k).getTotal();
+                            accByVps.remove(k);
                         }
                     }
                     /*
@@ -77,6 +84,7 @@ public class VpsController {
                     obj.put("timecheck",  vps.get(i).getTimecheck());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("total",total);
+                    obj.put("acccount", totalacc);
                     obj.put("view24h",totalview);
                     jsonArray.add(obj);
                 }
