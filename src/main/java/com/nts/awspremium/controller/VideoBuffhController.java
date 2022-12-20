@@ -87,6 +87,7 @@ public class VideoBuffhController {
                 videoBuffhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                 videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
                 videoBuffhnew.setInsertdate(System.currentTimeMillis());
+                videoBuffhnew.setUser(videoBuffh.getUser());
                 videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
                 videoBuffhnew.setChannelid(snippet.get("channelId").toString());
                 videoBuffhnew.setVideotitle(snippet.get("title").toString());
@@ -139,6 +140,7 @@ public class VideoBuffhController {
                 obj.put("homerate", orderRunnings.get(i).getHomeRate());
                 obj.put("likerate", orderRunnings.get(i).getLikeRate());
                 obj.put("commentrate", orderRunnings.get(i).getCommentRate());
+                obj.put("user", orderRunnings.get(i).getUser());
                 //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 obj.put("timebuffhtotal", 0);
@@ -297,7 +299,7 @@ public class VideoBuffhController {
                 obj.put("homerate", orderRunnings.get(i).getHomeRate());
                 obj.put("likerate", orderRunnings.get(i).getLikeRate());
                 obj.put("commentrate", orderRunnings.get(i).getCommentRate());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 for(int j=0;j<timeBuff.size();j++){
                     if(orderRunnings.get(i).getVideoId().equals(timeBuff.get(j).split(",")[0])){
@@ -347,7 +349,7 @@ public class VideoBuffhController {
                 obj.put("viewstart", orderRunnings.get(i).getViewstart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
-                //obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("timebuff", orderRunnings.get(i).getTimebuff());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("duration", orderRunnings.get(i).getDuration());
@@ -450,7 +452,7 @@ public class VideoBuffhController {
                 obj.put("homerate", orderRunnings.get(i).getHomeRate());
                 obj.put("likerate", orderRunnings.get(i).getLikeRate());
                 obj.put("commentrate", orderRunnings.get(i).getCommentRate());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
 
                 String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(orderRunnings.get(i).getVideoId().trim());
@@ -553,7 +555,7 @@ public class VideoBuffhController {
                 obj.put("homerate", orderRunnings.get(i).getHomeRate());
                 obj.put("likerate", orderRunnings.get(i).getLikeRate());
                 obj.put("commentrate", orderRunnings.get(i).getCommentRate());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
 
 
@@ -614,7 +616,7 @@ public class VideoBuffhController {
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 obj.put("viewend", orderRunnings.get(i).getViewend());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 obj.put("timebuffhtotal", orderRunnings.get(i).getTimebuffend());
                 obj.put("viewtotal", orderRunnings.get(i).getViewbuffend());
@@ -674,6 +676,7 @@ public class VideoBuffhController {
             videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
             videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
             videoBuffhnew.setCancel(1);
+            videoBuffhnew.setUser(videoBuffh.get(0).getUser());
             videoBuffhnew.setEnddate(enddate);
             String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(videoid.trim());
             if(timeBuff == null){
@@ -728,6 +731,7 @@ public class VideoBuffhController {
                 videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
                 videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
                 videoBuffhnew.setCancel(0);
+                videoBuffhnew.setUser(videoBuffh.get(0).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(list_done.get(i).getVideoId().trim());
                 if(timeBuff == null){
@@ -802,6 +806,7 @@ public class VideoBuffhController {
                 obj.put("likerate", orderRunnings.get(0).getLikeRate());
                 obj.put("commentrate", orderRunnings.get(0).getCommentRate());
                 obj.put("enabled", orderRunnings.get(0).getEnabled());
+                obj.put("user", orderRunnings.get(0).getUser());
                 obj.put("timebuffhtotal", 0);
                 obj.put("viewtotal", 0);
                 obj.put("timebuffh24h", 0);

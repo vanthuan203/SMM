@@ -30,11 +30,12 @@ public class VideoBuffh {
 
     private Integer likerate;
     private Integer commentrate;
+    private String user;
 
     public VideoBuffh() {
     }
 
-    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate) {
+    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate, String user) {
         this.id = id;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -57,6 +58,15 @@ public class VideoBuffh {
         this.note = note;
         this.likerate = likerate;
         this.commentrate = commentrate;
+        this.user = user;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public Integer getLikerate() {

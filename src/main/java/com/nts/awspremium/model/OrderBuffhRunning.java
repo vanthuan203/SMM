@@ -19,4 +19,5 @@ public interface OrderBuffhRunning {
     Integer getHomeRate();
     Integer getLikeRate();
     Integer getCommentRate();
+    String getUser();
 }

@@ -64,4 +64,34 @@ public class AuthController {
 
     }
 
+    @PostMapping(path = "register",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> register(@RequestBody Admin admin){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Integer checkusername= adminRepository.FindAdminByUser(admin.getUsername());
+        if(checkusername==0){
+            Admin admin1 =new Admin();
+            admin1.setUsername(admin.getUsername());
+            admin1.setPassword(admin.getPassword());
+            admin1.setRole("ROLE_USER");
+            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+            String token="";
+            Random ran=new Random();
+            for(int i=0;i<30;i++){
+                Integer ranver=ran.nextInt(stringrand.length());
+                token=token+stringrand.charAt(ranver);
+            }
+            admin1.setToken(token);
+            adminRepository.save(admin1);
+            //resp.put("status","true");
+            resp.put("token",token);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }else{
+            resp.put("status","fail");
+            resp.put("message","Tài khoản đã tồn tại!");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }
+
+    }
+
 }
