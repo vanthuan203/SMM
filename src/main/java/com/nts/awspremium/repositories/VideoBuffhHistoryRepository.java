@@ -20,4 +20,11 @@ public interface VideoBuffhHistoryRepository extends JpaRepository<VideoBuffhHis
             "channelid,'-',maxthreads,'-',timebuff,'-',note,'-',optionbuff) like ?1",nativeQuery = true)
     public List<VideoBuffhHistory> getOrderHistoryFilter(String key);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update videobuffhhistory set viewend=?1 where videoid=?2",nativeQuery = true)
+    public Integer updateviewend(Integer viewend,String videoid);
+
+    @Query(value = "SELECT videoid FROM videobuffhhistory where viewend is null and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 limit 50",nativeQuery = true)
+    public List<String> getOrderHistorythan5h();
 }

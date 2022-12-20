@@ -202,6 +202,59 @@ public class VideoBuffhController {
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/updateviewendcron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkduration() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<String> listvideo=videoBuffhHistoryRepository.getOrderHistorythan5h();
+        if(listvideo.size()==0){
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        String s_videoid="";
+        for(int i=0;i<listvideo.size();i++){
+            if(i==0){
+                s_videoid=listvideo.get(i);
+            }else {
+                s_videoid=s_videoid+","+listvideo.get(i);
+            }
+        }
+        System.out.println(s_videoid);
+        //VIDEOOOOOOOOOOOOOOO
+        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+        Request request1 = null;
+
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
+
+        Response response1 = client1.newCall(request1).execute();
+
+        String resultJson1 = response1.body().string();
+
+        Object obj1 = new JSONParser().parse(resultJson1);
+
+        JSONObject jsonObject1 = (JSONObject) obj1;
+        JSONArray items = (JSONArray) jsonObject1.get("items");
+        JSONArray jsonArray = new JSONArray();
+        Iterator k = items.iterator();
+
+        while (k.hasNext()) {
+            try {
+                JSONObject video = (JSONObject) k.next();
+                JSONObject obj = new JSONObject();
+                JSONObject statistics = (JSONObject) video.get("statistics");
+                System.out.println(Integer.parseInt(statistics.get("viewCount").toString()));
+                videoBuffhHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),video.get("id").toString());
+                //jsonArray.add(obj);
+            } catch (Exception e) {
+                resp.put("status", e);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+        }
+        resp.put("status","true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
 
     @GetMapping(path = "getorderbuffh",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization){
@@ -309,6 +362,7 @@ public class VideoBuffhController {
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("viewend", orderRunnings.get(i).getViewend());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 obj.put("timebuffhtotal", orderRunnings.get(i).getTimebuffend());
                 obj.put("viewtotal", orderRunnings.get(i).getViewbuffend());
@@ -559,6 +613,7 @@ public class VideoBuffhController {
                 obj.put("commentrate", orderRunnings.get(i).getCommentrate());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
+                obj.put("viewend", orderRunnings.get(i).getViewend());
                 //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
                 obj.put("timebuffhtotal", orderRunnings.get(i).getTimebuffend());
