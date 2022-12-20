@@ -14,15 +14,35 @@ public class Admin {
     private String password;
     private String role;
     private String token;
-
+    private Integer balance;
+    private Integer discount;
     public Admin() {
     }
 
-    public Admin(String username, String password, String role, String token) {
+    public Admin(Long id, String username, String password, String role, String token, Integer balance, Integer discount) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.token = token;
+        this.balance = balance;
+        this.discount = discount;
+    }
+
+    public Integer getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Integer balance) {
+        this.balance = balance;
+    }
+
+    public Integer getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(Integer discount) {
+        this.discount = discount;
     }
 
     @Override
@@ -41,7 +61,8 @@ public class Admin {
         obj.put("username", username);
         obj.put("role", role);
         obj.put("enabled", 1);
-        obj.put("balance", 0);
+        obj.put("balance", balance);
+        obj.put("discount", discount);
         obj.put("id", id);
         return obj;
 

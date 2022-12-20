@@ -18,6 +18,9 @@ public interface AdminRepository extends JpaRepository<Admin,Long> {
     @Query(value = "Select count(*) from admin where username=?1",nativeQuery = true)
     public Integer FindAdminByUser(String username);
 
+    @Query(value = "Select * from admin where username=?1",nativeQuery = true)
+    public List<Admin> GetAdminByUser(String username);
+
     @Query(value = "Select * from admin where token=?1",nativeQuery = true)
     public List<Admin>  FindByToken(String Authorization);
 }

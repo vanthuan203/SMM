@@ -64,6 +64,18 @@ public class AuthController {
 
     }
 
+    @GetMapping(path = "forgot_password",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> forgot_password(@RequestParam(defaultValue = "") String username){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.GetAdminByUser(username);
+        resp.put("status","success");
+        resp.put("user",admins.get(0).getJsonObj());
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
     @PostMapping(path = "register",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> register(@RequestBody Admin admin){
         JSONObject resp = new JSONObject();
@@ -76,6 +88,8 @@ public class AuthController {
             admin1.setRole("ROLE_USER");
             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
             String token="";
+            admin1.setBalance(0);
+            admin1.setDiscount(0);
             Random ran=new Random();
             for(int i=0;i<30;i++){
                 Integer ranver=ran.nextInt(stringrand.length());
