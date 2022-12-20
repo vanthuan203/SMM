@@ -432,14 +432,9 @@ public class VpsController {
             String[] vpsArr=vps.split(",");
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
-
-                historyRepository.deletenamevpsByVps(vpsArr[i].trim());
                 vpsRepository.deleteByVps(vpsArr[i].trim());
-
-                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-                Request request = null;
-                request = new Request.Builder().url("http://accpremiumpostget-env.ap-southeast-1.elasticbeanstalk.com/gmails/resetaccountbyvps?vps=" + vpsArr[i].trim()).get().addHeader("Authorization", "1").build();
-                Response response = client.newCall(request).execute();
+                accountRepository.resetAccountByVps("%"+vpsArr[i].trim()+"%");
+                historyRepository.resetThreadByVps("%"+vpsArr[i].trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -449,7 +444,7 @@ public class VpsController {
                 jsonArray.add(obj);
 
             }
-            resp.put("vps","Fdfdfd");
+            resp.put("vps","Oke");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
