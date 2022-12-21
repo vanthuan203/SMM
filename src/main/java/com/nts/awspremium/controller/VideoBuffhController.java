@@ -652,44 +652,44 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            Long enddate=System.currentTimeMillis();
-
-            List<VideoBuffh> videoBuffh =videoBuffhRepository.getVideoBuffhById(videoid.trim());
-            VideoBuffhHistory videoBuffhnew= new VideoBuffhHistory();
-            videoBuffhnew.setDuration(videoBuffh.get(0).getDuration());
-            videoBuffhnew.setOptionbuff(videoBuffh.get(0).getOptionbuff());
-            videoBuffhnew.setInsertdate(videoBuffh.get(0).getInsertdate());
-            videoBuffhnew.setOptionbuff(videoBuffh.get(0).getOptionbuff());
-            videoBuffhnew.setChannelid(videoBuffh.get(0).getChannelid());
-            videoBuffhnew.setVideotitle(videoBuffh.get(0).getVideotitle());
-            videoBuffhnew.setTimebuff(videoBuffh.get(0).getTimebuff());
-            videoBuffhnew.setVideoid(videoBuffh.get(0).getVideoid());
-            videoBuffhnew.setEnabled(videoBuffh.get(0).getEnabled());
-            videoBuffhnew.setDirectrate(videoBuffh.get(0).getDirectrate());
-            videoBuffhnew.setHomerate(videoBuffh.get(0).getHomerate());
-            videoBuffhnew.setSuggestrate(videoBuffh.get(0).getSuggestrate());
-            videoBuffhnew.setSearchrate(videoBuffh.get(0).getSearchrate());
-            videoBuffhnew.setViewstart(videoBuffh.get(0).getViewstart());
-            videoBuffhnew.setMaxthreads(videoBuffh.get(0).getMaxthreads());
-            videoBuffhnew.setNote(videoBuffh.get(0).getNote());
-            videoBuffhnew.setMobilerate(videoBuffh.get(0).getMobilerate());
-            videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
-            videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
-            videoBuffhnew.setCancel(1);
-            videoBuffhnew.setUser(videoBuffh.get(0).getUser());
-            videoBuffhnew.setEnddate(enddate);
-            String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(videoid.trim());
-            if(timeBuff == null){
-                videoBuffhnew.setTimebuffend(0);
-                videoBuffhnew.setViewbuffend(0);
-            }else{
-                videoBuffhnew.setTimebuffend(Integer.parseInt(timeBuff.split(",")[1]));
-                videoBuffhnew.setViewbuffend(Integer.parseInt(timeBuff.split(",")[2]));
+            String[] videoidArr=videoid.split(",");
+            for(int i=0;i<videoidArr.length;i++){
+                Long enddate=System.currentTimeMillis();
+                List<VideoBuffh> videoBuffh =videoBuffhRepository.getVideoBuffhById(videoidArr[i].trim());
+                VideoBuffhHistory videoBuffhnew= new VideoBuffhHistory();
+                videoBuffhnew.setDuration(videoBuffh.get(0).getDuration());
+                videoBuffhnew.setOptionbuff(videoBuffh.get(0).getOptionbuff());
+                videoBuffhnew.setInsertdate(videoBuffh.get(0).getInsertdate());
+                videoBuffhnew.setOptionbuff(videoBuffh.get(0).getOptionbuff());
+                videoBuffhnew.setChannelid(videoBuffh.get(0).getChannelid());
+                videoBuffhnew.setVideotitle(videoBuffh.get(0).getVideotitle());
+                videoBuffhnew.setTimebuff(videoBuffh.get(0).getTimebuff());
+                videoBuffhnew.setVideoid(videoBuffh.get(0).getVideoid());
+                videoBuffhnew.setEnabled(videoBuffh.get(0).getEnabled());
+                videoBuffhnew.setDirectrate(videoBuffh.get(0).getDirectrate());
+                videoBuffhnew.setHomerate(videoBuffh.get(0).getHomerate());
+                videoBuffhnew.setSuggestrate(videoBuffh.get(0).getSuggestrate());
+                videoBuffhnew.setSearchrate(videoBuffh.get(0).getSearchrate());
+                videoBuffhnew.setViewstart(videoBuffh.get(0).getViewstart());
+                videoBuffhnew.setMaxthreads(videoBuffh.get(0).getMaxthreads());
+                videoBuffhnew.setNote(videoBuffh.get(0).getNote());
+                videoBuffhnew.setMobilerate(videoBuffh.get(0).getMobilerate());
+                videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
+                videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
+                videoBuffhnew.setCancel(1);
+                videoBuffhnew.setUser(videoBuffh.get(0).getUser());
+                videoBuffhnew.setEnddate(enddate);
+                String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(videoidArr[i].trim());
+                if(timeBuff == null){
+                    videoBuffhnew.setTimebuffend(0);
+                    videoBuffhnew.setViewbuffend(0);
+                }else{
+                    videoBuffhnew.setTimebuffend(Integer.parseInt(timeBuff.split(",")[1]));
+                    videoBuffhnew.setViewbuffend(Integer.parseInt(timeBuff.split(",")[2]));
+                }
+                videoBuffhHistoryRepository.save(videoBuffhnew);
+                videoBuffhRepository.deletevideoByVideoId(videoidArr[i].trim());
             }
-
-
-            videoBuffhHistoryRepository.save(videoBuffhnew);
-            videoBuffhRepository.deletevideoByVideoId(videoid);
             resp.put("videobuffh","");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){

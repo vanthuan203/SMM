@@ -60,6 +60,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT count(*) FROM proxy",nativeQuery = true)
     public Integer countProxy();
 
+    @Query(value = "SELECT count(*) FROM proxy where state=?1 and proxy like ?2 limit 1",nativeQuery = true)
+    public Integer checkState(Integer state,String ipv4);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM proxyhistory where round((UNIX_TIMESTAMP()-id/1000)/60/60) >3",nativeQuery = true)
@@ -68,4 +71,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Transactional
     @Query(value = "DELETE FROM proxy where ipv4=?1 ",nativeQuery = true)
     public Integer deleteProxyByIpv4(String ipv4);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE proxy set state=?1  where ipv4 like ?2 ",nativeQuery = true)
+    public Integer updateState(Integer state,String ipv4);
 }
