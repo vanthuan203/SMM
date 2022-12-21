@@ -705,6 +705,7 @@ public class VideoBuffhController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try{
+            historyRepository.updateHistoryByAccount();
             List<OrderBuffhRunning> list_done =orderBuffhRunningRepository.getOrderFullBuffh();
             for(int i=0;i<list_done.size();i++){
                 Long enddate=System.currentTimeMillis();

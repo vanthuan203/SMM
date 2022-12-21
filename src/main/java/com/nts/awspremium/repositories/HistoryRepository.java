@@ -88,4 +88,9 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Transactional
     @Query(value = "DELETE FROM AccPremium.historysum where round((UNIX_TIMESTAMP()-id/1000)/60/60) >24 ",nativeQuery = true)
     public Integer deleteAllViewThan24h();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update history set running=0,vps='' where  username not in(select username from account where vps!='' and live=1 and running=1 ) and vps!=''",nativeQuery = true)
+    public Integer updateHistoryByAccount();
 }
