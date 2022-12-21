@@ -56,7 +56,7 @@ public class HistoryBuffhController {
         }
         Random ran=new Random();
         Integer ranver=ran.nextInt(10000);
-        if(ranver>8500){
+        if(ranver>10000){
             try{
                 //Long  historieId=null;
             /*
