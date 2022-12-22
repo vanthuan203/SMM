@@ -297,7 +297,7 @@ public class ChannelController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         String list_video = channelOrder.getList_video();
-        if (list_video.length() == 0) {
+        if (list_video==null) {
             String[] channellist = channelOrder.getChannel_id().split("\n");
             Integer index = 0;
             while (index < channellist.length) {
