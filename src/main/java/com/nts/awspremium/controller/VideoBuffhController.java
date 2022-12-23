@@ -44,74 +44,94 @@ public class VideoBuffhController {
     @PostMapping(value = "/orderbuffh", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderbuffh(@org.springframework.web.bind.annotation.RequestBody VideoBuffh videoBuffh, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
-        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
-        if (Authorization.length() == 0 || admins.size() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
+        try {
+            List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+            if (Authorization.length() == 0 || admins.size() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
 
-        String videolist = videoBuffh.getVideoid().replace("\n",",");
-        //VIDEOOOOOOOOOOOOOOO
-        int count = StringUtils.countOccurrencesOf(videolist, ",")+1;
-        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            String videolist = videoBuffh.getVideoid().replace("\n", ",");
+            //VIDEOOOOOOOOOOOOOOO
+            int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;
+            OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
-        Request request1 = null;
+            Request request1 = null;
 
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
-        Response response1 = client1.newCall(request1).execute();
+            Response response1 = client1.newCall(request1).execute();
 
-        String resultJson1 = response1.body().string();
+            String resultJson1 = response1.body().string();
 
-        Object obj1 = new JSONParser().parse(resultJson1);
+            Object obj1 = new JSONParser().parse(resultJson1);
 
-        JSONObject jsonObject1 = (JSONObject) obj1;
-        JSONArray items = (JSONArray) jsonObject1.get("items");
-        Iterator k = items.iterator();
-
-        while (k.hasNext()) {
-            try {
-                JSONObject video = (JSONObject) k.next();
-                JSONObject contentDetails = (JSONObject) video.get("contentDetails");
-                if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
-                    continue;
-                }
-                if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<600){
-                    continue;
-                }
-
-                JSONObject snippet = (JSONObject) video.get("snippet");
-                JSONObject statistics = (JSONObject) video.get("statistics");
-                VideoBuffh videoBuffhnew= new VideoBuffh();
-                videoBuffhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
-                videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
-                videoBuffhnew.setInsertdate(System.currentTimeMillis());
-                videoBuffhnew.setUser(videoBuffh.getUser());
-                videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
-                videoBuffhnew.setChannelid(snippet.get("channelId").toString());
-                videoBuffhnew.setVideotitle(snippet.get("title").toString());
-                videoBuffhnew.setTimebuff(videoBuffh.getTimebuff());
-                videoBuffhnew.setVideoid(video.get("id").toString());
-                videoBuffhnew.setEnabled(videoBuffh.getEnabled());
-                videoBuffhnew.setDirectrate(videoBuffh.getDirectrate());
-                videoBuffhnew.setHomerate(videoBuffh.getHomerate());
-                videoBuffhnew.setSuggestrate(videoBuffh.getSuggestrate());
-                videoBuffhnew.setSearchrate(videoBuffh.getSearchrate());
-                videoBuffhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                videoBuffhnew.setMaxthreads(videoBuffh.getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.getNote());
-                videoBuffhnew.setMobilerate(videoBuffh.getMobilerate());
-                videoBuffhnew.setLikerate(videoBuffh.getLikerate());
-                videoBuffhnew.setCommentrate(videoBuffh.getCommentrate());
-                videoBuffhRepository.save(videoBuffhnew);
-                //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
-
-            } catch (Exception e) {
-                resp.put("status", e);
+            JSONObject jsonObject1 = (JSONObject) obj1;
+            JSONArray items = (JSONArray) jsonObject1.get("items");
+            if(items==null){
+                resp.put("videobuffh","Fail check video!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            Iterator k = items.iterator();
+            if(k.hasNext()==false){
+                resp.put("videobuffh","Fail check video!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            while (k.hasNext()) {
+                try {
+                    JSONObject video = (JSONObject) k.next();
+                    JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                    if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
+                        resp.put("videobuffh","Đơn đã tồn tại!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<600){
+                        resp.put("videobuffh","time dưới 600s!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+
+                    JSONObject snippet = (JSONObject) video.get("snippet");
+                    JSONObject statistics = (JSONObject) video.get("statistics");
+                    VideoBuffh videoBuffhnew= new VideoBuffh();
+                    videoBuffhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
+                    videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
+                    videoBuffhnew.setInsertdate(System.currentTimeMillis());
+                    videoBuffhnew.setUser(videoBuffh.getUser());
+                    videoBuffhnew.setOptionbuff(videoBuffh.getOptionbuff());
+                    videoBuffhnew.setChannelid(snippet.get("channelId").toString());
+                    videoBuffhnew.setVideotitle(snippet.get("title").toString());
+                    videoBuffhnew.setTimebuff(videoBuffh.getTimebuff());
+                    videoBuffhnew.setVideoid(video.get("id").toString());
+                    videoBuffhnew.setEnabled(videoBuffh.getEnabled());
+                    videoBuffhnew.setDirectrate(videoBuffh.getDirectrate());
+                    videoBuffhnew.setHomerate(videoBuffh.getHomerate());
+                    videoBuffhnew.setSuggestrate(videoBuffh.getSuggestrate());
+                    videoBuffhnew.setSearchrate(videoBuffh.getSearchrate());
+                    videoBuffhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
+                    videoBuffhnew.setMaxthreads(videoBuffh.getMaxthreads());
+                    videoBuffhnew.setNote(videoBuffh.getNote());
+                    videoBuffhnew.setMobilerate(videoBuffh.getMobilerate());
+                    videoBuffhnew.setLikerate(videoBuffh.getLikerate());
+                    videoBuffhnew.setCommentrate(videoBuffh.getCommentrate());
+                    videoBuffhRepository.save(videoBuffhnew);
+                    resp.put("videobuffh","true");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
+
+                } catch (Exception e) {
+                    resp.put("videobuffh", "error");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }
+            resp.put("videobuffh", "error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("videobuffh","Fail check video!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+
+        /*
         try{
             List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrderNewAdd(count);
             //System.out.println(timeBuff.get(0).split(",")[0]);
@@ -160,6 +180,8 @@ public class VideoBuffhController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+
+         */
 
     }
 
