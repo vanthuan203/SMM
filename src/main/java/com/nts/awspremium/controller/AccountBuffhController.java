@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,6 +38,9 @@ public class AccountBuffhController {
     private CookieRepository cookieRepository;
     @Autowired
     private EncodefingerRepository encodefingerRepository;
+
+    @Autowired
+    private VpsRepository vpsRepository;
 
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
@@ -145,6 +149,12 @@ public class AccountBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
+            Integer check_get= vpsRepository.checkGetAccountByThreadVps("%"+vps.trim()+"%");
+            if(check_get==0){
+                resp.put("status","fail");
+                resp.put("message", "Đã đủ acc cho Vps!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }
 
             Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
             if(idbyVps==null){
@@ -761,6 +771,27 @@ public class AccountBuffhController {
         }
     }
 
+
+    @GetMapping(value = "/resetaccountbyvpsthan",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetaccountbyvpsthan(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> count_vps= accountRepository.getCountByVps();
+            for(int i=0;i<count_vps.size();i++){
+                System.out.println(count_vps.get(i));
+                accountRepository.updatelistaccount("%"+count_vps.get(i).split(",")[0]+"%",Integer.parseInt(count_vps.get(i).split(",")[1])-240);
+                historyRepository.updateHistoryByAccount();
+            }
+            resp.put("status", "true");
+            resp.put("message", "Update thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value = "/resetAccountByTimecheck",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetAccountByTimecheck() {

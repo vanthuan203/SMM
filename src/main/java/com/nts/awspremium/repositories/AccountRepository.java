@@ -16,6 +16,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
     public Integer findUsername(String username);
 
+    @Query(value = "Select vps,count(*) from account where vps in (select vps from vps) group by vps having count(*)>240",nativeQuery = true)
+    public List<String> getCountByVps();
+
+
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdByUsername(String username);
 
@@ -28,6 +32,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,0,'')",nativeQuery = true)
     public void insertAccount(String username,String password,String recover,Integer live,String encodefinger,String cookie,Long endtrial,String endtrialstring);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update account set vps='',running=0 where vps like ?1 limit ?2",nativeQuery = true)
+    public void updatelistaccount(String vps,Integer limit);
 
     @Modifying
     @Transactional
