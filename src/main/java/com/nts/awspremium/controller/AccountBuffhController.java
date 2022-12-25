@@ -165,7 +165,7 @@ public class AccountBuffhController {
                 }else if(test==2){
                     id=accountRepository.getAccountBuffh("us");
                 }else{
-                    id=accountRepository.getAccountBuffh();
+                    id=accountRepository.getAccountBuffh("us");
                 }
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
