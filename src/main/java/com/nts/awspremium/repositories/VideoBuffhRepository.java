@@ -14,11 +14,18 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo();
 
+    @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and videobuffh.user=?1 and time>=videobuffh.insertdate group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
+    public List<String> getTimeBuffVideo(String user);
+
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate and videobuffh.videoid=?1  group by videobuffh.videoid order by insertdate desc limit 1",nativeQuery = true)
     public String getTimeBuffByVideoId(String videoid);
 
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuff24hVideo();
+
+    @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and videobuffh.user=?1 and time>=videobuffh.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
+    public List<String> getTimeBuff24hVideo(String user);
+
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and videobuffh.videoid=?1 group by videobuffh.videoid order by insertdate desc limit 1",nativeQuery = true)
     public String getTimeBuff24hByVideoId(String videoid);
     @Query(value = "SELECT * from videobuffh where enabled!=0 and videoid=?1",nativeQuery = true)
@@ -28,8 +35,15 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     public Integer getCountVideoId(String vidoeid);
     @Query(value = "SELECT sum(timebuff) as total FROM AccPremium.videobuffh where enabled!=0",nativeQuery = true)
     public Integer getCountTimeBuffOrder();
+
+    @Query(value = "SELECT sum(timebuff) as total FROM AccPremium.videobuffh where enabled!=0 and user=?1",nativeQuery = true)
+    public Integer getCountTimeBuffOrder(String user);
+
     @Query(value = "SELECT Round(sum(historysum.duration)/3600,0) as timebuff FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate",nativeQuery = true)
     public Integer getCountTimeBuffedOrder();
+
+    @Query(value = "SELECT Round(sum(historysum.duration)/3600,0) as timebuff FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and videobuffh.user=?1 and time>=videobuffh.insertdate",nativeQuery = true)
+    public Integer getCountTimeBuffedOrder(String user);
 
     @Modifying
     @Transactional

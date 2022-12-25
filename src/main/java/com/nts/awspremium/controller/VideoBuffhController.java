@@ -30,6 +30,9 @@ public class VideoBuffhController {
     private VideoRepository videoRepository;
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private SettingRepository settingRepository;
     @Autowired
     OrderRunningRepository orderRunningRepository;
     @Autowired
@@ -80,6 +83,14 @@ public class VideoBuffhController {
             }
             while (k.hasNext()) {
                 try {
+                    Setting setting=settingRepository.getReferenceById(1L);
+                    System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
+                    float priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
+                    if(priceorder>(float)admins.get(0).getBalance()){
+                        resp.put("videobuffh","Số tiền không đủ!!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    admins.get(0).setBalance(admins.get(0).getBalance()-(int)priceorder);
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
@@ -113,7 +124,7 @@ public class VideoBuffhController {
                     videoBuffhnew.setNote(videoBuffh.getNote());
                     videoBuffhnew.setMobilerate(videoBuffh.getMobilerate());
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());
-                    videoBuffhnew.setCommentrate(videoBuffh.getCommentrate());
+
                     videoBuffhRepository.save(videoBuffhnew);
                     resp.put("videobuffh","true");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -281,7 +292,7 @@ public class VideoBuffhController {
 
 
     @GetMapping(path = "getorderbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -291,9 +302,19 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder();
-            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo();
-            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+            List<OrderBuffhRunning> orderRunnings;
+            List<String> timeBuff;
+            List<String> timeBuff24h;
+            if(user.length()==0){
+                orderRunnings=orderBuffhRunningRepository.getOrder();
+                timeBuff =videoBuffhRepository.getTimeBuffVideo();
+                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+            }else{
+                orderRunnings=orderBuffhRunningRepository.getOrder(user.trim());
+                timeBuff =videoBuffhRepository.getTimeBuffVideo(user.trim());
+                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(user.trim());
+            }
+
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -352,7 +373,7 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getorderbuffhhistory",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbuffhhistory(@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getorderbuffhhistory(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -362,7 +383,12 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<VideoBuffhHistory> orderRunnings=videoBuffhHistoryRepository.getVideoBuffhHistories();
+            List<VideoBuffhHistory> orderRunnings;
+            if(user.length()==0){
+                orderRunnings=videoBuffhHistoryRepository.getVideoBuffhHistories();
+            }else{
+                orderRunnings=videoBuffhHistoryRepository.getVideoBuffhHistories(user.trim());
+            }
             JSONArray jsonArray= new JSONArray();
             for(int i=0;i<orderRunnings.size();i++){
                 JSONObject obj = new JSONObject();
@@ -406,11 +432,16 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getcounttimebufforder",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcounttimebufforder() {
+    ResponseEntity<String> getcounttimebufforder(@RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            Integer counttimeorder =videoBuffhRepository.getCountTimeBuffOrder();
+            Integer counttimeorder=0;
+            if(user.length()==0){
+                counttimeorder=videoBuffhRepository.getCountTimeBuffOrder();
+            }else{
+                counttimeorder=videoBuffhRepository.getCountTimeBuffOrder(user.trim());
+            }
             resp.put("totaltimeorder",counttimeorder);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
@@ -421,11 +452,16 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getcounttimebuffedorder",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcounttimebuffedorder() {
+    ResponseEntity<String> getcounttimebuffedorder(@RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            Integer counttimeorder =videoBuffhRepository.getCountTimeBuffedOrder();
+            Integer counttimeorder=0;
+            if(user.length()==0){
+                counttimeorder =videoBuffhRepository.getCountTimeBuffedOrder();
+            }else{
+                counttimeorder =videoBuffhRepository.getCountTimeBuffedOrder(user.trim());
+            }
             resp.put("totaltimebuffedorder",counttimeorder);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
@@ -436,7 +472,7 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "getorderfilterbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderfilterbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key){
+    ResponseEntity<String> getorderfilterbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -446,7 +482,13 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrderFilter("%"+key+"%");
+            List<OrderBuffhRunning> orderRunnings;
+            if(user.length()==0){
+                orderRunnings=orderBuffhRunningRepository.getOrderFilter("%"+key+"%");
+            }else{
+                orderRunnings=orderBuffhRunningRepository.getOrderFilter("%"+key+"%",user.trim());
+            }
+
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -514,7 +556,7 @@ public class VideoBuffhController {
 
 
     @GetMapping(path = "getorderbypercentbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbypercentbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") Integer key){
+    ResponseEntity<String> getorderbypercentbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") Integer key,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -524,11 +566,18 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getOrder();
-            List<String> timeBuff =videoBuffhRepository.getTimeBuffVideo();
-            List<String> timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
-            //System.out.println(timeBuff.get(0).split(",")[0]);
-            //String a=orderRunnings.toString();
+            List<OrderBuffhRunning> orderRunnings;
+            List<String> timeBuff;
+            List<String> timeBuff24h;
+            if(user.length()==0){
+                orderRunnings=orderBuffhRunningRepository.getOrder();
+                timeBuff =videoBuffhRepository.getTimeBuffVideo();
+                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+            }else{
+                orderRunnings=orderBuffhRunningRepository.getOrder(user.trim());
+                timeBuff =videoBuffhRepository.getTimeBuffVideo(user.trim());
+                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(user.trim());
+            }
             JSONArray jsonArray= new JSONArray();
 
             //JSONObject jsonObject=new JSONObject().put("")
@@ -597,7 +646,7 @@ public class VideoBuffhController {
 
 
     @GetMapping(path = "getorderfilterbuffhhistory",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderfilterbuffhhistory(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key){
+    ResponseEntity<String> getorderfilterbuffhhistory(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String key,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -607,7 +656,12 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            List<VideoBuffhHistory> orderRunnings=videoBuffhHistoryRepository.getOrderHistoryFilter("%"+key+"%");
+            List<VideoBuffhHistory> orderRunnings;
+            if(user.length()==0){
+                orderRunnings=videoBuffhHistoryRepository.getOrderHistoryFilter("%"+key+"%");
+            }else{
+                orderRunnings=videoBuffhHistoryRepository.getOrderHistoryFilter("%"+key+"%",user.trim());
+            }
             //System.out.println(timeBuff.get(0).split(",")[0]);
             //String a=orderRunnings.toString();
             JSONArray jsonArray= new JSONArray();
@@ -659,7 +713,7 @@ public class VideoBuffhController {
 
 
     @DeleteMapping(path = "delete",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String videoid){
+    ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "1") Integer cancel){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
@@ -698,7 +752,11 @@ public class VideoBuffhController {
                 videoBuffhnew.setMobilerate(videoBuffh.get(0).getMobilerate());
                 videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
                 videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
-                videoBuffhnew.setCancel(1);
+                if(cancel==1){
+                    videoBuffhnew.setCancel(1);
+                }else{
+                    videoBuffhnew.setCancel(0);
+                }
                 videoBuffhnew.setUser(videoBuffh.get(0).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 String timeBuff =videoBuffhRepository.getTimeBuffByVideoId(videoidArr[i].trim());

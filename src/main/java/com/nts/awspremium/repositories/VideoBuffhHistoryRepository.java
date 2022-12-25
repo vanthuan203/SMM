@@ -15,10 +15,18 @@ public interface VideoBuffhHistoryRepository extends JpaRepository<VideoBuffhHis
     @Query(value = "SELECT * from videobuffhhistory order by enddate desc",nativeQuery = true)
     public List<VideoBuffhHistory> getVideoBuffhHistories();
 
+    @Query(value = "SELECT * from videobuffhhistory where user=?1 order by enddate desc",nativeQuery = true)
+    public List<VideoBuffhHistory> getVideoBuffhHistories(String user);
+
     @Query(value = "Select *\n" +
             "from videobuffhhistory where CONCAT(videoid,'-',videotitle,'-',\n" +
             "channelid,'-',maxthreads,'-',timebuff,'-',note,'-',optionbuff) like ?1",nativeQuery = true)
     public List<VideoBuffhHistory> getOrderHistoryFilter(String key);
+
+    @Query(value = "Select *\n" +
+            "from videobuffhhistory where CONCAT(videoid,'-',videotitle,'-',\n" +
+            "channelid,'-',maxthreads,'-',timebuff,'-',note,'-',optionbuff) like ?1 and user=?2",nativeQuery = true)
+    public List<VideoBuffhHistory> getOrderHistoryFilter(String key,String user);
 
     @Modifying
     @Transactional

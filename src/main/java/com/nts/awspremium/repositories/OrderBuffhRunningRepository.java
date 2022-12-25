@@ -12,11 +12,20 @@ public interface OrderBuffhRunningRepository extends JpaRepository<VideoBuffh,Lo
     @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,count(*) as total,maxthreads,timebuff,insertdate,enabled,note,duration,optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,viewstart,user from videobuffh left join history on history.videoid=videobuffh.videoid and running=1 where enabled!=0   group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderBuffhRunning> getOrder();
 
+    @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,count(*) as total,maxthreads,timebuff,insertdate,enabled,note,duration,optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,viewstart,user from videobuffh left join history on history.videoid=videobuffh.videoid and running=1 where enabled!=0  and user=?1  group by videoid order by insertdate desc",nativeQuery = true)
+    public List<OrderBuffhRunning> getOrder(String user);
+
     @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,count(*) as total,\n" +
             "maxthreads,timebuff,insertdate,enabled,note,duration,optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,viewstart,user\n" +
             "from videobuffh left join history on history.videoid=videobuffh.videoid and running=1 where CONCAT(videobuffh.videoid,'-',videobuffh.videotitle,'-',\n" +
             "maxthreads,'-',timebuff,'-',insertdate,'-',note,'-',optionbuff) like ?1 and enabled!=0   group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderBuffhRunning> getOrderFilter(String key);
+
+    @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,count(*) as total,\n" +
+            "maxthreads,timebuff,insertdate,enabled,note,duration,optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,viewstart,user\n" +
+            "from videobuffh left join history on history.videoid=videobuffh.videoid and running=1 where CONCAT(videobuffh.videoid,'-',videobuffh.videotitle,'-',\n" +
+            "maxthreads,'-',timebuff,'-',insertdate,'-',note,'-',optionbuff) like ?1 and enabled!=0 and videobuffh.user=?2  group by videoid order by insertdate desc",nativeQuery = true)
+    public List<OrderBuffhRunning> getOrderFilter(String key,String user);
 
     @Query(value = "select videobuffh.videoid,videobuffh.videotitle,0,maxthreads,timebuff,insertdate,enabled,note,videobuffh.duration,\n" +
             "            optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,user from videobuffh left join\n" +

@@ -447,16 +447,22 @@ public class HistoryBuffhController {
 
 
     @GetMapping(value = "gettimebuff7day",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> gettimebuff7day(){
+    ResponseEntity<String> gettimebuff7day(@RequestParam(defaultValue = "") String user){
         JSONObject resp=new JSONObject();
         try{
-            List<String> time7day=historySumRepository.Gettimebuff7day();
+            List<String> time7day;
+            if(user.length()==0){
+                time7day=historySumRepository.Gettimebuff7day();
+            }else{
+                time7day=historySumRepository.Gettimebuff7day(user.trim());
+            }
+
             JSONArray jsonArray=new JSONArray();
             Integer maxtime=0;
             Integer maxview=0;
 
             for(int i=0;i<time7day.size();i++){
-                System.out.println(time7day.get(i).split(",")[1]);
+                //System.out.println(time7day.get(i).split(",")[1]);
                 if(maxtime<Integer.parseInt(time7day.get(i).split(",")[1])){
                     maxtime=Integer.parseInt(time7day.get(i).split(",")[1]);
                 }
