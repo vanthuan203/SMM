@@ -822,10 +822,15 @@ public class VideoBuffhController {
                     videoBuffhnew.setTimebuffend(Integer.parseInt(timeBuff.split(",")[1]));
                     videoBuffhnew.setViewbuffend(Integer.parseInt(timeBuff.split(",")[2]));
                 }
+                try{
+                    videoBuffhHistoryRepository.save(videoBuffhnew);
+                    videoBuffhRepository.DeleteVideoBuffhDone(list_done.get(i).getVideoId().trim());
+                }catch (Exception e){
 
-                videoBuffhHistoryRepository.save(videoBuffhnew);
+                }
 
-                videoBuffhRepository.updateVideoBuffhDone(enddate,list_done.get(i).getVideoId().trim());
+
+
 
             }
             resp.put("status","true");
