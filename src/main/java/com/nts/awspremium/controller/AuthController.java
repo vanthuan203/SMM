@@ -64,6 +64,32 @@ public class AuthController {
 
     }
 
+    @GetMapping(path = "getalluser",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getalluser(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > alluser=adminRepository.GetAllUser();
+        String listuser="";
+        for(int i=0;i<alluser.size();i++){
+            if(i==0){
+                listuser=alluser.get(0);
+            }else{
+                listuser=listuser+","+alluser.get(i);
+            }
+
+        }
+        resp.put("user",listuser);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
     @GetMapping(path = "forgot_password",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> forgot_password(@RequestParam(defaultValue = "") String username){
         JSONObject resp = new JSONObject();
