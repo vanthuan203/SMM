@@ -407,7 +407,7 @@ public class ProxyController {
         try{
             Integer cron_num=0;
             for(int i=0;i<id_ipv4.size();i++){
-                if(i%30==0){
+                if(i%20==0){
                     cron_num=cron_num+1;
                 }
                 ipV4Repository.updatecronIpv4(cron_num, Long.parseLong(id_ipv4.get(i)) );

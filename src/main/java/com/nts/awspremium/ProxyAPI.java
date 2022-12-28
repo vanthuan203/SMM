@@ -13,7 +13,7 @@ public class ProxyAPI {
         String[] proxycut = proxycheck.split(":");
 
         try {
-            URL url = new URL("https://api.myip.com/");
+            URL url = new URL("https://www.google.com/");
             java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, new InetSocketAddress(proxycut[0], Integer.parseInt(proxycut[1])));
             if (proxycut.length > 2) {
 
