@@ -23,6 +23,9 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0 and username not in (select username from historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 65000  order by sum(duration) asc) order by timeget asc limit 1",nativeQuery = true)
     public Long getIdAccBuff(String vps);
 
+    @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0 order by timeget asc limit 1",nativeQuery = true)
+    public Long getIdAccBuffNoCheckTime24h(String vps);
+
     @Query(value = "SELECT id FROM AccPremium.history where vps like ?1 and running=0  order by timeget,rand() limit 1",nativeQuery = true)
     public Long getIdAccBuffCongchieu(String vps);
 
