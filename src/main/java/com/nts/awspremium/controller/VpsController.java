@@ -77,6 +77,8 @@ public class VpsController {
                     JSONObject obj = new JSONObject();
                     obj.put("id", vps.get(i).getId());
                     obj.put("vps", vps.get(i).getVps());
+                    obj.put("ipv4", vps.get(i).getIpv4());
+                    obj.put("namevps", vps.get(i).getNamevps());
                     obj.put("vpsoption",  vps.get(i).getVpsoption());
                     obj.put("vpsreset",  vps.get(i).getVpsreset());
                     obj.put("state",  vps.get(i).getState());
@@ -112,7 +114,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vps1 =vpsRepository.findVPS("%"+vps.trim()+"%");
+            List<Vps> vps1 =vpsRepository.findVPS(vps.trim()+"%");
             if(vps1.size()>0){
                 resp.put("status", "fail");
                 resp.put("message", "Vps đã tồn tại");
@@ -152,7 +154,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
+            List<Vps> vpscheck =vpsRepository.findVPS(vps.trim()+"%");
 
             if(vpscheck.size()>0){
                 if(vpscheck.get(0).getVpsoption().equals("Pending")){
@@ -215,7 +217,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
+            List<Vps> vpscheck =vpsRepository.findVPS(vps.trim()+"%");
 
             if(vpscheck.size()>0){
                 resp.put("status", "true");
@@ -257,7 +259,7 @@ public class VpsController {
             String[] vpsArr=vps.getVps().split("\n");
             JSONArray jsonArray =new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
-                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setThreads(vps.getThreads());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
@@ -313,7 +315,7 @@ public class VpsController {
             String[] vpsArr=vps.getVps().split("\n");
             JSONArray jsonArray =new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
-                List<Vps> vpsupdate =vpsRepository.findVPS("%"+vpsArr[i].trim()+"%");
+                List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsRepository.save(vpsupdate.get(0));
@@ -363,7 +365,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            resp.put("state", vpsRepository.getState("%"+vps.trim()+"%"));
+            resp.put("state", vpsRepository.getState(vps.trim()+"%"));
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
@@ -389,7 +391,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<Vps> vpsList =vpsRepository.findVPS("%"+vps.trim()+"%");
+            List<Vps> vpsList =vpsRepository.findVPS(vps.trim()+"%");
             vpsList.get(0).setState(1);
             vpsRepository.save(vpsList.get(0));
             resp.put("status", "true");
@@ -433,8 +435,8 @@ public class VpsController {
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
                 vpsRepository.deleteByVps(vpsArr[i].trim());
-                accountRepository.resetAccountByVps("%"+vpsArr[i].trim()+"%");
-                historyRepository.resetThreadByVps("%"+vpsArr[i].trim()+"%");
+                accountRepository.resetAccountByVps(vpsArr[i].trim()+"%");
+                historyRepository.resetThreadByVps(vpsArr[i].trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

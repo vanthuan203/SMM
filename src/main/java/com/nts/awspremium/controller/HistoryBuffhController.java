@@ -401,7 +401,7 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            historyRepository.resetThreadBuffhByVps("%"+vps.trim()+"%");
+            historyRepository.resetThreadBuffhByVps(vps.trim()+"%");
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

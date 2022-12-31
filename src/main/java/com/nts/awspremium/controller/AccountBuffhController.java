@@ -149,14 +149,14 @@ public class AccountBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            Integer check_get= vpsRepository.checkGetAccountByThreadVps("%"+vps.trim()+"%");
+            Integer check_get= vpsRepository.checkGetAccountByThreadVps(vps.trim()+"%");
             if(check_get==0){
                 resp.put("status","fail");
                 resp.put("message", "Đã đủ acc cho Vps!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
 
-            Long idbyVps=accountRepository.getaccountByVps("%"+vps.trim()+"%");
+            Long idbyVps=accountRepository.getaccountByVps(vps.trim()+"%");
             if(idbyVps==null){
                 //Thread.sleep((long)(Math.random() * 10000));
                 Long id=-0L;
@@ -174,8 +174,8 @@ public class AccountBuffhController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }else{
                     try{
-                        Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(account.get(0).getUsername().trim());
-                        String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
+                        //Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(account.get(0).getUsername().trim());
+                        //String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                         Thread.sleep(2);

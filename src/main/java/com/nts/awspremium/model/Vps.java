@@ -21,6 +21,7 @@ public class Vps {
     private Integer dayreset;
     private String ipv4;
     private Integer countipv4;
+    private String namevps;
     public Vps() {
     }
 
@@ -28,11 +29,19 @@ public class Vps {
         return dayreset;
     }
 
+    public String getNamevps() {
+        return namevps;
+    }
+
+    public void setNamevps(String namevps) {
+        this.namevps = namevps;
+    }
+
     public void setDayreset(Integer dayreset) {
         this.dayreset = dayreset;
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset, String ipv4, Integer countipv4) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset, String ipv4, Integer countipv4, String namevps) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
@@ -47,6 +56,7 @@ public class Vps {
         this.dayreset = dayreset;
         this.ipv4 = ipv4;
         this.countipv4 = countipv4;
+        this.namevps = namevps;
     }
 
     public Integer getTimereset() {
