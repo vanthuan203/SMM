@@ -91,17 +91,9 @@ public class HistoryBuffhController {
 
                     List<Proxy> proxy = null;
                     if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                        if(histories.get(0).getGeo().indexOf("vn")>=0){
-                            proxy = proxyRepository.getProxyBuff("%vn%");
-                        }else{
-                            proxy = proxyRepository.getProxyBuff("%us%");
-                        }
+                        proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
                     } else {
-                        if(histories.get(0).getGeo().indexOf("vn")>=0){
-                            proxy = proxyRepository.getProxyBuffByIpv4("%vn%",StringUtils.getProxyhost(histories.get(0).getProxy()));
-                        }else{
-                            proxy = proxyRepository.getProxyBuffByIpv4("%us%",StringUtils.getProxyhost(histories.get(0).getProxy()));
-                        }
+                        proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
                     }
                     if (proxy.size()==0){
                         histories.get(0).setProxy("");
