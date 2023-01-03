@@ -17,6 +17,12 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Query(value = "select * from proxy where state=1 and typeproxy like ?1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuff(String typeproxy);
+
+    @Query(value = "select * from proxy where state=1 and  INSTR(typeproxy,(select geo from account where username=?1))>0 order by timeget asc,rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyBuffByUsername(String username);
+
+    @Query(value = "select * from proxy where state=1 and  INSTR(typeproxy,(select geo from account where username=?1))>0 and proxy NOT LIKE ?2 order by timeget asc,rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyBuffByIpv4ByUsername(String username,String proxy);
     @Query(value = "select * from proxy where state=1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuff();
 
