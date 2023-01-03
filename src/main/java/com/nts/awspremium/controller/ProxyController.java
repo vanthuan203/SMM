@@ -68,12 +68,31 @@ public class ProxyController {
     }
 
     @PostMapping(value="/delproxy",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> create(@RequestBody String proxy){
+    ResponseEntity<String> delproxy(@RequestBody String proxy){
         JSONObject resp = new JSONObject();
         try{
             String[] ipv4 = proxy.split("\n");
             for(int i=0;i<ipv4.length;i++){
                 proxyRepository.deleteProxyByIpv4(ipv4[i]);
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/pendingproxy",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> pendingproxy(@RequestBody String proxy){
+        JSONObject resp = new JSONObject();
+        try{
+            List<String> list_ipv4=proxyRepository.getIpv4ProxyBuff();
+            System.out.println(list_ipv4);
+
+            for(int i=0;i<list_ipv4.size();i++){
+                proxyRepository.updatepending(list_ipv4.get(i));
             }
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

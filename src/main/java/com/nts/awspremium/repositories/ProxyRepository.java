@@ -20,6 +20,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where state=1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuff();
 
+    @Query(value = "SELECT ipv4 FROM AccPremium.proxy where typeproxy not like '%vn%' group by ipv4 ",nativeQuery = true)
+    public List<String> getIpv4ProxyBuff();
+
     @Query(value = "select * from proxy where state=1 and proxy NOT LIKE ?1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByIpv4(String proxy);
 
@@ -67,6 +70,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Transactional
     @Query(value = "DELETE FROM proxyhistory where round((UNIX_TIMESTAMP()-id/1000)/60/60) >3",nativeQuery = true)
     public Integer deleteProxyHisThan24h();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update proxy set typeproxy='pending' where ipv4=?1 limit 250",nativeQuery = true)
+    public Integer updatepending(String ipv4);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM proxy where ipv4=?1 ",nativeQuery = true)
