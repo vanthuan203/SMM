@@ -23,7 +23,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
 
  */
-    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) order by timeget asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByUsername(String username);
     @Query(value = "SELECT ipv4.ipv4,count(*) totalport,ipv4.timecheck,ipv4.state,proxy.typeproxy FROM AccPremium.proxy left join ipv4 on proxy.ipv4=ipv4.ipv4 where ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4;",nativeQuery = true)
     public List<String> getListProxyV4();
@@ -32,7 +32,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     public List<Proxy> getProxyBuffByIpv4ByUsername(String username,String proxy);
 
  */
-    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) and ipv4 NOT LIKE ?2 order by timeget asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) and ipv4 NOT LIKE ?2 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByIpv4ByUsername(String username,String proxy);
     @Query(value = "select * from proxy where state=1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuff();
