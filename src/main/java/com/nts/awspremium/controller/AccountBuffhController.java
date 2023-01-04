@@ -642,7 +642,8 @@ public class AccountBuffhController {
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
                 if(histories.get(0).getRunning()==1){
-                    proxyRepository.updaterunning(histories.get(0).getProxy());
+                    Integer proxyId= proxyRepository.getIdByProxy(histories.get(0).getProxy().trim());
+                    proxyRepository.updaterunning(proxyId);
                 }
                 List<Proxy> proxy = null;
                 if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {

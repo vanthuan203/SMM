@@ -306,7 +306,8 @@ public class HistoryBuffhController {
         try{
             Long  historieId=historyRepository.getId(username);
             List<History> histories =historyRepository.getHistoriesById(historieId);
-            proxyRepository.updaterunning(histories.get(0).getProxy());
+            Integer proxyId= proxyRepository.getIdByProxy(histories.get(0).getProxy().trim());
+            proxyRepository.updaterunning(proxyId);
             historyRepository.resetThreadBuffhById(historieId);
             //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");

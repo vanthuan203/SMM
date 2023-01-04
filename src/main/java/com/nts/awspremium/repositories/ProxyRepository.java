@@ -80,6 +80,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT count(*) FROM proxy",nativeQuery = true)
     public Integer countProxy();
 
+    @Query(value = "SELECT id FROM proxy where proxy=?1 limit 1 ",nativeQuery = true)
+    public Integer getIdByProxy(String proxy);
+
     @Query(value = "SELECT count(*) FROM proxy where state=?1 and proxy like ?2 limit 1",nativeQuery = true)
     public Integer checkState(Integer state,String ipv4);
 
@@ -100,8 +103,8 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update proxy set running=0,vps='' where proxy=?1",nativeQuery = true)
-    public Integer updaterunning(String proxy);
+    @Query(value = "update proxy set running=0,vps='' where id=?1",nativeQuery = true)
+    public Integer updaterunning(Integer proxyId);
 
     @Modifying
     @Transactional

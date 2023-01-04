@@ -417,23 +417,23 @@ public class ProxyController {
                 Integer ranproxy=ran.nextInt(199)+50000;
                 //System.out.println(ranproxy);
                 if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":proxy:789789")) {
-                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),"%"+proxys.get(i)+"%");
-                    Integer checkState=proxyRepository.checkState(0,"%"+proxys.get(i)+"%");
+                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
+                    Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
                     if(checkState>0){
-                        proxyRepository.updateState(1,"%"+proxys.get(i)+"%");
+                        proxyRepository.updateState(1,proxys.get(i)+"%");
                     }
                 }else{
-                    Integer checkState=proxyRepository.checkState(1,"%"+proxys.get(i)+"%");
+                    Integer checkState=proxyRepository.checkState(1,proxys.get(i)+"%");
                     if(checkState>0){
-                        proxyRepository.updateState(0,"%"+proxys.get(i)+"%");
+                        proxyRepository.updateState(0,proxys.get(i)+"%");
                     }
-                    proxyRepository.updateState(0,"%"+proxys.get(i)+"%");
-                    List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4("%"+proxys.get(i)+"%");
+                    proxyRepository.updateState(0,proxys.get(i)+"%");
+                    List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i)+"%");
                     if (stateAndCheck.get(0).getNumcheck()>=4){
                         list_check=list_check+","+proxys.get(i);
                         sum_error++;
                     }
-                    ipV4Repository.updateIpv4Error(System.currentTimeMillis(),"%"+proxys.get(i)+"%");
+                    ipV4Repository.updateIpv4Error(System.currentTimeMillis(),proxys.get(i)+"%");
 
 
                 }
