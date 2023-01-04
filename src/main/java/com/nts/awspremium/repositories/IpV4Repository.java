@@ -45,6 +45,9 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Query(value = "SELECT * from ipv4 where ipv4 like ?1",nativeQuery = true)
     public List<IpV4> getStateByIpv4(String ipv4);
 
+    @Query(value = "SELECT count(*) from ipv4 where ipv4=?1",nativeQuery = true)
+    public Integer checkIpv4(String ipv4);
+
     @Modifying
     @Transactional
     @Query(value = "Update ipv4 SET state=0,timecheck=?1,numcheck=numcheck+1 where ipv4 like ?2",nativeQuery = true)
@@ -59,4 +62,9 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Transactional
     @Query(value = "Update ipv4 SET vps=concat(vps,',',?1),vspcount=vspcount+1 where timereset=?2 and vspcount<5 order by vspcount asc limit 1 ",nativeQuery = true)
     public void updateIpv4byVps(String vps,Integer timereset);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE  FROM ipv4 where ipv4=?1",nativeQuery = true)
+    public void DeleteIPv4(String ipv4);
 }

@@ -206,6 +206,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE account SET running=0 where vps like ?1",nativeQuery = true)
+    public void updateRunningByVPs(String vps);
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE account SET timecheck=?1,running=1 where id=?2",nativeQuery = true)
     public Integer updateTimecheckById(Long timecheck,Long id);
     @Modifying

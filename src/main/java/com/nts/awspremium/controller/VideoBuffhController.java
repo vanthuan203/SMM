@@ -97,8 +97,8 @@ public class VideoBuffhController {
                         resp.put("videobuffh","Đơn đã tồn tại!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<600){
-                        resp.put("videobuffh","time dưới 600s!");
+                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<1800){
+                        resp.put("videobuffh","time dưới 30p!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
 

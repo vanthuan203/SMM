@@ -34,6 +34,8 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "DELETE  from vps where vps=?1",nativeQuery = true)
     public void deleteByVps(String vps);
 
+
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE vps set vpsreset=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15 and round((UNIX_TIMESTAMP()-timecheck/1000)/60)<30 ",nativeQuery = true)

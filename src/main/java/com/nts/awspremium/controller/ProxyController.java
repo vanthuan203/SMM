@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/proxy")
 public class ProxyController {
@@ -67,6 +68,8 @@ public class ProxyController {
         }
     }
 
+
+
     @PostMapping(value="/delproxy",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> delproxy(@RequestBody String proxy){
         JSONObject resp = new JSONObject();
@@ -83,6 +86,48 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value="/delipv4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> delipv4(@RequestParam String ipv4){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] ipv4list = ipv4.split(",");
+            System.out.println(ipv4list.length);
+            for(int i=0;i<ipv4list.length;i++){
+                proxyRepository.deleteProxyByIpv4(ipv4list[i].trim());
+                ipV4Repository.DeleteIPv4(ipv4list[i].trim());
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/addipv4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> addipv4(@RequestParam String ipv4){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] ipv4list = ipv4.split(",");
+            for(int i=0;i<ipv4list.length;i++){
+                if(ipV4Repository.checkIpv4(ipv4list[i].trim())==0){
+                    IpV4 ipV4=new IpV4();
+                    ipV4.setState(1);
+                    ipV4.setIpv4(ipv4list[i].trim());
+                    ipV4.setNumcheck(0);
+                    ipV4.setTimecheck(0L);
+                    ipV4Repository.save(ipV4);
+                }
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value="/pendingproxy",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> pendingproxy(@RequestBody String proxy){
@@ -95,6 +140,31 @@ public class ProxyController {
                 proxyRepository.updatepending(list_ipv4.get(i));
             }
             resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/list_v4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> list_v4(){
+        JSONObject resp = new JSONObject();
+        try{
+            List<String> list_ipv4=proxyRepository.getListProxyV4();
+
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<list_ipv4.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("ipv4",list_ipv4.get(i).split(",")[0]);
+                obj.put("totalport",list_ipv4.get(i).split(",")[1]);
+                obj.put("timecheck",list_ipv4.get(i).split(",")[2]);
+                obj.put("state",list_ipv4.get(i).split(",")[3]);
+                obj.put("geo",list_ipv4.get(i).split(",")[4]);
+                jsonArray.add(obj);
+            }
+            resp.put("proxies",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
