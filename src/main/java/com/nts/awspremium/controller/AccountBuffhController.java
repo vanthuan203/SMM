@@ -4,6 +4,7 @@ import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.model.Account;
 import com.nts.awspremium.model.History;
 import com.nts.awspremium.model.Proxy;
+import com.nts.awspremium.model.ProxyHistory;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -657,6 +658,16 @@ public class AccountBuffhController {
                 historyRepository.save(histories.get(0));
                 proxy.get(0).setTimeget(System.currentTimeMillis());
                 proxyRepository.save(proxy.get(0));
+
+                try{
+                    ProxyHistory proxyHistory=new ProxyHistory();
+                    proxyHistory.setId(System.currentTimeMillis());
+                    proxyHistory.setIpv4(proxy.get(0).getIpv4());
+                    proxyHistoryRepository.save(proxyHistory);
+                }catch (Exception e){
+
+                }
+
                 resp.put("status","true");
                 resp.put("proxy",proxy.get(0).getProxy());
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
