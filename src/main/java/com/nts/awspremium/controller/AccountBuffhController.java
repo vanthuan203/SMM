@@ -664,15 +664,6 @@ public class AccountBuffhController {
                 proxy.get(0).setVps(histories.get(0).getVps());
                 proxy.get(0).setRunning(1);
                 proxyRepository.save(proxy.get(0));
-
-                try{
-                    ProxyHistory proxyHistory=new ProxyHistory();
-                    proxyHistory.setId(System.currentTimeMillis());
-                    proxyHistory.setIpv4(proxy.get(0).getIpv4());
-                    proxyHistoryRepository.save(proxyHistory);
-                }catch (Exception e){
-
-                }
                 resp.put("status","true");
                 resp.put("proxy",proxy.get(0).getProxy());
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

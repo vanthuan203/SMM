@@ -107,14 +107,6 @@ public class HistoryBuffhController {
                     histories.get(0).setRunning(1);
                     historyRepository.save(histories.get(0));
                     proxy.get(0).setTimeget(System.currentTimeMillis());
-                    try{
-                        ProxyHistory proxyHistory=new ProxyHistory();
-                        proxyHistory.setId(System.currentTimeMillis());
-                        proxyHistory.setIpv4(proxy.get(0).getIpv4());
-                        proxyHistoryRepository.save(proxyHistory);
-                    }catch (Exception e){
-
-                    }
                     proxy.get(0).setVps(histories.get(0).getVps());
                     proxy.get(0).setRunning(1);
                     proxyRepository.save(proxy.get(0));
@@ -377,6 +369,7 @@ public class HistoryBuffhController {
         JSONObject resp=new JSONObject();
         try{
             historyRepository.resetThreadcron();
+            proxyRepository.ressetRunningProxyError();
             //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");
             resp.put("message", "Reset thread error thành công!");

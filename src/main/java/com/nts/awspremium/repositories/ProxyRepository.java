@@ -90,6 +90,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
+    @Query(value = "update proxy set running=0,vps='' where  proxy not in(select proxy from history where running=1) and running=1",nativeQuery = true)
+    public Integer ressetRunningProxyError();
+
+    @Modifying
+    @Transactional
     @Query(value = "update proxy set typeproxy='pending' where ipv4=?1 limit 250",nativeQuery = true)
     public Integer updatepending(String ipv4);
 
