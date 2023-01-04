@@ -14,11 +14,12 @@ public class Proxy {
     private String ipv4;
     private Integer running;
     private String typeproxy;
+    private String vps;
 
     public Proxy() {
     }
 
-    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy) {
+    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy, String vps) {
         this.id = id;
         this.proxy = proxy;
         this.state = state;
@@ -26,6 +27,15 @@ public class Proxy {
         this.ipv4 = ipv4;
         this.running = running;
         this.typeproxy = typeproxy;
+        this.vps = vps;
+    }
+
+    public String getVps() {
+        return vps;
+    }
+
+    public void setVps(String vps) {
+        this.vps = vps;
     }
 
     public String getTypeproxy() {

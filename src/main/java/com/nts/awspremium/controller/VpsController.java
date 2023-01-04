@@ -452,6 +452,7 @@ public class VpsController {
                 vpsRepository.deleteByVps(vpsArr[i].trim());
                 accountRepository.resetAccountByVps(vpsArr[i].trim()+"%");
                 historyRepository.resetThreadByVps(vpsArr[i].trim()+"%");
+                proxyRepository.updaterunningByVps(vps.trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

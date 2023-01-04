@@ -115,6 +115,7 @@ public class HistoryBuffhController {
                     }catch (Exception e){
 
                     }
+                    proxy.get(0).setVps(histories.get(0).getVps());
                     proxy.get(0).setRunning(1);
                     proxyRepository.save(proxy.get(0));
                     //resp.put("ref", ref);
@@ -256,8 +257,6 @@ public class HistoryBuffhController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                List<History> histories =historyRepository.getHistoriesById(historieId);
-                proxyRepository.updaterunning(histories.get(0).getProxy());
                 //histories.get(0).setProxy(proxy);
                 //histories.get(0).setRunning(0);
                 //histories.get(0).setVideoid("");
@@ -314,6 +313,8 @@ public class HistoryBuffhController {
         }
         try{
             Long  historieId=historyRepository.getId(username);
+            List<History> histories =historyRepository.getHistoriesById(historieId);
+            proxyRepository.updaterunning(histories.get(0).getProxy());
             historyRepository.resetThreadBuffhById(historieId);
             //historyViewRepository.deleteHistoryView(username,videoid);
             resp.put("status", "true");
@@ -402,6 +403,7 @@ public class HistoryBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            proxyRepository.updaterunningByVps(vps.trim()+"%");
             historyRepository.resetThreadBuffhByVps(vps.trim()+"%");
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");

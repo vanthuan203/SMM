@@ -657,9 +657,12 @@ public class AccountBuffhController {
                     resp.put("message", "Không còn proxy để sử dụng!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+
                 histories.get(0).setProxy(proxy.get(0).getProxy());
                 historyRepository.save(histories.get(0));
                 proxy.get(0).setTimeget(System.currentTimeMillis());
+                proxy.get(0).setVps(histories.get(0).getVps());
+                proxy.get(0).setRunning(1);
                 proxyRepository.save(proxy.get(0));
 
                 try{
@@ -670,7 +673,6 @@ public class AccountBuffhController {
                 }catch (Exception e){
 
                 }
-
                 resp.put("status","true");
                 resp.put("proxy",proxy.get(0).getProxy());
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
