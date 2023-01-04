@@ -23,7 +23,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
 
  */
-    @Query(value = "select * from proxy where state=1 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in(SELECT ipv4 FROM AccPremium.proxyhistory where round((UNIX_TIMESTAMP()-id/1000))<=30 group by ipv4 having count(*)>30 order by count(*)) order by timeget asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByUsername(String username);
     @Query(value = "SELECT ipv4.ipv4,count(*) totalport,ipv4.timecheck,ipv4.state,proxy.typeproxy FROM AccPremium.proxy left join ipv4 on proxy.ipv4=ipv4.ipv4 where ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4;",nativeQuery = true)
     public List<String> getListProxyV4();
@@ -32,7 +32,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     public List<Proxy> getProxyBuffByIpv4ByUsername(String username,String proxy);
 
  */
-    @Query(value = "select * from proxy where state=1  and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 NOT LIKE ?2 and ipv4 not in(SELECT ipv4 FROM AccPremium.proxyhistory where round((UNIX_TIMESTAMP()-id/1000))<=30 group by ipv4 having count(*)>30 order by count(*)) order by timeget asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0 and ipv4 not in (select ipv4 from proxy where running=1 group by ipv4 having count(*)>=300) and ipv4 NOT LIKE ?2 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByIpv4ByUsername(String username,String proxy);
     @Query(value = "select * from proxy where state=1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuff();
@@ -92,6 +92,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Transactional
     @Query(value = "update proxy set typeproxy='pending' where ipv4=?1 limit 250",nativeQuery = true)
     public Integer updatepending(String ipv4);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update proxy set running=0 where proxy=?1",nativeQuery = true)
+    public Integer updaterunning(String proxy);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM proxy where ipv4=?1 ",nativeQuery = true)

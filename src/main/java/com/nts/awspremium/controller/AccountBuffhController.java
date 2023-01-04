@@ -641,6 +641,9 @@ public class AccountBuffhController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
+                if(histories.get(0).getRunning()==1){
+                    proxyRepository.updaterunning(histories.get(0).getProxy());
+                }
                 List<Proxy> proxy = null;
                 if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
                     proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());

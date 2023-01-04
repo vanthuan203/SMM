@@ -115,7 +115,7 @@ public class HistoryBuffhController {
                     }catch (Exception e){
 
                     }
-                    //proxy.get(0).setRunning(proxy.get(0).getRunning()+1);
+                    proxy.get(0).setRunning(1);
                     proxyRepository.save(proxy.get(0));
                     //resp.put("ref", ref);
                     resp.put("channel_id", videos.get(0).getChannelid());
@@ -256,7 +256,8 @@ public class HistoryBuffhController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                //List<History> histories =historyRepository.getHistoriesById(historieId);
+                List<History> histories =historyRepository.getHistoriesById(historieId);
+                proxyRepository.updaterunning(histories.get(0).getProxy());
                 //histories.get(0).setProxy(proxy);
                 //histories.get(0).setRunning(0);
                 //histories.get(0).setVideoid("");
