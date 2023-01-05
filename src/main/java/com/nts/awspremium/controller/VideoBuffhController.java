@@ -54,7 +54,10 @@ public class VideoBuffhController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-
+            if(videoBuffhRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder()){
+                resp.put("videobuffh", "Vượt giới hạn đơn!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             String videolist = videoBuffh.getVideoid().replace("\n", ",");
             //VIDEOOOOOOOOOOOOOOO
             int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;
@@ -83,6 +86,7 @@ public class VideoBuffhController {
             }
             while (k.hasNext()) {
                 try {
+
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
@@ -98,11 +102,15 @@ public class VideoBuffhController {
                     Setting setting=settingRepository.getReferenceById(1L);
                     //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                     float priceorder=0;
+                    int time=0;
                     if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600){
+                        time=30;
                         priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.1*((float)(100-admins.get(0).getDiscount())/100);
                     }else if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<7200){
+                        time=60;
                         priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.05*((float)(100-admins.get(0).getDiscount())/100);
                     }else{
+                        time=120;
                         priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
                     }
                     if(priceorder>(float)admins.get(0).getBalance()){
@@ -110,7 +118,6 @@ public class VideoBuffhController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     admins.get(0).setBalance(admins.get(0).getBalance()-(long)priceorder);
-                    System.out.println(admins.get(0).getBalance()-priceorder);
 
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     JSONObject statistics = (JSONObject) video.get("statistics");
@@ -141,6 +148,7 @@ public class VideoBuffhController {
 
                     resp.put("videobuffh","true");
                     resp.put("price",priceorder);
+                    resp.put("time",time);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
 

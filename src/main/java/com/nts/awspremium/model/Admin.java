@@ -16,10 +16,11 @@ public class Admin {
     private String token;
     private Long balance;
     private Integer discount;
+    private Long maxorder;
     public Admin() {
     }
 
-    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount) {
+    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -27,6 +28,15 @@ public class Admin {
         this.token = token;
         this.balance = balance;
         this.discount = discount;
+        this.maxorder = maxorder;
+    }
+
+    public Long getMaxorder() {
+        return maxorder;
+    }
+
+    public void setMaxorder(Long maxorder) {
+        this.maxorder = maxorder;
     }
 
     public Long getBalance() {
