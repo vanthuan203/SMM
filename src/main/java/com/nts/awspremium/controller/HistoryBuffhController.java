@@ -102,6 +102,11 @@ public class HistoryBuffhController {
                         resp.put("message", "Không còn proxy để sử dụng!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }else{
+                        if(proxy.get(0).getRunning()==1){
+                            resp.put("status", "fail");
+                            resp.put("message", "Proxy đã được luồng khác sử dụng!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         histories.get(0).setProxy(proxy.get(0).getProxy().trim());
                     }
                     histories.get(0).setRunning(1);

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
+import java.util.Random;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -230,7 +231,7 @@ public class AccountBuffhController {
             }else{
                 try{
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    Thread.sleep(2);
+                    Thread.sleep(100);
                     Integer accountcheck=accountRepository.checkAccountById(idbyVps);
 
                     Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
@@ -658,7 +659,12 @@ public class AccountBuffhController {
                     resp.put("message", "Không còn proxy để sử dụng!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
+                Thread.sleep(100);
+                if(proxy.get(0).getRunning()==1){
+                    resp.put("status", "fail");
+                    resp.put("message", "Proxy đã được luồng khác sử dụng!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 histories.get(0).setProxy(proxy.get(0).getProxy());
                 historyRepository.save(histories.get(0));
                 proxy.get(0).setTimeget(System.currentTimeMillis());
