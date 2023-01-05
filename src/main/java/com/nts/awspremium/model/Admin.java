@@ -14,12 +14,12 @@ public class Admin {
     private String password;
     private String role;
     private String token;
-    private Integer balance;
+    private Long balance;
     private Integer discount;
     public Admin() {
     }
 
-    public Admin(Long id, String username, String password, String role, String token, Integer balance, Integer discount) {
+    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -29,11 +29,11 @@ public class Admin {
         this.discount = discount;
     }
 
-    public Integer getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
-    public void setBalance(Integer balance) {
+    public void setBalance(Long balance) {
         this.balance = balance;
     }
 
@@ -56,17 +56,6 @@ public class Admin {
                 '}';
     }
 
-    public JSONObject getJsonObj() {
-        JSONObject obj = new JSONObject();
-        obj.put("username", username);
-        obj.put("role", role);
-        obj.put("enabled", 1);
-        obj.put("balance", balance);
-        obj.put("discount", discount);
-        obj.put("id", id);
-        return obj;
-
-    }
 
     public Long getId() {
         return id;

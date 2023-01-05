@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -57,8 +58,16 @@ public class AuthController {
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
+        JSONObject obj = new JSONObject();
+        obj.put("username", admins.get(0).getUsername());
+        obj.put("role", admins.get(0).getRole());
+        obj.put("enabled",1);
+        obj.put("balance", admins.get(0).getBalance());
+        System.out.println(admins.get(0).getBalance());
+        obj.put("discount", admins.get(0).getDiscount());
+        obj.put("id", admins.get(0).getId());
         resp.put("status","success");
-        resp.put("user",admins.get(0).getJsonObj());
+        resp.put("user",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
@@ -95,8 +104,15 @@ public class AuthController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.GetAdminByUser(username);
+        JSONObject obj = new JSONObject();
+        obj.put("username", admins.get(0).getUsername());
+        obj.put("role", admins.get(0).getRole());
+        obj.put("enabled",1);
+        obj.put("balance", admins.get(0).getBalance());
+        obj.put("discount", admins.get(0).getDiscount());
+        obj.put("id", admins.get(0).getId());
         resp.put("status","success");
-        resp.put("user",admins.get(0).getJsonObj());
+        resp.put("user",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
@@ -114,7 +130,7 @@ public class AuthController {
             admin1.setRole("ROLE_USER");
             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
             String token="";
-            admin1.setBalance(0);
+            admin1.setBalance(0L);
             admin1.setDiscount(0);
             Random ran=new Random();
             for(int i=0;i<30;i++){
