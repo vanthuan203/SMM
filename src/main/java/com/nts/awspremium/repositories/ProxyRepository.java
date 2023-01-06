@@ -77,7 +77,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT count(*) FROM proxy where proxy=?1",nativeQuery = true)
     public Integer checkproxynull(String proxy);
 
-    @Query(value = "SELECT count(*) FROM proxy",nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM proxy where state=1 and",nativeQuery = true)
     public Integer countProxy();
 
     @Query(value = "SELECT id FROM proxy where proxy=?1 limit 1 ",nativeQuery = true)
