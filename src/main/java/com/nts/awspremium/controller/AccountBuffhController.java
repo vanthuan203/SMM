@@ -785,7 +785,7 @@ public class AccountBuffhController {
             List<String> count_vps= accountRepository.getCountByVps();
             for(int i=0;i<count_vps.size();i++){
                 System.out.println(count_vps.get(i));
-                accountRepository.updatelistaccount("%"+count_vps.get(i).split(",")[0]+"%",Integer.parseInt(count_vps.get(i).split(",")[1])-240);
+                accountRepository.updatelistaccount(count_vps.get(i).split(",")[0]+"%",Integer.parseInt(count_vps.get(i).split(",")[1])- 2*(vpsRepository.getThreadVPS(count_vps.get(i).split(",")[0]+"%")));
                 historyRepository.updateHistoryByAccount();
             }
             resp.put("status", "true");

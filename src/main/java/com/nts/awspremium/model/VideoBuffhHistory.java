@@ -30,7 +30,6 @@ public class VideoBuffhHistory {
     private Integer optionbuff;
     private String channeltitle;
     private String note;
-
     private Integer likerate;
     private Integer commentrate;
     private String user;

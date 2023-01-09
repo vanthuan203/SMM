@@ -20,4 +20,7 @@ public interface OrderBuffhRunning {
     Integer getLikeRate();
     Integer getCommentRate();
     String getUser();
+    Integer getTimeBuffTotal();
+    Integer getViewTotal();
+    Long getTimeUpdate();
 }
