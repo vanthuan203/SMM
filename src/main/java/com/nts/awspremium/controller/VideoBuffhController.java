@@ -103,15 +103,26 @@ public class VideoBuffhController {
                     //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                     float priceorder=0;
                     int time=0;
-                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600){
-                        time=30;
-                        priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.1*((float)(100-admins.get(0).getDiscount())/100);
-                    }else if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<7200){
-                        time=60;
-                        priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.05*((float)(100-admins.get(0).getDiscount())/100);
-                    }else{
-                        time=120;
+                    if(admins.get(0).getVip()==1){
+                        if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600){
+                            time=30;
+                        }else if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<7200){
+                            time=60;
+                        }else{
+                            time=120;
+                        }
                         priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
+                    }else{
+                        if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600){
+                            time=30;
+                            priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.1*((float)(100-admins.get(0).getDiscount())/100);
+                        }else if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<7200){
+                            time=60;
+                            priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.05*((float)(100-admins.get(0).getDiscount())/100);
+                        }else{
+                            time=120;
+                            priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
+                        }
                     }
                     if(priceorder>(float)admins.get(0).getBalance()){
                         resp.put("videobuffh","Số tiền không đủ!!");
