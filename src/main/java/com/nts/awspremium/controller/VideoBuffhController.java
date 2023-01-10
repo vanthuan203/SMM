@@ -86,7 +86,7 @@ public class VideoBuffhController {
             }
             while (k.hasNext()) {
                 try {
-
+                    admins = adminRepository.FindByToken(Authorization.trim());
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
@@ -128,7 +128,6 @@ public class VideoBuffhController {
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    admins = adminRepository.FindByToken(Authorization.trim());
                     admins.get(0).setBalance(admins.get(0).getBalance()-(long)priceorder);
 
                     JSONObject snippet = (JSONObject) video.get("snippet");
