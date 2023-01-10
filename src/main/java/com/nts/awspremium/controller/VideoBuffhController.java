@@ -157,6 +157,7 @@ public class VideoBuffhController {
                     adminRepository.save(admins.get(0));
 
                     resp.put("videobuffh","true");
+                    resp.put("blance",blance);
                     resp.put("price",priceorder);
                     resp.put("time",time);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
