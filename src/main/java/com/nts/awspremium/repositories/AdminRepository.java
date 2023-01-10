@@ -3,9 +3,11 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface AdminRepository extends JpaRepository<Admin,Long> {
@@ -20,6 +22,10 @@ public interface AdminRepository extends JpaRepository<Admin,Long> {
 
     @Query(value = "Select balance from admin where username=?1 limit 1",nativeQuery = true)
     public Long getBlance(String username);
+    @Modifying
+    @Transactional
+    @Query(value = "update admin set balance=?1 where username=?2",nativeQuery = true)
+    public Integer updateBalance(Long balance,String username);
 
     @Query(value = "Select username from admin",nativeQuery = true)
     public List<String> GetAllUser();

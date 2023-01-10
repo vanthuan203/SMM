@@ -153,8 +153,8 @@ public class VideoBuffhController {
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());
 
                     videoBuffhRepository.save(videoBuffhnew);
-                    adminRepository.save(admins.get(0));
-
+                    adminRepository.updateBalance((long)(adminRepository.getBlance(admins.get(0).getUsername())-priceorder),admins.get(0).getUsername());
+                    Thread.sleep(30);
                     resp.put("videobuffh","true");
                     resp.put("balance",adminRepository.getBlance(admins.get(0).getUsername()));
                     resp.put("price",priceorder);
