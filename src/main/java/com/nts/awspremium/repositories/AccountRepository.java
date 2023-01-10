@@ -16,7 +16,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
     public Integer findUsername(String username);
 
-    @Query(value = "Select vps,count(*) from account where vps in (select vps from vps) group by vps having count(*)>240",nativeQuery = true)
+    @Query(value = "Select vps,count(*) from account where vps in (select vps from vps) group by vps having count(*)>180 limit 20",nativeQuery = true)
     public List<String> getCountByVps();
 
 

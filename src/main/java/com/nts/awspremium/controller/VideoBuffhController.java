@@ -329,12 +329,12 @@ public class VideoBuffhController {
             List<String> timeBuff24h;
             if(user.length()==0){
                 orderRunnings=orderBuffhRunningRepository.getOrder();
-                timeBuff =videoBuffhRepository.getTimeBuffVideo();
-                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+                //timeBuff =videoBuffhRepository.getTimeBuffVideo();
+                //timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
             }else{
                 orderRunnings=orderBuffhRunningRepository.getOrder(user.trim());
-                timeBuff =videoBuffhRepository.getTimeBuffVideo(user.trim());
-                timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(user.trim());
+                //timeBuff =videoBuffhRepository.getTimeBuffVideo(user.trim());
+                //timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo(user.trim());
             }
 
             //System.out.println(timeBuff.get(0).split(",")[0]);
@@ -366,6 +366,7 @@ public class VideoBuffhController {
                 obj.put("commentrate", orderRunnings.get(i).getCommentRate());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("enabled", orderRunnings.get(i).getEnabled());
+                /*
                 for(int j=0;j<timeBuff.size();j++){
                     if(orderRunnings.get(i).getVideoId().equals(timeBuff.get(j).split(",")[0])){
                         obj.put("timebuffhtotal", timeBuff.get(j).split(",")[1]);
@@ -380,12 +381,62 @@ public class VideoBuffhController {
                         break;
                     }
                 }
+
+                 */
+                obj.put("timebuffhtotal", orderRunnings.get(i).getTimeBuffTotal());
+                obj.put("viewtotal",orderRunnings.get(i).getViewTotal());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
 
             resp.put("total",orderRunnings.size());
             resp.put("videobuff",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateorderbuffhcron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateorderbuffhcron(){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try{
+            List<String> timeBuff;
+            List<String> timeBuff24h;
+            List<VideoBuffh> videoBuffhList=videoBuffhRepository.getAllOrder();
+            timeBuff =videoBuffhRepository.getTimeBuffVideo();
+            timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
+
+            for(int i=0;i<videoBuffhList.size();i++){
+                int timebufftotal=0;
+                int timebuff24h=0;
+                int viewtotal=0;
+                int view24h=0;
+                for(int j=0;j<timeBuff.size();j++){
+                    if(videoBuffhList.get(i).getVideoid().equals(timeBuff.get(j).split(",")[0])){
+                        timebufftotal=Integer.parseInt(timeBuff.get(j).split(",")[1]);
+                        viewtotal=Integer.parseInt(timeBuff.get(j).split(",")[2]);
+                    }
+                }
+                for(int j=0;j<timeBuff24h.size();j++){
+                    if(videoBuffhList.get(i).getVideoid().equals(timeBuff24h.get(j).split(",")[0])){
+                        timebuff24h=Integer.parseInt(timeBuff24h.get(j).split(",")[1]);
+                        view24h=Integer.parseInt(timeBuff24h.get(j).split(",")[2]);
+                    }
+                }
+                try{
+                    videoBuffhRepository.updateTimeViewOrderByVideoId(timebufftotal,timebuff24h,viewtotal,view24h,System.currentTimeMillis(),videoBuffhList.get(i).getVideoid());
+                }catch (Exception e){
+
+                }
+            }
+            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
+
+            resp.put("total",videoBuffhList.size());
+            resp.put("videobuff",true);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");

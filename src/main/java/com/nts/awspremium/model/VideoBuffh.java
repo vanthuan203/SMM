@@ -31,11 +31,16 @@ public class VideoBuffh {
     private Integer likerate;
     private Integer commentrate;
     private String user;
+    private Integer timebufftotal;
+    private Integer timebuff24h;
+    private Integer viewtotal;
+    private Integer view24h;
+    private Long timeupdate;
 
     public VideoBuffh() {
     }
 
-    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate, String user) {
+    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate, String user, Integer timebufftotal, Integer timebuff24h, Integer viewtotal, Integer view24h, Long timeupdate) {
         this.id = id;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -59,6 +64,51 @@ public class VideoBuffh {
         this.likerate = likerate;
         this.commentrate = commentrate;
         this.user = user;
+        this.timebufftotal = timebufftotal;
+        this.timebuff24h = timebuff24h;
+        this.viewtotal = viewtotal;
+        this.view24h = view24h;
+        this.timeupdate = timeupdate;
+    }
+
+    public Integer getTimebuff24h() {
+        return timebuff24h;
+    }
+
+    public void setTimebuff24h(Integer timebuff24h) {
+        this.timebuff24h = timebuff24h;
+    }
+
+    public Integer getView24h() {
+        return view24h;
+    }
+
+    public void setView24h(Integer view24h) {
+        this.view24h = view24h;
+    }
+
+    public Integer getTimebufftotal() {
+        return timebufftotal;
+    }
+
+    public void setTimebufftotal(Integer timebufftotal) {
+        this.timebufftotal = timebufftotal;
+    }
+
+    public Integer getViewtotal() {
+        return viewtotal;
+    }
+
+    public void setViewtotal(Integer viewtotal) {
+        this.viewtotal = viewtotal;
+    }
+
+    public Long getTimeupdate() {
+        return timeupdate;
+    }
+
+    public void setTimeupdate(Long timeupdate) {
+        this.timeupdate = timeupdate;
     }
 
     public String getUser() {

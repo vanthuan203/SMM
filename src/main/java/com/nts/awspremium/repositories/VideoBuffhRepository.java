@@ -67,9 +67,16 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
             "from videobuffh left join history on history.videoid=videobuffh.videoid and running=1  where enabled=?2 \n" +
             "group by videoid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoBuffh> getvideobuffhVer2NoCheckTime24h(String listvideo, Integer enabled);
-
+    @Query(value = "SELECT * FROM videobuffh where enabled!=0 order by timeupdate asc",nativeQuery = true)
+    public List<VideoBuffh> getAllOrder();
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM videobuffh where enabled!=0  and videoid=?1",nativeQuery = true)
     public void deletevideoByVideoId(String videoid);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE videobuffh set timebufftotal=?1,timebuff24h=?2,viewtotal=?3,view24h=?4,timeupdate=?5 where videoid=?6",nativeQuery = true)
+    public void updateTimeViewOrderByVideoId(Integer timebufftotal,Integer timebuff24h,Integer viewtotal,Integer view24h,Long timeupdate,String videoid);
+
 }

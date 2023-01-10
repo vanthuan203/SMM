@@ -28,6 +28,8 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Query(value = "SELECT timereset FROM vps WHERE id=(select max(id) from vps)",nativeQuery = true)
     public Integer findTimeIdMax();
+    @Query(value = "SELECT threads FROM vps WHERE vps like ?1",nativeQuery = true)
+    public Integer getThreadVPS(String vps);
 
     @Modifying
     @Transactional
