@@ -21,6 +21,8 @@ public interface OrderBuffhRunning {
     Integer getCommentRate();
     String getUser();
     Integer getTimeBuffTotal();
+    Integer getTimeBuff24h();
     Integer getViewTotal();
+    Integer getView24h();
     Long getTimeUpdate();
 }
