@@ -128,7 +128,7 @@ public class VideoBuffhController {
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    admins.get(0).setBalance(blance-(long)priceorder);
+                    admins.get(0).setBalance((long) (blance-priceorder));
 
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     JSONObject statistics = (JSONObject) video.get("statistics");
