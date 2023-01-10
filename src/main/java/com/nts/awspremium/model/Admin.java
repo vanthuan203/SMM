@@ -17,10 +17,11 @@ public class Admin {
     private Long balance;
     private Integer discount;
     private Long maxorder;
+    private Integer vip;
     public Admin() {
     }
 
-    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder) {
+    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder, Integer vip) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -29,6 +30,15 @@ public class Admin {
         this.balance = balance;
         this.discount = discount;
         this.maxorder = maxorder;
+        this.vip = vip;
+    }
+
+    public Integer getVip() {
+        return vip;
+    }
+
+    public void setVip(Integer vip) {
+        this.vip = vip;
     }
 
     public Long getMaxorder() {
