@@ -128,6 +128,7 @@ public class VideoBuffhController {
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                    admins = adminRepository.FindByToken(Authorization.trim());
                     admins.get(0).setBalance(admins.get(0).getBalance()-(long)priceorder);
 
                     JSONObject snippet = (JSONObject) video.get("snippet");
@@ -155,7 +156,6 @@ public class VideoBuffhController {
 
                     videoBuffhRepository.save(videoBuffhnew);
                     adminRepository.save(admins.get(0));
-
 
                     resp.put("videobuffh","true");
                     resp.put("price",priceorder);
