@@ -154,7 +154,7 @@ public class VideoBuffhController {
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());
 
                     videoBuffhRepository.save(videoBuffhnew);
-
+                    adminRepository.save(admins.get(0));
 
 
                     resp.put("videobuffh","true");
