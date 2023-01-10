@@ -127,8 +127,6 @@ public class VideoBuffhController {
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    admins.get(0).setBalance((long) (adminRepository.getBlance(admins.get(0).getUsername())-priceorder));
-
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     VideoBuffh videoBuffhnew= new VideoBuffh();
@@ -154,7 +152,7 @@ public class VideoBuffhController {
 
                     videoBuffhRepository.save(videoBuffhnew);
                     adminRepository.updateBalance((long)(adminRepository.getBlance(admins.get(0).getUsername())-priceorder),admins.get(0).getUsername());
-                    Thread.sleep(30);
+                    Thread.sleep(100);
                     resp.put("videobuffh","true");
                     resp.put("balance",adminRepository.getBlance(admins.get(0).getUsername()));
                     resp.put("price",priceorder);
