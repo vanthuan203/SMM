@@ -86,7 +86,6 @@ public class VideoBuffhController {
             }
             while (k.hasNext()) {
                 try {
-                    long blance=admins.get(0).getBalance();
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
@@ -124,11 +123,11 @@ public class VideoBuffhController {
                             priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
                         }
                     }
-                    if(priceorder>(float)admins.get(0).getBalance()){
+                    if(priceorder>(float)adminRepository.getBlance(admins.get(0).getUsername())){
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    admins.get(0).setBalance((long) (blance-priceorder));
+                    admins.get(0).setBalance((long) (adminRepository.getBlance(admins.get(0).getUsername())-priceorder));
 
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     JSONObject statistics = (JSONObject) video.get("statistics");
@@ -157,7 +156,7 @@ public class VideoBuffhController {
                     adminRepository.save(admins.get(0));
 
                     resp.put("videobuffh","true");
-                    resp.put("blance",blance);
+                    resp.put("blance",adminRepository.getBlance(admins.get(0).getUsername()));
                     resp.put("price",priceorder);
                     resp.put("time",time);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
