@@ -85,7 +85,7 @@ public class VideoBuffhController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             long balance=admins.get(0).getBalance();
-
+            while (k.hasNext()) {
                 try {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
@@ -166,9 +166,9 @@ public class VideoBuffhController {
                     resp.put("videobuffh", "error");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
-            //resp.put("videobuffh", "error");
-            //return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            resp.put("videobuffh", "error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("videobuffh","Fail check video!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
