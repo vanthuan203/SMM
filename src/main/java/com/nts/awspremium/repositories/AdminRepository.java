@@ -18,7 +18,7 @@ public interface AdminRepository extends JpaRepository<Admin,Long> {
     @Query(value = "Select count(*) from admin where username=?1",nativeQuery = true)
     public Integer FindAdminByUser(String username);
 
-    @Query(value = "Select blance from admin where username=?1 limit 1",nativeQuery = true)
+    @Query(value = "Select balance from admin where username=?1 limit 1",nativeQuery = true)
     public Long getBlance(String username);
 
     @Query(value = "Select username from admin",nativeQuery = true)
