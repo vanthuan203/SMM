@@ -41,6 +41,11 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     @Transactional
     @Query(value = "update history set running=0,videoid='' where running=1 and POSITION(videoid in listvideo)=0 and  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15",nativeQuery = true)
     public Integer resetThreadcron();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update history set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=180 and running=1",nativeQuery = true)
+    public Integer resetThreadThan3hcron();
     @Modifying
     @Transactional
     @Query(value = "UPDATE history SET running=0,vps='' where vps like ?1",nativeQuery = true)

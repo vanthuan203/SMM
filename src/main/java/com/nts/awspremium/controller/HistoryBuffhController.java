@@ -374,6 +374,7 @@ public class HistoryBuffhController {
     ResponseEntity<String> delthreadcron(){
         JSONObject resp=new JSONObject();
         try{
+            historyRepository.resetThreadThan3hcron();
             historyRepository.resetThreadcron();
             proxyRepository.ressetRunningProxyError();
             //historyViewRepository.deleteHistoryView(username,videoid);
