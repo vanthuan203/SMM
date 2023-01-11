@@ -84,7 +84,6 @@ public class VideoBuffhController {
                 resp.put("videobuffh","Fail check video!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            long balance=admins.get(0).getBalance();
             while (k.hasNext()) {
                 try {
                     JSONObject video = (JSONObject) k.next();
@@ -124,7 +123,7 @@ public class VideoBuffhController {
                             priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
                         }
                     }
-                    if(priceorder>(float)balance){
+                    if(priceorder>(float)admins.get(0).getBalance()){
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -150,13 +149,10 @@ public class VideoBuffhController {
                     videoBuffhnew.setNote(videoBuffh.getNote());
                     videoBuffhnew.setMobilerate(videoBuffh.getMobilerate());
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());
-
+                    adminRepository.updateBalance((long)(admins.get(0).getBalance()-priceorder),admins.get(0).getUsername());
                     videoBuffhRepository.save(videoBuffhnew);
-                    adminRepository.updateBalance((long)(balance-priceorder),admins.get(0).getUsername());
-                    balance=(long)(balance-priceorder);
-                    Thread.sleep(100);
                     resp.put("videobuffh","true");
-                    resp.put("balance",balance);
+                    resp.put("balance",admins.get(0).getBalance());
                     resp.put("price",priceorder);
                     resp.put("time",time);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
