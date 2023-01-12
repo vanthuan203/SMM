@@ -1,10 +1,10 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.Admin;
+import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.OrderRunning;
-import com.nts.awspremium.repositories.AdminRepository;
-import com.nts.awspremium.repositories.ChannelRepository;
-import com.nts.awspremium.repositories.OrderRunningRepository;
+import com.nts.awspremium.model.Setting;
+import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,6 +26,10 @@ public class AuthController {
     ChannelRepository channelRepository;
     @Autowired
     OrderRunningRepository orderRunningRepository;
+    @Autowired
+    SettingRepository settingRepository;
+    @Autowired
+    BalanceRepository balanceRepository;
     @PostMapping(path = "login",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> login(@RequestBody Admin admin){
         JSONObject resp=new JSONObject();
@@ -67,6 +71,7 @@ public class AuthController {
         obj.put("discount", admins.get(0).getDiscount());
         obj.put("vip", admins.get(0).getVip());
         obj.put("id", admins.get(0).getId());
+        obj.put("price", settingRepository.getPrice());
         resp.put("status","success");
         resp.put("user",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -85,10 +90,20 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         List<Admin> admins=adminRepository.GetAdminByUser(admin.getUsername().trim());
+        long totalbalance=admin.getBalance()+admins.get(0).getBalance();
         admins.get(0).setVip(admin.getVip());
         admins.get(0).setMaxorder(admin.getMaxorder());
         admins.get(0).setDiscount(admin.getDiscount());
-        admins.get(0).setBalance(admin.getBalance()+admins.get(0).getBalance());
+        admins.get(0).setBalance(totalbalance);
+        if(admin.getBalance()>0){
+            Balance balance=new Balance();
+            balance.setUser(admin.getUsername().trim());
+            balance.setTime(System.currentTimeMillis());
+            balance.setTotalblance(totalbalance);
+            balance.setBalance(admin.getBalance());
+            balance.setNote("Admin nạp tiền");
+            balanceRepository.save(balance);
+        }
         adminRepository.save(admins.get(0));
         JSONObject obj = new JSONObject();
         obj.put("username", admins.get(0).getUsername());
@@ -103,6 +118,30 @@ public class AuthController {
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
+    }
+
+    @PostMapping(path = "updatesetting",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatesetting(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Setting setting){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> check=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| check.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<Setting> setting1=settingRepository.getSetting();
+        setting1.get(0).setBonus(setting.getBonus());
+        setting1.get(0).setMaxorder(setting.getMaxorder());
+        setting1.get(0).setPricerate(setting.getPricerate());
+        settingRepository.save(setting1.get(0));
+        JSONObject obj = new JSONObject();
+        obj.put("id", setting.getId());
+        obj.put("pricerate", setting.getPricerate());
+        obj.put("bonus", setting.getBonus());
+        obj.put("maxorder", setting.getMaxorder());
+        resp.put("account",obj);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 
     @GetMapping(path = "list",produces = "application/hal+json;charset=utf8")
@@ -127,6 +166,32 @@ public class AuthController {
             obj.put("id", users.get(i).getId());
             obj.put("vip",users.get(i).getVip());
             obj.put("maxorder",users.get(i).getMaxorder());
+            jsonArray.add(obj);
+        }
+        resp.put("accounts",jsonArray);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(path = "setting",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> setting(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        JSONArray jsonArray =new JSONArray();
+        List<Setting> setting=settingRepository.getSetting();
+        for(int i=0;i<setting.size();i++){
+            JSONObject obj = new JSONObject();
+            obj.put("id", setting.get(i).getId());
+            obj.put("pricerate", setting.get(i).getPricerate());
+            obj.put("bonus", setting.get(i).getBonus());
+            obj.put("maxorder", setting.get(i).getMaxorder());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);

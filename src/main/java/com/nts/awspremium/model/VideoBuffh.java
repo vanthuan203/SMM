@@ -36,11 +36,12 @@ public class VideoBuffh {
     private Integer viewtotal;
     private Integer view24h;
     private Long timeupdate;
+    private Integer price;
 
     public VideoBuffh() {
     }
 
-    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate, String user, Integer timebufftotal, Integer timebuff24h, Integer viewtotal, Integer view24h, Long timeupdate) {
+    public VideoBuffh(Long id, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer mobilerate, Long insertdate, Long enddate, Integer homerate, Integer searchrate, Integer suggestrate, Integer directrate, Integer enabled, Integer timebuff, Integer maxthreads, Long duration, Integer optionbuff, String channeltitle, String note, Integer likerate, Integer commentrate, String user, Integer timebufftotal, Integer timebuff24h, Integer viewtotal, Integer view24h, Long timeupdate, Integer price) {
         this.id = id;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -69,6 +70,15 @@ public class VideoBuffh {
         this.viewtotal = viewtotal;
         this.view24h = view24h;
         this.timeupdate = timeupdate;
+        this.price = price;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 
     public Integer getTimebuff24h() {

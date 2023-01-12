@@ -24,5 +24,6 @@ public interface OrderBuffhRunning {
     Integer getTimeBuff24h();
     Integer getViewTotal();
     Integer getView24h();
+    Integer getPrice();
     Long getTimeUpdate();
 }

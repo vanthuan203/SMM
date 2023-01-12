@@ -12,16 +12,26 @@ public class Setting {
     private Integer mintimebuff;
     private Integer maxthread;
     private Integer pricerate;
+    private Integer bonus;
 
     public Setting() {
     }
 
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate) {
+    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus) {
         this.id = id;
         this.maxorder = maxorder;
         this.mintimebuff = mintimebuff;
         this.maxthread = maxthread;
         this.pricerate = pricerate;
+        this.bonus = bonus;
+    }
+
+    public Integer getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(Integer bonus) {
+        this.bonus = bonus;
     }
 
     public Long getId() {
