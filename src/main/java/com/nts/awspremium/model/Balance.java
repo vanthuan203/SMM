@@ -3,7 +3,7 @@ package com.nts.awspremium.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "blance")
+@Table(name = "balance")
 public class Balance {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

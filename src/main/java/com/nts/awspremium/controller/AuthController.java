@@ -72,6 +72,7 @@ public class AuthController {
         obj.put("vip", admins.get(0).getVip());
         obj.put("id", admins.get(0).getId());
         obj.put("price", settingRepository.getPrice());
+        obj.put("bonus", settingRepository.getBonus());
         resp.put("status","success");
         resp.put("user",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -199,6 +200,41 @@ public class AuthController {
 
 
     }
+
+    @GetMapping(path = "balance",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balance(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        JSONArray jsonArray =new JSONArray();
+        List<Balance> balance;
+        if(user.length()==0){
+            balance =balanceRepository.getAllBalance();
+
+        }else{
+            balance=balanceRepository.getAllBalance(user.trim());
+        }
+        for(int i=0;i<balance.size();i++){
+            JSONObject obj = new JSONObject();
+            obj.put("user", balance.get(i).getUser());
+            obj.put("totalbalance", balance.get(i).getTotalblance());
+            obj.put("balance", balance.get(i).getBalance());
+            obj.put("note", balance.get(i).getNote());
+            obj.put("time", balance.get(i).getTime());
+            obj.put("id", balance.get(i).getId());
+            jsonArray.add(obj);
+        }
+        resp.put("balances",jsonArray);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
 
     @GetMapping(path = "getalluser",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getalluser(@RequestHeader(defaultValue = "") String Authorization){

@@ -30,6 +30,8 @@ public class VideoBuffhController {
     private VideoRepository videoRepository;
     @Autowired
     private AdminRepository adminRepository;
+    @Autowired
+    private BalanceRepository balanceRepository;
 
     @Autowired
     private SettingRepository settingRepository;
@@ -152,17 +154,16 @@ public class VideoBuffhController {
                     videoBuffhnew.setPrice((int)priceorder);
                     adminRepository.updateBalance((long)(admins.get(0).getBalance()-priceorder),admins.get(0).getUsername());
                     videoBuffhRepository.save(videoBuffhnew);
-/*
                     Balance balance=new Balance();
                     balance.setUser(admins.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(totalbalance);
-                    balance.setBalance(admin.getBalance());
-                    balance.setNote("Admin nạp tiền");
+                    balance.setTotalblance(admins.get(0).getBalance());
+                    balance.setBalance(-(long)priceorder);
+                    balance.setNote("Order " +videoBuffh.getTimebuff()+"h cho video "+videoBuffh.getVideoid());
                     balanceRepository.save(balance);
 
 
- */
+
                     resp.put("videobuffh","true");
                     resp.put("balance",admins.get(0).getBalance());
                     resp.put("price",priceorder);
@@ -952,7 +953,9 @@ public class VideoBuffhController {
                     resp.put("message","Số tiền không đủ!!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                int timethan=videoBuffh.getTimebuff()- video.get(0).getTimebuff();
                 admins.get(0).setBalance(admins.get(0).getBalance()-(long)priceorder);
+                adminRepository.save(admins.get(0));
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
                 video.get(0).setEnabled(videoBuffh.getEnabled());
                 video.get(0).setOptionbuff(videoBuffh.getOptionbuff());
@@ -966,6 +969,20 @@ public class VideoBuffhController {
                 video.get(0).setNote(videoBuffh.getNote());
                 video.get(0).setPrice((int)(videoBuffh.getPrice()+priceorder));
                 videoBuffhRepository.save(video.get(0));
+
+                Balance balance=new Balance();
+                balance.setUser(admins.get(0).getUsername().trim());
+                balance.setTime(System.currentTimeMillis());
+                balance.setTotalblance(admins.get(0).getBalance());
+                balance.setBalance(-(long)priceorder);
+                if(priceorder<0){
+                    balance.setNote("Hoàn " +(-timethan)+"h cho "+videoBuffh.getVideoid());
+                }else if(timethan!=0){
+                    balance.setNote("Order thêm " +timethan+"h cho "+videoBuffh.getVideoid());
+                }
+
+                balanceRepository.save(balance);
+
                 List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 JSONObject obj = new JSONObject();
                 obj.put("videoid", orderRunnings.get(0).getVideoId());
