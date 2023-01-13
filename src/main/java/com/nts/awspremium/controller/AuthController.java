@@ -105,6 +105,7 @@ public class AuthController {
             balance.setNote("Admin nạp tiền");
             balanceRepository.save(balance);
         }
+        admins.get(0).setNote(admin.getNote());
         adminRepository.save(admins.get(0));
         JSONObject obj = new JSONObject();
         obj.put("username", admins.get(0).getUsername());
@@ -115,6 +116,7 @@ public class AuthController {
         obj.put("id", admins.get(0).getId());
         obj.put("maxorder",admins.get(0).getMaxorder());
         obj.put("vip",admins.get(0).getVip());
+        obj.put("note",admins.get(0).getNote());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
@@ -167,6 +169,7 @@ public class AuthController {
             obj.put("id", users.get(i).getId());
             obj.put("vip",users.get(i).getVip());
             obj.put("maxorder",users.get(i).getMaxorder());
+            obj.put("note",users.get(i).getNote());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);

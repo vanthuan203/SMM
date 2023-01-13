@@ -18,10 +18,11 @@ public class Admin {
     private Integer discount;
     private Long maxorder;
     private Integer vip;
+    private String note;
     public Admin() {
     }
 
-    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder, Integer vip) {
+    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder, Integer vip, String note) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -31,6 +32,15 @@ public class Admin {
         this.discount = discount;
         this.maxorder = maxorder;
         this.vip = vip;
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Integer getVip() {

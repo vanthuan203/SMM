@@ -116,15 +116,17 @@ public class VideoBuffhController {
                     }else{
                         if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600){
                             time=30;
-                            priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.1*((float)(100-admins.get(0).getDiscount())/100);
+                            priceorder=(float)(videoBuffh.getTimebuff())/4000*(setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100)+40000F);
                         }else if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<7200){
                             time=60;
-                            priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*(float)1.05*((float)(100-admins.get(0).getDiscount())/100);
+                            priceorder=(float)(videoBuffh.getTimebuff())/4000*(setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100)+20000F);
                         }else{
                             time=120;
                             priceorder=(float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
                         }
                     }
+                    System.out.println(priceorder);
+                    System.out.println(setting.getPricerate()+20000F);
                     if(priceorder>(float)admins.get(0).getBalance()){
                         resp.put("videobuffh","Số tiền không đủ!!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -942,13 +944,18 @@ public class VideoBuffhController {
                 Setting setting=settingRepository.getReferenceById(1L);
                 //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                 float priceorder=0;
-                if(video.get(0).getDuration()<3600){
-                    priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*setting.getPricerate()*(float)1.1*((float)(100-admins.get(0).getDiscount())/100);
-                }else if(video.get(0).getDuration()<7200){
-                    priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*setting.getPricerate()*(float)1.05*((float)(100-admins.get(0).getDiscount())/100);
-                }else{
+                if(admins.get(0).getVip()==1){
                     priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
+                }else{
+                    if(video.get(0).getDuration()<3600){
+                        priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*(setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100)+40000F);
+                    }else if(video.get(0).getDuration()<7200){
+                        priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*(setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100)+20000F);
+                    }else{
+                        priceorder=(float)(videoBuffh.getTimebuff()-video.get(0).getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100);
+                    }
                 }
+
                 if(priceorder>(float)admins.get(0).getBalance()){
                     resp.put("message","Số tiền không đủ!!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -974,6 +981,7 @@ public class VideoBuffhController {
                 balance.setUser(admins.get(0).getUsername().trim());
                 balance.setTime(System.currentTimeMillis());
                 balance.setTotalblance(admins.get(0).getBalance());
+                System.out.println(admins.get(0).getBalance());
                 balance.setBalance(-(long)priceorder);
                 if(priceorder<0){
                     balance.setNote("Hoàn " +(-timethan)+"h cho "+videoBuffh.getVideoid());
