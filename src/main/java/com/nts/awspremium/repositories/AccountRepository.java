@@ -117,6 +117,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffh(String geo);
+    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')=0 order by rand()  limit 1",nativeQuery = true)
+    public Long getAccountBuffhDomain(String geo);
+
+    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')>0 order by rand()  limit 1",nativeQuery = true)
+    public Long getAccountBuffhGmail(String geo);
 
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSub();

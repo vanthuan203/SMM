@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.regex.Pattern;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
@@ -162,13 +163,25 @@ public class AccountBuffhController {
             if(idbyVps==null){
                 //Thread.sleep((long)(Math.random() * 10000));
                 Long id=-0L;
-                if(test==1){
-                    id=accountRepository.getAccountBuffh("vn");
-                }else if(test==2){
-                    id=accountRepository.getAccountBuffh("us");
+                Pattern  pattern = Pattern.compile("[a-zA-Z]");
+                if(pattern.matcher(vps.trim()).find()){
+                    if(test==1){
+                        id=accountRepository.getAccountBuffhGmail("vn");
+                    }else if(test==2){
+                        id=accountRepository.getAccountBuffhGmail("us");
+                    }else{
+                        id=accountRepository.getAccountBuffhGmail("us");
+                    }
                 }else{
-                    id=accountRepository.getAccountBuffh("us");
+                    if(test==1){
+                        id=accountRepository.getAccountBuffhDomain("vn");
+                    }else if(test==2){
+                        id=accountRepository.getAccountBuffhDomain("us");
+                    }else{
+                        id=accountRepository.getAccountBuffhDomain("us");
+                    }
                 }
+
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
