@@ -164,10 +164,9 @@ public class AccountSubController {
                                 break;
                             }
                         }
-
-                         */
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
+                         */
                         Thread.sleep(3);
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
@@ -185,7 +184,7 @@ public class AccountSubController {
                         //resp.put("endtrial",account.get(0).getEndtrial());
                         resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
-                        resp.put("cookie",cookieSub);
+                        resp.put("cookie","");
                         //resp.put("encodefinger",encodefingerSub);
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
@@ -203,6 +202,7 @@ public class AccountSubController {
                     Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
                     String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
                     int check_getfinger=0;
+                    /*
                     while (check_getfinger<=3){
                         if(encodefingerSub.length()<50){
                             Long idFinger= encodefingerRepository.getRandomIdSub();
@@ -212,8 +212,11 @@ public class AccountSubController {
                             break;
                         }
                     }
+
                     Long idCookieSub= cookieRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
                     String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
+
+                     */
                     if(accountcheck==0){
                         resp.put("status", "fail");
                         resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
@@ -227,7 +230,7 @@ public class AccountSubController {
                     resp.put("username",accountbyVps.get(0).getUsername());
                     resp.put("password",accountbyVps.get(0).getPassword());
                     resp.put("recover",accountbyVps.get(0).getRecover());
-                    resp.put("cookie",cookieSub);
+                    resp.put("cookie","");
                     //resp.put("encodefinger",encodefingerSub);
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }catch (Exception e){
