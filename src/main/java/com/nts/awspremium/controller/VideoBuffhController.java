@@ -465,7 +465,9 @@ public class VideoBuffhController {
                    try {
                        JSONObject video = (JSONObject) k.next();
                        JSONObject statistics = (JSONObject) video.get("statistics");
-                       if(Integer.parseInt(statistics.get("viewCount").toString())<videoBuffhHistories.get(i).getViewend()){
+                       if(Integer.parseInt(statistics.get("viewCount").toString())-(int)(videoBuffhHistories.get(i).getViewend()*0.05)<videoBuffhHistories.get(i).getViewend()){
+                           //time trung bình
+                           int time_avg=(int)((videoBuffhHistories.get(i).getTimebuffend()/videoBuffhHistories.get(i).getViewbuffend())/3600);
                            //view cần buff
                            int viewneed=0;
                            if(videoBuffhHistories.get(i).getDuration()<3600){
@@ -473,33 +475,34 @@ public class VideoBuffhController {
                            }else if(videoBuffhHistories.get(i).getDuration()<7200){
                                viewneed=videoBuffhHistories.get(i).getTimebuff();
                            }else{
-                               viewneed=videoBuffhHistories.get(i).getTimebuff()/2;
+                               viewneed=(int)(videoBuffhHistories.get(i).getTimebuff()/2);
                            }
 
                            if(Integer.parseInt(statistics.get("viewCount").toString())<viewneed+videoBuffhHistories.get(i).getViewstart()){
                                if(Integer.parseInt(statistics.get("viewCount").toString())<videoBuffhHistories.get(i).getViewstart()){
                                    videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                                   obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "View hiện tại nhỏ hơn view bđ");
+                                   obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "View hiện tại nhỏ hơn view bắt đầu buff");
                                    jsonArray.add(obj);
                                    continue;
                                }
                                int baohanh=0;
+                               System.out.println(1+setting.getBonus()/100F);
                                if(videoBuffhHistories.get(i).getDuration()<3600){
-                                   baohanh=(int)((viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))/2);
+                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)((viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
                                }else if(videoBuffhHistories.get(i).getDuration()<7200){
-                                   baohanh=(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()));
+                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString())));
                                }else{
-                                   baohanh=(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))*2;
+                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))*2);
                                }
-                               if(baohanh>=videoBuffhHistories.get(i).getTimebuff()*0.7){
+                               if(baohanh>=videoBuffhHistories.get(i).getTimebuff()*0.5){
                                    videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                                   obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "số giờ bảo hành > *0.7 số order ");
+                                   obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "số giờ bảo hành > *0.5 số order ");
                                    jsonArray.add(obj);
                                    continue;
                                }
-                               System.out.println(viewneed+""+baohanh);
+                               System.out.println(viewneed+"|"+baohanh);
                                float priceorder=0;
                                int time=0;
                                if(admins.get(0).getVip()==1){
@@ -534,7 +537,7 @@ public class VideoBuffhController {
                                videoBuffhnew.setSearchrate(videoBuffhHistories.get(i).getSearchrate());
                                videoBuffhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                                videoBuffhnew.setMaxthreads(videoBuffhHistories.get(i).getMaxthreads());
-                               videoBuffhnew.setNote(videoBuffhHistories.get(i).getUser() +"| BHL"+videoBuffhHistories.get(i).getNumbh()+1);
+                               videoBuffhnew.setNote(videoBuffhHistories.get(i).getUser() +"| BHL"+(int)(videoBuffhHistories.get(i).getNumbh()+1));
                                videoBuffhnew.setMobilerate(videoBuffhHistories.get(i).getMobilerate());
                                videoBuffhnew.setLikerate(videoBuffhHistories.get(i).getLikerate());
                                videoBuffhnew.setPrice((int)priceorder);
@@ -573,7 +576,7 @@ public class VideoBuffhController {
                }
 
            }
-            resp.put("Rep",jsonArray);
+            resp.put("rep",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
@@ -1091,7 +1094,6 @@ public class VideoBuffhController {
                 video.get(0).setNote(videoBuffh.getNote());
                 video.get(0).setPrice((int)(videoBuffh.getPrice()+priceorder));
                 videoBuffhRepository.save(video.get(0));
-
                 Balance balance=new Balance();
                 balance.setUser(admins.get(0).getUsername().trim());
                 balance.setTime(System.currentTimeMillis());

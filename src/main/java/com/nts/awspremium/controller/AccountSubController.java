@@ -132,11 +132,14 @@ public class AccountSubController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        /*
         if (vps.indexOf("WS") >= 0 || vps.indexOf("ws") >= 0 || vps.indexOf("Ws") >= 0 ||  vps.indexOf("wS") >= 0) {
             resp.put("status","fail");
             resp.put("message", "Hết tài khoản thỏa mãn!");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }
+
+         */
         try {
             Long idbyVps=accountRepository.getAccountSubByVps(vps);
             if(idbyVps==null){
