@@ -955,10 +955,25 @@ public class AccountSubController {
         }
     }
     @GetMapping(value = "/resetLoginAccountSubByTimecheck",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetAccountByTimecheck() {
+    ResponseEntity<String> resetLoginAccountSubByTimecheck() {
         JSONObject resp = new JSONObject();
         try {
             accountRepository.resetLoginAccountSubByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/resetAccountSubByTimecheck",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetAccountSubByTimecheck() {
+        JSONObject resp = new JSONObject();
+        try {
+            accountRepository.resetAccountSubByTimecheck();
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 

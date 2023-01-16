@@ -224,7 +224,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=12",nativeQuery = true)
+    @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=6",nativeQuery = true)
     public Integer resetAccountSubByTimecheck();
 
     @Modifying
@@ -236,6 +236,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET vps='',running=0,live=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=8 and live=0",nativeQuery = true)
     public Integer resetLoginAccountSubByTimecheck();
+
 
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timecheck)/1000)/60) as time,count(*) as total FROM account where endtrial=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
