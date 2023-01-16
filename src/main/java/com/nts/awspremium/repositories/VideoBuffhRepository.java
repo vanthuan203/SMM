@@ -14,6 +14,9 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and time>=videobuffh.insertdate group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo();
 
+    @Query(value = "SELECT * from videobuffh  where videoid=?1 limit 1",nativeQuery = true)
+    public List<VideoBuffh> getUserByVideoId(String videoid);
+
     @Query(value = "SELECT videobuffh.videoid,sum(historysum.duration) as total,count(*) as view FROM historysum left join videobuffh on historysum.videoid=videobuffh.videoid where videobuffh.enabled!=0 and videobuffh.user=?1 and time>=videobuffh.insertdate group by videobuffh.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo(String user);
 
