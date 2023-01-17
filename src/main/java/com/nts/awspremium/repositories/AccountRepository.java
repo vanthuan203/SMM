@@ -16,7 +16,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
     public Integer findUsername(String username);
 
-    @Query(value = "Select vps,count(*) from account where vps in (select vps from vps) group by vps having count(*)>180 limit 20",nativeQuery = true)
+    @Query(value = "Select vps,count(*) from account where vps in (select vps from vps) group by vps having count(*)>800 limit 20",nativeQuery = true)
     public List<String> getCountByVps();
 
 
@@ -35,7 +35,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update account set vps='',running=0 where vps like ?1 limit ?2",nativeQuery = true)
+    @Query(value = "update account set vps='',running=0 where vps like ?1 and username not in(select username from history where vps like ?1 and running=1) limit ?2",nativeQuery = true)
     public void updatelistaccount(String vps,Integer limit);
 
     @Modifying

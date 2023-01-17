@@ -32,6 +32,10 @@ public interface VideoBuffhHistoryRepository extends JpaRepository<VideoBuffhHis
     @Query(value = "SELECT * FROM AccPremium.videobuffhhistory where insertdate>=1672272000000 and cancel!=1 and timecheck!=-1 and viewend is not null order by timecheck asc,enddate asc  limit ?1",nativeQuery = true)
     public List<VideoBuffhHistory> getVideoCheckBH(Integer limit);
 
+    @Query(value = "SELECT * FROM AccPremium.videobuffhhistory where videoid=?1 and " +
+            "id in( SELECT  * FROM (SELECT  MAX(id) FROM videobuffhhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
+    public List<VideoBuffhHistory> getVideoBHByVideoId(String videoid);
+
 
     @Modifying
     @Transactional
