@@ -1224,7 +1224,7 @@ public class VideoBuffhController {
                 videoBuffhnew.setSearchrate(videoBuffh.get(i).getSearchrate());
                 videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
                 videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(0).getNote());
+                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
                 videoBuffhnew.setMobilerate(videoBuffh.get(i).getMobilerate());
                 videoBuffhnew.setLikerate(videoBuffh.get(i).getLikerate());
                 videoBuffhnew.setCommentrate(videoBuffh.get(i).getCommentrate());
@@ -1267,7 +1267,8 @@ public class VideoBuffhController {
             for(int i=0;i<videoidIdArr.length;i++){
                 List<VideoBuffh> video=videoBuffhRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 float priceorder=0;
-                if(videoBuffh.getTimebuff()!=video.get(0).getTimebuff()){
+                if((int)videoBuffh.getTimebuff()!=(int)video.get(0).getTimebuff()){
+                    System.out.println(videoBuffh.getTimebuff()!=video.get(0).getTimebuff());
                     Setting setting=settingRepository.getReferenceById(1L);
                     //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                     if(admins.get(0).getVip()==1){
