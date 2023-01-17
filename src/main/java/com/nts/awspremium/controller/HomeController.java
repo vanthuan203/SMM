@@ -40,7 +40,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String index() {
-        return "Vocuc203 || AccPremium + Proxy 8005";
+        return "Vocuc203 || AccPremium + Proxy 8006";
     }
 
     //Get video tren channel
