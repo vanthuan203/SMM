@@ -471,11 +471,11 @@ public class VideoBuffhController {
                            //view cần buff
                            int viewneed=0;
                            if(videoBuffhHistories.get(i).getDuration()<3600){
-                               viewneed=videoBuffhHistories.get(i).getTimebuff()*2;
+                               viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))*2);
                            }else if(videoBuffhHistories.get(i).getDuration()<7200){
-                               viewneed=videoBuffhHistories.get(i).getTimebuff();
+                               viewneed=(int)(videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F));
                            }else{
-                               viewneed=(int)(videoBuffhHistories.get(i).getTimebuff()/2);
+                               viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))/2);
                            }
 
                            if(Integer.parseInt(statistics.get("viewCount").toString())<viewneed+videoBuffhHistories.get(i).getViewstart()){
@@ -658,11 +658,11 @@ public class VideoBuffhController {
                             //view cần buff
                             int viewneed=0;
                             if(videoBuffhHistories.get(i).getDuration()<3600){
-                                viewneed=videoBuffhHistories.get(i).getTimebuff()*2;
+                                viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))*2);
                             }else if(videoBuffhHistories.get(i).getDuration()<7200){
-                                viewneed=videoBuffhHistories.get(i).getTimebuff();
+                                viewneed=(int)(videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F));
                             }else{
-                                viewneed=(int)(videoBuffhHistories.get(i).getTimebuff()/2);
+                                viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))/2);
                             }
 
                             if(Integer.parseInt(statistics.get("viewCount").toString())<viewneed+videoBuffhHistories.get(i).getViewstart()){

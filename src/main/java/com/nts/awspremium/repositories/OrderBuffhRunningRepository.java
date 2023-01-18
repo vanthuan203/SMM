@@ -27,7 +27,7 @@ public interface OrderBuffhRunningRepository extends JpaRepository<VideoBuffh,Lo
             "maxthreads,'-',timebuff,'-',insertdate,'-',note,'-',optionbuff) like ?1 and enabled!=0 and videobuffh.user=?2  group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderBuffhRunning> getOrderFilter(String key,String user);
 
-    @Query(value = "select * from videobuffh group by videobuffh.videoid having sum(timebufftotal)>(3600*timebuff + timebuff*(select bonus/100 from setting where id=1)*3600)",nativeQuery = true)
+    @Query(value = "select * from videobuffh where timebufftotal>(3600*timebuff + timebuff*(select bonus/100 from setting where id=1)*3600) and (CASE WHEN duration<3600 THEN viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1))*2  WHEN duration<7200 THEN viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1)) ELSE viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1))/2 END)",nativeQuery = true)
     public List<VideoBuffh> getOrderFullBuffh();
 
     @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,0 as total,maxthreads,timebuff,insertdate,enabled,note,duration," +
