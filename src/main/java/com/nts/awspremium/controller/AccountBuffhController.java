@@ -163,6 +163,7 @@ public class AccountBuffhController {
             if(idbyVps==null){
                 //Thread.sleep((long)(Math.random() * 10000));
                 Long id=-0L;
+                /*
                 Pattern  pattern = Pattern.compile("[a-zA-Z]");
                 if(pattern.matcher(vps.trim()).find()){
                     if(test==1){
@@ -172,7 +173,19 @@ public class AccountBuffhController {
                     }else{
                         id=accountRepository.getAccountBuffhGmail("us");
                     }
-                }else{
+                    List<Account> account=accountRepository.findAccountById(id);
+                    if(id==0L){
+                        if(test==1){
+                            id=accountRepository.getAccountBuffhDomain("vn");
+                        }else if(test==2){
+                            id=accountRepository.getAccountBuffhDomain("us");
+                        }else{
+                            id=accountRepository.getAccountBuffhDomain("us");
+                        }
+                    }
+
+                 */
+
                     if(test==1){
                         id=accountRepository.getAccountBuffhDomain("vn");
                     }else if(test==2){
@@ -180,8 +193,6 @@ public class AccountBuffhController {
                     }else{
                         id=accountRepository.getAccountBuffhDomain("us");
                     }
-                }
-
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
@@ -719,7 +730,8 @@ public class AccountBuffhController {
                 accounts.get(0).setRunning(0);
                 accounts.get(0).setVps("");
                 accountRepository.save(accounts.get(0));
-                historyRepository.resetThreadByUsername(username.trim());
+                Long  historieId=historyRepository.getId(username.trim());
+                historyRepository.resetThreadByUsername(historieId);
                 resp.put("status", "true");
                 resp.put("message", "Reset account thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

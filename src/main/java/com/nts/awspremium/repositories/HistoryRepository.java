@@ -33,8 +33,8 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     public List<History> checkEndTrial(String username);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE history SET running=0,vps='' where username=?1",nativeQuery = true)
-    public Integer resetThreadByUsername(String username);
+    @Query(value = "UPDATE history SET running=0,vps='' where id=?1",nativeQuery = true)
+    public Integer resetThreadByUsername(Long id);
 
 
     @Modifying

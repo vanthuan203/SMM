@@ -416,11 +416,11 @@ public class VideoBuffhController {
     }
 
     @GetMapping(path = "bhchudongbuffh",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> bhchudongbuffh(@RequestParam(defaultValue = "2") Integer limit){
+    ResponseEntity<String> bhchudongbuffh(@RequestParam(defaultValue = "0") Long start,@RequestParam(defaultValue = "0") Long end,@RequestParam(defaultValue = "2") Integer limit,Integer bonus){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try{
-           List<VideoBuffhHistory> videoBuffhHistories =videoBuffhHistoryRepository.getVideoCheckBH(limit);
+           List<VideoBuffhHistory> videoBuffhHistories =videoBuffhHistoryRepository.getVideoCheckBH(start,end,limit);
            JSONArray jsonArray =new JSONArray();
            Setting setting=settingRepository.getReferenceById(1L);
            List<Admin> admins=adminRepository.GetAdminByUser("baohanh01@gmail.com");
@@ -453,6 +453,7 @@ public class VideoBuffhController {
                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
                    obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "Đơn đang chạy!");
                    jsonArray.add(obj);
+                   continue;
                }
                Iterator k = items.iterator();
                if(k.hasNext()==false){
@@ -460,12 +461,13 @@ public class VideoBuffhController {
                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
                    obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "Không check được view!");
                    jsonArray.add(obj);
+                   continue;
                }
                while (k.hasNext()) {
                    try {
                        JSONObject video = (JSONObject) k.next();
                        JSONObject statistics = (JSONObject) video.get("statistics");
-                       if(Integer.parseInt(statistics.get("viewCount").toString())-(int)(videoBuffhHistories.get(i).getViewend()*0.05)<videoBuffhHistories.get(i).getViewend()){
+                       if(Integer.parseInt(statistics.get("viewCount").toString())-videoBuffhHistories.get(i).getViewend()-20<0){
                            //time trung bình
                            int time_avg=(int)((videoBuffhHistories.get(i).getTimebuffend()/videoBuffhHistories.get(i).getViewbuffend())/3600);
                            //view cần buff
@@ -478,23 +480,30 @@ public class VideoBuffhController {
                                viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))/2);
                            }
 
-                           if(Integer.parseInt(statistics.get("viewCount").toString())<viewneed+videoBuffhHistories.get(i).getViewstart()){
-                               if(Integer.parseInt(statistics.get("viewCount").toString())<videoBuffhHistories.get(i).getViewstart()){
-                                   videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
-                                   videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                                   obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "View hiện tại nhỏ hơn view bắt đầu buff");
-                                   jsonArray.add(obj);
-                                   continue;
-                               }
+                           if(Integer.parseInt(statistics.get("viewCount").toString())-(int)videoBuffhHistories.get(i).getViewstart()>0){
                                int baohanh=0;
                                System.out.println(1+setting.getBonus()/100F);
+                               /*
                                if(videoBuffhHistories.get(i).getDuration()<3600){
-                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)((viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
+                                   baohanh=(int)((1+bonus/100F)*(int)((viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
                                }else if(videoBuffhHistories.get(i).getDuration()<7200){
-                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString())));
+                                   baohanh=(int)((1+bonus/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString())));
                                }else{
-                                   baohanh=(int)((1+setting.getBonus()/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))*2);
+                                   baohanh=(int)((1+bonus/100F)*(int)(viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))*2);
                                }
+
+                                */
+                               if(videoBuffhHistories.get(i).getDuration()<3600){
+                                   baohanh=(int)((1+bonus/100F)*(int)((videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
+                               }else if(videoBuffhHistories.get(i).getDuration()<7200){
+                                   baohanh=(int)((1+bonus/100F)*(int)(videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString())));
+                               }else{
+                                   baohanh=(int)((1+bonus/100F)*(int)(videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString()))*2);
+                               }
+                               if(baohanh<50){
+                                   baohanh=50;
+                               }
+                               /*
                                if(baohanh>=videoBuffhHistories.get(i).getTimebuff()*0.5){
                                    videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
@@ -502,6 +511,8 @@ public class VideoBuffhController {
                                    jsonArray.add(obj);
                                    continue;
                                }
+
+                                */
                                System.out.println(viewneed+"|"+baohanh);
                                float priceorder=0;
                                int time=0;
@@ -561,8 +572,9 @@ public class VideoBuffhController {
                            }else{
                                videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                               obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "Không cần bảo hành!");
+                               obj.put(videoBuffhHistories.get(i).getVideoid().trim(), "View hiện tại nhỏ hơn view bắt đầu buff");
                                jsonArray.add(obj);
+                               System.out.println(Integer.parseInt(statistics.get("viewCount").toString())-(int)videoBuffhHistories.get(i).getViewstart());
                            }
                        }else{
                            videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
@@ -580,7 +592,7 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
-            resp.put("message", e.getMessage());
+            resp.put("message",e.getStackTrace()[0].getLineNumber());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
