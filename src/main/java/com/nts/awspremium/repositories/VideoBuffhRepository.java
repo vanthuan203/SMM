@@ -37,7 +37,7 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
     @Query(value = "SELECT count(*) from videobuffh where enabled!=0 and user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);
 
-    @Query(value = "SELECT count(*) from videobuffh where videoid=?1 and enabled!=0",nativeQuery = true)
+    @Query(value = "SELECT count(*) from videobuffh where videoid=?1",nativeQuery = true)
     public Integer getCountVideoId(String vidoeid);
     @Query(value = "SELECT sum(timebuff) as total FROM AccPremium.videobuffh where enabled!=0",nativeQuery = true)
     public Integer getCountTimeBuffOrder();

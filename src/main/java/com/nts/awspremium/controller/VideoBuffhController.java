@@ -502,6 +502,8 @@ public class VideoBuffhController {
                                }
                                if(baohanh<50){
                                    baohanh=50;
+                               }else if(baohanh>(int)(videoBuffhHistories.get(i).getTimebuff()*(1+bonus/100F))){
+                                   baohanh=videoBuffhHistories.get(i).getTimebuff();
                                }
                                /*
                                if(baohanh>=videoBuffhHistories.get(i).getTimebuff()*0.5){
@@ -513,7 +515,7 @@ public class VideoBuffhController {
                                }
 
                                 */
-                               System.out.println(viewneed+"|"+baohanh);
+                               //System.out.println(viewneed+"|"+baohanh);
                                float priceorder=0;
                                int time=0;
                                if(admins.get(0).getVip()==1){
@@ -664,10 +666,11 @@ public class VideoBuffhController {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
-                        if(Integer.parseInt(statistics.get("viewCount").toString())-(int)(videoBuffhHistories.get(i).getViewend()*0.05)<videoBuffhHistories.get(i).getViewend()){
+                        if(Integer.parseInt(statistics.get("viewCount").toString())-videoBuffhHistories.get(i).getViewend()-20<0){
                             //time trung bình
                             int time_avg=(int)((videoBuffhHistories.get(i).getTimebuffend()/videoBuffhHistories.get(i).getViewbuffend())/3600);
                             //view cần buff
+                            /*
                             int viewneed=0;
                             if(videoBuffhHistories.get(i).getDuration()<3600){
                                 viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))*2);
@@ -676,8 +679,8 @@ public class VideoBuffhController {
                             }else{
                                 viewneed=(int)((videoBuffhHistories.get(i).getTimebuff()+videoBuffhHistories.get(i).getTimebuff()*(setting.getBonus()/100F))/2);
                             }
-
-                            if(Integer.parseInt(statistics.get("viewCount").toString())<viewneed+videoBuffhHistories.get(i).getViewstart()){
+                             */
+                            if(Integer.parseInt(statistics.get("viewCount").toString())-(int)videoBuffhHistories.get(i).getViewstart()>0){
                                 if(Integer.parseInt(statistics.get("viewCount").toString())<videoBuffhHistories.get(i).getViewstart()){
                                     videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                     videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
@@ -686,6 +689,7 @@ public class VideoBuffhController {
                                 }
                                 int baohanh=0;
                                 System.out.println(1+setting.getBonus()/100F);
+                                /*
                                 if(videoBuffhHistories.get(i).getDuration()<3600){
                                     baohanh=(int)((1+setting.getBonus()/100F)*(int)((viewneed+videoBuffhHistories.get(i).getViewstart()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
                                 }else if(videoBuffhHistories.get(i).getDuration()<7200){
@@ -699,7 +703,23 @@ public class VideoBuffhController {
                                     obj.put("videobuffh", "số giờ bảo hành > *0.5 số order");
                                     return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
                                 }
+
+                                 */
                                 //System.out.println(viewneed+"|"+baohanh);
+
+                                if(videoBuffhHistories.get(i).getDuration()<3600){
+                                    baohanh=(int)((1+setting.getBonus()/100F)*(int)((videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString()))/2));
+                                }else if(videoBuffhHistories.get(i).getDuration()<7200){
+                                    baohanh=(int)((1+setting.getBonus()/100F)*(int)(videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString())));
+                                }else{
+                                    baohanh=(int)((1+setting.getBonus()/100F)*(int)(videoBuffhHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString()))*2);
+                                }
+                                if(baohanh<50){
+                                    baohanh=50;
+                                }else if(baohanh>(int)(videoBuffhHistories.get(i).getTimebuff()*(1+setting.getBonus()/100F))){
+                                    baohanh=videoBuffhHistories.get(i).getTimebuff();
+                                }
+
                                 float priceorder=0;
                                 int time=0;
                                 if(admins.get(0).getVip()==1){
