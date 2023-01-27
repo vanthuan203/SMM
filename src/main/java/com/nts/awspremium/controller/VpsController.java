@@ -246,6 +246,43 @@ public class VpsController {
     }
 
 
+    @GetMapping(value = "checkresetvpspython",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkresetvpspython(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+        JSONObject resp=new JSONObject();
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Vps> vpscheck =vpsRepository.findVPS(vps.trim()+"%");
+
+            if(vpscheck.size()>0){
+                resp.put("status", "true");
+                Long min=(System.currentTimeMillis()-vpscheck.get(0).getTimecheck())/1000/60;
+                System.out.println(min);
+                if(min>=5){
+                    resp.put("vpsreset",1);
+                }else{
+                    resp.put("vpsreset",0);
+                }
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+            }else{
+
+                resp.put("status", "fail");
+                resp.put("vpsreset","NULL");
+                //resp.put("message", "Vps thêm thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PostMapping(value = "update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
         JSONObject resp=new JSONObject();
