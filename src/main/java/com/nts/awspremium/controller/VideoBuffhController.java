@@ -681,12 +681,6 @@ public class VideoBuffhController {
                             }
                              */
                             if(Integer.parseInt(statistics.get("viewCount").toString())-(int)videoBuffhHistories.get(i).getViewstart()>0){
-                                if(Integer.parseInt(statistics.get("viewCount").toString())<videoBuffhHistories.get(i).getViewstart()){
-                                    videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
-                                    videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                                    obj.put("videobuffh", "View check < view start!");
-                                    return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
-                                }
                                 int baohanh=0;
                                 System.out.println(1+setting.getBonus()/100F);
                                 /*
@@ -781,10 +775,11 @@ public class VideoBuffhController {
                             }else{
                                 videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                                 videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
-                                obj.put("videobuffh", "Không cần bảo hành!");
+                                obj.put("videobuffh", "View check < view start!");
                                 return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
                             }
                         }else{
+                            System.out.println(videoBuffhHistories.get(i).getViewend());
                             videoBuffhHistories.get(i).setTimecheck(System.currentTimeMillis());
                             videoBuffhHistoryRepository.save(videoBuffhHistories.get(i));
                             obj.put("videobuffh", "Không cần bảo hành!");

@@ -49,14 +49,17 @@ public class AccountSubController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            Integer count= accountRepository.findUsername(newaccount.getUsername().trim());
-            if(count>0){
+            Long id= accountRepository.findIdByUsername(newaccount.getUsername().trim());
+            if(id!=null){
                 if(update==1) {
+                     /*
                     List<Account> accountcheck= accountRepository.findAccountByUsername(newaccount.getUsername().trim());
+
                     if(accountcheck.get(0).getLive()!=1){
                         cookieRepository.updateCookieSub(newaccount.getCookie(),newaccount.getUsername());
                     }
-                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getUsername());
+                     */
+                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",id);
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -67,7 +70,7 @@ public class AccountSubController {
                 }
             }else{
                 accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
-                cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
+                //cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
                 //encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
