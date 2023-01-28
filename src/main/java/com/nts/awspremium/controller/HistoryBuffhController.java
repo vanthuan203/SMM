@@ -151,25 +151,6 @@ public class HistoryBuffhController {
                     //resp.put("isPremium", isPremium ? 1 : 0);
                     //resp.put("isMobile", isMobile ? "Mobile" : "PC");
                     resp.put("status", "true");
-                    if(test==8){
-                        resp.put("finger", "true");
-                    }else{
-                        resp.put("finger", "false");
-                    }
-
-                    if(test==1 || test==2 || test==5||test==6){
-                        resp.put("off", "true");
-                    }else{
-                        resp.put("off", "false");
-                    }
-
-                    if(test==1 || test==3 || test==5){
-                        resp.put("view", "search");
-                    }else if(test==2 || test==4 || test==6){
-                        resp.put("view", "direct");
-                    }else{
-                        resp.put("view", "random");
-                    }
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("geo",histories.get(0).getGeo());

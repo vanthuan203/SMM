@@ -187,6 +187,27 @@ public class VpsController {
                 }else if(vpscheck.get(0).getVpsoption().equals("Test9")){
                     resp.put("option","9");
                 }
+
+                if(vpscheck.get(0).getVpsoption().equals("Test8")){
+                    resp.put("finger", "true");
+                }else{
+                    resp.put("finger", "false");
+                }
+
+                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test5")||vpscheck.get(0).getVpsoption().equals("Test6")){
+                    resp.put("off", "true");
+                }else{
+                    resp.put("off", "false");
+                }
+
+                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test3") || vpscheck.get(0).getVpsoption().equals("Test5")){
+                    resp.put("view", "search");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test4") || vpscheck.get(0).getVpsoption().equals("Test6")){
+                    resp.put("view", "direct");
+                }else{
+                    resp.put("view", "random");
+                }
+
                 resp.put("status", "true");
                 //resp.put("option",vpscheck.get(0).getVpsoption());
                 //resp.put("urlapi",vpscheck.get(0).getUrlapi());
