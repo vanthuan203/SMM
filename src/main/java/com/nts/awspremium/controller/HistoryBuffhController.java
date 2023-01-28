@@ -70,6 +70,20 @@ public class HistoryBuffhController {
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),2);
                     }else if(test==2){
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),3);
+                    }else if(test==3){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),4);
+                    }else if(test==4){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),5);
+                    }else if(test==5){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),6);
+                    }else if(test==6){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),7);
+                    }else if(test==7){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),8);
+                    }else if(test==8){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),9);
+                    }else if(test==9){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),10);
                     }else{
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),1);
                     }
@@ -87,13 +101,29 @@ public class HistoryBuffhController {
                     }
 
                     //add thong tin channel
-                    List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
+                    //List<Channel> channels=channelRepository.getChannelById(videos.get(0).getChannelid());
 
                     List<Proxy> proxy = null;
                     if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                        proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
+                        if(test==1 || test==2 || test==3 || test==4){
+                            proxy=proxyRepository.getProxyVtBuffTest();
+                        }else if(test==5 || test==6 || test==8 || test==0){
+                            proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
+                        }else if(test==7){
+                            proxy=proxyRepository.getProxyHc5pBuffTest();
+                        }else{
+                            proxy=proxyRepository.getProxyHcPortBuffTest();
+                        }
                     } else {
-                        proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        if(test==1 || test==2 || test==3 || test==4){
+                            proxy=proxyRepository.getProxyVtBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }else if(test==5 || test==6 || test==8 || test==0){
+                            proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }else if(test==7){
+                            proxy=proxyRepository.getProxyHc5pBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }else{
+                            proxy=proxyRepository.getProxyHcPortBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                        }
                     }
                     if (proxy.size()==0){
                         histories.get(0).setProxy("");
@@ -121,28 +151,55 @@ public class HistoryBuffhController {
                     //resp.put("isPremium", isPremium ? 1 : 0);
                     //resp.put("isMobile", isMobile ? "Mobile" : "PC");
                     resp.put("status", "true");
+                    if(test==8){
+                        resp.put("finger", "true");
+                    }else{
+                        resp.put("finger", "false");
+                    }
+
+                    if(test==1 || test==2 || test==5||test==6){
+                        resp.put("off", "true");
+                    }else{
+                        resp.put("off", "false");
+                    }
+
+                    if(test==1 || test==3 || test==5){
+                        resp.put("view", "search");
+                    }else if(test==2 || test==4 || test==6){
+                        resp.put("view", "direct");
+                    }else{
+                        resp.put("view", "random");
+                    }
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("geo",histories.get(0).getGeo());
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("proxy", proxy.get(0).getProxy());
-                    if(videos.get(0).getDuration()<3600){
-                        if(videos.get(0).getDuration()>1920){
-                            resp.put("video_duration", 1850+ran.nextInt(60));
-                        }else{
-                            resp.put("video_duration", videos.get(0).getDuration());
-                        }
-                    }else if(videos.get(0).getDuration()<7200){
-                        if(videos.get(0).getDuration()>3780){
-                            resp.put("video_duration", 3710+ran.nextInt(60));
+                    if(test==7){
+                        if(videos.get(0).getDuration()>360){
+                            resp.put("video_duration", 300+ran.nextInt(60));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }else{
-                        if(videos.get(0).getDuration()>7350){
-                            resp.put("video_duration", 7280+ran.nextInt(60));
+                        if(videos.get(0).getDuration()<3600){
+                            if(videos.get(0).getDuration()>1920){
+                                resp.put("video_duration", 1850+ran.nextInt(60));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
+                        }else if(videos.get(0).getDuration()<7200){
+                            if(videos.get(0).getDuration()>3780){
+                                resp.put("video_duration", 3710+ran.nextInt(60));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
                         }else{
-                            resp.put("video_duration", videos.get(0).getDuration());
+                            if(videos.get(0).getDuration()>7350){
+                                resp.put("video_duration", 7280+ran.nextInt(60));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
                         }
                     }
                     //resp.put("video_duration", videos.get(0).getDuration());

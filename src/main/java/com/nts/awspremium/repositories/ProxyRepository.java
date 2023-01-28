@@ -25,6 +25,21 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
  */
     @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,(select geo from account where username=?1 limit 1))>0  order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyBuffByUsername(String username);
+
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'vt')>0 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyVtBuffTest();
+
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'vt')>0 and ipv4 NOT LIKE ?1 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyVtBuffTest(String ipv4);
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'hc5p')>0 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyHc5pBuffTest();
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'hc5p')>0 and ipv4 NOT LIKE ?1 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyHc5pBuffTest(String ipv4);
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'hcport')>0 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyHcPortBuffTest();
+
+    @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'hcport')>0 and ipv4 NOT LIKE ?1 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyHcPortBuffTest(String ipv4);
     @Query(value = "SELECT ipv4.ipv4,count(*) totalport,ipv4.timecheck,ipv4.state,proxy.typeproxy FROM AccPremium.proxy left join ipv4 on proxy.ipv4=ipv4.ipv4 where ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4;",nativeQuery = true)
     public List<String> getListProxyV4();
 /*

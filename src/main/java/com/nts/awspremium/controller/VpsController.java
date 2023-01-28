@@ -172,6 +172,20 @@ public class VpsController {
                     resp.put("option","1");
                 }else if(vpscheck.get(0).getVpsoption().equals("Test2")){
                     resp.put("option","2");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test3")){
+                    resp.put("option","3");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test4")){
+                    resp.put("option","4");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test5")){
+                    resp.put("option","5");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test6")){
+                    resp.put("option","6");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test7")){
+                    resp.put("option","7");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test8")){
+                    resp.put("option","8");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test9")){
+                    resp.put("option","9");
                 }
                 resp.put("status", "true");
                 //resp.put("option",vpscheck.get(0).getVpsoption());

@@ -646,7 +646,7 @@ public class AccountBuffhController {
 
     }
     @GetMapping(value = "/getproxy",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxy(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getproxy(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "0") Integer test){
         JSONObject resp=new JSONObject();
         try{
             Integer checktoken= adminRepository.FindAdminByToken(Authorization);
@@ -672,9 +672,25 @@ public class AccountBuffhController {
                 }
                 List<Proxy> proxy = null;
                 if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                    proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
+                    if(test==1 || test==2 || test==3 || test==4){
+                        proxy=proxyRepository.getProxyVtBuffTest();
+                    }else if(test==5 || test==6 || test==8 || test==0){
+                        proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
+                    }else if(test==7){
+                        proxy=proxyRepository.getProxyHc5pBuffTest();
+                    }else{
+                        proxy=proxyRepository.getProxyHcPortBuffTest();
+                    }
                 } else {
-                    proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    if(test==1 || test==2 || test==3 || test==4){
+                        proxy=proxyRepository.getProxyVtBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }else if(test==5 || test==6 || test==8 || test==0){
+                        proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }else if(test==7){
+                        proxy=proxyRepository.getProxyHc5pBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }else{
+                        proxy=proxyRepository.getProxyHcPortBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
+                    }
                 }
                 if (proxy.size()==0) {
                     //histories.get(0).setProxy("");
