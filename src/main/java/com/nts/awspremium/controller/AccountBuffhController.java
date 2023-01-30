@@ -152,7 +152,12 @@ public class AccountBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            Integer check_get= vpsRepository.checkGetAccountByThreadVps(vps.trim()+"%");
+            Integer check_get=0;
+            if(test==8 ||test==9){
+                check_get= vpsRepository.checkGetAccount6ByThreadVps(vps.trim()+"%");
+            }else {
+                check_get= vpsRepository.checkGetAccountByThreadVps(vps.trim()+"%");
+            }
             if(check_get==0){
                 resp.put("status","fail");
                 resp.put("message", "Đã đủ acc cho Vps!");
@@ -185,14 +190,14 @@ public class AccountBuffhController {
                     }
 
                  */
-
-                    if(test==1){
-                        id=accountRepository.getAccountBuffhDomain("vn");
-                    }else if(test==2){
-                        id=accountRepository.getAccountBuffhDomain("us");
-                    }else{
-                        id=accountRepository.getAccountBuffhDomain("us");
+                if(test==8 ||test==9||test==10||test==11){
+                    id=accountRepository.getAccountBuffhGmail("us");
+                }else {
+                    id=accountRepository.getAccountBuffhDomain("us");
+                    if(id==0L){
+                        id=accountRepository.getAccountBuffhGmail("us");
                     }
+                }
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
@@ -672,7 +677,7 @@ public class AccountBuffhController {
                 }
                 List<Proxy> proxy = null;
                 if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                    if(test==1 || test==2 || test==3 || test==4){
+                    if(test==1 || test==2 || test==3 || test==4|| test==8||test==9|| test==10|| test==11|| test==12|| test==13){
                         proxy=proxyRepository.getProxyVtBuffTest();
                     }else if(test==5 || test==6 || test==8 || test==0){
                         proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
@@ -682,7 +687,7 @@ public class AccountBuffhController {
                         proxy=proxyRepository.getProxyHcPortBuffTest();
                     }
                 } else {
-                    if(test==1 || test==2 || test==3 || test==4){
+                    if(test==1 || test==2 || test==3 || test==4|| test==8||test==9|| test==10|| test==11|| test==12|| test==13){
                         proxy=proxyRepository.getProxyVtBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
                     }else if(test==5 || test==6 || test==8 || test==0){
                         proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));

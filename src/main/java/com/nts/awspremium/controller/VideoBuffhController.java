@@ -786,6 +786,7 @@ public class VideoBuffhController {
                             return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
                         }
                     } catch (Exception e) {
+                        System.out.println(e.getStackTrace()[0].getLineNumber());
                         throw new RuntimeException(e);
                     }
                 }
@@ -794,6 +795,7 @@ public class VideoBuffhController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
+            System.out.println(e.getStackTrace()[0].getLineNumber());
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }

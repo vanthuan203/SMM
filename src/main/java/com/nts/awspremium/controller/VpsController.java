@@ -186,20 +186,21 @@ public class VpsController {
                     resp.put("option","8");
                 }else if(vpscheck.get(0).getVpsoption().equals("Test9")){
                     resp.put("option","9");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test10")){
+                    resp.put("option","10");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test11")){
+                    resp.put("option","11");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test12")){
+                    resp.put("option","12");
+                }else if(vpscheck.get(0).getVpsoption().equals("Test13")){
+                    resp.put("option","13");
                 }
 
-                if(vpscheck.get(0).getVpsoption().equals("Test8")){
-                    resp.put("finger", "true");
-                }else{
-                    resp.put("finger", "false");
-                }
-
-                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test5")||vpscheck.get(0).getVpsoption().equals("Test6")){
+                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test5")||vpscheck.get(0).getVpsoption().equals("Test6")||vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test9")){
                     resp.put("off", "true");
                 }else{
                     resp.put("off", "false");
                 }
-
                 if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test3") || vpscheck.get(0).getVpsoption().equals("Test5")){
                     resp.put("view", "search");
                 }else if(vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test4") || vpscheck.get(0).getVpsoption().equals("Test6")){
@@ -207,8 +208,18 @@ public class VpsController {
                 }else{
                     resp.put("view", "random");
                 }
-
+                if(vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test9")){
+                    resp.put("number_acc",vpscheck.get(0).getThreads()*6 );
+                }else{
+                    resp.put("number_acc",vpscheck.get(0).getThreads()*2 );
+                }
+                if(vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test10")||vpscheck.get(0).getVpsoption().equals("Test12")){
+                    resp.put("version",2);
+                }else{
+                    resp.put("version",1);
+                }
                 resp.put("status", "true");
+                resp.put("finger", "false");
                 //resp.put("option",vpscheck.get(0).getVpsoption());
                 //resp.put("urlapi",vpscheck.get(0).getUrlapi());
                 //resp.put("token",vpscheck.get(0).getToken());

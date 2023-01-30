@@ -84,6 +84,14 @@ public class HistoryBuffhController {
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),9);
                     }else if(test==9){
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),10);
+                    }else if(test==10){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),11);
+                    }else if(test==11){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),12);
+                    }else if(test==12){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),13);
+                    }else if(test==13){
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),14);
                     }else{
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),1);
                     }
@@ -105,7 +113,7 @@ public class HistoryBuffhController {
 
                     List<Proxy> proxy = null;
                     if (histories.get(0).getProxy().length() == 0 || histories.get(0).getProxy() == null) {
-                        if(test==1 || test==2 || test==3 || test==4){
+                        if(test==1 || test==2 || test==3 || test==4|| test==8||test==9|| test==10|| test==11|| test==12|| test==13){
                             proxy=proxyRepository.getProxyVtBuffTest();
                         }else if(test==5 || test==6 || test==8 || test==0){
                             proxy=proxyRepository.getProxyBuffByUsername(histories.get(0).getUsername().trim());
@@ -115,7 +123,7 @@ public class HistoryBuffhController {
                             proxy=proxyRepository.getProxyHcPortBuffTest();
                         }
                     } else {
-                        if(test==1 || test==2 || test==3 || test==4){
+                        if(test==1 || test==2 || test==3 || test==4|| test==8||test==9|| test==10|| test==11|| test==12|| test==13){
                             proxy=proxyRepository.getProxyVtBuffTest(StringUtils.getProxyhost(histories.get(0).getProxy()));
                         }else if(test==5 || test==6 || test==8 || test==0){
                             proxy=proxyRepository.getProxyBuffByIpv4ByUsername(histories.get(0).getUsername().trim(),StringUtils.getProxyhost(histories.get(0).getProxy()));
@@ -163,6 +171,7 @@ public class HistoryBuffhController {
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }else{
+                        /*
                         if(videos.get(0).getDuration()<3600){
                             if(videos.get(0).getDuration()>1920){
                                 resp.put("video_duration", 1850+ran.nextInt(60));
@@ -181,6 +190,12 @@ public class HistoryBuffhController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
+                        }
+                         */
+                        if(videos.get(0).getDuration()>660){
+                            resp.put("video_duration", 600+ran.nextInt((int)(videos.get(0).getDuration()-660)));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }
                     //resp.put("video_duration", videos.get(0).getDuration());
