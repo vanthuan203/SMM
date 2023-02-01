@@ -1184,6 +1184,8 @@ public class VideoBuffhController {
                 videoBuffhnew.setMobilerate(videoBuffh.get(0).getMobilerate());
                 videoBuffhnew.setLikerate(videoBuffh.get(0).getLikerate());
                 videoBuffhnew.setCommentrate(videoBuffh.get(0).getCommentrate());
+                videoBuffhnew.setNumbh(0);
+                videoBuffhnew.setTimecheck(0L);
                 //videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                 if(cancel==1){
                     videoBuffhnew.setCancel(1);
@@ -1258,6 +1260,8 @@ public class VideoBuffhController {
                 videoBuffhnew.setLikerate(videoBuffh.get(i).getLikerate());
                 videoBuffhnew.setCommentrate(videoBuffh.get(i).getCommentrate());
                 videoBuffhnew.setCancel(0);
+                videoBuffhnew.setNumbh(0);
+                videoBuffhnew.setTimecheck(0L);
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setTimebuffend(videoBuffh.get(i).getTimebufftotal());

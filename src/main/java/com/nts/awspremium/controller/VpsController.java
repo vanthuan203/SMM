@@ -84,6 +84,7 @@ public class VpsController {
                     obj.put("state",  vps.get(i).getState());
                     obj.put("timegettask",time);
                     obj.put("timecheck",  vps.get(i).getTimecheck());
+                    obj.put("changefinger",  vps.get(i).getChangefinger());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("total",total);
                     obj.put("acccount", totalacc);
@@ -124,6 +125,7 @@ public class VpsController {
                 vpsnew.setVps(vps);
                 vpsnew.setState(1);
                 vpsnew.setRunning(0);
+                vpsnew.setChangefinger(0);
                 vpsnew.setVpsoption("Pending");
                 vpsnew.setUrlapi("");
                 vpsnew.setToken("");
@@ -195,7 +197,6 @@ public class VpsController {
                 }else if(vpscheck.get(0).getVpsoption().equals("Test13")){
                     resp.put("option","13");
                 }
-
                 if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test5")||vpscheck.get(0).getVpsoption().equals("Test6")||vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test9")){
                     resp.put("off", "true");
                 }else{
@@ -219,7 +220,11 @@ public class VpsController {
                     resp.put("version",1);
                 }
                 resp.put("status", "true");
-                resp.put("finger", "false");
+                if(vpscheck.get(0).getChangefinger()==1){
+                    resp.put("finger", "true");
+                }else{
+                    resp.put("finger", "false");
+                }
                 //resp.put("option",vpscheck.get(0).getVpsoption());
                 //resp.put("urlapi",vpscheck.get(0).getUrlapi());
                 //resp.put("token",vpscheck.get(0).getToken());
@@ -239,6 +244,7 @@ public class VpsController {
                 vpsnew.setToken("");
                 vpsnew.setVpsreset(0);
                 vpsnew.setThreads(0);
+                vpsnew.setChangefinger(0);
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
                 resp.put("status", "true");
@@ -270,6 +276,9 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
+                }
+                if(vpscheck.get(0).getChangefinger()>0){
+                    vpscheck.get(0).setChangefinger(0);
                 }
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
@@ -350,6 +359,7 @@ public class VpsController {
                     vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
                     vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsupdate.get(0).setChangefinger(vps.getChangefinger());
                     if(vps.getVpsreset()==2){
                         vpsupdate.get(0).setState(2);
                     }
@@ -363,6 +373,7 @@ public class VpsController {
                     obj.put("timecheck",  System.currentTimeMillis());
                     obj.put("threads",  vps.getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
+                    obj.put("changefinger",  vps.getChangefinger());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
@@ -401,6 +412,8 @@ public class VpsController {
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
+                    vpsupdate.get(0).setChangefinger(vps.getChangefinger());
+                    vpsupdate.get(0).setVpsoption(vps.getVpsoption());
                     vpsRepository.save(vpsupdate.get(0));
 
                     JSONObject obj = new JSONObject();
@@ -411,10 +424,11 @@ public class VpsController {
                     obj.put("timecheck",  System.currentTimeMillis());
                     obj.put("threads",  vpsupdate.get(0).getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
+                    obj.put("changefinger",  vps.getChangefinger());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
-                        resp.put("account",obj);
+                        resp.put("accounts",obj);
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     jsonArray.add(obj);
