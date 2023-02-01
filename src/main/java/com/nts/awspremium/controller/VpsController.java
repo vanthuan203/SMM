@@ -221,6 +221,7 @@ public class VpsController {
                 }
                 resp.put("status", "true");
                 if(vpscheck.get(0).getChangefinger()==1){
+                    vpscheck.get(0).setChangefinger(0);
                     resp.put("finger", "true");
                 }else{
                     resp.put("finger", "false");
@@ -276,9 +277,6 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
-                }
-                if(vpscheck.get(0).getChangefinger()>0){
-                    vpscheck.get(0).setChangefinger(0);
                 }
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
