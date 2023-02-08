@@ -93,7 +93,7 @@ public class HistoryBuffhController {
                     }else if(test==13){
                         videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),14);
                     }else{
-                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24h(histories.get(0).getListvideo(),1);
+                        videos=videoBuffhRepository.getvideobuffhVer2NoCheckTime24hNoTest(histories.get(0).getListvideo(),1);
                     }
                     //videos=videoRepository.getvideo(histories.get(0).getListvideo());
                     if(videos.size()>0){
@@ -171,7 +171,6 @@ public class HistoryBuffhController {
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }else{
-                        /*
                         if(videos.get(0).getDuration()<3600){
                             if(videos.get(0).getDuration()>1920){
                                 resp.put("video_duration", 1850+ran.nextInt(60));
@@ -191,12 +190,14 @@ public class HistoryBuffhController {
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
                         }
-                         */
+                        /*
                         if(videos.get(0).getDuration()>660){
                             resp.put("video_duration", 600+ran.nextInt((int)(videos.get(0).getDuration()-660)));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
+
+                         */
                     }
                     //resp.put("video_duration", videos.get(0).getDuration());
                     //resp.put("password", account.get(0).getPassword());

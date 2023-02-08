@@ -147,7 +147,7 @@ public class VideoBuffhController {
                     videoBuffhnew.setSuggestrate(videoBuffh.getSuggestrate());
                     videoBuffhnew.setSearchrate(videoBuffh.getSearchrate());
                     videoBuffhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    videoBuffhnew.setMaxthreads(videoBuffh.getMaxthreads());
+                    videoBuffhnew.setMaxthreads(200);
                     videoBuffhnew.setNote(videoBuffh.getNote());
                     videoBuffhnew.setMobilerate(videoBuffh.getMobilerate());
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());

@@ -70,6 +70,12 @@ public interface VideoBuffhRepository extends JpaRepository<VideoBuffh,Long> {
             "from videobuffh left join history on history.videoid=videobuffh.videoid and running=1  where enabled=?2 \n" +
             "group by videoid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoBuffh> getvideobuffhVer2NoCheckTime24h(String listvideo, Integer enabled);
+
+    @Query(value = "SELECT * FROM videobuffh where INSTR(?1,videoid)=0 and \n" +
+            "videoid in (select videoid from (select videobuffh.videoid,count(*) as total,maxthreads \n" +
+            "from videobuffh left join history on history.videoid=videobuffh.videoid and running=1  where enabled=?2 \n" +
+            "group by videoid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoBuffh> getvideobuffhVer2NoCheckTime24hNoTest(String listvideo, Integer enabled);
     @Query(value = "SELECT * FROM videobuffh where enabled!=0 order by timeupdate asc",nativeQuery = true)
     public List<VideoBuffh> getAllOrder();
     @Modifying
