@@ -1235,7 +1235,7 @@ public class VideoBuffhController {
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try{
             historyRepository.updateHistoryByAccount();
-            List<VideoBuffh> videoBuffh =orderBuffhRunningRepository.getOrderFullBuffh();
+            List<VideoBuffh> videoBuffh =orderBuffhRunningRepository.getOrderFullBuffhDuphong();
             for(int i=0;i<videoBuffh.size();i++){
                 Long enddate=System.currentTimeMillis();
 
@@ -1381,6 +1381,63 @@ public class VideoBuffhController {
                 obj.put("timebuffh24h", orderRunnings.get(0).getTimeBuff24h());
                 obj.put("view24h",orderRunnings.get(0).getView24h());
                 obj.put("price",(int)(videoBuffh.getPrice()+priceorder));
+
+                jsonArray.add(obj);
+            }
+            resp.put("videobuff",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "updatethread",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatethread(@RequestHeader(defaultValue = "") String Authorization,@org.springframework.web.bind.annotation.RequestBody VideoBuffh videoBuffh){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            String[] videoidIdArr=videoBuffh.getVideoid().split("\n");
+            JSONArray jsonArray =new JSONArray();
+            for(int i=0;i<videoidIdArr.length;i++){
+                List<VideoBuffh> video=videoBuffhRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                float priceorder=0;
+                video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
+                videoBuffhRepository.save(video.get(0));
+
+                List<OrderBuffhRunning> orderRunnings=orderBuffhRunningRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                JSONObject obj = new JSONObject();
+                obj.put("videoid", orderRunnings.get(0).getVideoId());
+                obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
+                obj.put("viewstart", orderRunnings.get(0).getViewStart());
+                obj.put("maxthreads", videoBuffh.getMaxthreads());
+                obj.put("insertdate", orderRunnings.get(0).getInsertDate());
+                obj.put("total", orderRunnings.get(0).getTotal());
+                obj.put("timebuff", orderRunnings.get(0).getTimeBuff());
+                obj.put("note", orderRunnings.get(0).getNote());
+                obj.put("duration", orderRunnings.get(0).getDuration());
+                obj.put("optionbuff", orderRunnings.get(0).getOptionBuff());
+                obj.put("mobilerate", orderRunnings.get(0).getMobileRate());
+                obj.put("searchrate", orderRunnings.get(0).getSearchRate());
+                obj.put("suggestrate", orderRunnings.get(0).getSuggestRate());
+                obj.put("directrate", orderRunnings.get(0).getDirectRate());
+                obj.put("homerate", orderRunnings.get(0).getHomeRate());
+                obj.put("likerate", orderRunnings.get(0).getLikeRate());
+                obj.put("commentrate", orderRunnings.get(0).getCommentRate());
+                obj.put("enabled", orderRunnings.get(0).getEnabled());
+                obj.put("user", orderRunnings.get(0).getUser());
+                obj.put("timebuffhtotal", orderRunnings.get(0).getTimeBuffTotal());
+                obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
+                obj.put("timebuffh24h", orderRunnings.get(0).getTimeBuff24h());
+                obj.put("view24h",orderRunnings.get(0).getView24h());
+                obj.put("price",orderRunnings.get(0).getPrice());
 
                 jsonArray.add(obj);
             }
