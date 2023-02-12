@@ -1235,7 +1235,7 @@ public class VideoBuffhController {
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try{
             historyRepository.updateHistoryByAccount();
-            List<VideoBuffh> videoBuffh =orderBuffhRunningRepository.getOrderFullBuffhDuphong();
+            List<VideoBuffh> videoBuffh =orderBuffhRunningRepository.getOrderFullBuffh();
             for(int i=0;i<videoBuffh.size();i++){
                 Long enddate=System.currentTimeMillis();
 

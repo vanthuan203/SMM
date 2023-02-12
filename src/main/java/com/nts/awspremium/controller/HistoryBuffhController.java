@@ -177,7 +177,14 @@ public class HistoryBuffhController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getDuration()<7200){
+                        }else{
+                            if(videos.get(0).getDuration()>3780){
+                                resp.put("video_duration", 3710+ran.nextInt(60));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
+                        }
+                        /*else if(videos.get(0).getDuration()<7200){
                             if(videos.get(0).getDuration()>3780){
                                 resp.put("video_duration", 3710+ran.nextInt(60));
                             }else{
@@ -190,6 +197,8 @@ public class HistoryBuffhController {
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
                         }
+
+                         */
                         /*
                         if(videos.get(0).getDuration()>660){
                             resp.put("video_duration", 600+ran.nextInt((int)(videos.get(0).getDuration()-660)));

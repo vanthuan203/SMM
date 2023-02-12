@@ -33,6 +33,9 @@ public interface OrderBuffhRunningRepository extends JpaRepository<VideoBuffh,Lo
     @Query(value = "select * from videobuffh where timebufftotal>(3600*timebuff + timebuff*(select bonus/100 from setting where id=1)*3600) and (CASE WHEN duration<3600 THEN viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1))*2  WHEN duration<7200 THEN viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1)) ELSE viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1))/2 END)",nativeQuery = true)
     public List<VideoBuffh> getOrderFullBuffhDuphong();
 
+    @Query(value = "select * from videobuffh where timebufftotal>(3600*timebuff + timebuff*(select bonus/100 from setting where id=1)*3600) and (CASE WHEN duration<3600 THEN viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1))*2  ELSE viewtotal>=(timebuff+ timebuff*(select bonus/100 from setting where id=1)) END)",nativeQuery = true)
+    public List<VideoBuffh> getOrderFullBuffhDuphong1h();
+
     @Query(value = "Select videobuffh.videoid,videobuffh.videotitle,0 as total,maxthreads,timebuff,insertdate,enabled,note,duration," +
             "optionbuff,mobilerate,searchrate,suggestrate,directrate,homerate,likerate,commentrate,user from videobuffh group by videoid order by insertdate desc limit ?1",nativeQuery = true)
     public List<OrderBuffhRunning> getOrderNewAdd(Integer limit);
