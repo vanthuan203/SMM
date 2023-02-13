@@ -14,7 +14,8 @@ public class Admin {
     private String password;
     private String role;
     private String token;
-    private Long balance;
+    private Float balance;
+    private String currency;
     private Integer discount;
     private Long maxorder;
     private Integer vip;
@@ -22,17 +23,26 @@ public class Admin {
     public Admin() {
     }
 
-    public Admin(Long id, String username, String password, String role, String token, Long balance, Integer discount, Long maxorder, Integer vip, String note) {
+    public Admin(Long id, String username, String password, String role, String token, Float balance, String currency, Integer discount, Long maxorder, Integer vip, String note) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.token = token;
         this.balance = balance;
+        this.currency = currency;
         this.discount = discount;
         this.maxorder = maxorder;
         this.vip = vip;
         this.note = note;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getNote() {
@@ -59,11 +69,11 @@ public class Admin {
         this.maxorder = maxorder;
     }
 
-    public Long getBalance() {
+    public Float getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(Float balance) {
         this.balance = balance;
     }
 

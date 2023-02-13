@@ -24,12 +24,12 @@ public class VideoView {
     private Integer viewtotal;
     private Integer view24h;
     private Long timeupdate;
-    private Integer price;
+    private Float price;
 
     public VideoView() {
     }
 
-    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer view24h, Long timeupdate, Integer price) {
+    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer view24h, Long timeupdate, Float price) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -186,11 +186,11 @@ public class VideoView {
         this.timeupdate = timeupdate;
     }
 
-    public Integer getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 }

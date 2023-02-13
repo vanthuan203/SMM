@@ -153,13 +153,13 @@ public class VideoBuffhController {
                     videoBuffhnew.setLikerate(videoBuffh.getLikerate());
                     videoBuffhnew.setPrice((int)priceorder);
                     videoBuffhRepository.save(videoBuffhnew);
-                    long balance_new=admins.get(0).getBalance()-(long)priceorder;
+                    float balance_new=admins.get(0).getBalance()-priceorder;
                     adminRepository.updateBalance(balance_new,admins.get(0).getUsername());
                     Balance balance=new Balance();
                     balance.setUser(admins.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
                     balance.setTotalblance(balance_new);
-                    balance.setBalance(-(long)priceorder);
+                    balance.setBalance(-priceorder);
                     balance.setNote("Order " +videoBuffh.getTimebuff()+"h cho video "+videoBuffh.getVideoid());
                     balanceRepository.save(balance);
 
@@ -555,13 +555,13 @@ public class VideoBuffhController {
                                videoBuffhnew.setLikerate(videoBuffhHistories.get(i).getLikerate());
                                videoBuffhnew.setPrice((int)priceorder);
                                videoBuffhRepository.save(videoBuffhnew);
-                               long balance_new=admins.get(0).getBalance()-(long)priceorder;
+                               float balance_new=admins.get(0).getBalance()-priceorder;
                                adminRepository.updateBalance(balance_new,admins.get(0).getUsername());
                                Balance balance=new Balance();
                                balance.setUser(admins.get(0).getUsername().trim());
                                balance.setTime(System.currentTimeMillis());
                                balance.setTotalblance(balance_new);
-                               balance.setBalance(-(long)priceorder);
+                               balance.setBalance(-priceorder);
                                balance.setNote("Bao hanh " +baohanh+"h cho video "+videoBuffhHistories.get(i).getVideoid());
                                balanceRepository.save(balance);
 
@@ -752,13 +752,13 @@ public class VideoBuffhController {
                                 videoBuffhnew.setLikerate(videoBuffhHistories.get(i).getLikerate());
                                 videoBuffhnew.setPrice((int)priceorder);
                                 videoBuffhRepository.save(videoBuffhnew);
-                                long balance_new=admins.get(0).getBalance()-(long)priceorder;
+                                float balance_new=admins.get(0).getBalance()-priceorder;
                                 adminRepository.updateBalance(balance_new,admins.get(0).getUsername());
                                 Balance balance=new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
                                 balance.setTime(System.currentTimeMillis());
                                 balance.setTotalblance(balance_new);
-                                balance.setBalance(-(long)priceorder);
+                                balance.setBalance(-priceorder);
                                 balance.setNote("Bao hanh " +baohanh+"h cho video "+videoBuffhHistories.get(i).getVideoid());
                                 balanceRepository.save(balance);
 
@@ -1193,12 +1193,12 @@ public class VideoBuffhController {
                     //Hoàn tiền những giờ chưa buff
                     int timebuffed=(int)(videoBuffhDel.get(0).getTimebufftotal()/3600);
                     int price_timebuffed=(int)(videoBuffhDel.get(0).getPrice()*(timebuffed)/videoBuffhDel.get(0).getTimebuff());
-                    Long price_refund=(long)(videoBuffhDel.get(0).getPrice()-price_timebuffed);
+                    float price_refund=(videoBuffhDel.get(0).getPrice()-price_timebuffed);
                     System.out.println(price_timebuffed);
                     videoBuffhnew.setPrice(price_timebuffed);
                     //hoàn tiền & add thong báo số dư
                     int timethan=(int)(videoBuffhDel.get(0).getTimebuff()- timebuffed);
-                    long balance_new=user.get(0).getBalance()+price_refund;
+                    float balance_new=user.get(0).getBalance()+price_refund;
                     user.get(0).setBalance(balance_new);
                     adminRepository.save(user.get(0));
                     //
@@ -1206,7 +1206,7 @@ public class VideoBuffhController {
                     balance.setUser(user.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
                     balance.setTotalblance(balance_new);
-                    balance.setBalance((long)(price_refund));
+                    balance.setBalance(price_refund);
                     balance.setNote("Hoàn " +(timethan)+"h cho "+videoBuffhDel.get(0).getVideoid());
                     balanceRepository.save(balance);
                 }else{
@@ -1321,7 +1321,7 @@ public class VideoBuffhController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     int timethan=videoBuffh.getTimebuff()- video.get(0).getTimebuff();
-                    long balance_new=admins.get(0).getBalance()-(long)priceorder;
+                    float balance_new=admins.get(0).getBalance()-priceorder;
                     admins.get(0).setBalance(balance_new);
                     adminRepository.save(admins.get(0));
 
@@ -1332,7 +1332,7 @@ public class VideoBuffhController {
                     balance.setUser(admins.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
                     balance.setTotalblance(balance_new);
-                    balance.setBalance(-(long)priceorder);
+                    balance.setBalance(-priceorder);
                     if(priceorder<0){
                         balance.setNote("Hoàn " +(-timethan)+"h cho "+videoBuffh.getVideoid());
                     }else if(timethan!=0){

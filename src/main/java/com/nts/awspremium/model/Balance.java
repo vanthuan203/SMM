@@ -9,20 +9,30 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String user;
-    private Long balance;
-    private Long totalblance;
+    private Float balance;
+    private Float totalblance;
     private Long time;
     private String note;
+    private String currency;
     public Balance() {
     }
 
-    public Balance(Long id, String user, Long balance, Long totalblance, Long time, String note) {
+    public Balance(Long id, String user, Float balance, Float totalblance, Long time, String note, String currency) {
         this.id = id;
         this.user = user;
         this.balance = balance;
         this.totalblance = totalblance;
         this.time = time;
         this.note = note;
+        this.currency = currency;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public String getNote() {
@@ -49,19 +59,19 @@ public class Balance {
         this.user = user;
     }
 
-    public Long getBalance() {
+    public Float getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(Float balance) {
         this.balance = balance;
     }
 
-    public Long getTotalblance() {
+    public Float getTotalblance() {
         return totalblance;
     }
 
-    public void setTotalblance(Long totalblance) {
+    public void setTotalblance(Float totalblance) {
         this.totalblance = totalblance;
     }
 

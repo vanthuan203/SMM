@@ -28,7 +28,7 @@ public interface AdminRepository extends JpaRepository<Admin,Long> {
     @Modifying
     @Transactional
     @Query(value = "update admin set balance=?1 where username=?2",nativeQuery = true)
-    public Integer updateBalance(Long balance,String username);
+    public Integer updateBalance(Float balance,String username);
 
     @Query(value = "Select username from admin",nativeQuery = true)
     public List<String> GetAllUser();

@@ -91,7 +91,7 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         List<Admin> admins=adminRepository.GetAdminByUser(admin.getUsername().trim());
-        long totalbalance=admin.getBalance()+admins.get(0).getBalance();
+        float totalbalance=admin.getBalance()+admins.get(0).getBalance();
         admins.get(0).setVip(admin.getVip());
         admins.get(0).setMaxorder(admin.getMaxorder());
         admins.get(0).setDiscount(admin.getDiscount());
@@ -262,7 +262,6 @@ public class AuthController {
         resp.put("user",listuser);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
-
     }
 
     @GetMapping(path = "forgot_password",produces = "application/hal+json;charset=utf8")
@@ -298,7 +297,7 @@ public class AuthController {
             admin1.setRole("ROLE_USER");
             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
             String token="";
-            admin1.setBalance(0L);
+            admin1.setBalance(0F);
             admin1.setDiscount(0);
             Random ran=new Random();
             for(int i=0;i<30;i++){
