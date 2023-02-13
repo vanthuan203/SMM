@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "videoview")
 public class VideoView {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderid;
     private String videoid;
     private String videotitle;
