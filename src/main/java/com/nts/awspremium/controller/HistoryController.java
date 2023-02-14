@@ -193,17 +193,6 @@ public class HistoryController {
         }
         try{
 
-                HistoryView historyView = new HistoryView();
-                historyView.setVideoid(videoid.trim());
-                historyView.setTime(System.currentTimeMillis());
-                try {
-                    historyViewRepository.save(historyView);
-                } catch (Exception e) {
-                    try {
-                        historyViewRepository.save(historyView);
-                    } catch (Exception f) {
-                    }
-                }
             //Thread.sleep((long)(Math.random() * 20000));
             Long  historieId=historyRepository.getId(username);
             if(historieId==null){

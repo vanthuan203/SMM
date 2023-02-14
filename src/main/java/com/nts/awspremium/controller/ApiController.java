@@ -196,7 +196,7 @@ public class ApiController {
             }
             Iterator k = items.iterator();
             if(k.hasNext()==false){
-                resp.put("error","Can't get video info1");
+                resp.put("error","Can't get video info");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             /////////////////////////////////////////////
@@ -258,102 +258,5 @@ public class ApiController {
         }
         resp.put("error", "Cant insert video");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-    @GetMapping(value = "/updateviewendcron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkduration() throws IOException, ParseException {
-        JSONObject resp = new JSONObject();
-        List<String> listvideo=videoViewHistoryRepository.getOrderHistorythan5h();
-        if(listvideo.size()==0){
-            resp.put("status","true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
-        String s_videoid="";
-        for(int i=0;i<listvideo.size();i++){
-            if(i==0){
-                s_videoid=listvideo.get(i);
-            }else {
-                s_videoid=s_videoid+","+listvideo.get(i);
-            }
-        }
-        //VIDEOOOOOOOOOOOOOOO
-        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
-        Request request1 = null;
-
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
-
-        Response response1 = client1.newCall(request1).execute();
-
-        String resultJson1 = response1.body().string();
-
-        Object obj1 = new JSONParser().parse(resultJson1);
-
-        JSONObject jsonObject1 = (JSONObject) obj1;
-        JSONArray items = (JSONArray) jsonObject1.get("items");
-        JSONArray jsonArray = new JSONArray();
-        Iterator k = items.iterator();
-
-        while (k.hasNext()) {
-            try {
-                JSONObject video = (JSONObject) k.next();
-                JSONObject obj = new JSONObject();
-                JSONObject statistics = (JSONObject) video.get("statistics");
-                System.out.println(Integer.parseInt(statistics.get("viewCount").toString()));
-                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),video.get("id").toString());
-                //jsonArray.add(obj);
-            } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-
-        }
-        resp.put("status","true");
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-
-    @GetMapping(path = "updateorderviewcron",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffhcron(){
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try{
-            List<String> timeBuff;
-            List<String> timeBuff24h;
-            List<VideoBuffh> videoBuffhList=videoBuffhRepository.getAllOrder();
-            timeBuff =videoBuffhRepository.getTimeBuffVideo();
-            timeBuff24h =videoBuffhRepository.getTimeBuff24hVideo();
-
-            for(int i=0;i<videoBuffhList.size();i++){
-                int timebufftotal=0;
-                int timebuff24h=0;
-                int viewtotal=0;
-                int view24h=0;
-                for(int j=0;j<timeBuff.size();j++){
-                    if(videoBuffhList.get(i).getVideoid().equals(timeBuff.get(j).split(",")[0])){
-                        timebufftotal=Integer.parseInt(timeBuff.get(j).split(",")[1]);
-                        viewtotal=Integer.parseInt(timeBuff.get(j).split(",")[2]);
-                    }
-                }
-                for(int j=0;j<timeBuff24h.size();j++){
-                    if(videoBuffhList.get(i).getVideoid().equals(timeBuff24h.get(j).split(",")[0])){
-                        timebuff24h=Integer.parseInt(timeBuff24h.get(j).split(",")[1]);
-                        view24h=Integer.parseInt(timeBuff24h.get(j).split(",")[2]);
-                    }
-                }
-                try{
-                    videoBuffhRepository.updateTimeViewOrderByVideoId(timebufftotal,timebuff24h,viewtotal,view24h,System.currentTimeMillis(),videoBuffhList.get(i).getVideoid());
-                }catch (Exception e){
-
-                }
-            }
-            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
-
-            resp.put("total",videoBuffhList.size());
-            resp.put("videobuff",true);
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
     }
 }

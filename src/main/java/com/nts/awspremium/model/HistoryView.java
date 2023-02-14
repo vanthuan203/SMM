@@ -6,24 +6,33 @@ import javax.persistence.*;
 @Entity
 public class HistoryView {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
-    private String videoid;
+    private String listvideo;
+    private String proxy;
+    private String vps;
+    private Integer running;
     private String channelid;
-    private Integer duration;
-    private Long time;
+    private Long timeget;
+    private String typeproxy;
+    private String geo;
+    private String videoid;
 
     public HistoryView() {
     }
 
-    public HistoryView(Long id, String username, String videoid, String channelid, Integer duration, Long time) {
+    public HistoryView(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long timeget, String typeproxy, String geo, String videoid) {
         this.id = id;
         this.username = username;
-        this.videoid = videoid;
+        this.listvideo = listvideo;
+        this.proxy = proxy;
+        this.vps = vps;
+        this.running = running;
         this.channelid = channelid;
-        this.duration = duration;
-        this.time = time;
+        this.timeget = timeget;
+        this.typeproxy = typeproxy;
+        this.geo = geo;
+        this.videoid = videoid;
     }
 
     public Long getId() {
@@ -42,12 +51,36 @@ public class HistoryView {
         this.username = username;
     }
 
-    public String getVideoid() {
-        return videoid;
+    public String getListvideo() {
+        return listvideo;
     }
 
-    public void setVideoid(String videoid) {
-        this.videoid = videoid;
+    public void setListvideo(String listvideo) {
+        this.listvideo = listvideo;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
+    }
+
+    public String getVps() {
+        return vps;
+    }
+
+    public void setVps(String vps) {
+        this.vps = vps;
+    }
+
+    public Integer getRunning() {
+        return running;
+    }
+
+    public void setRunning(Integer running) {
+        this.running = running;
     }
 
     public String getChannelid() {
@@ -58,19 +91,35 @@ public class HistoryView {
         this.channelid = channelid;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public Long getTimeget() {
+        return timeget;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setTimeget(Long timeget) {
+        this.timeget = timeget;
     }
 
-    public Long getTime() {
-        return time;
+    public String getTypeproxy() {
+        return typeproxy;
     }
 
-    public void setTime(Long time) {
-        this.time = time;
+    public void setTypeproxy(String typeproxy) {
+        this.typeproxy = typeproxy;
+    }
+
+    public String getGeo() {
+        return geo;
+    }
+
+    public void setGeo(String geo) {
+        this.geo = geo;
+    }
+
+    public String getVideoid() {
+        return videoid;
+    }
+
+    public void setVideoid(String videoid) {
+        this.videoid = videoid;
     }
 }

@@ -23,7 +23,7 @@ public class VideoViewHistory {
     private String channeltitle;
     private String note;
     private String user;
-    private Integer price;
+    private Float price;
     private Long timecheck;
     private Integer numbh;
     public VideoViewHistory() {
@@ -169,11 +169,11 @@ public class VideoViewHistory {
         this.user = user;
     }
 
-    public Integer getPrice() {
+    public Float getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(Float price) {
         this.price = price;
     }
 

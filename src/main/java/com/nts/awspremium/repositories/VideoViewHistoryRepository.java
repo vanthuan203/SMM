@@ -1,5 +1,6 @@
 package com.nts.awspremium.repositories;
 
+import com.nts.awspremium.model.VideoBuffhHistory;
 import com.nts.awspremium.model.VideoView;
 import com.nts.awspremium.model.VideoViewHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +21,13 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Transactional
     @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2",nativeQuery = true)
     public Integer updateviewend(Integer viewend,String videoid);
+
+    @Query(value = "SELECT * from videoviewhistory order by enddate desc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoViewHistories();
+
+    @Query(value = "SELECT * from videoviewhistory where user=?1 order by enddate desc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoViewHistories(String user);
+
+
+
 }
