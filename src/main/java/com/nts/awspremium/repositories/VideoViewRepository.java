@@ -57,10 +57,10 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) as total FROM videoview where user=?1",nativeQuery = true)
     public Integer getCountViewBuffOrder(String user);
 
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate",nativeQuery = true)
+    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where historyviewsum.duration>0 and time>=videoview.insertdate",nativeQuery = true)
     public Integer getCountViewBuffedOrder();
 
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where videoview.user=?1  time>=videoview.insertdate",nativeQuery = true)
+    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where historyviewsum.duration>0 and videoview.user=?1  time>=videoview.insertdate",nativeQuery = true)
     public Integer getCountViewBuffedOrder(String user);
 
     @Query(value = "SELECT * from videoview  where videoid=?1 limit 1",nativeQuery = true)

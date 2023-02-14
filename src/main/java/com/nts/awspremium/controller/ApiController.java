@@ -98,7 +98,7 @@ public class ApiController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }else{
                         resp.put("start_count",videoHistory.getViewstart());
-                        resp.put("current_count",videoHistory.getViewbuffend());
+                        resp.put("current_count",videoHistory.getViewtotal());
                         resp.put("charge", videoHistory.getPrice());
                         if(videoHistory.getCancel()==1){
                             resp.put("status", "Canceled");
@@ -107,7 +107,7 @@ public class ApiController {
                         }else{
                             resp.put("status", "Completed");
                         }
-                        resp.put("remains", videoHistory.getVieworder() - videoHistory.getViewbuffend());
+                        resp.put("remains", videoHistory.getVieworder() - videoHistory.getViewtotal());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -134,7 +134,7 @@ public class ApiController {
                     JSONObject videohisview = new JSONObject();
                     if(videoViewHistory!=null){
                         videohisview.put("start_count",vh.getViewstart());
-                        videohisview.put("current_count",vh.getViewbuffend());
+                        videohisview.put("current_count",vh.getViewtotal());
                         videohisview.put("charge", vh.getPrice());
                         if(vh.getCancel()==1){
                             videohisview.put("status", "Canceled");
@@ -143,7 +143,7 @@ public class ApiController {
                         }else{
                             videohisview.put("status", "Completed");
                         }
-                        videohisview.put("remains", vh.getVieworder() - vh.getViewbuffend());
+                        videohisview.put("remains", vh.getVieworder() - vh.getViewtotal());
                         videosview.put(""+vh.getOrderid(),videohisview);
                         ordersArrInput.remove(""+vh.getOrderid());
                     }

@@ -12,7 +12,7 @@ public class VideoViewHistory {
     private String channelid;
     private Integer viewstart;
     private Integer viewend;
-    private Integer viewbuffend;
+    private Integer viewtotal;
     private Integer cancel;
     private Long insertdate;
     private Long enddate;
@@ -27,6 +27,37 @@ public class VideoViewHistory {
     private Long timecheck;
     private Integer numbh;
     public VideoViewHistory() {
+    }
+
+    public VideoViewHistory(Long orderid, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer viewtotal, Integer cancel, Long insertdate, Long enddate, Integer vieworder, Integer service, Integer maxthreads, Long duration, String channeltitle, String note, String user, Float price, Long timecheck, Integer numbh) {
+        this.orderid = orderid;
+        this.videoid = videoid;
+        this.videotitle = videotitle;
+        this.channelid = channelid;
+        this.viewstart = viewstart;
+        this.viewend = viewend;
+        this.viewtotal = viewtotal;
+        this.cancel = cancel;
+        this.insertdate = insertdate;
+        this.enddate = enddate;
+        this.vieworder = vieworder;
+        this.service = service;
+        this.maxthreads = maxthreads;
+        this.duration = duration;
+        this.channeltitle = channeltitle;
+        this.note = note;
+        this.user = user;
+        this.price = price;
+        this.timecheck = timecheck;
+        this.numbh = numbh;
+    }
+
+    public Integer getViewtotal() {
+        return viewtotal;
+    }
+
+    public void setViewtotal(Integer viewtotal) {
+        this.viewtotal = viewtotal;
     }
 
     public VideoViewHistory(Long orderid) {
@@ -89,13 +120,6 @@ public class VideoViewHistory {
         this.viewend = viewend;
     }
 
-    public Integer getViewbuffend() {
-        return viewbuffend;
-    }
-
-    public void setViewbuffend(Integer viewbuffend) {
-        this.viewbuffend = viewbuffend;
-    }
 
     public Integer getCancel() {
         return cancel;

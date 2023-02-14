@@ -313,24 +313,18 @@ public class HistoryViewController {
             }
 
             JSONArray jsonArray=new JSONArray();
-            Integer maxtime=0;
             Integer maxview=0;
 
             for(int i=0;i<time7day.size();i++){
                 //System.out.println(time7day.get(i).split(",")[1]);
-                if(maxtime<Integer.parseInt(time7day.get(i).split(",")[1])){
-                    maxtime=Integer.parseInt(time7day.get(i).split(",")[1]);
-                }
-                if(maxview<Integer.parseInt(time7day.get(i).split(",")[2])){
-                    maxview=Integer.parseInt(time7day.get(i).split(",")[2]);
+                if(maxview<Integer.parseInt(time7day.get(i).split(",")[1])){
+                    maxview=Integer.parseInt(time7day.get(i).split(",")[1]);
                 }
             }
             for(int i=0;i<time7day.size();i++){
                 JSONObject obj=new JSONObject();
                 obj.put("date", time7day.get(i).split(",")[0]);
-                obj.put("time", time7day.get(i).split(",")[1]);
-                obj.put("view", time7day.get(i).split(",")[2]);
-                obj.put("maxtime", maxtime.toString());
+                obj.put("view", time7day.get(i).split(",")[1]);
                 obj.put("maxview",maxview.toString());
 
                 jsonArray.add(obj);

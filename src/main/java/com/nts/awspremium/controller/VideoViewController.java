@@ -133,6 +133,7 @@ public class VideoViewController {
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     videoViewhnew.setMaxthreads(200);
                     videoViewhnew.setPrice(priceorder);
+                    videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
                     videoViewRepository.save(videoViewhnew);
 
@@ -773,7 +774,8 @@ public class VideoViewController {
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
                 obj.put("viewend", orderRunnings.get(i).getViewend());
-                obj.put("viewtotal", orderRunnings.get(i).getViewbuffend());
+                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
+                obj.put("vieworder", orderRunnings.get(i).getVieworder());
                 obj.put("price",orderRunnings.get(i).getPrice());
                 obj.put("service",orderRunnings.get(i).getService());
                 jsonArray.add(obj);
@@ -1101,6 +1103,7 @@ public class VideoViewController {
                 videoBuffhnew.setVideotitle(videoBuffh.get(0).getVideotitle());
                 videoBuffhnew.setVideoid(videoBuffh.get(0).getVideoid());
                 videoBuffhnew.setViewstart(videoBuffh.get(0).getViewstart());
+                videoBuffhnew.setVieworder(videoBuffh.get(0).getVieworder());
                 videoBuffhnew.setMaxthreads(videoBuffh.get(0).getMaxthreads());
                 videoBuffhnew.setNote(videoBuffh.get(0).getNote());
                 videoBuffhnew.setNumbh(0);
@@ -1133,11 +1136,12 @@ public class VideoViewController {
                     balance.setNote("Hoàn " +(viewthan)+"view cho "+videoBuffh.get(0).getVideoid());
                     balanceRepository.save(balance);
                 }else{
+                    videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                     videoBuffhnew.setCancel(0);
                 }
                 videoBuffhnew.setUser(videoBuffh.get(0).getUser());
                 videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setViewbuffend(videoBuffh.get(0).getViewtotal());
+                videoBuffhnew.setViewtotal(videoBuffh.get(0).getViewtotal());
                 videoViewHistoryRepository.save(videoBuffhnew);
                 videoViewRepository.deletevideoByVideoId(videoidArr[i].trim());
             }
@@ -1177,7 +1181,8 @@ public class VideoViewController {
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewbuffend(videoBuffh.get(i).getViewtotal());
+                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
+                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
                 videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
                 try{
                     videoViewHistoryRepository.save(videoBuffhnew);
@@ -1248,6 +1253,7 @@ public class VideoViewController {
 
                 List<OrderViewRunning> orderRunnings=videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
                 JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(0).getOrderId());
                 obj.put("videoid", orderRunnings.get(0).getVideoId());
                 obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
                 obj.put("viewstart", orderRunnings.get(0).getViewStart());
@@ -1295,6 +1301,7 @@ public class VideoViewController {
 
                 List<OrderViewRunning> orderRunnings=videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
                 JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(0).getOrderId());
                 obj.put("videoid", orderRunnings.get(0).getVideoId());
                 obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
                 obj.put("viewstart", orderRunnings.get(0).getViewStart());
