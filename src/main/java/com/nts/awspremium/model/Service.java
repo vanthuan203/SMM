@@ -15,11 +15,11 @@ public class Service {
     private Float rate;
     private Integer min;
     private Integer max;
-
+    private String note;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, String note) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -27,6 +27,15 @@ public class Service {
         this.rate = rate;
         this.min = min;
         this.max = max;
+        this.note = note;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Integer getService() {

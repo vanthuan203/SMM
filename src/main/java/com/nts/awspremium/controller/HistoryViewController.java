@@ -79,18 +79,47 @@ public class HistoryViewController {
                         historyViewRepository.save(history);
 
                         resp.put("channel_id", videos.get(0).getChannelid());
-                        resp.put("search", videos.get(0).getChannelid());
-                        resp.put("suggest", videos.get(0).getChannelid());
-                        resp.put("search", videos.get(0).getChannelid());
-                        resp.put("dtn", videos.get(0).getChannelid());
                         resp.put("status", "true");
                         resp.put("video_id", videos.get(0).getVideoid());
                         resp.put("video_title", videos.get(0).getVideotitle());
                         resp.put("username", history.getUsername());
-
-
                         if(videos.get(0).getService()==666){
+                            if(ran.nextInt(10000)>5000){
+                                resp.put("source", "dtn");
+                            }else{
+                                resp.put("source", "search");
+                            }
+                        }else  if(videos.get(0).getService()==668){
+                            resp.put("source", "suggest");
+                        } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999){
+                            int rand =ran.nextInt(10000);
+                            if(rand<5000){
+                                resp.put("source", "suggest");
+                            }else if(rand<7500){
+                                resp.put("source", "search");
+                            }else{
+                                resp.put("source", "dtn");
+                            }
+                        }
 
+                        if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669){
+                            if(videos.get(0).getDuration()>360){
+                                resp.put("video_duration", 180+ran.nextInt(180));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
+                        }else if(videos.get(0).getService()==688){
+                            if(videos.get(0).getDuration()>660){
+                                resp.put("video_duration", 300+ran.nextInt(360));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
+                        }else if(videos.get(0).getService()==689){
+                            if(videos.get(0).getDuration()>1260){
+                                resp.put("video_duration", 900+ran.nextInt(360));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
                         }
 
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -124,27 +153,44 @@ public class HistoryViewController {
                     resp.put("status", "true");
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
-                    resp.put("geo",histories.get(0).getGeo());
                     resp.put("username", histories.get(0).getUsername());
-                    if(test==7){
+
+                    if(videos.get(0).getService()==666){
+                        if(ran.nextInt(10000)>5000){
+                            resp.put("source", "dtn");
+                        }else{
+                            resp.put("source", "search");
+                        }
+                    }else  if(videos.get(0).getService()==668){
+                        resp.put("source", "suggest");
+                    } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999){
+                        int rand =ran.nextInt(10000);
+                        if(rand<5000){
+                            resp.put("source", "suggest");
+                        }else if(rand<7500){
+                            resp.put("source", "search");
+                        }else{
+                            resp.put("source", "dtn");
+                        }
+                    }
+
+                    if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669){
                         if(videos.get(0).getDuration()>360){
-                            resp.put("video_duration", 300+ran.nextInt(60));
+                            resp.put("video_duration", 180+ran.nextInt(180));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else{
-                        if(videos.get(0).getDuration()<3600){
-                            if(videos.get(0).getDuration()>1920){
-                                resp.put("video_duration", 1850+ran.nextInt(60));
-                            }else{
-                                resp.put("video_duration", videos.get(0).getDuration());
-                            }
+                    }else if(videos.get(0).getService()==688){
+                        if(videos.get(0).getDuration()>660){
+                            resp.put("video_duration", 300+ran.nextInt(360));
                         }else{
-                            if(videos.get(0).getDuration()>3780){
-                                resp.put("video_duration", 3710+ran.nextInt(60));
-                            }else{
-                                resp.put("video_duration", videos.get(0).getDuration());
-                            }
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getService()==689){
+                        if(videos.get(0).getDuration()>1260){
+                            resp.put("video_duration", 900+ran.nextInt(360));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -158,15 +204,9 @@ public class HistoryViewController {
             }
     }
     @GetMapping(value = "/updatevideoid",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatevideoid(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
+    ResponseEntity<String> updatevideoid( @RequestParam(defaultValue = "") String username,
                                   @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String channelid,@RequestParam(defaultValue = "0") Integer duration){
         JSONObject resp=new JSONObject();
-        if(!Authorization.equals("1")){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         if (username.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Username không để trống");
@@ -205,14 +245,10 @@ public class HistoryViewController {
     }
 
     @GetMapping(value = "/update",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,
+    ResponseEntity<String> update( @RequestParam(defaultValue = "") String username,
                                   @RequestParam(defaultValue = "") String videoid,@RequestParam(defaultValue = "") String channelid,@RequestParam(defaultValue = "0") Integer duration){
         JSONObject resp=new JSONObject();
-        if(!Authorization.equals("1")){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
+
         if (username.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Username không để trống");

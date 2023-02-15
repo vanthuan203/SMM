@@ -67,7 +67,7 @@ public class VideoViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             if(videoBuffhRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || settingRepository.getMaxOrder()==0){
-                resp.put("videobuffh", "Vượt giới hạn đơn!");
+                resp.put("videobuffh", "System busy try again!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             String videolist = GoogleApi.getYoutubeId(videoView.getVideoid());
@@ -100,8 +100,8 @@ public class VideoViewController {
                 try {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
-                    if(videoBuffhRepository.getCountVideoId(video.get("id").toString().trim())>0){
-                        resp.put("videoview","Đơn đã tồn tại!");
+                    if(videoViewRepository.getCountVideoId(video.get("id").toString().trim())>0){
+                        resp.put("videoview","This video in process!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     Service service=serviceRepository.getService(videoView.getService());
@@ -1217,7 +1217,7 @@ public class VideoViewController {
             for(int i=0;i<videoidIdArr.length;i++){
                 List<VideoView> video=videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 float priceorder=0;
-                if((int)videoBuffh.getVieworder()!=(int)video.get(0).getVieworder()){
+                if(videoBuffh.getVieworder()!=video.get(0).getVieworder()){
                     Service service=serviceRepository.getService(video.get(0).getService());
                     priceorder=((videoBuffh.getVieworder()-video.get(0).getVieworder())/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
 
@@ -1239,14 +1239,15 @@ public class VideoViewController {
                     balance.setTotalblance(balance_new);
                     balance.setBalance(-priceorder);
                     if(priceorder<0){
-                        balance.setNote("Hoàn " +(-timethan)+"h cho "+videoBuffh.getVideoid());
+                        balance.setNote("Hoàn " +(-timethan)+" view cho "+videoBuffh.getVideoid());
                     }else if(timethan!=0){
-                        balance.setNote("Order thêm " +timethan+"h cho "+videoBuffh.getVideoid());
+                        balance.setNote("Order thêm " +timethan+" view cho "+videoBuffh.getVideoid());
                     }
 
                     balanceRepository.save(balance);
                 }
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
+                video.get(0).setVieworder(videoBuffh.getVieworder());
                 video.get(0).setNote(videoBuffh.getNote());
                 video.get(0).setPrice(videoBuffh.getPrice()+priceorder);
                 videoViewRepository.save(video.get(0));
@@ -1262,16 +1263,16 @@ public class VideoViewController {
                 obj.put("total", orderRunnings.get(0).getTotal());
                 obj.put("note", orderRunnings.get(0).getNote());
                 obj.put("duration", orderRunnings.get(0).getDuration());
-
+                obj.put("vieworder",orderRunnings.get(0).getViewOrder());
                 obj.put("service", orderRunnings.get(0).getService());
                 obj.put("user", orderRunnings.get(0).getUser());
                 obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
                 obj.put("view24h",orderRunnings.get(0).getView24h());
-                obj.put("price",(int)(videoBuffh.getPrice()+priceorder));
+                obj.put("price",videoBuffh.getPrice()+priceorder);
 
                 jsonArray.add(obj);
             }
-            resp.put("videobuff",jsonArray);
+            resp.put("videoview",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
@@ -1315,6 +1316,8 @@ public class VideoViewController {
                 obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
                 obj.put("view24h",orderRunnings.get(0).getView24h());
                 obj.put("price",orderRunnings.get(0).getPrice());
+                obj.put("vieworder",orderRunnings.get(0).getViewOrder());
+
 
                 jsonArray.add(obj);
             }

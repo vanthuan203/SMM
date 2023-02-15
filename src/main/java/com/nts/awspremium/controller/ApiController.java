@@ -129,7 +129,7 @@ public class ApiController {
                     ordersArrInput.remove(""+v.getOrderid());
                 }
                 String listIdHis = String.join(",", ordersArrInput);
-                List<VideoViewHistory> videoViewHistory= videoViewHistoryRepository.getVideoViewHisByListId(listIdHis);
+                List<VideoViewHistory> videoViewHistory= videoViewHistoryRepository.getVideoViewHisByListId(ordersArrInput);
                 for(VideoViewHistory vh:videoViewHistory){
                     JSONObject videohisview = new JSONObject();
                     if(videoViewHistory!=null){
@@ -236,6 +236,7 @@ public class ApiController {
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     videoViewhnew.setMaxthreads(200);
                     videoViewhnew.setPrice(priceorder);
+                    videoViewhnew.setNote("");
                     videoViewhnew.setService(data.getService());
                     videoViewRepository.save(videoViewhnew);
 

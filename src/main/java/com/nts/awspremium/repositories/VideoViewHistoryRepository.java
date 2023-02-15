@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHistory,Long> {
     @Query(value = "SELECT * from videoviewhistory where orderid in (?1)",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHisByListId(String list_orderid);
+    public List<VideoViewHistory> getVideoViewHisByListId(List<String> list_orderid);
 
     @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 limit 50",nativeQuery = true)
     public List<String> getOrderHistorythan5h();
