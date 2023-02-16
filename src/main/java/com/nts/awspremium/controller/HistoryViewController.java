@@ -120,6 +120,12 @@ public class HistoryViewController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
+                        }else if(videos.get(0).getService()==999){
+                            if(videos.get(0).getDuration()>3720){
+                                resp.put("video_duration", 3600+ran.nextInt(120));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
                         }
 
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
