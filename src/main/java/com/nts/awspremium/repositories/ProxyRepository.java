@@ -63,13 +63,13 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where state=1 and proxy NOT LIKE ?1 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyUpdate(String proxy);
 
-    @Query(value = "select * from proxy where  ipv4 in (select ipv4 from ipv4 where state=1 and timereset=20) and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20 order by timeget asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy where  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=10 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxySubT1();
 
     @Query(value = "select * from proxy where  ipv4 in (select ipv4 from ipv4 where state=1 and timereset=30) and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=60 order by timeget asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxySubT2();
 
-    @Query(value = "SELECT * from proxy where proxy like ?1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20 order by timeget asc,rand() limit 1;",nativeQuery = true)
+    @Query(value = "SELECT * from proxy where ipv4 like ?1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=10 order by timeget asc,rand() limit 1;",nativeQuery = true)
     public List<Proxy> getProxySubByIpv4T1(String ipv4);
     @Query(value = "SELECT * from proxy where proxy like ?1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=60 order by timeget asc,rand() limit 1;",nativeQuery = true)
     public List<Proxy> getProxySubByIpv4T2(String ipv4);

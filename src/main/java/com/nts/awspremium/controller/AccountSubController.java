@@ -83,6 +83,32 @@ public class AccountSubController {
         }
     }
 
+    @PostMapping(value = "/updateallinfo",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateallinfo(@RequestBody Account newaccount) {
+        JSONObject resp = new JSONObject();
+
+        try {
+            Long id = accountRepository.findIdByUsername(newaccount.getUsername().trim());
+            if (id != null) {
+                accountRepository.updateAllInfoAccSub(newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), newaccount.getVps(),id);
+                resp.put("status", "true");
+                resp.put("message", "Update " + newaccount.getUsername() + " thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } else {
+                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), "", "", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
+                //cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
+                //encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
+                resp.put("status", "true");
+                resp.put("message", "Insert " + newaccount.getUsername() + " thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/getencodefinger", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getencodefinger(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();

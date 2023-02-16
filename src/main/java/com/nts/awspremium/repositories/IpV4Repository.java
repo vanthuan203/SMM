@@ -16,8 +16,14 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Query(value = "select ipv4 from ipv4 where timereset=?1 and vps like ?2 order by usercount asc limit 1",nativeQuery = true)
     public String getIpv4ByVps(Integer timereset,String vps);
 
+    @Query(value = "SELECT ipv4 FROM ipv4 order by usercount asc,rand() limit 1",nativeQuery = true)
+    public String getIpv4ByVps();
+
     @Query(value = "select count(*) from ipv4 where timereset=?1 and vps like ?2 ",nativeQuery = true)
     public Integer checkIpv4ByVps(Integer timereset,String vps);
+
+    @Query(value = "select count(*) from ipv4 where vps like ?1 ",nativeQuery = true)
+    public Integer checkIpv4ByVps(String vps);
     @Query(value = "select ipv4 from ipv4 where cron=?1 order by timecheck asc",nativeQuery = true)
     public List<String> getListIpv4(Integer cron);
 
@@ -62,6 +68,12 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Transactional
     @Query(value = "Update ipv4 SET vps=concat(vps,',',?1),vspcount=vspcount+1 where timereset=?2 and vspcount<5 order by vspcount asc limit 1 ",nativeQuery = true)
     public void updateIpv4byVps(String vps,Integer timereset);
+
+    @Modifying
+    @Transactional
+    @Query(value = "Update ipv4 SET vps=concat(vps,',',?1),vspcount=vspcount+1 where  vspcount<5 order by vspcount asc limit 1 ",nativeQuery = true)
+    public void updateIpv4byVps(String vps);
+
 
     @Modifying
     @Transactional

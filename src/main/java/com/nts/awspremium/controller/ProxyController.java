@@ -196,9 +196,8 @@ public class ProxyController {
         }
 
     }
-
-    @GetMapping(value = "/checkproxyvpssub", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> checkproxyvps(@RequestParam(defaultValue = "")  String vps) {
+    @GetMapping(value = "/checkproxyvpssubpending", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkproxyvpssubpending(@RequestParam(defaultValue = "")  String vps) {
         JSONObject resp = new JSONObject();
         try{
             if(vps.length()==0){
@@ -224,9 +223,35 @@ public class ProxyController {
         }
 
     }
+    @GetMapping(value = "/checkproxyvpssub", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkproxyvps(@RequestParam(defaultValue = "")  String vps) {
+        JSONObject resp = new JSONObject();
+        try{
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            Integer checkv1= ipV4Repository.checkIpv4ByVps("%"+vps.trim()+"%");
+            if(checkv1!=12 ) {
+                for (int i = 0; i < 12 - checkv1; i++) {
+                    ipV4Repository.updateIpv4byVps(vps.trim(), 20);
+                }
+                for (int i = 0; i < 3 - checkv1; i++) {
+                    ipV4Repository.updateIpv4byVps(vps.trim(), 30);
+                }
+            }
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
 
-    @GetMapping(value = "/getproxysub", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
+    }
+//get proxy sub old
+    @GetMapping(value = "/getproxysubpending", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getproxysubpending(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
         JSONObject resp = new JSONObject();
         try{
             if(vps.length()==0){
@@ -300,6 +325,54 @@ public class ProxyController {
 
     }
 
+    @GetMapping(value = "/getproxysub", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
+        JSONObject resp = new JSONObject();
+        try{
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(username.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để username trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+
+            Long id=accountRepository.findIdByUsername(username);
+            String v4 =accountRepository.CheckProxyByIdSub(id);
+            if(v4.length()<5){
+                v4= ipV4Repository.getIpv4ByVps();
+                ipV4Repository.updateUserCountByIpv4(v4);
+                accountRepository.updateProxyById(v4,id);
+            }
+            List<Proxy> proxyGet=null;
+            if(proxyfail.length()!=0){
+                proxyGet=proxyRepository.getProxySubT1();
+            }else{
+                proxyGet=proxyRepository.getProxySubByIpv4T1(v4);
+                if(proxyGet==null){
+                    proxyGet=proxyRepository.getProxySubT1();
+                }
+            }
+            if(proxyGet==null){
+                resp.put("status","fail");
+                resp.put("message","Hết proxy khả dụng!" );
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            proxyGet.get(0).setTimeget(System.currentTimeMillis());
+            proxyRepository.save(proxyGet.get(0));
+            resp.put("status","true");
+            resp.put("proxy",proxyGet.get(0).getProxy());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+        resp.put("status", e);
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+    }
+
+    }
 
 
     @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")

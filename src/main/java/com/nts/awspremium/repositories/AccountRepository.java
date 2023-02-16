@@ -26,6 +26,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select proxy,proxy2 from account where id=?1 limit 1",nativeQuery = true)
     public String findProxyByIdSub(Long id);
 
+    @Query(value = "Select proxy from account where id=?1 limit 1",nativeQuery = true)
+    public String CheckProxyByIdSub(Long id);
+
     @Query(value = "Select count(*) from account where username=?1 and vps=?2 limit 1",nativeQuery = true)
     public Integer findUsernameByVps(String username,String vps);
     @Modifying
@@ -65,7 +68,10 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where id=?6",nativeQuery = true)
     public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,Long id);
-
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,vps=?4 where id=?5",nativeQuery = true)
+    public void updateAllInfoAccSub(String password,String recover,Integer live,String vps,Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
@@ -183,6 +189,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET proxy=?1,proxy2=?2 where id=?3",nativeQuery = true)
     public Integer updateProxyById(String proxy,String proxy2,Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET proxy=?1 where id=?2",nativeQuery = true)
+    public Integer updateProxyById(String proxy,Long id);
 
     @Modifying
     @Transactional
