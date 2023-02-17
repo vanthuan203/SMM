@@ -45,7 +45,7 @@ public class ApiController {
     private ServiceRepository serviceRepository;
 
     @PostMapping(value = "/view", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> buffh(DataRequest data) throws IOException, ParseException {
+    ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         try{
             List<Admin> admins = adminRepository.FindByToken(data.getKey().trim());
@@ -82,7 +82,6 @@ public class ApiController {
             if(data.getAction().equals("status")){
                 if(data.getOrders().length()==0){
                     VideoView video = videoViewRepository.getReferenceById(data.getOrder());
-                    System.out.println(data.getOrder());
                     VideoViewHistory videoHistory=videoViewHistoryRepository.getReferenceById(data.getOrder());
 
                     if(video !=null){
@@ -237,7 +236,7 @@ public class ApiController {
                         videoViewhnew.setVideotitle(snippet.get("title").toString());
                         videoViewhnew.setVideoid(video.get("id").toString());
                         videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                        videoViewhnew.setMaxthreads(200);
+                        videoViewhnew.setMaxthreads(50);
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());

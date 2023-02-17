@@ -1114,8 +1114,9 @@ public class VideoViewController {
                     List<Admin> user=adminRepository.getAdminByUser(videoBuffh.get(0).getUser());
                     //Hoàn tiền những view chưa buff
                     int viewbuff=videoBuffh.get(0).getViewtotal();
-                    float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
-                    float price_refund=(videoBuffh.get(0).getPrice()-pricebuffed);
+                    float price_refund=((videoBuffh.get(0).getVieworder()-videoBuffh.get(0).getViewtotal())/(float)videoBuffh.get(0).getVieworder())*videoBuffh.get(0).getPrice();
+                    //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
+                    float pricebuffed=(videoBuffh.get(0).getPrice()-price_refund);
                     videoBuffhnew.setPrice(pricebuffed);
                     if(viewbuff==0){
                         videoBuffhnew.setCancel(1);
@@ -1219,7 +1220,7 @@ public class VideoViewController {
                 float priceorder=0;
                 if(videoBuffh.getVieworder()!=video.get(0).getVieworder()){
                     Service service=serviceRepository.getService(video.get(0).getService());
-                    priceorder=((videoBuffh.getVieworder()-video.get(0).getVieworder())/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
+                    priceorder=((videoBuffh.getVieworder()-video.get(0).getVieworder()))*(video.get(0).getPrice()/video.get(0).getVieworder());
 
                     if(priceorder>(float)admins.get(0).getBalance()){
                         resp.put("message","Số tiền không đủ!!");
