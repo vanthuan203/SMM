@@ -83,6 +83,21 @@ public class HistoryViewController {
                         resp.put("video_id", videos.get(0).getVideoid());
                         resp.put("video_title", videos.get(0).getVideotitle());
                         resp.put("username", history.getUsername());
+                        int randLike =ran.nextInt(10000);
+                        if(randLike<500){
+                            resp.put("like","true");
+                        }else{
+                            resp.put("like","fail");
+                        }
+                        int randSub =ran.nextInt(10000);
+                        if(randSub<500){
+                            resp.put("sub","true");
+                        }else{
+                            resp.put("sub","fail");
+                        }
+                        resp.put("suggest_type","fail");
+                        resp.put("suggest_key","");
+                        resp.put("suggest_video","");
                         if(videos.get(0).getService()==666){
                             if(ran.nextInt(10000)>5000){
                                 resp.put("source", "dtn");
@@ -160,7 +175,21 @@ public class HistoryViewController {
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", histories.get(0).getUsername());
-
+                    int randLike =ran.nextInt(10000);
+                    if(randLike<500){
+                        resp.put("like","true");
+                    }else{
+                        resp.put("like","fail");
+                    }
+                    int randSub =ran.nextInt(10000);
+                    if(randSub<500){
+                        resp.put("sub","true");
+                    }else{
+                        resp.put("sub","fail");
+                    }
+                    resp.put("suggest_type","fail");
+                    resp.put("suggest_key","");
+                    resp.put("suggest_video","");
                     if(videos.get(0).getService()==666){
                         if(ran.nextInt(10000)>5000){
                             resp.put("source", "dtn");
@@ -312,13 +341,8 @@ public class HistoryViewController {
         }
     }
     @GetMapping(value = "delthreadbyusername",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delthreadbyusername(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String videoid){
+    ResponseEntity<String> delthreadbyusername(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String videoid){
         JSONObject resp=new JSONObject();
-        if(!Authorization.equals("1")){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         if (username.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "username không để trống");
@@ -399,13 +423,8 @@ public class HistoryViewController {
 
 
     @GetMapping(value = "delnamebyvps",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delnamebyvps(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String vps){
+    ResponseEntity<String> delnamebyvps(@RequestParam(defaultValue = "") String vps){
         JSONObject resp=new JSONObject();
-        if(!Authorization.equals("1")){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "vps không để trống");
