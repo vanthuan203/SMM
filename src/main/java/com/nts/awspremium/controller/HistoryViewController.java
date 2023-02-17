@@ -44,7 +44,7 @@ public class HistoryViewController {
     @Autowired
     private IpV4Repository ipV4Repository;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Integer test){
+    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Integer buffh ){
         JSONObject resp=new JSONObject();
         if (vps.length() == 0) {
             resp.put("status", "fail");
@@ -71,7 +71,11 @@ public class HistoryViewController {
                     history.setVideoid("");
                     history.setChannelid("");
                     history.setTimeget(System.currentTimeMillis());
-                    videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
+                    if(buffh==1){
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
+                    }else{
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
+                    }
                     if(videos.size()>0){
                         history.setVideoid(videos.get(0).getVideoid());
                         history.setChannelid(videos.get(0).getChannelid());
@@ -135,9 +139,15 @@ public class HistoryViewController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
+                        }else if(videos.get(0).getService()==998){
+                            if(videos.get(0).getDuration()>1980){
+                                resp.put("video_duration", 1800+ran.nextInt(180));
+                            }else{
+                                resp.put("video_duration", videos.get(0).getDuration());
+                            }
                         }else if(videos.get(0).getService()==999){
-                            if(videos.get(0).getDuration()>3720){
-                                resp.put("video_duration", 3600+ran.nextInt(120));
+                            if(videos.get(0).getDuration()>3780){
+                                resp.put("video_duration", 3600+ran.nextInt(180));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
@@ -156,7 +166,11 @@ public class HistoryViewController {
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //histories.get(0).setVps(vps);
                     histories.get(0).setTimeget(System.currentTimeMillis());
-                    videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
+                    if(buffh==1){
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
+                    }else{
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
+                    }
                     if(videos.size()>0){
                         histories.get(0).setVideoid(videos.get(0).getVideoid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -224,6 +238,18 @@ public class HistoryViewController {
                     }else if(videos.get(0).getService()==689){
                         if(videos.get(0).getDuration()>1260){
                             resp.put("video_duration", 900+ran.nextInt(360));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getService()==998){
+                        if(videos.get(0).getDuration()>1980){
+                            resp.put("video_duration", 1800+ran.nextInt(180));
+                        }else{
+                            resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getService()==999){
+                        if(videos.get(0).getDuration()>3780){
+                            resp.put("video_duration", 3600+ran.nextInt(180));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }

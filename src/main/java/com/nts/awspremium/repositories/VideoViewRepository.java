@@ -14,11 +14,17 @@ import java.util.List;
 
 public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
-    @Query(value = "SELECT * FROM videoview where INSTR(?1,videoid)=0 and \n" +
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and INSTR(?1,videoid)=0 and \n" +
             "videoid in (select videoid from (select videoview.videoid,count(*) as total,maxthreads \n" +
             "from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 \n" +
             "group by videoid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2NoCheckTime24hNoTest(String listvideo);
+
+    @Query(value = "SELECT * FROM videoview where service in (999,998) and INSTR(?1,videoid)=0 and \n" +
+            "videoid in (select videoid from (select videoview.videoid,count(*) as total,maxthreads \n" +
+            "from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 \n" +
+            "group by videoid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewVer2NoCheckTime24hNoTestTimeBuff(String listvideo);
     @Query(value = "SELECT * from videoview where orderid in (?1)",nativeQuery = true)
     public List<VideoView> getVideoViewByListId(List<String> list_orderid);
 

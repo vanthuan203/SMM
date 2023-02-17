@@ -261,7 +261,7 @@ public class VideoViewController {
 
 
     @GetMapping(path = "getorderview",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderbuffh(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
+    ResponseEntity<String> getorderview(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
