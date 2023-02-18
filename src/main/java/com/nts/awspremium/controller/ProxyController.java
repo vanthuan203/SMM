@@ -342,7 +342,7 @@ public class ProxyController {
 
             Long id=accountRepository.findIdByUsername(username);
             String v4 =accountRepository.CheckProxyByIdSub(id);
-            if(v4.length()<5){
+            if(v4.length()<5 || v4==null){
                 v4= ipV4Repository.getIpv4ByVps();
                 ipV4Repository.updateUserCountByIpv4(v4);
                 accountRepository.updateProxyById(v4,id);
@@ -368,7 +368,7 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {
-        resp.put("status", e);
+        resp.put("status", e.getStackTrace()[0].getLineNumber());
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
     }
 

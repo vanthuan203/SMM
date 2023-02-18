@@ -374,11 +374,6 @@ public class HistoryViewController {
             resp.put("message", "username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (videoid.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "videoid không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         try{
             Long  historieId=historyViewRepository.getId(username);
             historyViewRepository.resetThreadBuffhById(historieId);
