@@ -56,7 +56,7 @@ public class VideoViewController {
     private ServiceRepository serviceRepository;
 
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> orderbuffh(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
+    ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         System.out.println(videoView.getService());
         try {
@@ -107,6 +107,14 @@ public class VideoViewController {
                     Service service=serviceRepository.getService(videoView.getService());
                     if(service==null){
                         resp.put("videoview", "Service not found ");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600 && videoView.getService()==999){
+                        resp.put("error", "video under 60 minutes");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<1800 && videoView.getService()==998){
+                        resp.put("error", "video under 30 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
 

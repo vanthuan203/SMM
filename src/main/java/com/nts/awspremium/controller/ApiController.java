@@ -215,6 +215,10 @@ public class ApiController {
                             resp.put("error", "video under 60 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<1800 && data.getService()==998){
+                            resp.put("error", "video under 30 minutes");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                         float priceorder=0;
                         int time=0;
