@@ -374,7 +374,7 @@ public class ProxyController {
 
     }
 
-
+/*
     @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkproxylist(@RequestParam(defaultValue = "1") Integer cron) {
         List<String> proxys= ipV4Repository.getListIpv4(cron);
@@ -425,6 +425,8 @@ public class ProxyController {
 
     }
 
+
+ */
     @GetMapping(value = "/checkproxylistphim", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkproxylistphim(@RequestParam(defaultValue = "1") Integer cron) {
         List<String> proxys= ipV4Repository.getListIpv4(cron);
@@ -517,6 +519,66 @@ public class ProxyController {
 
                 Request requestchannel = null;
 
+                requestchannel = new Request.Builder().url("https://maker.ifttt.com/trigger/noti_proxy_error/with/key/fwentilQadKm7AhNm53u4BCM8OF7BYmOOO0JgPE8qoS?value1="+list_check+"&value2="+sum_error.toString()+"&value3=check_ae_nhe").get().build();
+
+                Response responsechannel = clientchannel.newCall(requestchannel).execute();
+            }
+
+            resp.put("list:",list_check);
+            resp.put("sum:",sum_error);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+
+        } catch (Exception e) {
+            resp.put("status",e);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+
+    }
+
+
+    @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkproxylist(@RequestParam(defaultValue = "1") Integer cron) {
+        List<String> proxys= ipV4Repository.getListIpv4(cron);
+        JSONObject resp = new JSONObject();
+        //System.out.println(proxys);
+        //String[] proxys=proxylist.split("\r\n");
+        try{
+            String list_check="";
+            Integer sum_error=0;
+            for(int i=0;i<proxys.size();i++){
+                JSONObject obj = new JSONObject();
+                Random ran=new Random();
+                Integer ranproxy=ran.nextInt(199)+50000;
+                //System.out.println(ranproxy);
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":proxy:789789")) {
+                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
+                    Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
+                    if(checkState>0){
+                        proxyRepository.updateState(1,proxys.get(i)+"%");
+                    }
+                }else{
+                    Integer checkState=proxyRepository.checkState(1,proxys.get(i)+"%");
+                    if(checkState>0){
+                        proxyRepository.updateState(0,proxys.get(i)+"%");
+                    }
+                    proxyRepository.updateState(0,proxys.get(i)+"%");
+                    List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i)+"%");
+                    if (stateAndCheck.get(0).getNumcheck()>=4){
+                        list_check=list_check+","+proxys.get(i);
+                        sum_error++;
+                    }
+                    ipV4Repository.updateIpv4Error(System.currentTimeMillis(),proxys.get(i)+"%");
+
+
+                }
+            }
+            if(list_check.length()>0){
+
+                OkHttpClient clientchannel = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request requestchannel = null;
+
                 requestchannel = new Request.Builder().url("https://maker.ifttt.com/trigger/noti_proxy_buffh_error/with/key/fwentilQadKm7AhNm53u4BCM8OF7BYmOOO0JgPE8qoS?value1="+list_check+"&value2="+sum_error.toString()+"&value3=check_ae_nhe").get().build();
 
                 Response responsechannel = clientchannel.newCall(requestchannel).execute();
@@ -533,6 +595,7 @@ public class ProxyController {
         }
 
     }
+
 
 
     @GetMapping(value = "/addproxusub", produces = "application/hal_json;charset=utf8")
