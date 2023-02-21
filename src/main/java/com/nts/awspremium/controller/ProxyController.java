@@ -352,11 +352,11 @@ public class ProxyController {
                 proxyGet=proxyRepository.getProxySubT1();
             }else{
                 proxyGet=proxyRepository.getProxySubByIpv4T1(v4);
-                if(proxyGet==null){
+                if(proxyGet.size()==0){
                     proxyGet=proxyRepository.getProxySubT1();
                 }
             }
-            if(proxyGet==null){
+            if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -549,9 +549,9 @@ public class ProxyController {
             for(int i=0;i<proxys.size();i++){
                 JSONObject obj = new JSONObject();
                 Random ran=new Random();
-                Integer ranproxy=ran.nextInt(199)+50000;
-                //System.out.println(ranproxy);
-                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":proxy:789789")) {
+                Integer ranproxy=ran.nextInt(199)+13000;
+                System.out.println(proxys.get(i)+":"+ranproxy.toString()+":tunghoanh:Dung1234@");
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":tunghoanh:Dung1234@")) {
                     ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
                     Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
                     if(checkState>0){
