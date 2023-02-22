@@ -171,6 +171,11 @@ public class ApiController {
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                Service service=serviceRepository.getService(data.getService());
+                if(service.getType().equals("Special") && data.getSuggest().length()==0 && data.getSearch().length()==0){
+                    resp.put("error", "Keyword is null");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 ////////////////////////////////
                 String videolist = GoogleApi.getYoutubeId(data.getLink());
                 if(videolist==null){
@@ -200,11 +205,7 @@ public class ApiController {
                     resp.put("error","Can't get video info");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                Service service=serviceRepository.getService(data.getService());
-                if(service.getType().equals("Special") && data.getSuggest().length()==0 && data.getSuggest().length()==0 && data.getSearch().length()==0){
-                        resp.put("error", "Keyword is null");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
+
                 /////////////////////////////////////////////
                 while (k.hasNext()) {
                     try {
@@ -257,7 +258,7 @@ public class ApiController {
                             DataOrder dataOrder=new DataOrder();
                             dataOrder.setOrderid(videoViewhnew.getOrderid());
                             dataOrder.setListvideo(data.getSuggest());
-                            dataOrder.setListkey(data.getKey());
+                            dataOrder.setListkey(data.getSearch());
                             dataOrderRepository.save(dataOrder);
                         }
 
