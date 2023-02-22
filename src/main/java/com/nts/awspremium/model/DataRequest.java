@@ -9,6 +9,9 @@ public class DataRequest {
     private Long order=-1L;
     private String orders="";
 
+    private String search="";
+    private String suggest="";
+
     public DataRequest() {
     }
 
@@ -18,6 +21,22 @@ public class DataRequest {
         this.quantity = quantity;
         this.action = action;
         this.service = service;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
+    public String getSuggest() {
+        return suggest;
+    }
+
+    public void setSuggest(String suggest) {
+        this.suggest = suggest;
     }
 
     public Long getOrder() {

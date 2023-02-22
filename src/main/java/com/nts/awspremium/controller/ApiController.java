@@ -44,6 +44,9 @@ public class ApiController {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    @Autowired
+    private DataOrderRepository dataOrderRepository;
+
     @PostMapping(value = "/view", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -197,6 +200,11 @@ public class ApiController {
                     resp.put("error","Can't get video info");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                Service service=serviceRepository.getService(data.getService());
+                if(service.getType().equals("Special") && data.getSuggest().length()==0 && data.getSuggest().length()==0 && data.getSearch().length()==0){
+                        resp.put("error", "Keyword is null");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 /////////////////////////////////////////////
                 while (k.hasNext()) {
                     try {
@@ -206,7 +214,6 @@ public class ApiController {
                             resp.put("error", "This video in process");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        Service service=serviceRepository.getService(data.getService());
                         if(service==null){
                             resp.put("error", "Service not found ");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -245,6 +252,14 @@ public class ApiController {
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());
                         videoViewRepository.save(videoViewhnew);
+
+                        if(service.getType().equals("Special")){
+                            DataOrder dataOrder=new DataOrder();
+                            dataOrder.setOrderid(videoViewhnew.getOrderid());
+                            dataOrder.setListvideo(data.getSuggest());
+                            dataOrder.setListkey(data.getKey());
+                            dataOrderRepository.save(dataOrder);
+                        }
 
                         float balance_new=admins.get(0).getBalance()-priceorder;
                         adminRepository.updateBalance(balance_new,admins.get(0).getUsername());
