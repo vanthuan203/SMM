@@ -258,6 +258,12 @@ public class ApiController {
                             DataOrder dataOrder=new DataOrder();
                             dataOrder.setOrderid(videoViewhnew.getOrderid());
                             dataOrder.setListvideo(data.getSuggest());
+                            dataOrder.setListkey(data.getSuggest());
+                            dataOrderRepository.save(dataOrder);
+                        }else if(service.getType().equals("Special 1")){
+                            DataOrder dataOrder=new DataOrder();
+                            dataOrder.setOrderid(videoViewhnew.getOrderid());
+                            dataOrder.setListvideo(data.getSuggest());
                             dataOrder.setListkey(data.getSearch());
                             dataOrderRepository.save(dataOrder);
                         }

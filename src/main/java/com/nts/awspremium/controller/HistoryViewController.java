@@ -190,13 +190,13 @@ public class HistoryViewController {
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", histories.get(0).getUsername());
                     int randLike =ran.nextInt(10000);
-                    if(randLike<500){
+                    if(randLike<300){
                         resp.put("like","true");
                     }else{
                         resp.put("like","fail");
                     }
                     int randSub =ran.nextInt(10000);
-                    if(randSub<500){
+                    if(randSub<100){
                         resp.put("sub","true");
                     }else{
                         resp.put("sub","fail");
