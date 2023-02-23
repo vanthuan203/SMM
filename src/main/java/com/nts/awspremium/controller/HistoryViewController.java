@@ -36,7 +36,8 @@ public class HistoryViewController {
     private HistoryViewRepository historyViewRepository;
     @Autowired
     private HistorySumRepository historySumRepository;
-
+    @Autowired
+    private DataOrderRepository dataOrderRepository;
     @Autowired
     private HistoryViewSumRepository historyViewSumRepository;
     @Autowired
@@ -87,20 +88,42 @@ public class HistoryViewController {
                         resp.put("video_id", videos.get(0).getVideoid());
                         resp.put("video_title", videos.get(0).getVideotitle());
                         resp.put("username", history.getUsername());
-                        int randLike =ran.nextInt(10000);
-                        if(randLike<500){
-                            resp.put("like","true");
+                        if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
+                            int randLike =ran.nextInt(10000);
+                            if(randLike<2000){
+                                resp.put("like","true");
+                            }else{
+                                resp.put("like","fail");
+                            }
+                            int randSub =ran.nextInt(10000);
+                            if(randSub<300){
+                                resp.put("sub","true");
+                            }else{
+                                resp.put("sub","fail");
+                            }
                         }else{
-                            resp.put("like","fail");
+                            int randLike =ran.nextInt(10000);
+                            if(randLike<300){
+                                resp.put("like","true");
+                            }else{
+                                resp.put("like","fail");
+                            }
+                            int randSub =ran.nextInt(10000);
+                            if(randSub<100){
+                                resp.put("sub","true");
+                            }else{
+                                resp.put("sub","fail");
+                            }
                         }
-                        int randSub =ran.nextInt(10000);
-                        if(randSub<500){
-                            resp.put("sub","true");
-                        }else{
-                            resp.put("sub","fail");
+
+                        String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
+                        String key="";
+                        if(list_key!=null && list_key.length()!=0){
+                            String[] keyArr=list_key.split(",");
+                            key=keyArr[ran.nextInt(keyArr.length)];
                         }
                         resp.put("suggest_type","fail");
-                        resp.put("suggest_key","");
+                        resp.put("suggest_key",key.length()==0?videos.get(0).getVideotitle():key);
                         resp.put("suggest_video","");
                         if(videos.get(0).getService()==666){
                             if(ran.nextInt(10000)>5000){
@@ -114,8 +137,14 @@ public class HistoryViewController {
                             int rand =ran.nextInt(10000);
                             if(rand<5000){
                                 resp.put("source", "suggest");
+                                if(videos.get(0).getService()!=999){
+                                    resp.put("suggest_type","true");
+                                }
                             }else if(rand<7500){
                                 resp.put("source", "search");
+                                if(videos.get(0).getService()!=999){
+                                    resp.put("video_title", key.length()==0?videos.get(0).getVideotitle():key);
+                                }
                             }else{
                                 resp.put("source", "dtn");
                             }
@@ -201,8 +230,14 @@ public class HistoryViewController {
                     }else{
                         resp.put("sub","fail");
                     }
+                    String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
+                    String key="";
+                    if(list_key!=null && list_key.length()!=0){
+                        String[] keyArr=list_key.split(",");
+                        key=keyArr[ran.nextInt(keyArr.length)];
+                    }
                     resp.put("suggest_type","fail");
-                    resp.put("suggest_key","");
+                    resp.put("suggest_key",key.length()==0?videos.get(0).getVideotitle():key);
                     resp.put("suggest_video","");
                     if(videos.get(0).getService()==666){
                         if(ran.nextInt(10000)>5000){
@@ -216,8 +251,15 @@ public class HistoryViewController {
                         int rand =ran.nextInt(10000);
                         if(rand<5000){
                             resp.put("source", "suggest");
+                            if(videos.get(0).getService()!=999){
+                                resp.put("suggest_type","true");
+                            }
+                            resp.put("source", "suggest");
                         }else if(rand<7500){
                             resp.put("source", "search");
+                            if(videos.get(0).getService()!=999){
+                                resp.put("video_title", key.length()==0?videos.get(0).getVideotitle():key);
+                            }
                         }else{
                             resp.put("source", "dtn");
                         }
