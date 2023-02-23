@@ -218,17 +218,32 @@ public class HistoryViewController {
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", histories.get(0).getUsername());
-                    int randLike =ran.nextInt(10000);
-                    if(randLike<300){
-                        resp.put("like","true");
+                    if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
+                        int randLike =ran.nextInt(10000);
+                        if(randLike<2000){
+                            resp.put("like","true");
+                        }else{
+                            resp.put("like","fail");
+                        }
+                        int randSub =ran.nextInt(10000);
+                        if(randSub<300){
+                            resp.put("sub","true");
+                        }else{
+                            resp.put("sub","fail");
+                        }
                     }else{
-                        resp.put("like","fail");
-                    }
-                    int randSub =ran.nextInt(10000);
-                    if(randSub<100){
-                        resp.put("sub","true");
-                    }else{
-                        resp.put("sub","fail");
+                        int randLike =ran.nextInt(10000);
+                        if(randLike<300){
+                            resp.put("like","true");
+                        }else{
+                            resp.put("like","fail");
+                        }
+                        int randSub =ran.nextInt(10000);
+                        if(randSub<100){
+                            resp.put("sub","true");
+                        }else{
+                            resp.put("sub","fail");
+                        }
                     }
                     String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                     String key="";
