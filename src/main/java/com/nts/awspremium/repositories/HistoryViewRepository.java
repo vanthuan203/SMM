@@ -36,13 +36,13 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update historyview set running=0,videoid='' where running=1 and POSITION(videoid in listvideo)=0 and  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15",nativeQuery = true)
+    @Query(value = "update historyview set running=0,videoid='' where running=1 and POSITION(videoid in listvideo)=0 and  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20",nativeQuery = true)
     public Integer resetThreadcron();
 
     @Modifying
     @Transactional
-    @Query(value = "update historyview set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=180 and running=1",nativeQuery = true)
-    public Integer resetThreadThan3hcron();
+    @Query(value = "update historyview set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=90 and running=1",nativeQuery = true)
+    public Integer resetThreadThan90mcron();
     @Modifying
     @Transactional
     @Query(value = "UPDATE historyview SET running=0,vps='' where vps like ?1",nativeQuery = true)

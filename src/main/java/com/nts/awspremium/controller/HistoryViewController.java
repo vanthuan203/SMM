@@ -487,7 +487,7 @@ public class HistoryViewController {
     ResponseEntity<String> delthreadcron(){
         JSONObject resp=new JSONObject();
         try{
-            historyViewRepository.resetThreadThan3hcron();
+            historyViewRepository.resetThreadThan90mcron();
             historyViewRepository.resetThreadcron();
             resp.put("status", "true");
             resp.put("message", "Reset thread error thành công!");

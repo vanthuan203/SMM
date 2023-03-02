@@ -339,7 +339,7 @@ public class ProxyController {
                 resp.put("message", "Không để username trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-
+/*
             Long id=accountRepository.findIdByUsername(username);
             String v4 =accountRepository.CheckProxyByIdSub(id);
             if(v4.length()<5 || v4==null){
@@ -347,7 +347,7 @@ public class ProxyController {
                 ipV4Repository.updateUserCountByIpv4(v4);
                 accountRepository.updateProxyById(v4,id);
             }
-            List<Proxy> proxyGet=null;
+
             if(proxyfail.length()!=0){
                 proxyGet=proxyRepository.getProxySubT1();
             }else{
@@ -356,6 +356,10 @@ public class ProxyController {
                     proxyGet=proxyRepository.getProxySubT1();
                 }
             }
+
+ */
+            List<Proxy> proxyGet=null;
+            proxyGet=proxyRepository.getProxySubT1();
             if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );
@@ -632,7 +636,7 @@ public class ProxyController {
         try{
             Integer cron_num=0;
             for(int i=0;i<id_ipv4.size();i++){
-                if(i%20==0){
+                if(i%15==0){
                     cron_num=cron_num+1;
                 }
                 ipV4Repository.updatecronIpv4(cron_num, Long.parseLong(id_ipv4.get(i)) );
