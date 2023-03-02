@@ -359,7 +359,8 @@ public class ProxyController {
 
  */
             if(proxyfail.length()!=0){
-                proxyRepository.updaterunningProxyByVps(vps,proxyfail);
+                Integer proxyId= proxyRepository.getIdByProxy(proxyfail.trim());
+                proxyRepository.updaterunningProxyByVps(proxyId);
             }
             Random ran=new Random();
             List<Proxy> proxyGet=null;
@@ -398,7 +399,8 @@ public class ProxyController {
                 resp.put("message", "Không để vps trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            proxyRepository.updaterunningProxyByVps(vps,proxy);
+            Integer proxyId= proxyRepository.getIdByProxy(proxy.trim());
+            proxyRepository.updaterunningProxyByVps(proxyId);
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

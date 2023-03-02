@@ -130,8 +130,8 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update proxy set running=0,vps='' where  vps=?1 and proxy=?2",nativeQuery = true)
-    public Integer updaterunningProxyByVps(String vps,String proxy);
+    @Query(value = "update proxy set running=0,vps='' where  id=?1",nativeQuery = true)
+    public Integer updaterunningProxyByVps(Integer id);
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM proxy where ipv4=?1 ",nativeQuery = true)
