@@ -358,7 +358,12 @@ public class ProxyController {
             }
 
  */
+            if(proxyfail.length()!=0){
+                proxyRepository.updaterunningProxyByVps(vps,proxyfail);
+            }
+            Random ran=new Random();
             List<Proxy> proxyGet=null;
+            Thread.sleep(ran.nextInt(1000));
             proxyGet=proxyRepository.getProxySubT1();
             if(proxyGet.size()==0){
                 resp.put("status","fail");
@@ -366,6 +371,8 @@ public class ProxyController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             proxyGet.get(0).setTimeget(System.currentTimeMillis());
+            proxyGet.get(0).setRunning(1);
+            proxyGet.get(0).setVps(vps);
             proxyRepository.save(proxyGet.get(0));
             resp.put("status","true");
             resp.put("proxy",proxyGet.get(0).getProxy());
@@ -377,7 +384,29 @@ public class ProxyController {
     }
 
     }
+    @GetMapping(value = "/resetrunningproxy", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetrunningproxy(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxy) {
+        JSONObject resp = new JSONObject();
+        try{
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(proxy.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            proxyRepository.updaterunningProxyByVps(vps,proxy);
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
 
+    }
 /*
     @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkproxylist(@RequestParam(defaultValue = "1") Integer cron) {

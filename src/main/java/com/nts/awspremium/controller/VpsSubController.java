@@ -156,6 +156,7 @@ public class VpsSubController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            proxyRepository.updaterunningByVps(vps.trim()+"%");
             List<Vps> vpscheck =vpsRepository.findVPS("%"+vps.trim()+"%");
 
             Integer resetSub=0;
