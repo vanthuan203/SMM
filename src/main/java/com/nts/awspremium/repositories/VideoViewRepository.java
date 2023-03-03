@@ -37,12 +37,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrder();
 
-    @Query(value = "Select orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder();
 
-    @Query(value = "Select orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder(String user);
-    @Query(value = "Select orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where videoview.videoid=?1",nativeQuery = true)
+    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where videoview.videoid=?1",nativeQuery = true)
     public List<OrderViewRunning> getVideoViewById(String videoid);
 
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate group by videoview.videoid order by insertdate desc",nativeQuery = true)
