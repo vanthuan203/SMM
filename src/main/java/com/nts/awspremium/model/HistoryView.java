@@ -17,11 +17,12 @@ public class HistoryView {
     private String typeproxy;
     private String geo;
     private String videoid;
+    private Long orderid;
 
     public HistoryView() {
     }
 
-    public HistoryView(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long timeget, String typeproxy, String geo, String videoid) {
+    public HistoryView(Long id, String username, String listvideo, String proxy, String vps, Integer running, String channelid, Long timeget, String typeproxy, String geo, String videoid, Long orderid) {
         this.id = id;
         this.username = username;
         this.listvideo = listvideo;
@@ -33,6 +34,15 @@ public class HistoryView {
         this.typeproxy = typeproxy;
         this.geo = geo;
         this.videoid = videoid;
+        this.orderid = orderid;
+    }
+
+    public Long getOrderid() {
+        return orderid;
+    }
+
+    public void setOrderid(Long orderid) {
+        this.orderid = orderid;
     }
 
     public Long getId() {

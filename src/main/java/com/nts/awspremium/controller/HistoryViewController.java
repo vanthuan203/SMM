@@ -71,18 +71,17 @@ public class HistoryViewController {
                     history.setRunning(0);
                     history.setVps(vps);
                     history.setVideoid("");
+                    history.setOrderid(0L);
                     history.setChannelid("");
                     history.setTimeget(System.currentTimeMillis());
-                    Long orderid=0L;
                     if(buffh==1){
-                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
-                        videos=videoViewRepository.getVideoById(orderid);
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
                     }else{
-                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
-                        videos=videoViewRepository.getVideoById(orderid);
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
                     }
                     if(videos.size()>0){
                         history.setVideoid(videos.get(0).getVideoid());
+                        history.setOrderid(videos.get(0).getOrderid());
                         history.setChannelid(videos.get(0).getChannelid());
                         history.setRunning(1);
                         historyViewRepository.save(history);
@@ -199,16 +198,14 @@ public class HistoryViewController {
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //histories.get(0).setVps(vps);
                     histories.get(0).setTimeget(System.currentTimeMillis());
-                    Long orderid=0L;
                     if(buffh==1){
-                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
-                        videos=videoViewRepository.getVideoById(orderid);
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
                     }else{
-                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
-                        videos=videoViewRepository.getVideoById(orderid);
+                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
                     }
                     if(videos.size()>0){
                         histories.get(0).setVideoid(videos.get(0).getVideoid());
+                        histories.get(0).setOrderid(videos.get(0).getOrderid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
                     }else{
                         historyViewRepository.save(histories.get(0));

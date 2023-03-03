@@ -50,7 +50,7 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='' where vps like ?1",nativeQuery = true)
+    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where vps like ?1",nativeQuery = true)
     public Integer resetThreadBuffhByVps(String vps);
 
     @Modifying
@@ -61,11 +61,11 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='' where id=?1",nativeQuery = true)
+    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where id=?1",nativeQuery = true)
     public Integer resetThreadBuffhById(Long id);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET vps='',running=0 where INSTR(?1,id)",nativeQuery = true)
+    @Query(value = "UPDATE historyview SET vps='',running=0,orderid=0 where INSTR(?1,id)",nativeQuery = true)
     public Integer deletenamevpsByVps(String listId);
 
     @Query(value = "SELECT * FROM historyview where vps=?1",nativeQuery = true)
