@@ -72,10 +72,13 @@ public class HistoryViewController {
                     history.setVideoid("");
                     history.setChannelid("");
                     history.setTimeget(System.currentTimeMillis());
+                    Long orderid=0L;
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
+                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
+                        videos=videoViewRepository.getVideoById(orderid);
                     }else{
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
+                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
+                        videos=videoViewRepository.getVideoById(orderid);
                     }
                     if(videos.size()>0){
                         history.setVideoid(videos.get(0).getVideoid());
@@ -195,10 +198,13 @@ public class HistoryViewController {
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //histories.get(0).setVps(vps);
                     histories.get(0).setTimeget(System.currentTimeMillis());
+                    Long orderid=0L;
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
+                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
+                        videos=videoViewRepository.getVideoById(orderid);
                     }else{
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
+                        orderid=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
+                        videos=videoViewRepository.getVideoById(orderid);
                     }
                     if(videos.size()>0){
                         histories.get(0).setVideoid(videos.get(0).getVideoid());
