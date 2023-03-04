@@ -248,7 +248,7 @@ public class ApiController {
                         videoViewhnew.setVideotitle(snippet.get("title").toString());
                         videoViewhnew.setVideoid(video.get("id").toString());
                         videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                        videoViewhnew.setMaxthreads(50);
+                        videoViewhnew.setMaxthreads(service.getThread());
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());

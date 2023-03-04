@@ -197,13 +197,20 @@ public class HistoryViewController {
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //histories.get(0).setVps(vps);
-                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
+                        resp.put("status", "fail");
+                        resp.put("username",histories.get(0).getUsername());
+                        resp.put("fail", "video");
+                        resp.put("message", "Không còn video để view!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                     if(buffh==1){
                         videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
                     }else{
                         videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
                     }
                     if(videos.size()>0){
+                        histories.get(0).setTimeget(System.currentTimeMillis());
                         histories.get(0).setVideoid(videos.get(0).getVideoid());
                         histories.get(0).setOrderid(videos.get(0).getOrderid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
@@ -224,13 +231,13 @@ public class HistoryViewController {
                     resp.put("username", histories.get(0).getUsername());
                     if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
                         int randLike =ran.nextInt(10000);
-                        if(randLike<2000){
+                        if(randLike<300){
                             resp.put("like","true");
                         }else{
                             resp.put("like","fail");
                         }
                         int randSub =ran.nextInt(10000);
-                        if(randSub<300){
+                        if(randSub<100){
                             resp.put("sub","true");
                         }else{
                             resp.put("sub","fail");
@@ -347,6 +354,8 @@ public class HistoryViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
+                historyViewRepository.updateListVideo(videoid,historieId);
+                /*
                 List<HistoryView> histories =historyViewRepository.getHistoriesById(historieId);
                 if(histories.get(0).getListvideo().length()==0){
                     histories.get(0).setListvideo(videoid);
@@ -355,6 +364,8 @@ public class HistoryViewController {
                 }
                 //histories.get(0).setRunning(1);
                 historyViewRepository.save(histories.get(0));
+
+                 */
                 resp.put("status", "true");
                 resp.put("message", "Update videoid vào history thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -396,7 +407,7 @@ public class HistoryViewController {
                 //histories.get(0).setVideoid("");
                 //histories.get(0).setVps("");
                 //historyRepository.save(histories.get(0));
-                Integer check_duration= historyViewRepository.checkDurationBuffhByTimecheck(username.trim(),(long)(duration));
+                Integer check_duration= historyViewRepository.checkDurationViewByTimecheck(historieId,(long)(duration));
                 if(check_duration>0){
                     HistoryViewSum historySum = new HistoryViewSum();
                     historySum.setVideoid(videoid.trim());

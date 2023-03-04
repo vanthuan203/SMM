@@ -15,11 +15,12 @@ public class Service {
     private Float rate;
     private Integer min;
     private Integer max;
+    private Integer thread;
     private String note;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, String note) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -27,7 +28,16 @@ public class Service {
         this.rate = rate;
         this.min = min;
         this.max = max;
+        this.thread = thread;
         this.note = note;
+    }
+
+    public Integer getThread() {
+        return thread;
+    }
+
+    public void setThread(Integer thread) {
+        this.thread = thread;
     }
 
     public String getNote() {

@@ -74,8 +74,8 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Query(value = "SELECT count(*) FROM historyview where vps=?1 and running=1",nativeQuery = true)
     public Integer getrunningbyVps(String vps);
 
-    @Query(value = "SELECT count(*) FROM historyview where username=?1 and round((UNIX_TIMESTAMP()-timeget/1000))>?2",nativeQuery = true)
-    public Integer checkDurationBuffhByTimecheck(String username,Long duration);
+    @Query(value = "SELECT count(*) FROM historyview where id=?1 and round((UNIX_TIMESTAMP()-timeget/1000))>?2",nativeQuery = true)
+    public Integer checkDurationViewByTimecheck(Long id,Long duration);
 
     @Query(value = "SELECT id FROM historyview where vps=?1 and running=1",nativeQuery = true)
     public List<Long> getHistoryIdbyVps(String vps);
@@ -98,4 +98,9 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Transactional
     @Query(value = "update historyview set running=0,vps='' where  username not in(select username from account where vps!='' and live=1 and running=1 ) and vps!=''",nativeQuery = true)
     public Integer updateHistoryByAccount();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update historyview set listvideo=CONCAT(listvideo,\",\",?1) where id=?2",nativeQuery = true)
+    public Integer updateListVideo(String videoid,Long id);
 }

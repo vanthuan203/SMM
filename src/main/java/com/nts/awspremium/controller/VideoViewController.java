@@ -139,7 +139,7 @@ public class VideoViewController {
                     videoViewhnew.setVideotitle(snippet.get("title").toString());
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    videoViewhnew.setMaxthreads(200);
+                    videoViewhnew.setMaxthreads(videoView.getMaxthreads());
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
