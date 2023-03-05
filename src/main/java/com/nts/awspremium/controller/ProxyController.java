@@ -339,6 +339,11 @@ public class ProxyController {
                 resp.put("message", "Không để username trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
+            if(proxyRepository.PROCESSLISTSUB()>=50){
+                resp.put("status","fail");
+                resp.put("message","Hết proxy khả dụng!" );
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
 /*
             Long id=accountRepository.findIdByUsername(username);
             String v4 =accountRepository.CheckProxyByIdSub(id);
@@ -359,8 +364,11 @@ public class ProxyController {
 
  */
             if(proxyfail.length()!=0){
-                Integer proxyId= proxyRepository.getIdByProxy(proxyfail.trim());
-                proxyRepository.updaterunningProxyByVps(proxyId);
+                Integer proxyId= proxyRepository.getIdByProxyFalse(proxyfail.trim(),vps);
+                System.out.println(proxyId);
+                if(proxyId!=null){
+                    proxyRepository.updaterunningProxyByVps(proxyId);
+                }
             }
             Random ran=new Random();
             List<Proxy> proxyGet=null;
@@ -371,10 +379,7 @@ public class ProxyController {
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            proxyGet.get(0).setTimeget(System.currentTimeMillis());
-            proxyGet.get(0).setRunning(1);
-            proxyGet.get(0).setVps(vps);
-            proxyRepository.save(proxyGet.get(0));
+            proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
             resp.put("status","true");
             resp.put("proxy",proxyGet.get(0).getProxy());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
