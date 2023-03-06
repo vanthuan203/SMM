@@ -1093,7 +1093,7 @@ public class VideoViewController {
         }
         if(videoid.length()==0){
             resp.put("status","fail");
-            resp.put("message", "channelid không được để trống");
+            resp.put("message", "videoid không được để trống");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{

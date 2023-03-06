@@ -8,7 +8,7 @@ public class DataRequest {
     private int service=-1;
     private Long order=-1L;
     private String orders="";
-
+    private String list="";
     private String search="";
     private String suggest="";
 
@@ -37,6 +37,14 @@ public class DataRequest {
 
     public void setSuggest(String suggest) {
         this.suggest = suggest;
+    }
+
+    public String getList() {
+        return list;
+    }
+
+    public void setList(String list) {
+        this.list = list;
     }
 
     public Long getOrder() {

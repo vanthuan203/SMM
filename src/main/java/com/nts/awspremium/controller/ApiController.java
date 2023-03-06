@@ -172,7 +172,7 @@ public class ApiController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 Service service=serviceRepository.getService(data.getService());
-                if(service.getType().equals("Special") && data.getSuggest().length()==0 && data.getSearch().length()==0){
+                if(service.getType().equals("Special") && data.getList().length()==0){
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -257,8 +257,8 @@ public class ApiController {
                         if(service.getType().equals("Special")){
                             DataOrder dataOrder=new DataOrder();
                             dataOrder.setOrderid(videoViewhnew.getOrderid());
-                            dataOrder.setListvideo(data.getSuggest());
-                            dataOrder.setListkey(data.getSuggest());
+                            dataOrder.setListvideo(data.getList());
+                            dataOrder.setListkey(data.getList());
                             dataOrderRepository.save(dataOrder);
                         }else if(service.getType().equals("Special 1")){
                             DataOrder dataOrder=new DataOrder();
