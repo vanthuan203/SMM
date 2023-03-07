@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account,Long> {
-    @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
-    public Integer findUsername(String username);
+    @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
+    public Long findIdUsername(String username);
 
     @Query(value = "Select vps,count(*) from account where vps in (select vps from vps where vpsoption=\"Buffh\") group by vps having count(*)>500  limit 20",nativeQuery = true)
     public List<String> getCountByVps();
@@ -44,7 +44,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps,date,geo) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8,?9,?10)",nativeQuery = true)
-    public void insertAccountBuffh(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date,String geo);
+    public void insertAccountView(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date,String geo);
     @Modifying
     @Transactional
     @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps,date) VALUES(?1,?2,?3,?4,?5,?6,0,'',?7,?8,?9)",nativeQuery = true)
@@ -56,8 +56,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0',running=1,timecheck=?2 where username=?3",nativeQuery = true)
-    public void updateTaskSub(Long endtrial,Long timecheck,String username);
+    @Query(value = "UPDATE account SET endtrial=?1,endtrialstring='0',running=1,timecheck=?2 where id=?3",nativeQuery = true)
+    public void updateTaskSub(Long endtrial,Long timecheck,Long id);
 
     @Modifying
     @Transactional
@@ -74,8 +74,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public void updateAllInfoAccSub(String password,String recover,Integer live,String vps,Long id);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where username=?6",nativeQuery = true)
-    public void updateAccountBuffh(String password,String recover,Integer live,String encodefinger,String cookie,String username);
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where id=?6",nativeQuery = true)
+    public void updateAccountView(String password,String recover,Integer live,String encodefinger,String cookie,Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET endtrial=0  where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=10 and endtrial=1",nativeQuery = true)
@@ -105,12 +105,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Query(value = "Select count(*) from account where id=?1 and running=0",nativeQuery = true)
     public Integer checkAccountById(Long id);
-    @Query(value = "Select password,recover from account where username=?1 limit 1",nativeQuery = true)
-    public String getInfo(String username);
-    @Query(value = "Select count(*) from account where username=?1 and live=1 limit 1",nativeQuery = true)
-    public Integer getCookieAccSub(String username);
-    @Query(value = "Select count(*) from account where username=?1 and vps like ?2 limit 1",nativeQuery = true)
-    public Integer checkAcountByVps(String username,String vps);
+    @Query(value = "Select password,recover from account where id=?1 limit 1",nativeQuery = true)
+    public String getInfo(Long id);
+    @Query(value = "Select count(*) from account where id=?1 and live=1 limit 1",nativeQuery = true)
+    public Integer getCookieAccSub(Long id);
+    @Query(value = "Select count(*) from account where id=?1 and vps like ?2 limit 1",nativeQuery = true)
+    public Integer checkAcountByVps(Long id,String vps);
 
     @Query(value = "Select count(*) from account where id=?1 and vps like ?2 limit 1",nativeQuery = true)
     public Integer checkIdByVps(Long id,String vps);
@@ -124,7 +124,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffh(String geo);
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')=0 order by rand()  limit 1",nativeQuery = true)
-    public Long getAccountBuffhDomain(String geo);
+    public Long getAccountViewDomain(String geo);
 
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')>0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffhGmail(String geo);
@@ -141,7 +141,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where live!=1 and live!=2 and live!=5 and running=0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSubByWhere();
 
-    @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountByVps(String vps);
 
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
@@ -165,7 +165,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer getCountGmailsByEndtrial();
 
     @Query(value = "SELECT count(*) FROM account where live=1",nativeQuery = true)
-    public Integer getCountGmailLiveBuffh();
+    public Integer getCountGmailLiveView();
 
     @Query(value = "SELECT count(*) FROM account",nativeQuery = true)
     public Integer getCountGmailBuffh();
@@ -178,12 +178,12 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer getCountGmailsFullSub24h();
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where vps like ?1",nativeQuery = true)
+    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where vps=?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='',live=?1,proxy='',proxy2='' where username=?2",nativeQuery = true)
-    public Integer resetAccountByUsername(Integer live,String username);
+    @Query(value = "UPDATE account SET running=0,vps='',live=?1,proxy='',proxy2='' where id=?2",nativeQuery = true)
+    public Integer resetAccountByUsername(Integer live,Long id);
 
     @Modifying
     @Transactional
@@ -197,13 +197,13 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET endtrialstring=?1 where username=?2",nativeQuery = true)
-    public Integer updateTaskSub24h(String done,String username);
+    @Query(value = "UPDATE account SET endtrialstring=?1 where id=?2",nativeQuery = true)
+    public Integer updateTaskSub24h(String done,Long id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=1,live=1 where username=?1",nativeQuery = true)
-    public Integer updateAccSubWhileCookieUpdate(String username);
+    @Query(value = "UPDATE account SET running=1,live=1 where id=?1",nativeQuery = true)
+    public Integer updateAccSubWhileCookieUpdate(Long id);
 
     @Modifying
     @Transactional
@@ -212,13 +212,13 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,live=1,vps='' where username=?1",nativeQuery = true)
-    public Integer updatecookieloginlocal(String username);
+    @Query(value = "UPDATE account SET running=0,live=1,vps='' where id=?1",nativeQuery = true)
+    public Integer updatecookieloginlocal(Long id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET timecheck=?1,running=1 where username=?2",nativeQuery = true)
-    public Integer updatetimecheck(Long timecheck,String username);
+    @Query(value = "UPDATE account SET timecheck=?1,running=1 where id=?2",nativeQuery = true)
+    public Integer updatetimecheck(Long timecheck,Long id);
 
     @Modifying
     @Transactional
@@ -230,7 +230,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer updateTimecheckById(Long timecheck,Long id);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET vps='',running=0 where vps like ?1 and INSTR(?2,username)=0",nativeQuery = true)
+    @Query(value = "UPDATE account SET vps='',running=0 where vps=?1 and INSTR(?2,username)=0",nativeQuery = true)
     public Integer updateListAccount(String vps,String listacc);
 
     @Modifying

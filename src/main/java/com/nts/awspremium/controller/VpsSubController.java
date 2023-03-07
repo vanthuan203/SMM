@@ -396,14 +396,14 @@ public class VpsSubController {
                 vpsRepository.save(vpscheck.get(0));
             }
             if(username.length()>0){
-                Integer accounts=accountRepository.findUsername(username.trim());
-                if(accounts==0){
+                Long idUsername= accountRepository.findIdUsername(username.trim());
+                if(idUsername==null){
                     resp.put("status","fail");
                     resp.put("message", "Username không tồn tại!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }
-                List<Account> acccheckvpsnull=accountRepository.findAccountByUsername(username);
-                Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
+                List<Account> acccheckvpsnull=accountRepository.findAccountById(idUsername);
+                Integer accountcheck = accountRepository.checkAcountByVps(idUsername,vps.trim());
                 if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length()!=0) {
                     resp.put("status", "fail");
                     resp.put("fail", "nouser");

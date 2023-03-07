@@ -52,13 +52,6 @@ public class AccountSubController {
             Long id= accountRepository.findIdByUsername(newaccount.getUsername().trim());
             if(id!=null){
                 if(update==1) {
-                     /*
-                    List<Account> accountcheck= accountRepository.findAccountByUsername(newaccount.getUsername().trim());
-
-                    if(accountcheck.get(0).getLive()!=1){
-                        cookieRepository.updateCookieSub(newaccount.getCookie(),newaccount.getUsername());
-                    }
-                     */
                     accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",id);
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
@@ -70,8 +63,6 @@ public class AccountSubController {
                 }
             }else{
                 accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
-                //cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
-                //encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -96,8 +87,6 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
                 accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), "", "", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
-                //cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
-                //encodefingerRepository.insertEncodefingerSub(newaccount.getUsername(), newaccount.getEncodefinger());
                 resp.put("status", "true");
                 resp.put("message", "Insert " + newaccount.getUsername() + " thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -459,22 +448,21 @@ public class AccountSubController {
                 resp.put("message", "Vps không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            Integer accounts = accountRepository.findUsername(username.trim());
-            if (accounts == 0) {
+            Long idUsername=accountRepository.findIdUsername(username);
+            if (idUsername == null) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-
-            Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
+            Integer accountcheck = accountRepository.checkAcountByVps(idUsername,vps.trim());
             if (accountcheck == 0) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
                 resp.put("message", "Yều cầu lấy tài khoản khác");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                accountRepository.updatetimecheck(System.currentTimeMillis(),username.trim());
+                accountRepository.updatetimecheck(System.currentTimeMillis(),idUsername);
                 resp.put("status", "true");
                 resp.put("message", "Check time user thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -501,13 +489,13 @@ public class AccountSubController {
                     resp.put("message", "Username không được để trống!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
                 }
-                Integer accounts=accountRepository.findUsername(username);
-                if(accounts==0){
+                Long idUsername=accountRepository.findIdUsername(username);
+                if(idUsername==null){
                     resp.put("status","fail");
                     resp.put("message", "Username không tồn tại!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }else{
-                    String account=accountRepository.getInfo(username);
+                    String account=accountRepository.getInfo(idUsername);
                     String[] accountinfo=account.split(",");
                     resp.put("status","true");
                     //resp.put("username",accounts.get(0).getUsername());
@@ -537,13 +525,13 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            Integer accounts=accountRepository.findUsername(username);
-            if(accounts==0){
+            Long idUsername=accountRepository.findIdUsername(username);
+            if(idUsername==null){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-                accountRepository.updateTaskSub24h(done.trim(),username.trim());
+                accountRepository.updateTaskSub24h(done.trim(),idUsername);
                 resp.put("status","true");
                 //resp.put("username",accounts.get(0).getUsername());
                 resp.put("message","update thành công!");
@@ -557,40 +545,30 @@ public class AccountSubController {
     }
 
     @GetMapping(value = "/getcookie",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcookie(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getcookie(@RequestParam(defaultValue = "")  String username){
         JSONObject resp=new JSONObject();
         try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-
-                resp.put("status","fail");
-                resp.put("message", "Token het han!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
             if(username.length()==0){
                 resp.put("status","fail");
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            Integer accounts=accountRepository.findUsername(username.trim());
-            if(accounts==0){
+            Long idUsername=accountRepository.findIdUsername(username);
+            if(idUsername==null){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-                Integer cookie=accountRepository.getCookieAccSub(username.trim());
+                Integer cookie=accountRepository.getCookieAccSub(idUsername);
                 if(cookie>0){
-                    Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(username.trim());
-                    String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
 
                     Long idCookieSub= cookieRepository.findIdSubByUsername(username.trim());
                     String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
-                    String account=accountRepository.getInfo(username.trim());
+                    String account=accountRepository.getInfo(idUsername);
                     String[] accountinfo=account.split(",");
                     resp.put("status","true");
                     resp.put("password",accountinfo[0]);
                     resp.put("recover",accountinfo[1]);
-                    resp.put("encodefinger",encodefingerSub);
                     resp.put("cookie",cookieSub);
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
@@ -624,15 +602,15 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            Integer accounts=accountRepository.findUsername(username.trim());
-            if(accounts==0){
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            if(idUsername==0){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
 
-                cookieRepository.updateCookieSub(account.getCookie(),username.trim());
-                accountRepository.updateAccSubWhileCookieUpdate(username);
+                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
+                accountRepository.updateAccSubWhileCookieUpdate(idUsername);
                 resp.put("status","true");
                 resp.put("message", "Update cookie "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -661,14 +639,14 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            List<Account> accounts=accountRepository.findAccountByUsername(username);
-            if(accounts.size()==0){
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            if(idUsername==null){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
-
-                cookieRepository.updateCookieSub(account.getCookie(),username.trim());
+                List<Account> accounts=accountRepository.findAccountById(idUsername);
+                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
                 //accountRepository.updateAccSubWhileCookieUpdate(username);
                 if(account.getPassword().length()>0){
                     accounts.get(0).setPassword(account.getPassword().trim());
@@ -706,13 +684,14 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            List<Account> accounts=accountRepository.findAccountByUsername(username);
-            if(accounts.size()==0){
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            if(idUsername==null){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
             else{
+                List<Account> accounts=accountRepository.findAccountById(idUsername);
                 if(password.length()>0){
                     accounts.get(0).setPassword(password.trim());
                 }
@@ -748,15 +727,15 @@ public class AccountSubController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            Integer accounts=accountRepository.findUsername(username.trim());
-            if(accounts==0){
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            if(idUsername==null){
                 resp.put("status","fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
 
-            List<Account> acccheckvpsnull=accountRepository.findAccountByUsername(username);
-            Integer accountcheck = accountRepository.checkAcountByVps(username,vps.trim());
+            List<Account> acccheckvpsnull=accountRepository.findAccountById(idUsername);
+            Integer accountcheck = accountRepository.checkAcountByVps(idUsername,vps.trim());
             if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length()!=0) {
                 resp.put("status", "fail");
                 resp.put("fail", "nouser");
@@ -764,7 +743,7 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if (acccheckvpsnull.get(0).getVps().length()!=0){
-                accountRepository.updateTaskSub(running,System.currentTimeMillis(),username.trim());
+                accountRepository.updateTaskSub(running,System.currentTimeMillis(),idUsername);
                 resp.put("status","true");
                 resp.put("message", "Update "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -837,51 +816,24 @@ public class AccountSubController {
 
     }
 
-    @GetMapping(value = "/getproxy",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxy(@RequestHeader(defaultValue = "") String Authorization){
-        JSONObject resp=new JSONObject();
-        try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            List<Proxy> proxyList =proxyRepository.getProxy();
-            proxyList.get(0).setTimeget(System.currentTimeMillis());
-            proxyRepository.save(proxyList.get(0));
-            resp.put("status","true");
-            resp.put("proxy",proxyList.get(0).getProxy());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @GetMapping(value = "/updatelive",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> reset(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live,@RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> reset(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live) {
         JSONObject resp = new JSONObject();
         try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
+
             if (username.length() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            List<Account> accounts=accountRepository.findAccountByUsername(username.trim());
-            if(accounts.size()==0) {
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            if(idUsername==null) {
                 resp.put("status", "fail");
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }else{
+                List<Account> accounts=accountRepository.findAccountById(idUsername);
                 if(live==1){
                     accounts.get(0).setLive(live);
                     accounts.get(0).setRunning(1);
@@ -904,15 +856,10 @@ public class AccountSubController {
         }
     }
     @PostMapping(value = "/resetaccnotinvps",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetaccnotinvps(@RequestBody  String listacc,@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "")  String vps) {
+    ResponseEntity<String> resetaccnotinvps(@RequestBody  String listacc,@RequestParam(defaultValue = "")  String vps) {
         JSONObject resp = new JSONObject();
         try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
+
             if (vps.length() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "vps không đươc để trống!");
@@ -930,21 +877,15 @@ public class AccountSubController {
         }
     }
     @GetMapping(value = "/resetaccountbyvps",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetAccountByVps(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> resetAccountByVps(@RequestParam(defaultValue = "")  String vps) {
         JSONObject resp = new JSONObject();
         try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
             if (vps.length() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "Vps không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            accountRepository.resetAccountByVps("%"+vps.trim()+"%");
+            accountRepository.resetAccountByVps(vps.trim()+"%");
             resp.put("status", "true");
             resp.put("message", "Update thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -961,18 +902,13 @@ public class AccountSubController {
     ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
             if (username.length() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            accountRepository.resetAccountByUsername(live,username.trim());
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            accountRepository.resetAccountByUsername(live,idUsername);
             resp.put("status", "true");
             resp.put("message", "Reset Account thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

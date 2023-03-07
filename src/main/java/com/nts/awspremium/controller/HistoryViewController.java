@@ -57,7 +57,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(historyViewRepository.PROCESSLISTVIEW()>=50){
+        if(historyViewRepository.PROCESSLISTVIEW()>=30){
             resp.put("status", "fail");
             resp.put("username","");
             resp.put("fail", "video");
@@ -82,9 +82,9 @@ public class HistoryViewController {
                     history.setChannelid("");
                     history.setTimeget(System.currentTimeMillis());
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff("");
+                        videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff("");
                     }else{
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest("");
+                        videos=videoViewRepository.getvideoViewNoCheckMaxThread("");
                     }
                     if(videos.size()>0){
                         history.setVideoid(videos.get(0).getVideoid());
@@ -100,13 +100,13 @@ public class HistoryViewController {
                         resp.put("username", history.getUsername());
                         if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
                             int randLike =ran.nextInt(10000);
-                            if(randLike<2000){
+                            if(randLike<300){
                                 resp.put("like","true");
                             }else{
                                 resp.put("like","fail");
                             }
                             int randSub =ran.nextInt(10000);
-                            if(randSub<300){
+                            if(randSub<100){
                                 resp.put("sub","true");
                             }else{
                                 resp.put("sub","fail");
@@ -204,7 +204,10 @@ public class HistoryViewController {
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //histories.get(0).setVps(vps);
+                    //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
                     if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
+                        histories.get(0).setTimeget(System.currentTimeMillis());
+                        historyViewRepository.save(histories.get(0));
                         resp.put("status", "fail");
                         resp.put("username",histories.get(0).getUsername());
                         resp.put("fail", "video");
@@ -212,9 +215,9 @@ public class HistoryViewController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTestTimeBuff(histories.get(0).getListvideo());
+                        videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
                     }else{
-                        videos=videoViewRepository.getvideoViewVer2NoCheckTime24hNoTest(histories.get(0).getListvideo());
+                        videos=videoViewRepository.getvideoViewNoCheckMaxThread(histories.get(0).getListvideo());
                     }
                     if(videos.size()>0){
                         histories.get(0).setTimeget(System.currentTimeMillis());
