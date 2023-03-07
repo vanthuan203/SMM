@@ -32,7 +32,7 @@ public class ProxyAPI {
             conn.connect();
             //System.out.println(proxycut[0]+":"+proxycut[1]+":"+proxycut[2]+":"+ proxycut[3]);
             int code = conn.getResponseCode();
-            System.out.println("Status:"+code);
+            //System.out.println("Status:"+code);
             //String contents = conn.getResponseMessage();
             conn.disconnect();
             if (code == 200 || code == 429 || code ==404) {
