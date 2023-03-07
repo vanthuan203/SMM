@@ -162,6 +162,7 @@ public class ProxyController {
                 obj.put("timecheck",list_ipv4.get(i).split(",")[2]);
                 obj.put("state",list_ipv4.get(i).split(",")[3]);
                 obj.put("geo",list_ipv4.get(i).split(",")[4]);
+                obj.put("numcheck",list_ipv4.get(i).split(",")[5]);
                 jsonArray.add(obj);
             }
             resp.put("proxies",jsonArray);
