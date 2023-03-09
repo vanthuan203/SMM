@@ -55,6 +55,9 @@ public class VideoViewController {
     @Autowired
     private ServiceRepository serviceRepository;
 
+    @Autowired
+    private DataOrderRepository dataOrderRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -800,6 +803,8 @@ public class VideoViewController {
         }
     }
 
+
+
     @GetMapping(path = "getcountviewbufforder",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getcountviewbufforder(@RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
@@ -809,9 +814,49 @@ public class VideoViewController {
             if(user.length()==0){
                 countvieworder=videoViewRepository.getCountViewBuffOrder();
             }else{
-                countvieworder=videoBuffhRepository.getCountTimeBuffOrder(user.trim());
+                countvieworder=videoViewRepository.getCountViewBuffOrder(user.trim());
             }
             resp.put("totalvieworder",countvieworder);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "getinfo",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "") Long orderid) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            VideoView videoView=videoViewRepository.getInfoByOrderId(orderid);
+            JSONArray jsonArray= new JSONArray();
+
+
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", videoView.getOrderid());
+                obj.put("videoid", videoView.getVideoid());
+                obj.put("videotitle", videoView.getVideotitle());
+                obj.put("viewstart", videoView.getViewstart());
+                obj.put("maxthreads", videoView.getMaxthreads());
+                obj.put("insertdate", videoView.getInsertdate());
+                obj.put("vieworder", videoView.getVieworder());
+                obj.put("note", videoView.getNote());
+                obj.put("duration", videoView.getDuration());
+                obj.put("service", videoView.getService());
+
+                obj.put("view24h",videoView.getView24h());
+                obj.put("viewtotal",videoView.getViewtotal());
+                obj.put("price",videoView.getPrice());
+                if (videoView.getService()==669 ||videoView.getService()==688||videoView.getService()==689){
+                    obj.put("keyword",dataOrderRepository.getListKeyByOrderid(orderid));
+                }else{
+                    obj.put("keyword","");
+                }
+                jsonArray.add(obj);
+
+            resp.put("info",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");

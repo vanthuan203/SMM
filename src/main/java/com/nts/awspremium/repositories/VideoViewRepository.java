@@ -59,7 +59,6 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where time>=videoview.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> get24hViewBuff();
 
-
     @Modifying
     @Transactional
     @Query(value = "UPDATE videoview set viewtotal=?1,view24h=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
@@ -67,6 +66,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT sum(vieworder) as total FROM videoview",nativeQuery = true)
     public Integer getCountViewBuffOrder();
+
+    @Query(value = "SELECT *  FROM videoview where orderid=?1 limit 1",nativeQuery = true)
+    public VideoView getInfoByOrderId(Long orderid);
 
     @Query(value = "SELECT sum(vieworder) as total FROM videoview where user=?1",nativeQuery = true)
     public Integer getCountViewBuffOrder(String user);
