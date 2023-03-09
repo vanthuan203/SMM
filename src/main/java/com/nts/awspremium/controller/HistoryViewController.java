@@ -203,7 +203,7 @@ public class HistoryViewController {
                     }
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
-                    //histories.get(0).setVps(vps);
+                    histories.get(0).setVps(vps);
                     //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
                     if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
                         histories.get(0).setTimeget(System.currentTimeMillis());
