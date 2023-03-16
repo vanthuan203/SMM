@@ -83,6 +83,7 @@ public class VpsSubController {
                     obj.put("vpsoption",  vps.get(i).getVpsoption());
                     obj.put("vpsreset",  vps.get(i).getVpsreset());
                     obj.put("state",  vps.get(i).getState());
+                    obj.put("changefinger",  vps.get(i).getChangefinger());
                     obj.put("timecheck",  vps.get(i).getTimecheck());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("running",  vps.get(i).getRunning());
