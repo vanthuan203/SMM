@@ -23,6 +23,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where service not in (999,998) and INSTR(?1,videoid)=0  order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewNoCheckMaxThread(String listvideo);
 
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and (char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+600)>=char_length(?1)  order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewLoopNoCheckMaxThread(String listvideo);
+
+
+
     @Query(value = "SELECT * FROM videoview where service in (999,998) and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
             "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
@@ -31,6 +36,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT * FROM videoview where service in (999,998) and INSTR(?1,videoid)=0  order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewNoCheckMaxThreadViewBuff(String listvideo);
+
+    @Query(value = "SELECT * FROM videoview where service in (999,998) and (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and (char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+600)>=char_length(?1)  order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewLoopNoCheckMaxThreadViewBuff(String listvideo);
 
 
     @Query(value = "SELECT * from videoview where orderid in (?1)",nativeQuery = true)

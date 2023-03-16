@@ -366,7 +366,7 @@ public class ProxyController {
  */
             if(proxyfail.length()!=0){
                 Integer proxyId= proxyRepository.getIdByProxyFalse(proxyfail.trim(),vps);
-                System.out.println(proxyId);
+                //System.out.println(proxyId);
                 if(proxyId!=null){
                     proxyRepository.updaterunningProxyByVps(proxyId);
                 }

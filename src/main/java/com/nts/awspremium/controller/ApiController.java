@@ -219,12 +219,16 @@ public class ApiController {
                             resp.put("error", "Service not found ");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()==0){
+                            resp.put("error", "This video is a livestream video");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600 && data.getService()==999){
-                            resp.put("error", "video under 60 minutes");
+                            resp.put("error", "Video under 60 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<1800 && data.getService()==998){
-                            resp.put("error", "video under 30 minutes");
+                            resp.put("error", "Video under 30 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));

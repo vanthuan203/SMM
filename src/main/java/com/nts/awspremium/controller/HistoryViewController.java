@@ -203,11 +203,10 @@ public class HistoryViewController {
                     }
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
-                    histories.get(0).setVps(vps);
                     //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
                     if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
-                        histories.get(0).setTimeget(System.currentTimeMillis());
-                        historyViewRepository.save(histories.get(0));
+                        //histories.get(0).setTimeget(System.currentTimeMillis());
+                        //historyViewRepository.save(histories.get(0));
                         resp.put("status", "fail");
                         resp.put("username",histories.get(0).getUsername());
                         resp.put("fail", "video");
@@ -215,9 +214,17 @@ public class HistoryViewController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
+                        if(histories.get(0).getListvideo().length()>600){
+                            videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
+                        }else{
+                            videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
+                        }
                     }else{
-                        videos=videoViewRepository.getvideoViewNoCheckMaxThread(histories.get(0).getListvideo());
+                        if(histories.get(0).getListvideo().length()>600){
+                            videos=videoViewRepository.getvideoViewLoopNoCheckMaxThread(histories.get(0).getListvideo());
+                        }else{
+                            videos=videoViewRepository.getvideoViewNoCheckMaxThread(histories.get(0).getListvideo());
+                        }
                     }
                     if(videos.size()>0){
                         histories.get(0).setTimeget(System.currentTimeMillis());
@@ -232,6 +239,8 @@ public class HistoryViewController {
                         resp.put("message", "Không còn video để view!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    histories.get(0).setVps(vps);
                     histories.get(0).setRunning(1);
                     historyViewRepository.save(histories.get(0));
                     resp.put("channel_id", videos.get(0).getChannelid());
