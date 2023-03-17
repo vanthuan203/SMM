@@ -55,6 +55,7 @@ public class ProxyController {
             proxynew.setProxy(proxy.getProxy().trim());
             proxynew.setIpv4(proxy.getIpv4().trim());
             proxynew.setState(1);
+            proxynew.setGeo(proxy.getGeo().trim());
             proxynew.setTimeget(System.currentTimeMillis());
             proxynew.setTypeproxy(proxy.getTypeproxy().trim());
             proxynew.setRunning(0);
@@ -327,7 +328,8 @@ public class ProxyController {
     }
 
     @GetMapping(value = "/getproxysub", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
+    ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail,
+            @RequestParam(defaultValue = "vn") String geo) {
         JSONObject resp = new JSONObject();
         try{
             if(vps.length()==0){
@@ -338,6 +340,11 @@ public class ProxyController {
             if(username.length()==0){
                 resp.put("status","fail");
                 resp.put("message", "Không để username trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(geo.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để Geo trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             if(proxyRepository.PROCESSLISTSUB()>=50){
@@ -374,7 +381,7 @@ public class ProxyController {
             Random ran=new Random();
             List<Proxy> proxyGet=null;
             Thread.sleep(ran.nextInt(1000));
-            proxyGet=proxyRepository.getProxySubT1();
+            proxyGet=proxyRepository.getProxyByGeo(geo.trim());
             if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );

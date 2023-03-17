@@ -142,14 +142,8 @@ public class VpsController {
         }
     }
     @GetMapping(value = "checkvps",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkvps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+    ResponseEntity<String> checkvps(@RequestParam(defaultValue = "") String vps){
         JSONObject resp=new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Vps không để trống");
@@ -168,69 +162,12 @@ public class VpsController {
                     //resp.put("message", "Vps thêm thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(vpscheck.get(0).getVpsoption().equals("Buffh")){
-                    resp.put("option","0");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test1")){
-                    resp.put("option","1");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test2")){
-                    resp.put("option","2");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test3")){
-                    resp.put("option","3");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test4")){
-                    resp.put("option","4");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test5")){
-                    resp.put("option","5");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test6")){
-                    resp.put("option","6");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test7")){
-                    resp.put("option","7");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test8")){
-                    resp.put("option","8");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test9")){
-                    resp.put("option","9");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test10")){
-                    resp.put("option","10");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test11")){
-                    resp.put("option","11");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test12")){
-                    resp.put("option","12");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test13")){
-                    resp.put("option","13");
-                }
-                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test5")||vpscheck.get(0).getVpsoption().equals("Test6")||vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test9")){
-                    resp.put("off", "true");
-                }else{
-                    resp.put("off", "false");
-                }
-                if(vpscheck.get(0).getVpsoption().equals("Test1") || vpscheck.get(0).getVpsoption().equals("Test3") || vpscheck.get(0).getVpsoption().equals("Test5")){
-                    resp.put("view", "search");
-                }else if(vpscheck.get(0).getVpsoption().equals("Test2") || vpscheck.get(0).getVpsoption().equals("Test4") || vpscheck.get(0).getVpsoption().equals("Test6")){
-                    resp.put("view", "direct");
-                }else{
-                    resp.put("view", "random");
-                }
-                if(vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test9")){
-                    resp.put("number_acc",vpscheck.get(0).getThreads()*6 );
-                }else{
-                    resp.put("number_acc",vpscheck.get(0).getThreads()*2 );
-                }
-                if(vpscheck.get(0).getVpsoption().equals("Test8")||vpscheck.get(0).getVpsoption().equals("Test10")||vpscheck.get(0).getVpsoption().equals("Test12")){
-                    resp.put("version",2);
-                }else{
-                    resp.put("version",1);
-                }
-                resp.put("status", "true");
-                if(vpscheck.get(0).getChangefinger()==1){
-                    vpscheck.get(0).setChangefinger(0);
-                    resp.put("finger", "true");
-                }else{
-                    resp.put("finger", "false");
-                }
-                //resp.put("option",vpscheck.get(0).getVpsoption());
+                resp.put("option",vpscheck.get(0).getVpsoption());
                 //resp.put("urlapi",vpscheck.get(0).getUrlapi());
                 //resp.put("token",vpscheck.get(0).getToken());
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
+                resp.put("changefinger",vpscheck.get(0).getChangefinger());
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -353,9 +290,9 @@ public class VpsController {
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setThreads(vps.getThreads());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
-                    vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat") ? "accpremium-env.ap-southeast-1.elasticbeanstalk.com" : vps.getVpsoption().contains("Pending") ? "" : "cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
-                    vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
-                    vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
+                    //vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat") ? "accpremium-env.ap-southeast-1.elasticbeanstalk.com" : vps.getVpsoption().contains("Pending") ? "" : "cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
+                    //vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
+                    //vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setChangefinger(vps.getChangefinger());
                     if(vps.getVpsreset()==2){
@@ -368,7 +305,7 @@ public class VpsController {
                     obj.put("vps", vpsupdate.get(0).getVps());
                     obj.put("vpsoption",  vps.getVpsoption());
                     obj.put("state",   vpsupdate.get(0).getState());
-                    obj.put("timecheck",  System.currentTimeMillis());
+                    obj.put("timecheck",  vps.getTimecheck());
                     obj.put("threads",  vps.getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("changefinger",  vps.getChangefinger());

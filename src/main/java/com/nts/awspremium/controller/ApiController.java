@@ -223,6 +223,10 @@ public class ApiController {
                             resp.put("error", "This video is a livestream video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<60){
+                            resp.put("error", "Videos under 60 seconds");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         if(Duration.parse(contentDetails.get("duration").toString()).getSeconds()<3600 && data.getService()==999){
                             resp.put("error", "Video under 60 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

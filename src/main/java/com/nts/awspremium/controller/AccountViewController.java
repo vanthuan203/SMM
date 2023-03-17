@@ -26,7 +26,8 @@ public class AccountViewController {
 
     @Autowired
     private HistoryRepository historyRepository;
-
+    @Autowired
+    private HistoryViewRepository historyViewRepository;
 
     @Autowired
     private CookieRepository cookieRepository;
@@ -50,7 +51,7 @@ public class AccountViewController {
             if(idUsername!=null){
                 if(update==1) {
                     accountRepository.updateAccountView(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",idUsername);
-                    cookieRepository.updateCookieBuffh(newaccount.getCookie(),newaccount.getUsername());
+                    //cookieRepository.updateCookieBuffh(newaccount.getCookie(),newaccount.getUsername());
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -61,7 +62,7 @@ public class AccountViewController {
                 }
             }else{
                 accountRepository.insertAccountView(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","",0,"",newaccount.getDate(),newaccount.getGeo());
-                cookieRepository.insertCookieView(newaccount.getUsername(), newaccount.getCookie());
+                //cookieRepository.insertCookieView(newaccount.getUsername(), newaccount.getCookie());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -74,13 +75,18 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestParam(defaultValue = "0") Integer test){
+    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestParam(defaultValue = "vn") String geo){
         JSONObject resp = new JSONObject();
         Random ran=new Random();
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(historyViewRepository.PROCESSLISTVIEW()>=30){
+            resp.put("status", "fail");
+            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         try {
             Integer check_get=0;
@@ -90,11 +96,11 @@ public class AccountViewController {
                 resp.put("message", "Đã đủ acc cho Vps!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }
-
+            Thread.sleep(ran.nextInt(500));
             Long idbyVps=accountRepository.getaccountByVps(vps.trim());
             if(idbyVps==null){
-
-                Long id=accountRepository.getAccountViewDomain("us");
+                Thread.sleep(ran.nextInt(500));
+                Long id=accountRepository.getAccountView(geo.trim());
                 if(id==null){
                     resp.put("status","fail");
                     resp.put("message", "Hết tài khoản thỏa mãn!");
@@ -132,13 +138,6 @@ public class AccountViewController {
             }else{
                 try{
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    Thread.sleep(100+ran.nextInt(200));
-                    Integer accountcheck=accountRepository.checkAccountById(idbyVps);
-                    if(accountcheck==0){
-                        resp.put("status", "fail");
-                        resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
                     accountbyVps.get(0).setVps(vps.trim());
                     accountbyVps.get(0).setRunning(1);
                     accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
