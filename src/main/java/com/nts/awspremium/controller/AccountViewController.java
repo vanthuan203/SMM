@@ -251,16 +251,10 @@ public class AccountViewController {
         }
     }
     @GetMapping(value = "/checkaccount",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String vps) {
         JSONObject resp = new JSONObject();
         try {
             //Thread.sleep((long)(Math.random() * 10000));
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
             if (username.length() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "Username không được để trống!");
