@@ -222,7 +222,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0 where vps like ?1",nativeQuery = true)
+    @Query(value = "UPDATE account SET running=0 where vps=?1",nativeQuery = true)
     public void updateRunningByVPs(String vps);
     @Modifying
     @Transactional

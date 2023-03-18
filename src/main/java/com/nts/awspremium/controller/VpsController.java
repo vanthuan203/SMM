@@ -441,7 +441,7 @@ public class VpsController {
         try{
             String[] vpslist = vps.split(",");
             for(int i=0;i<vpslist.length;i++){
-                accountRepository.updateRunningByVPs(vpslist[i].trim()+'%');
+                accountRepository.updateRunningByVPs(vpslist[i].trim());
             }
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

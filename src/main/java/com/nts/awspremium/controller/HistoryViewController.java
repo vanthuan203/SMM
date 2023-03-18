@@ -80,6 +80,7 @@ public class HistoryViewController {
                     history.setVideoid("");
                     history.setOrderid(0L);
                     history.setChannelid("");
+                    System.out.println(accountRepository.getGeoByUsername(username.trim()));
                     history.setGeo(accountRepository.getGeoByUsername(username.trim()));
                     history.setTimeget(System.currentTimeMillis());
                     if(buffh==1){
