@@ -151,6 +151,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+
             List<Vps> vpscheck =vpsRepository.findVPS(vps.trim()+"%");
 
             if(vpscheck.size()>0){
@@ -170,6 +171,11 @@ public class VpsController {
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 resp.put("changefinger",vpscheck.get(0).getChangefinger());
                 resp.put("ext",vpscheck.get(0).getExt());
+                if(vpscheck.get(0).getVpsreset()>0){
+                    vpscheck.get(0).setVpsreset(0);
+                }
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpsRepository.save(vpscheck.get(0));
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -215,12 +221,6 @@ public class VpsController {
             if(vpscheck.size()>0){
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
-                if(vpscheck.get(0).getVpsreset()>0){
-                    vpscheck.get(0).setVpsreset(0);
-                }
-                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
-                vpsRepository.save(vpscheck.get(0));
-
 
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
