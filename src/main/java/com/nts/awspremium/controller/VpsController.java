@@ -88,6 +88,7 @@ public class VpsController {
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("total",total);
                     obj.put("acccount", totalacc);
+                    obj.put("ext", vps.get(i).getExt());
                     obj.put("view24h",totalview);
                     jsonArray.add(obj);
                 }
@@ -168,6 +169,7 @@ public class VpsController {
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 resp.put("changefinger",vpscheck.get(0).getChangefinger());
+                resp.put("ext",vpscheck.get(0).getExt());
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -182,6 +184,7 @@ public class VpsController {
                 vpsnew.setToken("");
                 vpsnew.setVpsreset(0);
                 vpsnew.setThreads(0);
+                vpsnew.setExt(1);
                 vpsnew.setChangefinger(0);
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
@@ -289,6 +292,7 @@ public class VpsController {
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setThreads(vps.getThreads());
+                    vpsupdate.get(0).setExt(vps.getExt());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
                     //vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat") ? "accpremium-env.ap-southeast-1.elasticbeanstalk.com" : vps.getVpsoption().contains("Pending") ? "" : "cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
                     //vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
@@ -309,6 +313,7 @@ public class VpsController {
                     obj.put("threads",  vps.getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("changefinger",  vps.getChangefinger());
+                    obj.put("ext",  vps.getExt());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
@@ -349,6 +354,7 @@ public class VpsController {
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setChangefinger(vps.getChangefinger());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
+                    vpsupdate.get(0).setExt(vps.getExt());
                     vpsRepository.save(vpsupdate.get(0));
 
                     JSONObject obj = new JSONObject();

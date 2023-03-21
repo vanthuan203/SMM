@@ -23,6 +23,7 @@ public class Vps {
     private Integer countipv4;
     private String namevps;
     private Integer changefinger;
+    private Integer ext;
     public Vps() {
     }
 
@@ -42,7 +43,7 @@ public class Vps {
         this.dayreset = dayreset;
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger, Integer ext) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
@@ -59,6 +60,15 @@ public class Vps {
         this.countipv4 = countipv4;
         this.namevps = namevps;
         this.changefinger = changefinger;
+        this.ext = ext;
+    }
+
+    public Integer getExt() {
+        return ext;
+    }
+
+    public void setExt(Integer ext) {
+        this.ext = ext;
     }
 
     public Integer getChangefinger() {
