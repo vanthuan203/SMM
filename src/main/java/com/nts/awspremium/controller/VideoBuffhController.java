@@ -56,10 +56,6 @@ public class VideoBuffhController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            if(videoBuffhRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || settingRepository.getMaxOrder()==0){
-                resp.put("videobuffh", "Vượt giới hạn đơn!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
             String videolist = videoBuffh.getVideoid().replace("\n", ",");
             //VIDEOOOOOOOOOOOOOOO
             int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;

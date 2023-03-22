@@ -17,10 +17,12 @@ public class Service {
     private Integer max;
     private Integer thread;
     private String note;
+    private String geo;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note) {
+
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -30,6 +32,15 @@ public class Service {
         this.max = max;
         this.thread = thread;
         this.note = note;
+        this.geo = geo;
+    }
+
+    public String getGeo() {
+        return geo;
+    }
+
+    public void setGeo(String geo) {
+        this.geo = geo;
     }
 
     public Integer getThread() {

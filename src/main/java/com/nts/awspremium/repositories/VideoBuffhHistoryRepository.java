@@ -36,7 +36,8 @@ public interface VideoBuffhHistoryRepository extends JpaRepository<VideoBuffhHis
             "id in( SELECT  * FROM (SELECT  MAX(id) FROM videobuffhhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoBuffhHistory> getVideoBHByVideoId(String videoid);
 
-
+    @Query(value = "SELECT count(*) from videobuffh where videoid=?1",nativeQuery = true)
+    public Integer getCountVideoId(String vidoeid);
     @Modifying
     @Transactional
     @Query(value = "update videobuffhhistory set timecheck=-1 where timecheck!=-1 and id not in( SELECT  * FROM (SELECT  MAX(id) FROM videobuffhhistory group by videoid) as p) and cancel!=1",nativeQuery = true)

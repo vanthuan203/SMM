@@ -167,11 +167,12 @@ public class ApiController {
                     resp.put("error", "Max quantity is 120000");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || settingRepository.getMaxOrder()==0){
+                Service service=serviceRepository.getService(data.getService());
+                if(videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN()==0) ||
+                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS()==0)){
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                Service service=serviceRepository.getService(data.getService());
                 if(service.getType().equals("Special") && data.getList().length()==0){
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

@@ -136,13 +136,15 @@ public class AuthController {
         List<Setting> setting1=settingRepository.getSetting();
         setting1.get(0).setBonus(setting.getBonus());
         setting1.get(0).setMaxorder(setting.getMaxorder());
-        setting1.get(0).setPricerate(setting.getPricerate());
+        setting1.get(0).setMaxordervn(setting.getMaxordervn());
+        setting1.get(0).setMaxorderus(setting.getMaxorderus());
         settingRepository.save(setting1.get(0));
         JSONObject obj = new JSONObject();
         obj.put("id", setting.getId());
         obj.put("pricerate", setting.getPricerate());
         obj.put("bonus", setting.getBonus());
-        obj.put("maxorder", setting.getMaxorder());
+        obj.put("maxordervn", setting.getMaxordervn());
+        obj.put("maxorderus", setting.getMaxorderus());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
@@ -196,6 +198,8 @@ public class AuthController {
             obj.put("pricerate", setting.get(i).getPricerate());
             obj.put("bonus", setting.get(i).getBonus());
             obj.put("maxorder", setting.get(i).getMaxorder());
+            obj.put("maxordervn", setting.get(i).getMaxordervn());
+            obj.put("maxorderus", setting.get(i).getMaxorderus());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);

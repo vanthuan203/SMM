@@ -13,8 +13,10 @@ public interface SettingRepository  extends JpaRepository<Setting,Long> {
     @Query(value = "SELECT bonus FROM setting where id=1",nativeQuery = true)
     public Integer getBonus();
 
-    @Query(value = "SELECT count(*) FROM setting where id=1 and (select count(*) from videobuffh where enabled!=0)<maxorder",nativeQuery = true)
-    public Integer getMaxOrder();
+    @Query(value = "SELECT count(*) FROM setting where id=1 and (select count(*) from videoview where service>600)<maxordervn",nativeQuery = true)
+    public Integer getMaxOrderVN();
+    @Query(value = "SELECT count(*) FROM setting where id=1 and (select count(*) from videoview where service<600)<maxorderus",nativeQuery = true)
+    public Integer getMaxOrderUS();
     @Query(value = "SELECT * FROM setting where id=1",nativeQuery = true)
     public List<Setting> getSetting();
 }

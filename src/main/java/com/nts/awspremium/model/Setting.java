@@ -13,17 +13,37 @@ public class Setting {
     private Integer maxthread;
     private Integer pricerate;
     private Integer bonus;
+    private Integer maxordervn;
+    private Integer maxorderus;
 
     public Setting() {
     }
 
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus) {
+    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus) {
         this.id = id;
         this.maxorder = maxorder;
         this.mintimebuff = mintimebuff;
         this.maxthread = maxthread;
         this.pricerate = pricerate;
         this.bonus = bonus;
+        this.maxordervn = maxordervn;
+        this.maxorderus = maxorderus;
+    }
+
+    public Integer getMaxordervn() {
+        return maxordervn;
+    }
+
+    public void setMaxordervn(Integer maxordervn) {
+        this.maxordervn = maxordervn;
+    }
+
+    public Integer getMaxorderus() {
+        return maxorderus;
+    }
+
+    public void setMaxorderus(Integer maxorderus) {
+        this.maxorderus = maxorderus;
     }
 
     public Integer getBonus() {
