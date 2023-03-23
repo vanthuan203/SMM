@@ -52,8 +52,8 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where vps like ?1",nativeQuery = true)
-    public Integer resetThreadBuffhByVps(String vps);
+    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where vps=?1",nativeQuery = true)
+    public Integer resetThreadViewByVps(String vps);
 
     @Modifying
     @Transactional

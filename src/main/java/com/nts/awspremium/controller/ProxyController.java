@@ -422,6 +422,38 @@ public class ProxyController {
         }
 
     }
+
+    @GetMapping(value = "/resetproxyByVps", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetproxyByVps(@RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        try{
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            proxyRepository.updaterunningByVps(vps.trim()+"%");
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @GetMapping(value = "/resetproxyByCron", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetproxyByCron() {
+        JSONObject resp = new JSONObject();
+        try{
+            proxyRepository.ResetProxyThan2h();
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
 /*
     @GetMapping(value = "/checkproxylist", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkproxylist(@RequestParam(defaultValue = "1") Integer cron) {

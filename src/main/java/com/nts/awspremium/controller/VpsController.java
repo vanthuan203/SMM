@@ -26,6 +26,8 @@ public class VpsController {
     @Autowired
     private HistoryRepository historyRepository;
     @Autowired
+    private HistoryViewRepository historyViewRepository;
+    @Autowired
     private ProxyRepository proxyRepository;
     @Autowired
     private AccountRepository accountRepository;
@@ -272,6 +274,20 @@ public class VpsController {
         }
     }
 
+    @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasByCron(){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetBasByCron();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(value = "update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
@@ -485,9 +501,9 @@ public class VpsController {
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
                 vpsRepository.deleteByVps(vpsArr[i].trim());
-                accountRepository.resetAccountByVps(vpsArr[i].trim()+"%");
-                historyRepository.resetThreadByVps(vpsArr[i].trim()+"%");
-                proxyRepository.updaterunningByVps(vps.trim()+"%");
+                accountRepository.resetAccountByVps(vpsArr[i].trim());
+                historyViewRepository.resetThreadViewByVps(vpsArr[i].trim());
+                //proxyRepository.updaterunningByVps(vps.trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

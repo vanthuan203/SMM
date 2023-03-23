@@ -48,7 +48,7 @@ public interface HistoryRepository extends JpaRepository<History,Long> {
     public Integer resetThreadThan3hcron();
     @Modifying
     @Transactional
-    @Query(value = "UPDATE history SET running=0,vps='' where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE historyview SET running=0,vps='' where vps=?1",nativeQuery = true)
     public Integer resetThreadByVps(String vps);
 
     @Modifying

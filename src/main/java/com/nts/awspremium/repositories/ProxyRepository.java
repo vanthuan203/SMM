@@ -151,11 +151,16 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE proxy set state=?1,timeget=0  where ipv4 like ?2 ",nativeQuery = true)
+    @Query(value = "UPDATE proxy set state=?1  where ipv4 like ?2 ",nativeQuery = true)
     public Integer updateState(Integer state,String ipv4);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE proxy set running=1,vps=?1,timeget=?2  where id=?3",nativeQuery = true)
     public Integer updateProxyGet(String vps,Long timeget,Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE proxy set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=2 and running=1",nativeQuery = true)
+    public Integer ResetProxyThan2h();
 }
