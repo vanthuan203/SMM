@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BalanceRepository extends JpaRepository<Balance,Long> {
-    @Query(value = "Select * from balance order by time desc",nativeQuery = true)
+    @Query(value = "Select * from balance where round((UNIX_TIMESTAMP()-time/1000)/60/60/24)<=20 order by time desc",nativeQuery = true)
     public List<Balance> getAllBalance();
-    @Query(value = "Select * from balance where user=?1 order by time desc",nativeQuery = true)
+    @Query(value = "Select * from balance where user=?1 and round((UNIX_TIMESTAMP()-time/1000)/60/60/24)<=20 order by time desc",nativeQuery = true)
     public List<Balance> getAllBalance(String user);
 }

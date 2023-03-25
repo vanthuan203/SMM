@@ -109,9 +109,9 @@ public class HistoryViewController {
                         resp.put("video_title", videos.get(0).getVideotitle());
                         resp.put("username", history.getUsername());
                         resp.put("geo",accountRepository.getGeoByUsername(username.trim()));
-                        if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
+                        if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
                             int randLike =ran.nextInt(10000);
-                            if(randLike<300){
+                            if(randLike<700){
                                 resp.put("like","true");
                             }else{
                                 resp.put("like","fail");
@@ -171,6 +171,8 @@ public class HistoryViewController {
                             }else{
                                 resp.put("source", "dtn");
                             }
+                        }else if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
+                            resp.put("source", "dtn");
                         }
 
                         if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 || videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
@@ -204,6 +206,20 @@ public class HistoryViewController {
                                 resp.put("video_duration", 3600+ran.nextInt(180));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
+                            }
+                        }else if(videos.get(0).getService()==701){
+                            int ran_time=(int)(1800*(Math.random()*(1-0.6+1)+0.6));
+                            if(ran_time>videos.get(0).getDuration()){
+                                resp.put("video_duration",videos.get(0).getDuration() );
+                            }else{
+                                resp.put("video_duration",ran_time );
+                            }
+                        }else if(videos.get(0).getService()==702){
+                            int ran_time=(int)(3600*(Math.random()*(1-0.6+1)+0.6));
+                            if(ran_time>videos.get(0).getDuration()){
+                                resp.put("video_duration",videos.get(0).getDuration() );
+                            }else{
+                                resp.put("video_duration",ran_time );
                             }
                         }
 
@@ -280,9 +296,9 @@ public class HistoryViewController {
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689){
+                    if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
                         int randLike =ran.nextInt(10000);
-                        if(randLike<300){
+                        if(randLike<700){
                             resp.put("like","true");
                         }else{
                             resp.put("like","fail");
@@ -341,6 +357,8 @@ public class HistoryViewController {
                         }else{
                             resp.put("source", "dtn");
                         }
+                    }else if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
+                        resp.put("source", "dtn");
                     }
 
                     if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 || videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
@@ -374,6 +392,20 @@ public class HistoryViewController {
                             resp.put("video_duration", 3600+ran.nextInt(180));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
+                        }
+                    }else if(videos.get(0).getService()==701){
+                        int ran_time=(int)(1800*(Math.random()*(1-0.6+1)+0.6));
+                        if(ran_time>videos.get(0).getDuration()){
+                            resp.put("video_duration",videos.get(0).getDuration() );
+                        }else{
+                            resp.put("video_duration",ran_time );
+                        }
+                    }else if(videos.get(0).getService()==702){
+                        int ran_time=(int)(3600*(Math.random()*(1-0.6+1)+0.6));
+                        if(ran_time>videos.get(0).getDuration()){
+                            resp.put("video_duration",videos.get(0).getDuration() );
+                        }else{
+                            resp.put("video_duration",ran_time );
                         }
                     }
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

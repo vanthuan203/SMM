@@ -29,10 +29,10 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2",nativeQuery = true)
     public Integer updateviewend(Integer viewend,String videoid);
 
-    @Query(value = "SELECT * from videoviewhistory order by enddate desc",nativeQuery = true)
+    @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories();
 
-    @Query(value = "SELECT * from videoviewhistory where user=?1 order by enddate desc",nativeQuery = true)
+    @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories(String user);
 
 
