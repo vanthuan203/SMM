@@ -121,7 +121,6 @@ public class VideoViewController {
                         resp.put("error", "video under 30 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                     float priceorder=0;
                     int time=0;
                     priceorder=(videoView.getVieworder()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
@@ -826,6 +825,45 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "findorder",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> findorder(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String videoid){
+        JSONObject resp = new JSONObject();
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<VideoViewHistory> orderRunnings=videoViewHistoryRepository.getVideoViewHistoriesByVideoId(videoid.trim());
+            JSONArray jsonArray= new JSONArray();
+            for(int i=0;i<orderRunnings.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(i).getOrderid());
+                obj.put("videoid", orderRunnings.get(i).getVideoid());
+                obj.put("viewstart", orderRunnings.get(i).getViewstart());
+                obj.put("insertdate", orderRunnings.get(i).getInsertdate());
+                obj.put("user", orderRunnings.get(i).getUser());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("enddate", orderRunnings.get(i).getEnddate());
+                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
+                obj.put("vieworder", orderRunnings.get(i).getVieworder());
+                obj.put("price",orderRunnings.get(i).getPrice());
+                obj.put("service",orderRunnings.get(i).getService());
+                jsonArray.add(obj);
+            }
+            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
+
+            resp.put("total",orderRunnings.size());
+            resp.put("videoview",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
     @GetMapping(path = "getcountviewbufforder",produces = "application/hal+json;charset=utf8")
@@ -1269,6 +1307,23 @@ public class VideoViewController {
                 }
             }
             resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateordercheck",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateordercheck(@RequestParam(defaultValue = "") String videoid){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] videoidArr=videoid.split(",");
+            for(int i=0;i<videoidArr.length;i++){
+                   videoViewRepository.updateOrderCheck(videoid.trim());
+            }
+            resp.put("videoview","");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");

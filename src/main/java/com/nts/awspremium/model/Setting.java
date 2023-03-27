@@ -15,11 +15,12 @@ public class Setting {
     private Integer bonus;
     private Integer maxordervn;
     private Integer maxorderus;
+    private Integer levelthread;
 
     public Setting() {
     }
 
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus) {
+    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread) {
         this.id = id;
         this.maxorder = maxorder;
         this.mintimebuff = mintimebuff;
@@ -28,6 +29,15 @@ public class Setting {
         this.bonus = bonus;
         this.maxordervn = maxordervn;
         this.maxorderus = maxorderus;
+        this.levelthread = levelthread;
+    }
+
+    public Integer getLevelthread() {
+        return levelthread;
+    }
+
+    public void setLevelthread(Integer levelthread) {
+        this.levelthread = levelthread;
     }
 
     public Integer getMaxordervn() {

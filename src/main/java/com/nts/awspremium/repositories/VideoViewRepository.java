@@ -19,7 +19,17 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
             "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2NoCheckTime24hNoTest(String listvideo);
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service>600 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
+            "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewVer2VN(String listvideo);
 
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and service>600 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
+            "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewVer2US(String listvideo);
     @Query(value = "SELECT * FROM videoview where service not in (999,998) and service>600 and INSTR(?1,videoid)=0  order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewNoCheckMaxThreadVN(String listvideo);
 
@@ -43,6 +53,19 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and ((char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+500)<=char_length(?1) or INSTR(?1,videoid)=0)  order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewLoopNoCheckMaxThreadUS(String listvideo);
 
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service>600 and" +
+            " (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and ((char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+500)<=char_length(?1) or INSTR(?1,videoid)=0) and\n" +
+            "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
+            "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewLoopVer2VN(String listvideo);
+
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and" +
+            " (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and ((char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+500)<=char_length(?1) or INSTR(?1,videoid)=0) and\n" +
+            "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
+            "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoViewLoopVer2US(String listvideo);
 
     @Query(value = "SELECT * FROM videoview where service in (999,998) and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
@@ -99,6 +122,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Transactional
     @Query(value = "update videoview set valid=0 where videoid not in (select videoid from historyviewsum where round((UNIX_TIMESTAMP()-time/1000)/60)<=5  group by videoid ) and round((UNIX_TIMESTAMP()-insertdate/1000)/60)>20",nativeQuery = true)
     public void updateOrderCheckCancel();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update videoview set valid=1 where videoid=?1",nativeQuery = true)
+    public void updateOrderCheck(String videoid);
 
     @Query(value = "SELECT sum(vieworder) as total FROM videoview",nativeQuery = true)
     public Integer getCountViewBuffOrder();

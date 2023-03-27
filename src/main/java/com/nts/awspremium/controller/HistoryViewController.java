@@ -87,9 +87,11 @@ public class HistoryViewController {
                         videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff("");
                     }else{
                         if(history.getGeo().equals("vn")){
-                            videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
+                            videos=videoViewRepository.getvideoViewVer2VN("");
                         }else if(history.getGeo().equals("us")){
-                            videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS("");
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS("");
+                            videos=videoViewRepository.getvideoViewVer2US("");
                         }else if(history.getGeo().equals("vn-test")){
                             videos=videoViewRepository.getvideoViewNoCheckMaxThreadVNTEST("");
                         }else{
@@ -253,9 +255,11 @@ public class HistoryViewController {
                     }else{
                         if(histories.get(0).getListvideo().length()>600){
                             if(histories.get(0).getGeo().equals("vn")){
-                                videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVN(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVN(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewLoopVer2VN(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("us")){
-                                videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewLoopVer2US(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
                             }else{
@@ -263,9 +267,11 @@ public class HistoryViewController {
                             }
                         }else{
                             if(histories.get(0).getGeo().equals("vn")){
-                                videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewVer2VN(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("us")){
-                                videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewVer2US(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
                             }else{

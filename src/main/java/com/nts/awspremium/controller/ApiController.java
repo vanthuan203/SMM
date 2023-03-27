@@ -168,6 +168,7 @@ public class ApiController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 Service service=serviceRepository.getService(data.getService());
+                Setting setting=settingRepository.getReferenceById(1L);
                 if(videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN()==0) ||
                         (service.getGeo().equals("us") && settingRepository.getMaxOrderUS()==0)){
                     resp.put("error", "System busy try again");
@@ -236,7 +237,6 @@ public class ApiController {
                             resp.put("error", "Video under 30 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        //System.out.println((float)(videoBuffh.getTimebuff())/4000*setting.getPricerate()*((float)(100-admins.get(0).getDiscount())/100));
                         float priceorder=0;
                         int time=0;
                         priceorder=(data.getQuantity()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
@@ -257,7 +257,12 @@ public class ApiController {
                         videoViewhnew.setVideotitle(snippet.get("title").toString());
                         videoViewhnew.setVideoid(video.get("id").toString());
                         videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                        videoViewhnew.setMaxthreads(service.getThread());
+                        int max_thread=service.getThread()+((int)(data.getQuantity()/1000)-1)*setting.getLevelthread();
+                        if(max_thread<=setting.getMaxthread()){
+                            videoViewhnew.setMaxthreads(max_thread);
+                        }else{
+                            videoViewhnew.setMaxthreads(setting.getMaxthread());
+                        }
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());
