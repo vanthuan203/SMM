@@ -25,7 +25,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VN(String listvideo);
 
-    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and service>600 and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
             "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
