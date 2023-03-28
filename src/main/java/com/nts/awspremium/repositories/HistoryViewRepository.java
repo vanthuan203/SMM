@@ -16,6 +16,9 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Query(value = "SELECT * FROM historyview where id=?1 limit 1",nativeQuery = true)
     public List<HistoryView> getHistoriesById(Long id);
+
+    @Query(value = "SELECT listvideo FROM historyview where id=?1 limit 1",nativeQuery = true)
+    public String getListVideoById(Long id);
     @Query(value = "SELECT id FROM historyview where username=?1 limit 1",nativeQuery = true)
     public Long getId(String username);
 
@@ -105,4 +108,9 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Transactional
     @Query(value = "update historyview set listvideo=CONCAT(listvideo,\",\",?1) where id=?2",nativeQuery = true)
     public Integer updateListVideo(String videoid,Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update historyview set listvideo=?1 where id=?2",nativeQuery = true)
+    public Integer updateListVideoNew(String videoid,Long id);
 }

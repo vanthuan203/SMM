@@ -383,7 +383,6 @@ public class VideoViewController {
             List<String> viewBuff24h;
             List<VideoView> videoViewList=videoViewRepository.getAllOrder();
             viewBuff =videoViewRepository.getTotalViewBuff();
-            viewBuff24h =videoViewRepository.get24hViewBuff();
 
             for(int i=0;i<videoViewList.size();i++){
                 int viewtotal=0;
@@ -391,11 +390,6 @@ public class VideoViewController {
                 for(int j=0;j<viewBuff.size();j++){
                     if(videoViewList.get(i).getVideoid().equals(viewBuff.get(j).split(",")[0])){
                         viewtotal=Integer.parseInt(viewBuff.get(j).split(",")[1]);
-                    }
-                }
-                for(int j=0;j<viewBuff24h.size();j++){
-                    if(videoViewList.get(i).getVideoid().equals(viewBuff24h.get(j).split(",")[0])){
-                        view24h=Integer.parseInt(viewBuff24h.get(j).split(",")[1]);
                     }
                 }
                 try{
@@ -1321,7 +1315,7 @@ public class VideoViewController {
         try{
             String[] videoidArr=videoid.split(",");
             for(int i=0;i<videoidArr.length;i++){
-                   videoViewRepository.updateOrderCheck(videoid.trim());
+                   videoViewRepository.updateOrderCheck(videoidArr[i]);
             }
             resp.put("videoview","");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

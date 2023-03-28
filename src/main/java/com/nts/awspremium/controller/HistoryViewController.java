@@ -446,7 +446,11 @@ public class HistoryViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                historyViewRepository.updateListVideo(videoid,historieId);
+                if(historyViewRepository.getListVideoById(historieId).length()>580){
+                    historyViewRepository.updateListVideoNew(videoid,historieId);
+                }else{
+                    historyViewRepository.updateListVideo(videoid,historieId);
+                }
                 /*
                 List<HistoryView> histories =historyViewRepository.getHistoriesById(historieId);
                 if(histories.get(0).getListvideo().length()==0){
