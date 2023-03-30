@@ -124,6 +124,9 @@ public class HistoryViewController {
                             }else{
                                 resp.put("sub","fail");
                             }
+                        }else if(videos.get(0).getService()<600){
+                            resp.put("like","fail");
+                            resp.put("sub","fail");
                         }else{
                             int randLike =ran.nextInt(10000);
                             if(randLike<300){
@@ -315,6 +318,9 @@ public class HistoryViewController {
                         }else{
                             resp.put("sub","fail");
                         }
+                    }else if(videos.get(0).getService()<600){
+                        resp.put("like","fail");
+                        resp.put("sub","fail");
                     }else{
                         int randLike =ran.nextInt(10000);
                         if(randLike<300){
