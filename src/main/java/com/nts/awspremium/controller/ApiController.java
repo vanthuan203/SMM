@@ -84,9 +84,8 @@ public class ApiController {
             //Get trạng thái đơns
             if(data.getAction().equals("status")){
                 if(data.getOrders().length()==0){
-                    VideoView video = videoViewRepository.getReferenceById(data.getOrder());
-                    VideoViewHistory videoHistory=videoViewHistoryRepository.getReferenceById(data.getOrder());
-
+                    VideoView video = videoViewRepository.getVideoViewById(data.getOrder());
+                    VideoViewHistory videoHistory=videoViewHistoryRepository.getVideoViewHisById(data.getOrder());
                     if(video !=null){
                         resp.put("start_count",video.getViewstart());
                         resp.put("current_count",video.getViewtotal());
@@ -159,6 +158,7 @@ public class ApiController {
                 }
             }
             if(data.getAction().equals("add")){
+                /*
                 if (data.getQuantity() < 100) {
                     resp.put("error", "Min quantity is 100");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -167,6 +167,7 @@ public class ApiController {
                     resp.put("error", "Max quantity is 120000");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                 */
                 Service service=serviceRepository.getService(data.getService());
                 Setting setting=settingRepository.getReferenceById(1L);
                 if(videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim())>=admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN()==0) ||
@@ -302,7 +303,7 @@ public class ApiController {
                 }
             }
         }catch (Exception e){
-            resp.put("error", "api system error");
+            resp.put("error","api system error");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         resp.put("error", "api system error");

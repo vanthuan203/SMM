@@ -82,6 +82,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT * from videoview where orderid in (?1)",nativeQuery = true)
     public List<VideoView> getVideoViewByListId(List<String> list_orderid);
+    @Query(value = "SELECT * from videoview where orderid=?1",nativeQuery = true)
+    public VideoView getVideoViewById(Long orderid);
+
 
     @Query(value = "SELECT count(*) from videoview where user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);

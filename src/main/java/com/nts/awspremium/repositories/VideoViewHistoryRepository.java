@@ -14,6 +14,8 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * from videoviewhistory where orderid in (?1)",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHisByListId(List<String> list_orderid);
 
+    @Query(value = "SELECT * from videoviewhistory where orderid=?1",nativeQuery = true)
+    public VideoViewHistory getVideoViewHisById(Long orderid);
     @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in(111,112,113,122,123,801,802,811,812,813) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
     public List<String> getOrderHistorythan5h();
 
