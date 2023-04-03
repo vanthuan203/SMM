@@ -11,6 +11,7 @@ public class DataRequest {
     private String list="";
     private String search="";
     private String suggest="";
+    private String comments="";
 
     public DataRequest() {
     }
@@ -21,6 +22,14 @@ public class DataRequest {
         this.quantity = quantity;
         this.action = action;
         this.service = service;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
     public String getSearch() {

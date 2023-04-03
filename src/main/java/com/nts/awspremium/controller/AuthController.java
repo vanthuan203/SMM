@@ -234,6 +234,7 @@ public class AuthController {
             obj.put("note", balance.get(i).getNote());
             obj.put("time", balance.get(i).getTime());
             obj.put("id", balance.get(i).getId());
+            obj.put("service", balance.get(i).getService());
             jsonArray.add(obj);
         }
         resp.put("balances",jsonArray);

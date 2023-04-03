@@ -154,6 +154,7 @@ public class VideoViewController {
                     balance.setTime(System.currentTimeMillis());
                     balance.setTotalblance(balance_new);
                     balance.setBalance(-priceorder);
+                    balance.setService(videoView.getService());
                     balance.setNote("Order " +videoView.getVieworder() +" view cho video "+videoViewhnew.getVideoid());
                     balanceRepository.save(balance);
 
@@ -1242,6 +1243,7 @@ public class VideoViewController {
                     balance.setTime(System.currentTimeMillis());
                     balance.setTotalblance(balance_new);
                     balance.setBalance(price_refund);
+                    balance.setService(videoBuffh.get(0).getService());
                     balance.setNote("Hoàn " +(viewthan)+"view cho "+videoBuffh.get(0).getVideoid());
                     balanceRepository.save(balance);
                 }else{
@@ -1358,19 +1360,21 @@ public class VideoViewController {
 
 
                     //
+                    if(timethan!=0){
+                        Balance balance=new Balance();
+                        balance.setUser(admins.get(0).getUsername().trim());
+                        balance.setTime(System.currentTimeMillis());
+                        balance.setTotalblance(balance_new);
+                        balance.setBalance(-priceorder);
+                        balance.setService(videoBuffh.getService());
+                        if(priceorder<0){
+                            balance.setNote("Hoàn " +(-timethan)+" view cho "+videoBuffh.getVideoid());
+                        }else if(timethan!=0){
+                            balance.setNote("Order thêm " +timethan+" view cho "+videoBuffh.getVideoid());
+                        }
 
-                    Balance balance=new Balance();
-                    balance.setUser(admins.get(0).getUsername().trim());
-                    balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(balance_new);
-                    balance.setBalance(-priceorder);
-                    if(priceorder<0){
-                        balance.setNote("Hoàn " +(-timethan)+" view cho "+videoBuffh.getVideoid());
-                    }else if(timethan!=0){
-                        balance.setNote("Order thêm " +timethan+" view cho "+videoBuffh.getVideoid());
+                        balanceRepository.save(balance);
                     }
-
-                    balanceRepository.save(balance);
                 }
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
                 video.get(0).setVieworder(videoBuffh.getVieworder());
