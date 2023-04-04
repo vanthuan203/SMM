@@ -90,7 +90,7 @@ public class AccountViewController {
         }
         try {
             Integer check_get=0;
-            check_get= vpsRepository.checkGetAccount3ByThreadVps(vps.trim()+"%");
+            check_get= vpsRepository.checkGetAccount12ByThreadVps(vps.trim());
             if(check_get==0){
                 resp.put("status","fail");
                 resp.put("message", "Đã đủ acc cho Vps!");
