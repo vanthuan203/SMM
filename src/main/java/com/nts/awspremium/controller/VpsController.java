@@ -86,7 +86,7 @@ public class VpsController {
                     obj.put("state",  vps.get(i).getState());
                     obj.put("timegettask",time);
                     obj.put("timecheck",  vps.get(i).getTimecheck());
-                    obj.put("changefinger",  vps.get(i).getChangefinger());
+                    obj.put("get_account",  vps.get(i).getGet_account());
                     obj.put("threads",  vps.get(i).getThreads());
                     obj.put("total",total);
                     obj.put("acccount", totalacc);
@@ -171,7 +171,7 @@ public class VpsController {
                 resp.put("option",vpscheck.get(0).getVpsoption());
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
-                resp.put("changefinger",vpscheck.get(0).getChangefinger());
+                resp.put("get_account",vpscheck.get(0).getGet_account());
                 resp.put("ext",vpscheck.get(0).getExt());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
@@ -191,6 +191,7 @@ public class VpsController {
                 vpsnew.setVpsreset(0);
                 vpsnew.setThreads(0);
                 vpsnew.setExt(1);
+                vpsnew.setGet_account(1);
                 vpsnew.setChangefinger(0);
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
@@ -311,7 +312,7 @@ public class VpsController {
                     //vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
                     //vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
-                    vpsupdate.get(0).setChangefinger(vps.getChangefinger());
+                    vpsupdate.get(0).setGet_account(vps.getGet_account());
                     if(vps.getVpsreset()==2){
                         vpsupdate.get(0).setState(2);
                     }
@@ -325,7 +326,7 @@ public class VpsController {
                     obj.put("timecheck",  vps.getTimecheck());
                     obj.put("threads",  vps.getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
-                    obj.put("changefinger",  vps.getChangefinger());
+                    obj.put("get_account",  vps.getGet_account());
                     obj.put("ext",  vps.getExt());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
@@ -365,7 +366,7 @@ public class VpsController {
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim()+"%");
                 if(vpsupdate.size()>0) {
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
-                    vpsupdate.get(0).setChangefinger(vps.getChangefinger());
+                    vpsupdate.get(0).setGet_account(vps.getGet_account());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
                     vpsupdate.get(0).setExt(vps.getExt());
                     vpsRepository.save(vpsupdate.get(0));
@@ -378,7 +379,7 @@ public class VpsController {
                     obj.put("timecheck",  System.currentTimeMillis());
                     obj.put("threads",  vpsupdate.get(0).getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
-                    obj.put("changefinger",  vps.getChangefinger());
+                    obj.put("get_account",  vps.getGet_account());
                     obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
