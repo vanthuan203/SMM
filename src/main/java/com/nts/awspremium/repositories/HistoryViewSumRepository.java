@@ -12,7 +12,11 @@ import java.util.List;
 public interface HistoryViewSumRepository extends JpaRepository<HistoryViewSum,Long> {
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM hisoryview where username=?1 and videoid=?2",nativeQuery = true)
+    @Query(value = "DELETE FROM historyviewsum where videoid not in (select videoid from videoview) limit 500000",nativeQuery = true)
+    public void DelHistorySum();
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM historyviewsum where username=?1 and videoid=?2",nativeQuery = true)
     public void DelHistoryError(String username,String videoid);
     @Query(value = "SELECT FROM_UNIXTIME(historyviewsum.time/1000,'%Y-%m-%d') as date,count(*) as view FROM historyviewsum where duration>0 group by date order by date desc limit 7",nativeQuery = true)
     public List<String> Gettimebuff7day();

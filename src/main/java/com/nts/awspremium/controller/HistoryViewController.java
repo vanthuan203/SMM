@@ -57,7 +57,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(historyViewRepository.PROCESSLISTVIEW()>=20){
+        if(historyViewRepository.PROCESSLISTVIEW()>=30){
             resp.put("status", "fail");
             resp.put("username","");
             resp.put("fail", "video");
@@ -622,6 +622,22 @@ public class HistoryViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "delhistorysumcron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> delhistorysumcron(){
+        JSONObject resp=new JSONObject();
+        try{
+            historyViewSumRepository.DelHistorySum();
+            resp.put("status", "true");
+            resp.put("message", "Delete history thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
     @GetMapping(value = "delnamebyvps",produces = "application/hal+json;charset=utf8")
