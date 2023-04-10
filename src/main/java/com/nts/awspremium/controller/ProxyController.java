@@ -405,12 +405,12 @@ public class ProxyController {
             if(vps.length()==0){
                 resp.put("status","fail");
                 resp.put("message", "Không để vps trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if(proxy.length()==0){
                 resp.put("status","fail");
-                resp.put("message", "Không để vps trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                resp.put("message", "Không để proxy trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             Integer proxyId= proxyRepository.getIdByProxy(proxy.trim());
             proxyRepository.updaterunningProxyByVps(proxyId);

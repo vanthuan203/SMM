@@ -16,14 +16,14 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * from videoviewhistory where orderid=?1",nativeQuery = true)
     public VideoViewHistory getVideoViewHisById(Long orderid);
-    @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in(111,112,113,122,123,801,802,811,812,813) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
+    @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in(201,202,203,211,212,213) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
     public List<String> getOrderHistorythan5h();
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(111,112,113,122,123,801,802,811,812,813) and \n" +
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and \n" +
             "orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoId(String videoid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where orderid=?1 and service in(111,112,113,122,123,801,802,811,812,813) and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where orderid=?1 and service in(201,202,203,211,212,213) and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByOrderId(Long orderid);
 
     @Modifying

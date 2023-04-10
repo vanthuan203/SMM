@@ -628,7 +628,14 @@ public class VideoViewController {
             Setting setting=settingRepository.getReferenceById(1L);
             List<Admin> admins=adminRepository.GetAdminByUser("baohanh01@gmail.com");
             if(videoViewHistories.size()==0){
-                videoViewHistories =videoViewHistoryRepository.getVideoBHByOrderId(Long.parseLong(videoid.getVideoid().trim()));
+                long orderid=0L;
+                try{
+                    orderid= Long.parseLong(videoid.getVideoid().trim());
+                }catch (Exception e){
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                videoViewHistories =videoViewHistoryRepository.getVideoBHByOrderId(orderid);
                 if(videoViewHistories.size()==0) {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -642,12 +649,14 @@ public class VideoViewController {
                     obj.put("videoview", "Đơn đang chạy!");
                     return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
                 }
-                if (videoViewHistories.get(i).getViewend()==null) {
+
+                if (System.currentTimeMillis()-videoViewHistories.get(i).getEnddate()<1000*3600*24) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     obj.put("videoview", "Chưa đủ time bh!");
                     return new ResponseEntity<String>(obj.toJSONString(),HttpStatus.OK);
                 }
+
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
@@ -679,14 +688,14 @@ public class VideoViewController {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
-                        if(Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(i).getViewend()<=0){
+                        if(Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(i).getViewstart()-videoViewHistories.get(i).getVieworder()<0){
                             if(Integer.parseInt(statistics.get("viewCount").toString())-(int)videoViewHistories.get(i).getViewstart()>0){
                                 int baohanh=0;
-                                baohanh=(int)((1+setting.getBonus()/100F)*(int)(videoViewHistories.get(i).getViewend()-Integer.parseInt(statistics.get("viewCount").toString())));
-                                if(baohanh<100){
-                                    baohanh=100;
-                                }else if(baohanh>videoViewHistories.get(i).getViewtotal()){
-                                    baohanh=videoViewHistories.get(i).getViewtotal();
+                                baohanh=(int)((int)(videoViewHistories.get(i).getViewstart()+videoViewHistories.get(i).getVieworder()-Integer.parseInt(statistics.get("viewCount").toString())));
+                                if(baohanh<50){
+                                    baohanh=50;
+                                }else if(baohanh>videoViewHistories.get(i).getVieworder()){
+                                    baohanh=videoViewHistories.get(i).getVieworder();
                                 }
                                 float priceorder=0;
                                 Service service=serviceRepository.getService(videoViewHistories.get(i).getService());
@@ -707,7 +716,12 @@ public class VideoViewController {
                                 videoViewhnew.setVideotitle(videoViewHistories.get(i).getVideotitle());
                                 videoViewhnew.setVideoid(videoViewHistories.get(i).getVideoid());
                                 videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                                videoViewhnew.setMaxthreads(service.getThread());
+                                int max_thread = service.getThread() + (((int) (baohanh<1000?1000:baohanh) / 1000) - 1) * setting.getLevelthread();
+                                if (max_thread <= setting.getMaxthread()) {
+                                    videoViewhnew.setMaxthreads(max_thread);
+                                } else {
+                                    videoViewhnew.setMaxthreads(setting.getMaxthread());
+                                }
                                 videoViewhnew.setPrice(priceorder);
                                 videoViewhnew.setNote(videoViewHistories.get(i).getUser() +"| BHL"+(int)(videoViewHistories.get(i).getNumbh()+1));
                                 videoViewhnew.setService(videoViewHistories.get(i).getService());
@@ -724,13 +738,15 @@ public class VideoViewController {
                                 }
 
                                 float balance_new=admins.get(0).getBalance()-priceorder;
+                                System.out.println(balance_new);
                                 adminRepository.updateBalance(balance_new,admins.get(0).getUsername());
                                 Balance balance=new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
                                 balance.setTime(System.currentTimeMillis());
                                 balance.setTotalblance(balance_new);
                                 balance.setBalance(-priceorder);
-                                balance.setNote("Bao hanh " +baohanh+"h cho video "+videoViewHistories.get(i).getVideoid());
+                                balance.setService(service.getService());
+                                balance.setNote("Bảo hành " +baohanh+" view cho video "+videoViewHistories.get(i).getVideoid());
                                 balanceRepository.save(balance);
 
 
