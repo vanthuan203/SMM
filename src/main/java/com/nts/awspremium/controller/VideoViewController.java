@@ -145,6 +145,7 @@ public class VideoViewController {
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
+                    videoViewhnew.setValid(1);
                     videoViewRepository.save(videoViewhnew);
 
                     float balance_new = admins.get(0).getBalance() - priceorder;
@@ -738,6 +739,7 @@ public class VideoViewController {
                                 videoViewhnew.setPrice(priceorder);
                                 videoViewhnew.setNote(videoViewHistories.get(i).getUser() + "| BHL" + (int) (videoViewHistories.get(i).getNumbh() + 1));
                                 videoViewhnew.setService(videoViewHistories.get(i).getService());
+                                videoViewhnew.setValid(1);
                                 videoViewRepository.save(videoViewhnew);
                                 videoViewHistories.get(i).setNumbh(videoViewHistories.get(i).getNumbh() + 1);
                                 videoViewHistoryRepository.save(videoViewHistories.get(i));
@@ -1630,8 +1632,8 @@ public class VideoViewController {
     ResponseEntity<String> updatecheckcancel(@RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
         try {
-            videoViewRepository.updateCheckCancel(videoid);
-            resp.put("status", "true");
+            videoViewRepository.updateCheckCancel(videoid.trim());
+            resp.put("status", "true"+videoid);
             resp.put("message", "update trạng thái đơn thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

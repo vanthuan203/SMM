@@ -380,6 +380,7 @@ public class ApiController {
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());
+                        videoViewhnew.setValid(1);
                         videoViewRepository.save(videoViewhnew);
 
                         if (service.getType().equals("Special")) {
