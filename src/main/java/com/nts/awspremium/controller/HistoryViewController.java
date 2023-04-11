@@ -124,7 +124,7 @@ public class HistoryViewController {
                             }else{
                                 resp.put("sub","fail");
                             }
-                        }else if(videos.get(0).getService()<600){
+                        }else if(videos.get(0).getService()<600 || history.getUsername().indexOf("@gmail")<0){
                             resp.put("like","fail");
                             resp.put("sub","fail");
                         }else{
@@ -321,7 +321,7 @@ public class HistoryViewController {
                         }else{
                             resp.put("sub","fail");
                         }
-                    }else if(videos.get(0).getService()<600){
+                    }else if(videos.get(0).getService()<600 || histories.get(0).getUsername().indexOf("@gmail")<0){
                         resp.put("like","fail");
                         resp.put("sub","fail");
                     }else{

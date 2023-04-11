@@ -131,6 +131,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "update videoview set valid=1 where videoid=?1",nativeQuery = true)
     public void updateOrderCheck(String videoid);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update videoview set valid=0 where videoid=?1 and valid=1",nativeQuery = true)
+    public void updateCheckCancel(String videoid);
+
     @Query(value = "SELECT sum(vieworder) as total FROM videoview",nativeQuery = true)
     public Integer getCountViewBuffOrder();
 

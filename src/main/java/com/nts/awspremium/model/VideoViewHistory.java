@@ -26,10 +26,11 @@ public class VideoViewHistory {
     private Float price;
     private Long timecheck;
     private Integer numbh;
+    private Integer refund=0;
     public VideoViewHistory() {
     }
 
-    public VideoViewHistory(Long orderid, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer viewtotal, Integer cancel, Long insertdate, Long enddate, Integer vieworder, Integer service, Integer maxthreads, Long duration, String channeltitle, String note, String user, Float price, Long timecheck, Integer numbh) {
+    public VideoViewHistory(Long orderid, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer viewtotal, Integer cancel, Long insertdate, Long enddate, Integer vieworder, Integer service, Integer maxthreads, Long duration, String channeltitle, String note, String user, Float price, Long timecheck, Integer numbh, Integer refund) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -50,6 +51,15 @@ public class VideoViewHistory {
         this.price = price;
         this.timecheck = timecheck;
         this.numbh = numbh;
+        this.refund = refund;
+    }
+
+    public Integer getRefund() {
+        return refund;
+    }
+
+    public void setRefund(Integer refund) {
+        this.refund = refund;
     }
 
     public Integer getViewtotal() {
