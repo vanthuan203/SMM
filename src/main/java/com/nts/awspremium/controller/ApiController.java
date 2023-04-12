@@ -197,7 +197,7 @@ public class ApiController {
 
                     Request request1 = null;
 
-                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
                     Response response1 = client1.newCall(request1).execute();
 
@@ -244,6 +244,10 @@ public class ApiController {
                                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                             }
                             JSONObject snippet = (JSONObject) video.get("snippet");
+                            if(!snippet.get("liveBroadcastContent").toString().equals("none")){
+                                resp.put("error", "This video is not a pure public video");
+                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                            }
                             JSONObject statistics = (JSONObject) video.get("statistics");
                             VideoComment videoViewhnew = new VideoComment();
                             videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
@@ -305,7 +309,7 @@ public class ApiController {
 
                 Request request1 = null;
 
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -360,6 +364,10 @@ public class ApiController {
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         JSONObject snippet = (JSONObject) video.get("snippet");
+                        if(!snippet.get("liveBroadcastContent").toString().equals("none")){
+                            resp.put("error", "This video is not a pure public video");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
