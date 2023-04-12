@@ -96,6 +96,7 @@ public class AuthController {
         admins.get(0).setMaxorder(admin.getMaxorder());
         admins.get(0).setDiscount(admin.getDiscount());
         admins.get(0).setBalance(totalbalance);
+        admins.get(0).setRate(admin.getRate());
         if(admin.getBalance()>0){
             Balance balance=new Balance();
             balance.setUser(admin.getUsername().trim());
@@ -116,6 +117,7 @@ public class AuthController {
         obj.put("id", admins.get(0).getId());
         obj.put("maxorder",admins.get(0).getMaxorder());
         obj.put("vip",admins.get(0).getVip());
+        obj.put("rate",admins.get(0).getRate());
         obj.put("note",admins.get(0).getNote());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -166,6 +168,7 @@ public class AuthController {
             obj.put("username", users.get(i).getUsername());
             obj.put("role", users.get(i).getRole());
             obj.put("enabled",1);
+            obj.put("rate", users.get(i).getRate());
             obj.put("balance", users.get(i).getBalance());
             obj.put("discount", users.get(i).getDiscount());
             obj.put("id", users.get(i).getId());
@@ -280,12 +283,11 @@ public class AuthController {
         obj.put("enabled",1);
         obj.put("balance", admins.get(0).getBalance());
         obj.put("discount", admins.get(0).getDiscount());
+        obj.put("rate", admins.get(0).getRate());
         obj.put("id", admins.get(0).getId());
         resp.put("status","success");
         resp.put("user",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-
     }
 
     @PostMapping(path = "register",produces = "application/hal+json;charset=utf8")
@@ -304,6 +306,7 @@ public class AuthController {
             String token="";
             admin1.setBalance(0F);
             admin1.setDiscount(0);
+            admin1.setRate(125);
             Random ran=new Random();
             for(int i=0;i<30;i++){
                 Integer ranver=ran.nextInt(stringrand.length());

@@ -65,14 +65,15 @@ public class ApiController {
             if (data.getAction().equals("services")) {
                 List<Service> services = serviceRepository.getAllService();
                 JSONArray arr = new JSONArray();
-
+                float rate;
                 for (int i = 0; i < services.size(); i++) {
+                    rate=services.get(i).getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
                     JSONObject serviceBuffH = new JSONObject();
                     serviceBuffH.put("service", services.get(i).getService());
                     serviceBuffH.put("name", services.get(i).getName());
                     serviceBuffH.put("type", services.get(i).getType());
                     serviceBuffH.put("category", services.get(i).getCategory());
-                    serviceBuffH.put("rate", services.get(i).getRate());
+                    serviceBuffH.put("rate",rate );
                     serviceBuffH.put("min", services.get(i).getMin());
                     serviceBuffH.put("max", services.get(i).getMax());
                     arr.add(serviceBuffH);
@@ -237,7 +238,7 @@ public class ApiController {
                             }
                             float priceorder = 0;
                             int time = 0;
-                            priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                            priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)* ((float) (100 - admins.get(0).getDiscount()) / 100);
                             if (priceorder > (float) admins.get(0).getBalance()) {
                                 resp.put("error", "Your balance not enough");
                                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -353,7 +354,7 @@ public class ApiController {
                         }
                         float priceorder = 0;
                         int time = 0;
-                        priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                        priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
                         if (priceorder > (float) admins.get(0).getBalance()) {
                             resp.put("error", "Your balance not enough");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

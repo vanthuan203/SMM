@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
-    @Query(value = "SELECT * FROM service",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where enabled=1",nativeQuery = true)
     public List<Service> getAllService();
 
     @Query(value = "SELECT * FROM service where service=?1 limit 1",nativeQuery = true)
@@ -36,7 +36,7 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "update admin set balance=?1 where username=?2",nativeQuery = true)
     public Integer updateBalance(Float balance,String username);
 
-    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where enabled=1",nativeQuery = true)
     public List<String> GetAllService();
 
     @Query(value = "Select * from admin",nativeQuery = true)

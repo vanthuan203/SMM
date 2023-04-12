@@ -123,7 +123,7 @@ public class VideoViewController {
                     }
                     float priceorder = 0;
                     int time = 0;
-                    priceorder = (videoView.getVieworder() / 1000F) * service.getRate() * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                    priceorder = (videoView.getVieworder() / 1000F) * service.getRate()* ((float) (admins.get(0).getRate())/ 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                     if (priceorder > (float) admins.get(0).getBalance()) {
                         resp.put("videoview", "Your balance not enough");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -713,7 +713,7 @@ public class VideoViewController {
                                 }
                                 float priceorder = 0;
                                 Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
-                                priceorder = (baohanh / 1000F) * service.getRate() * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                                priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
                                 if (priceorder > (float) admins.get(0).getBalance()) {
                                     obj.put("videoview", "Số tiền không đủ!");
                                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
