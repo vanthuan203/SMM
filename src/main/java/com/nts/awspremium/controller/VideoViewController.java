@@ -74,6 +74,10 @@ public class VideoViewController {
                 resp.put("videoview", "Service not found ");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            if (videoView.getVieworder()>service.getMax() || videoView.getVieworder()<service.getMin()) {
+                resp.put("error", "Min/Max order is: "+service.getMin()+"/"+service.getMax());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             if (videoBuffhRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                     (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0)) {
                 resp.put("videoview", "System busy try again!");

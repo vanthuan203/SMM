@@ -185,6 +185,14 @@ public class ApiController {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if (service.getType().equals("Special") && data.getList().length() == 0) {
+                    resp.put("error", "Keyword is null");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                if (data.getQuantity()>service.getMax() || data.getQuantity()<service.getMin()) {
+                    resp.put("error", "Min/Max order is: "+service.getMin()+"/"+service.getMax());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 ////////////////////////////////
                 String videolist = GoogleApi.getYoutubeId(data.getLink());
                 if (videolist == null) {
