@@ -297,6 +297,7 @@ public class ApiCmtController {
                             dataComment.setUsername("");
                             dataComment.setRunning(0);
                             dataComment.setTimeget(0L);
+                            dataComment.setVps("");
                             dataCommentRepository.save(dataComment);
                         }
 

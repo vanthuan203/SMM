@@ -17,8 +17,8 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update datacomment set running=1,timeget=?1,username=?2 where orderid  in (select orderid from videocomment) and orderid=?3 and running=0 and username='' limit 1",nativeQuery = true)
-    public void updateRunningComment(Long timeget,String username,Long orderid);
+    @Query(value = "update datacomment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and orderid=?4 and running=0 and username='' limit 1",nativeQuery = true)
+    public void updateRunningComment(Long timeget,String username,String vps,Long orderid);
     @Modifying
     @Transactional
     @Query(value = "update datacomment set running=2 where id=?1",nativeQuery = true)
@@ -26,6 +26,11 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update datacomment set running=0,username='' where username=?1 and running=1",nativeQuery = true)
+    @Query(value = "update datacomment set running=0,username='',vps='' where vps=?1 and running=1",nativeQuery = true)
+    public void resetRunningCommentByVPS(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update datacomment set running=0,username='',vps='' where username=?1 and running=1",nativeQuery = true)
     public void resetRunningComment(String username);
 }

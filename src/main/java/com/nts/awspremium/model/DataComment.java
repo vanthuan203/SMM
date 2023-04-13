@@ -13,17 +13,27 @@ public class DataComment {
     private String username;
     private Integer running;
     private Long timeget;
+    private String vps;
 
     public DataComment() {
     }
 
-    public DataComment(Long id, Long orderid, String comment, String username, Integer running, Long timeget) {
+    public DataComment(Long id, Long orderid, String comment, String username, Integer running, Long timeget, String vps) {
         this.id = id;
         this.orderid = orderid;
         this.comment = comment;
         this.username = username;
         this.running = running;
         this.timeget = timeget;
+        this.vps = vps;
+    }
+
+    public String getVps() {
+        return vps;
+    }
+
+    public void setVps(String vps) {
+        this.vps = vps;
     }
 
     public Long getId() {

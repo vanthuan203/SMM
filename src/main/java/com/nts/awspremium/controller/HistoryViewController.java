@@ -659,6 +659,7 @@ public class HistoryViewController {
         try{
             historyViewRepository.resetThreadViewByVps(vps.trim());
             historyCommentRepository.resetThreadViewByVps(vps.trim());
+            dataCommentRepository.resetRunningCommentByVPS(vps.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

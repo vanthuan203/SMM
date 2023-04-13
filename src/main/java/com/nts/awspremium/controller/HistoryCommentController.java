@@ -120,12 +120,12 @@ public class HistoryCommentController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
 
-                    dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),videos.get(0).getOrderid());
+                    dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                     if(comment!=null){
                         resp.put("comment", comment.split(",")[1]);
-                        resp.put("comment_id", comment.split(",")[0]);
+                        resp.put("comment", comment.substring(comment.indexOf(",")+1));
                     }else{
                         resp.put("status", "fail");
                         resp.put("username", history.getUsername());
@@ -204,12 +204,12 @@ public class HistoryCommentController {
                     resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),videos.get(0).getOrderid());
+                dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                 Thread.sleep(ran.nextInt(1000)+500);
                 String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                 if(comment!=null){
-                    resp.put("comment", comment.split(",")[1]);
                     resp.put("comment_id", comment.split(",")[0]);
+                    resp.put("comment", comment.substring(comment.indexOf(",")+1));
                 }else{
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
