@@ -30,10 +30,16 @@ public class HistoryViewController {
 
     @Autowired
     private VideoViewRepository videoViewRepository;
+
+    @Autowired
+    private DataCommentRepository dataCommentRepository;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
     private HistoryViewRepository historyViewRepository;
+
+    @Autowired
+    private HistoryCommentRepository historyCommentRepository;
     @Autowired
     private HistorySumRepository historySumRepository;
     @Autowired
@@ -556,8 +562,10 @@ public class HistoryViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            Long  historieId=historyViewRepository.getId(username);
+            Long  historieId=historyViewRepository.getId(username.trim());
             historyViewRepository.resetThreadBuffhById(historieId);
+            historyCommentRepository.resetThreadBuffhByUsername(username.trim());
+            dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -650,6 +658,7 @@ public class HistoryViewController {
         }
         try{
             historyViewRepository.resetThreadViewByVps(vps.trim());
+            historyCommentRepository.resetThreadViewByVps(vps.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

@@ -31,6 +31,9 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
     @Query(value = "SELECT id FROM historycomment where vps like ?1 and running=0  order by timeget,rand() limit 1",nativeQuery = true)
     public Long getIdAccBuffCongchieu(String vps);
 
+    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccPremium' and COMMAND='Query' and Info LIKE ?1",nativeQuery = true)
+    public Integer CheckGetTaskComment(String query);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE historyview SET running=0,vps='' where id=?1",nativeQuery = true)
@@ -55,7 +58,7 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE historycomment SET running=0,videoid='',orderid=0 where vps=?1",nativeQuery = true)
     public Integer resetThreadViewByVps(String vps);
 
     @Modifying
@@ -66,8 +69,13 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where id=?1",nativeQuery = true)
+    @Query(value = "UPDATE historycomment SET running=0,videoid='',orderid=0 where id=?1",nativeQuery = true)
     public Integer resetThreadBuffhById(Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE historycomment SET running=0,videoid='',orderid=0 where username=?1",nativeQuery = true)
+    public Integer resetThreadBuffhByUsername(String username);
     @Modifying
     @Transactional
     @Query(value = "UPDATE historyview SET vps='',running=0,orderid=0 where INSTR(?1,id)",nativeQuery = true)

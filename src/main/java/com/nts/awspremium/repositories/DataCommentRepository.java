@@ -12,6 +12,9 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Query(value = "SELECT id,comment FROM datacomment WHERE orderid=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
     public String getCommentByOrderIdAndUsername(Long orderid,String username);
 
+    @Query(value = "SELECT count(*) FROM datacomment WHERE orderid=?1 and running=1",nativeQuery = true)
+    public Integer checkCommentDone(Long orderid);
+
     @Modifying
     @Transactional
     @Query(value = "update datacomment set running=1,timeget=?1,username=?2 where orderid  in (select orderid from videocomment) and orderid=?3 and running=0 and username='' limit 1",nativeQuery = true)
@@ -21,4 +24,8 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Query(value = "update datacomment set running=2 where id=?1",nativeQuery = true)
     public void updateRunningCommentDone(Long id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update datacomment set running=0,username='' where username=?1 and running=1",nativeQuery = true)
+    public void resetRunningComment(String username);
 }

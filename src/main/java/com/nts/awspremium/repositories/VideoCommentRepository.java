@@ -25,10 +25,10 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUS(String listvideo);
 
-    @Query(value = "SELECT * from videoview where orderid in (?1)",nativeQuery = true)
-    public List<VideoView> getVideoViewByListId(List<String> list_orderid);
-    @Query(value = "SELECT * from videoview where orderid=?1",nativeQuery = true)
-    public VideoView getVideoViewById(Long orderid);
+    @Query(value = "SELECT * from videocomment where orderid in (?1)",nativeQuery = true)
+    public List<VideoComment> getVideoViewByListId(List<String> list_orderid);
+    @Query(value = "SELECT * from videocomment where orderid=?1",nativeQuery = true)
+    public VideoComment getVideoViewById(Long orderid);
 
     @Query(value = "SELECT orderid from videocomment where videoid=?1",nativeQuery = true)
     public Long getOrderIdByVideoId(String videoid);
