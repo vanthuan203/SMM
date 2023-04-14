@@ -124,7 +124,7 @@ public class HistoryCommentController {
                     Thread.sleep(ran.nextInt(1000)+500);
                     String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                     if(comment!=null){
-                        resp.put("comment_id", comment.split(",")[1]);
+                        resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
                     }else{
                         resp.put("status", "fail");
