@@ -352,7 +352,6 @@ public class VideoCommentController {
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             List<String> viewBuff;
-            List<String> viewBuff24h;
             List<VideoComment> videoViewList = videoCommentRepository.getAllOrder();
             viewBuff = videoCommentRepository.getTotalCommentBuff();
 
@@ -1540,7 +1539,7 @@ public class VideoCommentController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            historyRepository.updateHistoryByAccount();
+            //historyRepository.updateHistoryByAccount();
             List<VideoComment> videoBuffh = videoCommentRepository.getOrderFullView();
             for (int i = 0; i < videoBuffh.size(); i++) {
                 Long enddate = System.currentTimeMillis();

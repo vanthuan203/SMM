@@ -59,7 +59,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videoview.videoid=?1",nativeQuery = true)
     public List<OrderCommentRunning> getVideoViewById(String videoid);
 
-    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.videoid=videocomment.videoid where  time>=videocomment.insertdate group by videocomment.videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.orderid=videocomment.orderid where  time>=videocomment.insertdate group by videocomment.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalCommentBuff();
 
     @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.videoid=videocomment.videoid where time>=videocomment.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videocomment.videoid order by insertdate desc",nativeQuery = true)

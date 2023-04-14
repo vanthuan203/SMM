@@ -293,8 +293,9 @@ public class VideoViewController {
             if (i == 0) {
                 s_videoid = listvideo.get(i).getVideoid();
             } else {
-                s_videoid = s_videoid + "," + listvideo.get(i);
+                s_videoid = s_videoid + "," + listvideo.get(i).getVideoid();
             }
+            System.out.println(s_videoid);
         }
         //VIDEOOOOOOOOOOOOOOO
         OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -320,6 +321,8 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 JSONObject snippet = (JSONObject) video.get("snippet");
+                System.out.println(video.get("id").toString());
+                System.out.println(snippet.get("liveBroadcastContent").toString());
                 if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                     VideoView videoView =videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
                     Service service = serviceRepository.getService(videoView.getService());
@@ -1639,7 +1642,7 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            historyRepository.updateHistoryByAccount();
+            //historyRepository.updateHistoryByAccount();
             List<VideoView> videoBuffh = videoViewRepository.getOrderFullView();
             for (int i = 0; i < videoBuffh.size(); i++) {
                 Long enddate = System.currentTimeMillis();
