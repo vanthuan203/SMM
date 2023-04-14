@@ -20,10 +20,10 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
 
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(111,112,113,122,123,801,802,811,812,813) and \n" +
             "orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
-    public List<VideoViewHistory> getVideoBHByVideoId(String videoid);
+    public List<VideoCommentHistory> getVideoBHByVideoId(String videoid);
 
     @Query(value = "SELECT * FROM videoviewhistory where orderid=?1 and service in(111,112,113,122,123,801,802,811,812,813) and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
-    public List<VideoViewHistory> getVideoBHByOrderId(Long orderid);
+    public List<VideoCommentHistory> getVideoBHByOrderId(Long orderid);
 
     @Modifying
     @Transactional
@@ -31,13 +31,13 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
     public Integer updateviewend(Integer viewend,String videoid);
 
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHistories();
+    public List<VideoCommentHistory> getVideoViewHistories();
 
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 and videoid=?1 order by enddate desc",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHistoriesByVideoId(String videoid);
+    public List<VideoCommentHistory> getVideoViewHistoriesByVideoId(String videoid);
 
     @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHistories(String user);
+    public List<VideoCommentHistory> getVideoViewHistories(String user);
 
 
 

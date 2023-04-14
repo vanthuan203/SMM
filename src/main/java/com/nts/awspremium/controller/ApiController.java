@@ -96,7 +96,11 @@ public class ApiController {
                         resp.put("start_count", video.getViewstart());
                         resp.put("current_count", video.getViewtotal()+video.getViewstart());
                         resp.put("charge", video.getPrice());
-                        resp.put("status", "In progress");
+                        if(video.getMaxthreads()==0){
+                            resp.put("status", "Processing");
+                        }else{
+                            resp.put("status", "In progress");
+                        }
                         resp.put("remains", video.getVieworder() - video.getViewtotal());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     } else {
@@ -130,7 +134,12 @@ public class ApiController {
                         videoview.put("start_count", v.getViewstart());
                         videoview.put("current_count", v.getViewstart() + v.getViewtotal());
                         videoview.put("charge", v.getPrice());
-                        videoview.put("status", "In progress");
+                        if(v.getMaxthreads()==0){
+                            videoview.put("status", "Processing");
+                        }else{
+                            videoview.put("status", "In progress");
+                        }
+                        //videoview.put("status", "In progress");
                         videoview.put("remains", v.getVieworder() - v.getViewtotal());
                         videosview.put("" + v.getOrderid(), videoview);
                         ordersArrInput.remove("" + v.getOrderid());
@@ -199,119 +208,6 @@ public class ApiController {
                     resp.put("error", "Cant filter videoid from link");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (service.getType().equals("Custom Comments")) {
-                    int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;
-                    OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
-                    Request request1 = null;
-
-                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
-
-                    Response response1 = client1.newCall(request1).execute();
-
-                    String resultJson1 = response1.body().string();
-                    Object obj1 = new JSONParser().parse(resultJson1);
-                    JSONObject jsonObject1 = (JSONObject) obj1;
-                    JSONArray items = (JSONArray) jsonObject1.get("items");
-                    if (items == null) {
-                        resp.put("error", "Can't get video info");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
-                    Iterator k = items.iterator();
-                    if (k.hasNext() == false) {
-                        resp.put("error", "Can't get video info");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
-
-                    /////////////////////////////////////////////
-                    while (k.hasNext()) {
-                        try {
-                            JSONObject video = (JSONObject) k.next();
-                            JSONObject contentDetails = (JSONObject) video.get("contentDetails");
-                            if (videoViewRepository.getCountVideoId(video.get("id").toString().trim()) > 0) {
-                                resp.put("error", "This video in process");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            if (service == null) {
-                                resp.put("error", "Service not found ");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
-                                resp.put("error", "This video is a livestream video");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 60) {
-                                resp.put("error", "Videos under 60 seconds");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            float priceorder = 0;
-                            int time = 0;
-                            priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)* ((float) (100 - admins.get(0).getDiscount()) / 100);
-                            if (priceorder > (float) admins.get(0).getBalance()) {
-                                resp.put("error", "Your balance not enough");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            JSONObject snippet = (JSONObject) video.get("snippet");
-                            if(!snippet.get("liveBroadcastContent").toString().equals("none")){
-                                resp.put("error", "This video is not a pure public video");
-                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            }
-                            JSONObject statistics = (JSONObject) video.get("statistics");
-                            VideoComment videoViewhnew = new VideoComment();
-                            videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
-                            videoViewhnew.setInsertdate(System.currentTimeMillis());
-                            videoViewhnew.setCommenttotal(0);
-                            videoViewhnew.setCommentorder(data.getQuantity());
-                            videoViewhnew.setUser(admins.get(0).getUsername());
-                            videoViewhnew.setChannelid(snippet.get("channelId").toString());
-                            videoViewhnew.setVideotitle(snippet.get("title").toString());
-                            videoViewhnew.setVideoid(video.get("id").toString());
-                            videoViewhnew.setCommentstart(Integer.parseInt(statistics.get("commentCount").toString()));
-                            int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                            if (max_thread <= setting.getMaxthread()) {
-                                videoViewhnew.setMaxthreads(max_thread);
-                            } else {
-                                videoViewhnew.setMaxthreads(setting.getMaxthread());
-                            }
-                            videoViewhnew.setPrice(priceorder);
-                            videoViewhnew.setNote("");
-                            videoViewhnew.setService(data.getService());
-                            videoCommentRepository.save(videoViewhnew);
-
-                            //list comment
-                            String[] comments = data.getComments().split("\n");
-                            System.out.println(comments);
-                            for (int i = 0; i < comments.length; i++) {
-                                DataComment dataComment = new DataComment();
-                                dataComment.setOrderid(videoViewhnew.getOrderid());
-                                dataComment.setComment(comments[i]);
-                                dataComment.setUsername("");
-                                dataComment.setRunning(0);
-                                dataComment.setTimeget(0L);
-                                dataComment.setVps("");
-                                dataCommentRepository.save(dataComment);
-                            }
-
-                            float balance_new = admins.get(0).getBalance() - priceorder;
-                            adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
-                            Balance balance = new Balance();
-                            balance.setUser(admins.get(0).getUsername().trim());
-                            balance.setTime(System.currentTimeMillis());
-                            balance.setTotalblance(balance_new);
-                            balance.setBalance(-priceorder);
-                            balance.setService(data.getService());
-                            balance.setNote("Order " + data.getQuantity() + " comment cho video " + videoViewhnew.getVideoid());
-                            balanceRepository.save(balance);
-                            resp.put("order", videoViewhnew.getOrderid());
-                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                            //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
-
-                        } catch (Exception e) {
-                            resp.put("error", "Cant insert video");
-                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                        }
-                    }
-                }
                 //VIDEOOOOOOOOOOOOOOO
                 int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -373,10 +269,12 @@ public class ApiController {
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         JSONObject snippet = (JSONObject) video.get("snippet");
+                        /*
                         if(!snippet.get("liveBroadcastContent").toString().equals("none")){
                             resp.put("error", "This video is not a pure public video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                         */
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
@@ -389,11 +287,19 @@ public class ApiController {
                         videoViewhnew.setVideotitle(snippet.get("title").toString());
                         videoViewhnew.setVideoid(video.get("id").toString());
                         videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                        int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                        if (max_thread <= setting.getMaxthread()) {
-                            videoViewhnew.setMaxthreads(max_thread);
-                        } else {
-                            videoViewhnew.setMaxthreads(setting.getMaxthread());
+                        ////////////////
+                        if(snippet.get("liveBroadcastContent").toString().equals("none")){
+                            int max_thread = service.getThread() + ((int)(data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                            if (max_thread <= setting.getMaxthread()) {
+                                videoViewhnew.setMaxthreads(max_thread);
+                            } else {
+                                videoViewhnew.setMaxthreads(setting.getMaxthread());
+                            }
+                        }else if(snippet.get("liveBroadcastContent").toString().equals("live")){
+                            videoViewhnew.setMaxthreads(0);
+                        }else{
+                            resp.put("error", "This video is not a pure public video");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");

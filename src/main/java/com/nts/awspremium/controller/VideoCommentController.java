@@ -52,6 +52,12 @@ public class VideoCommentController {
     private VideoViewHistoryRepository videoViewHistoryRepository;
     @Autowired
     private VideoViewRepository videoViewRepository;
+
+    @Autowired
+    private VideoCommentRepository videoCommentRepository;
+
+    @Autowired
+    private VideoCommentHistoryRepository videoCommentHistoryRepository;
     @Autowired
     private ServiceRepository serviceRepository;
 
@@ -188,46 +194,6 @@ public class VideoCommentController {
     }
 
 
-    @GetMapping(value = "/checkduration", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkduration(@RequestParam(defaultValue = "") String listvideo) throws IOException, ParseException {
-        JSONObject resp = new JSONObject();
-        System.out.println(listvideo);
-        //VIDEOOOOOOOOOOOOOOO
-        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
-        Request request1 = null;
-
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,contentDetails(duration))&part=contentDetails&id=" + listvideo).get().build();
-
-        Response response1 = client1.newCall(request1).execute();
-
-        String resultJson1 = response1.body().string();
-
-        Object obj1 = new JSONParser().parse(resultJson1);
-
-        JSONObject jsonObject1 = (JSONObject) obj1;
-        JSONArray items = (JSONArray) jsonObject1.get("items");
-        JSONArray jsonArray = new JSONArray();
-        Iterator k = items.iterator();
-
-        while (k.hasNext()) {
-            try {
-                JSONObject video = (JSONObject) k.next();
-                JSONObject obj = new JSONObject();
-                JSONObject contentDetails = (JSONObject) video.get("contentDetails");
-                obj.put("duration", Duration.parse(contentDetails.get("duration").toString()).getSeconds());
-                return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
-                //jsonArray.add(obj);
-            } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-
-        }
-        resp.put("durations", jsonArray);
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-
     @GetMapping(value = "/updateviewendcron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateviewendcron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -291,12 +257,12 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<OrderViewRunning> orderRunnings;
+            List<OrderCommentRunning> orderRunnings;
             if (user.length() == 0) {
-                orderRunnings = videoViewRepository.getOrder();
+                orderRunnings = videoCommentRepository.getOrder();
 
             } else {
-                orderRunnings = videoViewRepository.getOrder(user.trim());
+                orderRunnings = videoCommentRepository.getOrder(user.trim());
             }
 
             JSONArray jsonArray = new JSONArray();
@@ -306,24 +272,22 @@ public class VideoCommentController {
                 obj.put("orderid", orderRunnings.get(i).getOrderId());
                 obj.put("videoid", orderRunnings.get(i).getVideoId());
                 obj.put("videotitle", orderRunnings.get(i).getVideoTitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewStart());
+                obj.put("commentstart", orderRunnings.get(i).getCommentStart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertDate());
                 obj.put("total", orderRunnings.get(i).getTotal());
-                obj.put("vieworder", orderRunnings.get(i).getViewOrder());
+                obj.put("commentorder", orderRunnings.get(i).getCommentOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("service", orderRunnings.get(i).getService());
                 obj.put("user", orderRunnings.get(i).getUser());
-
-                obj.put("view24h", orderRunnings.get(i).getView24h());
-                obj.put("viewtotal", orderRunnings.get(i).getViewTotal());
+                obj.put("commenttotal", orderRunnings.get(i).getCommentTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 jsonArray.add(obj);
             }
 
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("videocomment", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -343,12 +307,12 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<OrderViewRunning> orderRunnings;
+            List<OrderCommentRunning> orderRunnings;
             if (user.length() == 0) {
-                orderRunnings = videoViewRepository.getOrderCheckCancel();
+                orderRunnings = videoCommentRepository.getOrderCheckCancel();
 
             } else {
-                orderRunnings = videoViewRepository.getOrderCheckCancel(user.trim());
+                orderRunnings = videoCommentRepository.getOrderCheckCancel(user.trim());
             }
 
             JSONArray jsonArray = new JSONArray();
@@ -358,24 +322,22 @@ public class VideoCommentController {
                 obj.put("orderid", orderRunnings.get(i).getOrderId());
                 obj.put("videoid", orderRunnings.get(i).getVideoId());
                 obj.put("videotitle", orderRunnings.get(i).getVideoTitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewStart());
+                obj.put("commentstart", orderRunnings.get(i).getCommentStart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertDate());
                 obj.put("total", orderRunnings.get(i).getTotal());
-                obj.put("vieworder", orderRunnings.get(i).getViewOrder());
+                obj.put("commentorder", orderRunnings.get(i).getCommentOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("service", orderRunnings.get(i).getService());
                 obj.put("user", orderRunnings.get(i).getUser());
-
-                obj.put("view24h", orderRunnings.get(i).getView24h());
-                obj.put("viewtotal", orderRunnings.get(i).getViewTotal());
+                obj.put("commenttotal", orderRunnings.get(i).getCommentTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 jsonArray.add(obj);
             }
 
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("videocomment", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -391,19 +353,18 @@ public class VideoCommentController {
         try {
             List<String> viewBuff;
             List<String> viewBuff24h;
-            List<VideoView> videoViewList = videoViewRepository.getAllOrder();
-            viewBuff = videoViewRepository.getTotalViewBuff();
+            List<VideoComment> videoViewList = videoCommentRepository.getAllOrder();
+            viewBuff = videoCommentRepository.getTotalCommentBuff();
 
             for (int i = 0; i < videoViewList.size(); i++) {
                 int viewtotal = 0;
-                int view24h = 0;
                 for (int j = 0; j < viewBuff.size(); j++) {
                     if (videoViewList.get(i).getVideoid().equals(viewBuff.get(j).split(",")[0])) {
                         viewtotal = Integer.parseInt(viewBuff.get(j).split(",")[1]);
                     }
                 }
                 try {
-                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(), videoViewList.get(i).getVideoid());
+                    videoCommentRepository.updateViewOrderByVideoId(viewtotal, System.currentTimeMillis(), videoViewList.get(i).getVideoid());
                 } catch (Exception e) {
 
                 }
@@ -411,7 +372,7 @@ public class VideoCommentController {
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
 
             resp.put("total", videoViewList.size());
-            resp.put("videoview", true);
+            resp.put("videocomment", true);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -1089,11 +1050,11 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<VideoViewHistory> orderRunnings;
+            List<VideoCommentHistory> orderRunnings;
             if (user.length() == 0) {
-                orderRunnings = videoViewHistoryRepository.getVideoViewHistories();
+                orderRunnings = videoCommentHistoryRepository.getVideoViewHistories();
             } else {
-                orderRunnings = videoViewHistoryRepository.getVideoViewHistories(user.trim());
+                orderRunnings = videoCommentHistoryRepository.getVideoViewHistories(user.trim());
             }
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
@@ -1101,7 +1062,7 @@ public class VideoCommentController {
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
                 obj.put("videotitle", orderRunnings.get(i).getVideotitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewstart());
+                obj.put("commentstart", orderRunnings.get(i).getCommentstart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
                 obj.put("user", orderRunnings.get(i).getUser());
@@ -1110,9 +1071,9 @@ public class VideoCommentController {
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
-                obj.put("viewend", orderRunnings.get(i).getViewend());
-                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
-                obj.put("vieworder", orderRunnings.get(i).getVieworder());
+                obj.put("commentend", orderRunnings.get(i).getCommentend());
+                obj.put("commenttotal", orderRunnings.get(i).getCommenttotal());
+                obj.put("commentorder", orderRunnings.get(i).getCommentorder());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
                 jsonArray.add(obj);
@@ -1120,7 +1081,7 @@ public class VideoCommentController {
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
 
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("videocomment", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -1510,8 +1471,8 @@ public class VideoCommentController {
             for (int i = 0; i < videoidArr.length; i++) {
 
                 Long enddate = System.currentTimeMillis();
-                List<VideoView> videoBuffh = videoViewRepository.getVideoBuffhById(videoidArr[i].trim());
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
+                List<VideoComment> videoBuffh = videoCommentRepository.getVideoBuffhById(videoidArr[i].trim());
+                VideoCommentHistory videoBuffhnew = new VideoCommentHistory();
                 videoBuffhnew.setOrderid(videoBuffh.get(0).getOrderid());
                 videoBuffhnew.setDuration(videoBuffh.get(0).getDuration());
                 videoBuffhnew.setInsertdate(videoBuffh.get(0).getInsertdate());
@@ -1519,8 +1480,8 @@ public class VideoCommentController {
                 videoBuffhnew.setChannelid(videoBuffh.get(0).getChannelid());
                 videoBuffhnew.setVideotitle(videoBuffh.get(0).getVideotitle());
                 videoBuffhnew.setVideoid(videoBuffh.get(0).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(0).getViewstart());
-                videoBuffhnew.setVieworder(videoBuffh.get(0).getVieworder());
+                videoBuffhnew.setCommentstart(videoBuffh.get(0).getCommentstart());
+                videoBuffhnew.setCommentorder(videoBuffh.get(0).getCommentorder());
                 videoBuffhnew.setMaxthreads(videoBuffh.get(0).getMaxthreads());
                 videoBuffhnew.setNote(videoBuffh.get(0).getNote());
                 videoBuffhnew.setNumbh(0);
@@ -1530,8 +1491,8 @@ public class VideoCommentController {
                     Service service = serviceRepository.getService(videoBuffh.get(0).getService());
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.get(0).getUser());
                     //Hoàn tiền những view chưa buff
-                    int viewbuff = videoBuffh.get(0).getViewtotal();
-                    float price_refund = ((videoBuffh.get(0).getVieworder() - videoBuffh.get(0).getViewtotal()) / (float) videoBuffh.get(0).getVieworder()) * videoBuffh.get(0).getPrice();
+                    int viewbuff = videoBuffh.get(0).getCommenttotal();
+                    float price_refund = ((videoBuffh.get(0).getCommentorder() - videoBuffh.get(0).getCommenttotal()) / (float) videoBuffh.get(0).getCommentorder()) * videoBuffh.get(0).getPrice();
                     //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                     float pricebuffed = (videoBuffh.get(0).getPrice() - price_refund);
                     videoBuffhnew.setPrice(pricebuffed);
@@ -1541,7 +1502,7 @@ public class VideoCommentController {
                         videoBuffhnew.setCancel(2);
                     }
                     //hoàn tiền & add thong báo số dư
-                    int viewthan = (int) (videoBuffh.get(0).getVieworder() - viewbuff);
+                    int viewthan = (int) (videoBuffh.get(0).getCommenttotal() - viewbuff);
                     float balance_new = user.get(0).getBalance() + price_refund;
                     user.get(0).setBalance(balance_new);
                     adminRepository.save(user.get(0));
@@ -1560,11 +1521,11 @@ public class VideoCommentController {
                 }
                 videoBuffhnew.setUser(videoBuffh.get(0).getUser());
                 videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setViewtotal(videoBuffh.get(0).getViewtotal());
-                videoViewHistoryRepository.save(videoBuffhnew);
-                videoViewRepository.deletevideoByVideoId(videoidArr[i].trim());
+                videoBuffhnew.setCommenttotal(videoBuffh.get(0).getCommenttotal());
+                videoCommentHistoryRepository.save(videoBuffhnew);
+                videoCommentRepository.deletevideoByVideoId(videoidArr[i].trim());
             }
-            resp.put("videoview", "");
+            resp.put("videocomment", "");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -1580,18 +1541,18 @@ public class VideoCommentController {
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullView();
+            List<VideoComment> videoBuffh = videoCommentRepository.getOrderFullView();
             for (int i = 0; i < videoBuffh.size(); i++) {
                 Long enddate = System.currentTimeMillis();
 
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
+                VideoCommentHistory videoBuffhnew = new VideoCommentHistory();
                 videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
                 videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
                 videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
                 videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
                 videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
                 videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
+                videoBuffhnew.setCommentstart(videoBuffh.get(i).getCommentstart());
                 videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
                 videoBuffhnew.setNote(videoBuffh.get(i).getNote());
                 videoBuffhnew.setCancel(0);
@@ -1600,12 +1561,12 @@ public class VideoCommentController {
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
+                videoBuffhnew.setCommenttotal(videoBuffh.get(i).getCommenttotal());
+                videoBuffhnew.setCommentorder(videoBuffh.get(i).getCommentorder());
                 videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
                 try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
+                    videoCommentHistoryRepository.save(videoBuffhnew);
+                    videoCommentRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
                 } catch (Exception e) {
 
                 }

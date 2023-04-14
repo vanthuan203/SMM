@@ -74,8 +74,8 @@ public class VideoViewController {
                 resp.put("videoview", "Service not found ");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            if (videoView.getVieworder()>service.getMax() || videoView.getVieworder()<service.getMin()) {
-                resp.put("error", "Min/Max order is: "+service.getMin()+"/"+service.getMax());
+            if (videoView.getVieworder() > service.getMax() || videoView.getVieworder() < service.getMin()) {
+                resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if (videoBuffhRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
@@ -127,13 +127,13 @@ public class VideoViewController {
                     }
                     float priceorder = 0;
                     int time = 0;
-                    priceorder = (videoView.getVieworder() / 1000F) * service.getRate()* ((float) (admins.get(0).getRate())/ 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                    priceorder = (videoView.getVieworder() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                     if (priceorder > (float) admins.get(0).getBalance()) {
                         resp.put("videoview", "Your balance not enough");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     JSONObject snippet = (JSONObject) video.get("snippet");
-                    if(!snippet.get("liveBroadcastContent").toString().equals("none")){
+                    if (!snippet.get("liveBroadcastContent").toString().equals("none")) {
                         resp.put("error", "This video is not a pure public video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -269,6 +269,66 @@ public class VideoViewController {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
                 //jsonArray.add(obj);
+            } catch (Exception e) {
+                resp.put("status", e);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/updateRunningOrder", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> listvideo = videoViewRepository.getAllOrderPending();
+        if (listvideo.size() == 0) {
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        String s_videoid = "";
+        for (int i = 0; i < listvideo.size(); i++) {
+            if (i == 0) {
+                s_videoid = listvideo.get(i).getVideoid();
+            } else {
+                s_videoid = s_videoid + "," + listvideo.get(i);
+            }
+        }
+        //VIDEOOOOOOOOOOOOOOO
+        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+        Request request1 = null;
+
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
+
+        Response response1 = client1.newCall(request1).execute();
+
+        String resultJson1 = response1.body().string();
+
+        Object obj1 = new JSONParser().parse(resultJson1);
+
+        JSONObject jsonObject1 = (JSONObject) obj1;
+        JSONArray items = (JSONArray) jsonObject1.get("items");
+        JSONArray jsonArray = new JSONArray();
+        Iterator k = items.iterator();
+        Setting setting = settingRepository.getReferenceById(1L);
+        while (k.hasNext()) {
+            try {
+                JSONObject video = (JSONObject) k.next();
+                JSONObject obj = new JSONObject();
+                JSONObject statistics = (JSONObject) video.get("statistics");
+                JSONObject snippet = (JSONObject) video.get("snippet");
+                if (snippet.get("liveBroadcastContent").toString().equals("none")) {
+                    VideoView videoView =videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
+                    Service service = serviceRepository.getService(videoView.getService());
+                    int max_thread = service.getThread() + ((int)(videoView.getVieworder() / 1000) - 1) * setting.getLevelthread();
+                    if (max_thread > setting.getMaxthread()) {
+                        max_thread=setting.getMaxthread();
+                    }
+                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()),max_thread,System.currentTimeMillis(), video.get("id").toString());
+                }
             } catch (Exception e) {
                 resp.put("status", e);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -650,14 +710,14 @@ public class VideoViewController {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(orderid!=videoViewHistories.get(0).getOrderid()){
+                if (orderid != videoViewHistories.get(0).getOrderid()) {
                     resp.put("videoview", "Không đủ ĐK bảo hành!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
-                if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
+                if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
                     resp.put("videoview", "Đã hoàn trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -721,7 +781,7 @@ public class VideoViewController {
                                 }
                                 float priceorder = 0;
                                 Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
-                                priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
+                                priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                                 if (priceorder > (float) admins.get(0).getBalance()) {
                                     obj.put("videoview", "Số tiền không đủ!");
                                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
@@ -838,7 +898,7 @@ public class VideoViewController {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(orderid!=videoViewHistories.get(0).getOrderid()){
+                if (orderid != videoViewHistories.get(0).getOrderid()) {
                     resp.put("videoview", "Không đủ ĐK hoàn tiền!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -846,7 +906,7 @@ public class VideoViewController {
 
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
-                if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
+                if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
                     resp.put("videoview", "Đã hoàn trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -903,14 +963,14 @@ public class VideoViewController {
                         List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
                         //Hoàn tiền những view chưa buff
                         int viewcount = Integer.parseInt(statistics.get("viewCount").toString());
-                        int viewthan = videoViewHistories.get(i).getVieworder()+videoViewHistories.get(i).getViewstart() - viewcount;
-                        if(viewthan>videoViewHistories.get(i).getVieworder()){
-                            viewthan=  videoViewHistories.get(i).getVieworder();
+                        int viewthan = videoViewHistories.get(i).getVieworder() + videoViewHistories.get(i).getViewstart() - viewcount;
+                        if (viewthan > videoViewHistories.get(i).getVieworder()) {
+                            viewthan = videoViewHistories.get(i).getVieworder();
                         }
                         float price_refund = ((viewthan) / (float) videoViewHistories.get(i).getVieworder()) * videoViewHistories.get(i).getPrice();
                         //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
-                        if(videoViewHistories.get(i).getPrice()<price_refund){
-                            price_refund=videoViewHistories.get(i).getPrice();
+                        if (videoViewHistories.get(i).getPrice() < price_refund) {
+                            price_refund = videoViewHistories.get(i).getPrice();
                         }
                         float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
                         videoViewHistories.get(i).setPrice(pricebuffed);
@@ -985,14 +1045,14 @@ public class VideoViewController {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(orderid!=videoViewHistories.get(0).getOrderid()){
+                if (orderid != videoViewHistories.get(0).getOrderid()) {
                     resp.put("videoview", "Không đủ ĐK bảo hành!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
-                if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
+                if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
                     resp.put("videoview", "Đã hoàn trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -1641,7 +1701,7 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         try {
             videoViewRepository.updateCheckCancel(videoid.trim());
-            resp.put("status", "true"+videoid);
+            resp.put("status", "true" + videoid);
             resp.put("message", "update trạng thái đơn thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

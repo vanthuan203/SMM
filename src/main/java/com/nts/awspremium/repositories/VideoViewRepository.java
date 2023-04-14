@@ -85,6 +85,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * from videoview where orderid=?1",nativeQuery = true)
     public VideoView getVideoViewById(Long orderid);
 
+    @Query(value = "SELECT * from videoview where videoid=?1",nativeQuery = true)
+    public VideoView getVideoViewByVideoid(String videoid);
+
 
     @Query(value = "SELECT count(*) from videoview where user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);
@@ -94,6 +97,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT * FROM videoview order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrder();
+
+    @Query(value = "SELECT * FROM videoview where maxthreads=0 order by insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderPending();
 
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user!='baohanh01@gmail.com' group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder();
@@ -115,6 +121,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where time>=videoview.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> get24hViewBuff();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
+    public void updatePendingOrderByVideoId(Integer viewstart,Integer maxthreads,Long timeupdate,String videoid);
 
     @Modifying
     @Transactional
