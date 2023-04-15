@@ -902,7 +902,7 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (orderid != videoViewHistories.get(0).getOrderid()) {
-                    resp.put("videoview", "Không đủ ĐK hoàn tiền!");
+                    resp.put("videoview", "Không đủ ĐK hoàn tiền!("+videoViewHistories.get(0).getOrderid()+")");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
@@ -979,6 +979,11 @@ public class VideoViewController {
                         videoViewHistories.get(i).setPrice(pricebuffed);
                         videoViewHistories.get(i).setViewend(viewcount);
                         videoViewHistories.get(i).setRefund(1);
+                        if( price_refund == videoViewHistories.get(i).getPrice()){
+                            videoViewHistories.get(i).setCancel(1);
+                        }else{
+                            videoViewHistories.get(i).setCancel(2);
+                        }
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         //hoàn tiền & add thong báo số dư
                         float balance_new = user.get(0).getBalance() + price_refund;
