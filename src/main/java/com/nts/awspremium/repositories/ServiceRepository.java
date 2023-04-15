@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
-    @Query(value = "SELECT * FROM service where enabled=1 and and type!=\"Custom Comments\"",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where enabled=1 and type!=\"Custom Comments\"",nativeQuery = true)
     public List<Service> getAllService();
 
     @Query(value = "SELECT * FROM service where enabled=1 and type=\"Custom Comments\"",nativeQuery = true)
