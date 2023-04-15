@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "videobuffh")
 public class VideoBuffh {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String videoid;
     private String videotitle;

@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "Cookie")
 public class Cookie {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
     private String cookie;
