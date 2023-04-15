@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Entity
 public class HistorySum {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String videoid;

@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "setting")
 public class Setting {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer maxorder;
     private Integer mintimebuff;

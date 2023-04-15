@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "Encodefinger")
 public class Encodefinger {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
     private String encodefinger;

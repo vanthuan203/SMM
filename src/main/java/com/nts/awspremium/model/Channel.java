@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name = "channel")
 public class Channel{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String channelid;
     private Integer premiumrate;

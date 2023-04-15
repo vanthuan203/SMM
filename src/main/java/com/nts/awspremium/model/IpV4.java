@@ -7,7 +7,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 @Table(name="ipv4")
 public class IpV4 {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String ipv4;
     private Integer state;

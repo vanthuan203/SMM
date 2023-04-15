@@ -6,7 +6,7 @@ import javax.persistence.*;
 @Table(name="proxy")
 public class Proxy {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String proxy;
     private Integer state;
