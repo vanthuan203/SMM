@@ -370,8 +370,9 @@ public class HistoryCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            Long historieId = historyViewRepository.getId(username);
-            historyViewRepository.resetThreadBuffhById(historieId);
+            Long historieId = historyCommentRepository.getId(username);
+            historyCommentRepository.resetThreadBuffhById(historieId);
+            dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

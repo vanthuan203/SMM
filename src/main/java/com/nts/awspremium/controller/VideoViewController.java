@@ -978,6 +978,7 @@ public class VideoViewController {
                         float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
                         videoViewHistories.get(i).setPrice(pricebuffed);
                         videoViewHistories.get(i).setViewend(viewcount);
+                        videoViewHistories.get(i).setViewtotal(videoViewHistories.get(i).getVieworder()-viewthan);
                         videoViewHistories.get(i).setRefund(1);
                         if( price_refund == videoViewHistories.get(i).getPrice()){
                             videoViewHistories.get(i).setCancel(1);
