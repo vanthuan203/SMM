@@ -564,8 +564,8 @@ public class HistoryViewController {
         try{
             Long  historieId=historyViewRepository.getId(username.trim());
             historyViewRepository.resetThreadBuffhById(historieId);
-            historyCommentRepository.resetThreadBuffhByUsername(username.trim());
-            dataCommentRepository.resetRunningComment(username.trim());
+            //historyCommentRepository.resetThreadBuffhByUsername(username.trim());
+            //dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
