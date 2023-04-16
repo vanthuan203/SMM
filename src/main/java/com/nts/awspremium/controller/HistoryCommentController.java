@@ -284,7 +284,7 @@ public class HistoryCommentController {
                     } catch (Exception f) {
                     }
                 }
-                if (historyCommentRepository.getListVideoById(historieId).length() > 1500) {
+                if (historyCommentRepository.getListVideoById(historieId).length() > 150) {
                     historyCommentRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyCommentRepository.updateListVideo(videoid, historieId);
