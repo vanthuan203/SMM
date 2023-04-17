@@ -115,18 +115,20 @@ public class HistoryCommentController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
 
-                     */
-                    if(historyCommentRepository.CheckGetTaskComment("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%")>0){
+
+                    if(historyCommentRepository.CheckGetTaskComment("%orderid="+videos.get(0).getOrderid().toString().trim()+"%")>0){
                         resp.put("status", "fail");
                         resp.put("username", history.getUsername());
                         resp.put("fail", "video");
                         resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+
+                     */
                     //System.out.println("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%");
                     //System.out.println(historyCommentRepository.CheckGetTaskComment("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%"));
                     dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
-                    Thread.sleep(ran.nextInt(1000)+500);
+                    //Thread.sleep(ran.nextInt(1000)+500);
                     String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                     if(comment!=null){
                         resp.put("comment_id", comment.split(",")[0]);
@@ -202,7 +204,7 @@ public class HistoryCommentController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
 
-                 */
+
                 if(historyCommentRepository.CheckGetTaskComment("(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%")>0){
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
@@ -210,9 +212,9 @@ public class HistoryCommentController {
                     resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
+                 */
                 dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
-                Thread.sleep(ran.nextInt(1000)+500);
+                //Thread.sleep(ran.nextInt(1000)+500);
                 String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                 if(comment!=null){
                     resp.put("comment_id", comment.split(",")[0]);
@@ -381,7 +383,7 @@ public class HistoryCommentController {
         try {
             Long historieId = historyCommentRepository.getId(username);
             historyCommentRepository.resetThreadBuffhById(historieId);
-            dataCommentRepository.resetRunningComment(username.trim());
+            //dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
