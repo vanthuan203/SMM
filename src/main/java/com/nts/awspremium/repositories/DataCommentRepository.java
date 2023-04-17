@@ -40,6 +40,11 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update  datacomment set running=0,username='',vps='' where round((UNIX_TIMESTAMP()-timeget/1000)/60)>7 and running=1",nativeQuery = true)
+    @Query(value = "update  datacomment set running=0,username='',vps='' where round((UNIX_TIMESTAMP()-timeget/1000)/60)>5 and running=1",nativeQuery = true)
     public void resetRunningCommentByCron();
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete FROM AccPremium.datacomment where orderid not in (select orderid from videocomment)",nativeQuery = true)
+    public void deleteCommentDoneByCron();
 }

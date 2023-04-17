@@ -31,7 +31,7 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
     @Query(value = "SELECT id FROM historycomment where vps like ?1 and running=0  order by timeget,rand() limit 1",nativeQuery = true)
     public Long getIdAccBuffCongchieu(String vps);
 
-    @Query(value = "select * from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccPremium' and STATE='updating' and INFO LIKE ?1",nativeQuery = true)
+    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccPremium' and COMMAND='Query' and STATE in('preparing','updating') and INFO LIKE ?1",nativeQuery = true)
     public Integer CheckGetTaskComment(String query);
 
     @Modifying
