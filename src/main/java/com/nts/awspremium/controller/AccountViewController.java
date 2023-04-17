@@ -83,7 +83,7 @@ public class AccountViewController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(historyViewRepository.PROCESSLISTVIEW()>=20){
+        if(historyViewRepository.PROCESSLISTVIEW()>=30){
             resp.put("status", "fail");
             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

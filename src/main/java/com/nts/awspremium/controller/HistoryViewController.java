@@ -86,7 +86,7 @@ public class HistoryViewController {
                     history.setVideoid("");
                     history.setOrderid(0L);
                     history.setChannelid("");
-                    System.out.println(accountRepository.getGeoByUsername(username.trim()));
+                    //System.out.println(accountRepository.getGeoByUsername(username.trim()));
                     history.setGeo(accountRepository.getGeoByUsername(username.trim()));
                     history.setTimeget(System.currentTimeMillis());
                     if(buffh==1){
@@ -147,7 +147,6 @@ public class HistoryViewController {
                                 resp.put("sub","fail");
                             }
                         }
-
                         String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                         String key="";
                         if(list_key!=null && list_key.length()!=0){
@@ -192,14 +191,14 @@ public class HistoryViewController {
                                 videos.get(0).getService()==111 || videos.get(0).getService()==112 || videos.get(0).getService()==113||
                                 videos.get(0).getService()==801 || videos.get(0).getService()==802 || videos.get(0).getService()==811 ||
                                 videos.get(0).getService()==201 || videos.get(0).getService()==202||videos.get(0).getService()==211){
-                            if(videos.get(0).getDuration()>300){
-                                resp.put("video_duration", 180+ran.nextInt(120));
+                            if(videos.get(0).getDuration()>240){
+                                resp.put("video_duration", 180+ran.nextInt(60));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
                         }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 || videos.get(0).getService()==212){
-                            if(videos.get(0).getDuration()>600){
-                                resp.put("video_duration", 300+ran.nextInt(300));
+                            if(videos.get(0).getDuration()>540){
+                                resp.put("video_duration", 300+ran.nextInt(240));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
@@ -389,14 +388,14 @@ public class HistoryViewController {
                             videos.get(0).getService()==111 || videos.get(0).getService()==112 || videos.get(0).getService()==113||
                             videos.get(0).getService()==801 || videos.get(0).getService()==802 || videos.get(0).getService()==811 ||
                             videos.get(0).getService()==201 || videos.get(0).getService()==202||videos.get(0).getService()==211){
-                        if(videos.get(0).getDuration()>300){
-                            resp.put("video_duration", 180+ran.nextInt(120));
+                        if(videos.get(0).getDuration()>240){
+                            resp.put("video_duration", 180+ran.nextInt(60));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 || videos.get(0).getService()==212){
-                        if(videos.get(0).getDuration()>600){
-                            resp.put("video_duration", 300+ran.nextInt(300));
+                        if(videos.get(0).getDuration()>540){
+                            resp.put("video_duration", 300+ran.nextInt(240));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
@@ -465,7 +464,7 @@ public class HistoryViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             else{
-                if(historyViewRepository.getListVideoById(historieId).length()>300){
+                if(historyViewRepository.getListVideoById(historieId).length()>200){
                     historyViewRepository.updateListVideoNew(videoid,historieId);
                 }else{
                     historyViewRepository.updateListVideo(videoid,historieId);

@@ -295,11 +295,8 @@ public class ApiController {
                             } else {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
-                        }else if(snippet.get("liveBroadcastContent").toString().equals("live")){
-                            videoViewhnew.setMaxthreads(0);
                         }else{
-                            resp.put("error", "This video is not a pure public video");
-                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                            videoViewhnew.setMaxthreads(0);
                         }
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");

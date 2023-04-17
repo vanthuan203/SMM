@@ -1055,7 +1055,7 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (orderid != videoViewHistories.get(0).getOrderid()) {
-                    resp.put("videoview", "Không đủ ĐK bảo hành!");
+                    resp.put("videoview", "Không đủ ĐK bảo hành! (OrderId :"+videoViewHistories.get(0).getOrderid()+")");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }

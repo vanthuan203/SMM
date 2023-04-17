@@ -145,7 +145,7 @@ public class ApiCmtController {
                         JSONObject videohisview = new JSONObject();
                         if (videoViewHistory != null) {
                             videohisview.put("start_count", vh.getCommentstart());
-                            videohisview.put("current_count", vh.getCommentstart()+vh.getCommenttotal());
+                            videohisview.put("current_count", vh.getCommentstart() + vh.getCommenttotal());
                             videohisview.put("charge", vh.getPrice());
                             if (vh.getCancel() == 1) {
                                 videohisview.put("status", "Canceled");
@@ -232,7 +232,7 @@ public class ApiCmtController {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject contentDetails = (JSONObject) video.get("contentDetails");
-                        if (videoViewRepository.getCountVideoId(video.get("id").toString().trim()) > 0) {
+                        if (videoCommentRepository.getCountVideoId(video.get("id").toString().trim()) > 0) {
                             resp.put("error", "This video in process");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
@@ -291,6 +291,9 @@ public class ApiCmtController {
                         String[] comments = data.getComments().split("\n");
                         System.out.println(comments);
                         for (int i = 0; i < comments.length; i++) {
+                            if (comments[i].length() == 0) {
+                                continue;
+                            }
                             DataComment dataComment = new DataComment();
                             dataComment.setOrderid(videoViewhnew.getOrderid());
                             dataComment.setComment(comments[i]);
