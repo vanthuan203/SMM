@@ -22,6 +22,7 @@ public class VideoComment {
     private Integer enddate;
     private Integer commentorder;
     private Integer commenttotal;
+    private String listcomment;
     private Long timeupdate;
     private Float price;
     private Integer valid;
@@ -29,7 +30,7 @@ public class VideoComment {
     public VideoComment() {
     }
 
-    public VideoComment(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer commentstart, Long insertdate, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer commentorder, Integer commenttotal, Long timeupdate, Float price, Integer valid) {
+    public VideoComment(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer commentstart, Long insertdate, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer commentorder, Integer commenttotal, String listcomment, Long timeupdate, Float price, Integer valid) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -45,9 +46,18 @@ public class VideoComment {
         this.enddate = enddate;
         this.commentorder = commentorder;
         this.commenttotal = commenttotal;
+        this.listcomment = listcomment;
         this.timeupdate = timeupdate;
         this.price = price;
         this.valid = valid;
+    }
+
+    public String getListcomment() {
+        return listcomment;
+    }
+
+    public void setListcomment(String listcomment) {
+        this.listcomment = listcomment;
     }
 
     public Long getOrderid() {

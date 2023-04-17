@@ -34,7 +34,8 @@ public class VideoCommentController {
     private AdminRepository adminRepository;
     @Autowired
     private BalanceRepository balanceRepository;
-
+    @Autowired
+    private DataCommentRepository dataCommentRepository;
     @Autowired
     private SettingRepository settingRepository;
     @Autowired
@@ -1578,6 +1579,44 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @GetMapping(path = "updateStateComment", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateStateComment() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            //historyRepository.updateHistoryByAccount();
+            List<VideoComment> videoComments = videoCommentRepository.getOrderThreadNull();
+            for (int i = 0; i < videoComments.size(); i++) {
+                String[] comments = videoComments.get(i).getListcomment().split("\n");
+                System.out.println(comments);
+                for (int j = 0; j < comments.length; j++) {
+                    if (comments[j].length() == 0) {
+                        continue;
+                    }
+                    DataComment dataComment = new DataComment();
+                    dataComment.setOrderid(videoComments.get(i).getOrderid());
+                    dataComment.setComment(comments[j]);
+                    dataComment.setUsername("");
+                    dataComment.setRunning(0);
+                    dataComment.setTimeget(0L);
+                    dataComment.setVps("");
+                    dataCommentRepository.save(dataComment);
+                }
+                Service service = serviceRepository.getService(videoComments.get(i).getService());
+                videoComments.get(i).setMaxthreads(service.getThread());
+                videoCommentRepository.save(videoComments.get(i));
+            }
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping(path = "updateordercheck", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateordercheck(@RequestParam(defaultValue = "") String videoid) {

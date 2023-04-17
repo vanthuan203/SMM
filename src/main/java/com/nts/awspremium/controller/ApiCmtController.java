@@ -281,13 +281,15 @@ public class ApiCmtController {
                         }
 
                          */
-                        videoViewhnew.setMaxthreads(service.getThread());
+                        videoViewhnew.setMaxthreads(0);
                         videoViewhnew.setPrice(priceorder);
                         videoViewhnew.setNote("");
                         videoViewhnew.setService(data.getService());
+                        videoViewhnew.setListcomment(data.getComments());
                         videoCommentRepository.save(videoViewhnew);
 
                         //list comment
+                        /*
                         String[] comments = data.getComments().split("\n");
                         System.out.println(comments);
                         for (int i = 0; i < comments.length; i++) {
@@ -303,7 +305,7 @@ public class ApiCmtController {
                             dataComment.setVps("");
                             dataCommentRepository.save(dataComment);
                         }
-
+                         */
                         float balance_new = admins.get(0).getBalance() - priceorder;
                         adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
                         Balance balance = new Balance();

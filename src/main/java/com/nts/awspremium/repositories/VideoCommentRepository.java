@@ -107,4 +107,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "select * from videocomment where commenttotal>=commentorder",nativeQuery = true)
     public List<VideoComment> getOrderFullView();
 
+    @Query(value = "select * from videocomment where maxthreads=0 order by insertdate asc limit 10",nativeQuery = true)
+    public List<VideoComment> getOrderThreadNull();
+
 }

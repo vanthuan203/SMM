@@ -49,8 +49,8 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
     public Integer PROCESSLISTVIEW();
     @Modifying
     @Transactional
-    @Query(value = "update historyview set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=90 and running=1",nativeQuery = true)
-    public Integer resetThreadThan90mcron();
+    @Query(value = "update historycomment set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15 and running=1",nativeQuery = true)
+    public Integer resetThreadThan15mcron();
     @Modifying
     @Transactional
     @Query(value = "UPDATE historyview SET running=0,vps='' where vps like ?1",nativeQuery = true)

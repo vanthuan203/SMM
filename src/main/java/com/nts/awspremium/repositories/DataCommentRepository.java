@@ -33,4 +33,9 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Transactional
     @Query(value = "update datacomment set running=0,username='',vps='' where username=?1 and running=1",nativeQuery = true)
     public void resetRunningComment(String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update  datacomment set running=0,username='',vps='' where round((UNIX_TIMESTAMP()-timeget/1000)/60)>7 and running=1",nativeQuery = true)
+    public void resetRunningCommentByCron();
 }

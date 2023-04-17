@@ -426,8 +426,8 @@ public class HistoryCommentController {
     ResponseEntity<String> delthreadcron() {
         JSONObject resp = new JSONObject();
         try {
-            historyViewRepository.resetThreadThan90mcron();
-            historyViewRepository.resetThreadcron();
+            historyCommentRepository.resetThreadThan15mcron();
+            dataCommentRepository.resetRunningCommentByCron();
             resp.put("status", "true");
             resp.put("message", "Reset thread error thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
