@@ -72,7 +72,7 @@ public class HistoryViewController {
         }
         Random ran=new Random();
             try{
-                Thread.sleep(ran.nextInt(1000));
+                Thread.sleep(ran.nextInt(2000));
                 Long  historieId=historyViewRepository.getId(username);
                 List<VideoView> videos=null;
                 if(historieId==null){

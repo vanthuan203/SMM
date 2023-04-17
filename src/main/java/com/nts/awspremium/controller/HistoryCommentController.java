@@ -76,7 +76,7 @@ public class HistoryCommentController {
         }
         Random ran = new Random();
         try {
-            //Thread.sleep(ran.nextInt(1000));
+            Thread.sleep(ran.nextInt(2000));
             Long historieId = historyCommentRepository.getId(username);
             List<VideoComment> videos = null;
             if (historieId == null) {
@@ -112,7 +112,7 @@ public class HistoryCommentController {
                     }
 
                      */
-                    if(historyCommentRepository.CheckGetTaskComment("(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim())>0){
+                    if(historyCommentRepository.CheckGetTaskComment("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%")>0){
                         resp.put("status", "fail");
                         resp.put("username", history.getUsername());
                         resp.put("fail", "video");
