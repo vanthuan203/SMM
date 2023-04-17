@@ -180,8 +180,8 @@ public class ApiCmtController {
                  */
                 Service service = serviceRepository.getService(data.getService());
                 Setting setting = settingRepository.getReferenceById(1L);
-                if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
-                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0)) {
+                if (videoCommentRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderCmtVN() == 0) ||
+                        (service.getGeo().equals("us") && settingRepository.getMaxOrderCmtUS() == 0)) {
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }

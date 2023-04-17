@@ -35,7 +35,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     public Long getOrderIdByVideoId(String videoid);
 
 
-    @Query(value = "SELECT count(*) from videoview where user=?1",nativeQuery = true)
+    @Query(value = "SELECT count(*) from videocomment where user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);
 
     @Query(value = "SELECT count(*) from videocomment where videoid=?1",nativeQuery = true)
