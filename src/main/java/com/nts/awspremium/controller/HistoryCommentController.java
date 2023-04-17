@@ -67,7 +67,7 @@ public class HistoryCommentController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (historyViewRepository.PROCESSLISTVIEW() >= 30) {
+        if (historyViewRepository.PROCESSLISTVIEW() >= 50) {
             resp.put("status", "fail");
             resp.put("username", "");
             resp.put("fail", "video");
@@ -76,7 +76,7 @@ public class HistoryCommentController {
         }
         Random ran = new Random();
         try {
-            Thread.sleep(ran.nextInt(2000));
+            //Thread.sleep(ran.nextInt(2000));
             Long historieId = historyCommentRepository.getId(username);
             List<VideoComment> videos = null;
             if (historieId == null) {
@@ -111,7 +111,7 @@ public class HistoryCommentController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
 
-                     */
+
                     if(historyCommentRepository.CheckGetTaskComment("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%")>0){
                         resp.put("status", "fail");
                         resp.put("username", history.getUsername());
@@ -119,7 +119,9 @@ public class HistoryCommentController {
                         resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-
+                     */
+                    //System.out.println("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%");
+                    //System.out.println(historyCommentRepository.CheckGetTaskComment("%(select orderid from videocomment) and orderid="+videos.get(0).getOrderid().toString().trim()+"%"));
                     dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());

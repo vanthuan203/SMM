@@ -63,7 +63,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(historyViewRepository.PROCESSLISTVIEW()>=30){
+        if(historyViewRepository.PROCESSLISTVIEW()>=50){
             resp.put("status", "fail");
             resp.put("username","");
             resp.put("fail", "video");
@@ -72,7 +72,7 @@ public class HistoryViewController {
         }
         Random ran=new Random();
             try{
-                Thread.sleep(ran.nextInt(2000));
+                //Thread.sleep(ran.nextInt(2000));
                 Long  historieId=historyViewRepository.getId(username);
                 List<VideoView> videos=null;
                 if(historieId==null){

@@ -17,7 +17,7 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update datacomment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and orderid=?4 and running=0 and username='' limit 1",nativeQuery = true)
+    @Query(value = "update datacomment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and orderid=?4 and running=0 and username='' order by rand() limit 1",nativeQuery = true)
     public void updateRunningComment(Long timeget,String username,String vps,Long orderid);
     @Modifying
     @Transactional
