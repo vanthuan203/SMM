@@ -75,8 +75,6 @@ public class HistoryCommentController {
             resp.put("message", "Không còn video để comment!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
-
-
          */
         Random ran = new Random();
         try {
