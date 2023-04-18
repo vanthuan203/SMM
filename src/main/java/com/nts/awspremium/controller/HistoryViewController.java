@@ -63,6 +63,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        /*
         if(historyViewRepository.PROCESSLISTVIEW()>=60){
             resp.put("status", "fail");
             resp.put("username","");
@@ -71,6 +72,8 @@ public class HistoryViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
 
+
+         */
         Random ran=new Random();
             try{
                 Thread.sleep(ran.nextInt(1000));
