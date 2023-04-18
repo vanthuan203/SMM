@@ -63,7 +63,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(historyViewRepository.PROCESSLISTVIEW()>=40){
+        if(historyViewRepository.PROCESSLISTVIEW()>=60){
             resp.put("status", "fail");
             resp.put("username","");
             resp.put("fail", "video");
