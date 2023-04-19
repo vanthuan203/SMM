@@ -1,10 +1,7 @@
 package com.nts.awspremium.repositories;
 
 
-import com.nts.awspremium.model.OrderBuffhRunning;
-import com.nts.awspremium.model.OrderViewRunning;
-import com.nts.awspremium.model.VideoBuffh;
-import com.nts.awspremium.model.VideoView;
+import com.nts.awspremium.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +21,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
             "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VN(String listvideo);
+
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service>600 and INSTR(?1,videoid)=0 and  orderid in (?2)",nativeQuery = true)
+    public List<VideoView> getvideoViewVer2VNTEST(String listvideo, List<String> orderid);
+
+    @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<600 and INSTR(?1,videoid)=0 and  orderid in (?2)",nativeQuery = true)
+    public List<VideoView> getvideoViewVer2USTEST(String listvideo, List<String> orderid);
 
     @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
@@ -59,6 +62,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
             "            from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewLoopVer2VN(String listvideo);
+
+    @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
+            "             from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "             group by orderid having total<maxthreads) as t",nativeQuery = true)
+    public List<String> getListOrderTrueThread();
 
     @Query(value = "SELECT * FROM videoview where service not in (999,998) and service<500 and" +
             " (CHAR_LENGTH(?1) - CHAR_LENGTH(REPLACE(?1, videoid, ''))) / CHAR_LENGTH(videoid)<=7 and ((char_length(?1) -  LOCATE(REVERSE(videoid),REVERSE(?1))+500)<=char_length(?1) or INSTR(?1,videoid)=0) and\n" +

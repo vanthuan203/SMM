@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -50,6 +52,8 @@ public class HistoryViewController {
     private ProxyHistoryRepository proxyHistoryRepository;
     @Autowired
     private IpV4Repository ipV4Repository;
+    @Autowired
+    private OrderTrue orderTrue;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "0") Integer buffh ){
         JSONObject resp=new JSONObject();
@@ -264,10 +268,11 @@ public class HistoryViewController {
                             videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
                         }
                     }else{
+                        //String str = String.join(",",orderTrue.getValue());
                         if(histories.get(0).getListvideo().length()>600){
                             if(histories.get(0).getGeo().equals("vn")){
                                 //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVN(histories.get(0).getListvideo());
-                                videos=videoViewRepository.getvideoViewLoopVer2VN(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                             }else if(histories.get(0).getGeo().equals("us")){
                                 //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadUS(histories.get(0).getListvideo());
                                 videos=videoViewRepository.getvideoViewLoopVer2US(histories.get(0).getListvideo());
@@ -278,11 +283,13 @@ public class HistoryViewController {
                             }
                         }else{
                             if(histories.get(0).getGeo().equals("vn")){
+                                videos=videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                                 //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
-                                videos=videoViewRepository.getvideoViewVer2VN(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewVer2VN(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("us")){
+                                videos=videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                                 //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                                videos=videoViewRepository.getvideoViewVer2US(histories.get(0).getListvideo());
+                                //videos=videoViewRepository.getvideoViewVer2US(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
                             }else{
