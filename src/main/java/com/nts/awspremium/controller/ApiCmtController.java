@@ -32,8 +32,6 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping(path = "/api")
 public class ApiCmtController {
     @Autowired
-    private VideoViewRepository videoViewRepository;
-    @Autowired
     private VideoCommentRepository videoCommentRepository;
 
     @Autowired
@@ -42,19 +40,11 @@ public class ApiCmtController {
     @Autowired
     private BalanceRepository balanceRepository;
     @Autowired
-    private VideoViewHistoryRepository videoViewHistoryRepository;
-    @Autowired
     private AdminRepository adminRepository;
     @Autowired
     private SettingRepository settingRepository;
     @Autowired
     private ServiceRepository serviceRepository;
-
-    @Autowired
-    private DataOrderRepository dataOrderRepository;
-
-    @Autowired
-    private DataCommentRepository dataCommentRepository;
 
     @PostMapping(value = "/cmt", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {

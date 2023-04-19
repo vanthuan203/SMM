@@ -22,10 +22,6 @@ public class ServiceController {
     @Autowired
     AdminRepository adminRepository;
     @Autowired
-    ChannelRepository channelRepository;
-    @Autowired
-    OrderRunningRepository orderRunningRepository;
-    @Autowired
     SettingRepository settingRepository;
     @Autowired
     BalanceRepository balanceRepository;

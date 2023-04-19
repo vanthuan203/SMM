@@ -1,7 +1,5 @@
 package com.nts.awspremium.repositories;
 
-import com.nts.awspremium.model.VideoBuffhHistory;
-import com.nts.awspremium.model.VideoView;
 import com.nts.awspremium.model.VideoViewHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -18,7 +16,6 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public VideoViewHistory getVideoViewHisById(Long orderid);
     @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in(201,202,203,211,212,213) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
     public List<String> getOrderHistorythan5h();
-
 
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and \n" +
             "orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
@@ -41,7 +38,5 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories(String user);
-
-
 
 }

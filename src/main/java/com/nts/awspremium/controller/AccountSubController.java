@@ -21,22 +21,6 @@ public class AccountSubController {
     @Autowired
     private AdminRepository adminRepository;
 
-    @Autowired
-    private ProxyRepository proxyRepository;
-
-    @Autowired
-    private HistoryRepository historyRepository;
-
-    @Autowired
-    private ProxyHistoryRepository proxyHistoryRepository;
-    @Autowired
-    private IpV4Repository ipV4Repository;
-    @Autowired
-    private CookieRepository cookieRepository;
-    @Autowired
-    private EncodefingerRepository encodefingerRepository;
-    @Autowired
-    private VpsRepository vpsRepository;
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
                                                  @RequestParam(defaultValue = "1") Integer update){
@@ -96,44 +80,6 @@ public class AccountSubController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @GetMapping(value = "/getencodefinger", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getencodefinger(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
-        JSONObject resp = new JSONObject();
-        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-        if (checktoken == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-        try{
-            Long idFinger= encodefingerRepository.getRandomIdSub();
-            String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idFinger);
-            int check_getfinger=0;
-            while (check_getfinger<=3){
-                if(encodefingerSub.length()<50){
-                    idFinger= encodefingerRepository.getRandomIdSub();
-                    encodefingerSub= encodefingerRepository.findEncodefingerSubById(idFinger);
-                    check_getfinger++;
-                }else {
-                    break;
-                }
-            }
-            if(encodefingerSub.length()>50){
-                resp.put("status","true");
-                resp.put("encodefinger",encodefingerSub);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                resp.put("status", "fail");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
-        }catch (Exception e){
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
@@ -214,27 +160,8 @@ public class AccountSubController {
             }else{
                 try{
                     List<Account> accountbyVps=accountRepository.findAccountById(idbyVps);
-                    Thread.sleep(3);
+                    Thread.sleep(300);
                     Integer accountcheck=accountRepository.checkAccountById(idbyVps);
-
-                    Long idEncodefingerSub= encodefingerRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
-                    String encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
-                    int check_getfinger=0;
-                    /*
-                    while (check_getfinger<=3){
-                        if(encodefingerSub.length()<50){
-                            Long idFinger= encodefingerRepository.getRandomIdSub();
-                            encodefingerSub= encodefingerRepository.findEncodefingerSubById(idEncodefingerSub);
-                            check_getfinger++;
-                        }else {
-                            break;
-                        }
-                    }
-
-                    Long idCookieSub= cookieRepository.findIdSubByUsername(accountbyVps.get(0).getUsername().trim());
-                    String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
-
-                     */
                     if(accountcheck==0){
                         resp.put("status", "fail");
                         resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
@@ -544,85 +471,6 @@ public class AccountSubController {
         }
     }
 
-    @GetMapping(value = "/getcookie",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcookie(@RequestParam(defaultValue = "")  String username){
-        JSONObject resp=new JSONObject();
-        try{
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            Long idUsername=accountRepository.findIdUsername(username);
-            if(idUsername==null){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
-                Integer cookie=accountRepository.getCookieAccSub(idUsername);
-                if(cookie>0){
-
-                    Long idCookieSub= cookieRepository.findIdSubByUsername(username.trim());
-                    String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
-                    String account=accountRepository.getInfo(idUsername);
-                    String[] accountinfo=account.split(",");
-                    resp.put("status","true");
-                    resp.put("password",accountinfo[0]);
-                    resp.put("recover",accountinfo[1]);
-                    resp.put("cookie",cookieSub);
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }else{
-                    resp.put("status","fail");
-                    //resp.put("username",accounts.get(0).getUsername());
-                    resp.put("message","Tài khoản live=0");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-
-            }
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message",e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-    @PostMapping(value = "/updatecookie", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatecookie(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
-        JSONObject resp=new JSONObject();
-        try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            Long idUsername=accountRepository.findIdUsername(username.trim());
-            if(idUsername==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
-
-                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
-                accountRepository.updateAccSubWhileCookieUpdate(idUsername);
-                resp.put("status","true");
-                resp.put("message", "Update cookie "+username+" thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-            }
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
-
-    }
 
     @PostMapping(value = "/updateinfo", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateinfo(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
@@ -646,8 +494,6 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
                 List<Account> accounts=accountRepository.findAccountById(idUsername);
-                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
-                //accountRepository.updateAccSubWhileCookieUpdate(username);
                 if(account.getPassword().length()>0){
                     accounts.get(0).setPassword(account.getPassword().trim());
                 }

@@ -24,8 +24,6 @@ public class VpsController {
     @Autowired
     private VpsRepository vpsRepository;
     @Autowired
-    private HistoryRepository historyRepository;
-    @Autowired
     private HistoryViewRepository historyViewRepository;
     @Autowired
     private ProxyRepository proxyRepository;
@@ -42,13 +40,8 @@ public class VpsController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }else{
                 JSONArray jsonArray= new JSONArray();
-
-                //JSONObject jsonObject=new JSONObject().put("")
-                //JSONObject jsonObject= (JSONObject) new JSONObject().put("Channelid",orderRunnings.get(0).toString());
-                //jsonArray.add(orderRunnings);
-                List<VpsRunning> vpsRunnings=historyRepository.getvpsrunning();
+                List<VpsRunning> vpsRunnings=historyViewRepository.getvpsrunning();
                 List<VpsRunning> accByVps=accountRepository.getCountAccByVps();
-                //List<VpsRunning> vpsview=historyRepository.getvpsview();
                 for(int i=0;i<vps.size();i++){
                     Integer total=0;
                     String time="";
@@ -67,15 +60,6 @@ public class VpsController {
                             accByVps.remove(k);
                         }
                     }
-                    /*
-                    for(int k=0;k<vpsview.size();k++){
-                        if(vps.get(i).getVps().equals(vpsview.get(k).getVps())){
-                            totalview=vpsview.get(k).getTotal();
-                            vpsview.remove(k);
-                        }
-                    }
-
-                     */
                     JSONObject obj = new JSONObject();
                     obj.put("id", vps.get(i).getId());
                     obj.put("vps", vps.get(i).getVps());
@@ -328,7 +312,7 @@ public class VpsController {
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("get_account",  vps.getGet_account());
                     obj.put("ext",  vps.getExt());
-                    obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
+                    obj.put("total",historyViewRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
                         resp.put("account",obj);
@@ -380,7 +364,7 @@ public class VpsController {
                     obj.put("threads",  vpsupdate.get(0).getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("get_account",  vps.getGet_account());
-                    obj.put("total",historyRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
+                    obj.put("total",historyViewRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
                         resp.put("accounts",obj);

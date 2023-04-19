@@ -30,10 +30,6 @@ public class VpsSubController {
     @Autowired
     private VpsRepository vpsRepository;
     @Autowired
-    private HistoryRepository historyRepository;
-    @Autowired
-    private ProxyRepository proxyRepository;
-    @Autowired
     private AccountRepository accountRepository;
     @GetMapping(value = "list",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getlist(@RequestHeader(defaultValue = "") String Authorization){

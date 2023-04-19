@@ -16,19 +16,10 @@ import java.util.Random;
 @RestController
 @RequestMapping(path = "/historycomment")
 public class HistoryCommentController {
-    @Autowired
-    private HistoryRepository historyRepository;
-    @Autowired
-    private ChannelRepository channelRepository;
-    @Autowired
-    private ProxyRepository proxyRepository;
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private VideoRepository videoRepository;
+
 
     @Autowired
-    private VideoViewRepository videoViewRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private VideoCommentRepository videoCommentRepository;
@@ -40,8 +31,6 @@ public class HistoryCommentController {
     @Autowired
     private HistoryCommentRepository historyCommentRepository;
     @Autowired
-    private HistorySumRepository historySumRepository;
-    @Autowired
     private DataCommentRepository dataCommentRepository;
     @Autowired
     private HistoryViewSumRepository historyViewSumRepository;
@@ -49,10 +38,6 @@ public class HistoryCommentController {
     @Autowired
     private HistoryCommentSumRepository historyCommentSumRepository;
 
-    @Autowired
-    private ProxyHistoryRepository proxyHistoryRepository;
-    @Autowired
-    private IpV4Repository ipV4Repository;
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
@@ -67,6 +52,7 @@ public class HistoryCommentController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        /*
         if (historyViewRepository.PROCESSLISTVIEW() >= 40) {
             resp.put("status", "fail");
             resp.put("username", "");
@@ -74,6 +60,7 @@ public class HistoryCommentController {
             resp.put("message", "Không còn video để comment!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+         */
         Random ran = new Random();
         try {
             Thread.sleep(ran.nextInt(1000));

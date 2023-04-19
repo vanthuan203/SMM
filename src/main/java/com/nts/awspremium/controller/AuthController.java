@@ -2,18 +2,15 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.Admin;
 import com.nts.awspremium.model.Balance;
-import com.nts.awspremium.model.OrderRunning;
 import com.nts.awspremium.model.Setting;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -22,10 +19,6 @@ import java.util.*;
 public class AuthController {
     @Autowired
     AdminRepository adminRepository;
-    @Autowired
-    ChannelRepository channelRepository;
-    @Autowired
-    OrderRunningRepository orderRunningRepository;
     @Autowired
     SettingRepository settingRepository;
     @Autowired

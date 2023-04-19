@@ -25,15 +25,12 @@ public class AccountViewController {
     private AdminRepository adminRepository;
 
     @Autowired
-    private HistoryRepository historyRepository;
-    @Autowired
     private HistoryViewRepository historyViewRepository;
 
     @Autowired
-    private CookieRepository cookieRepository;
-
-    @Autowired
     private VpsRepository vpsRepository;
+    @Autowired
+    private HistoryViewSumRepository historyViewSumRepository;
 
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
@@ -51,7 +48,6 @@ public class AccountViewController {
             if(idUsername!=null){
                 if(update==1) {
                     accountRepository.updateAccountView(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",idUsername);
-                    //cookieRepository.updateCookieBuffh(newaccount.getCookie(),newaccount.getUsername());
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -62,7 +58,6 @@ public class AccountViewController {
                 }
             }else{
                 accountRepository.insertAccountView(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","",0,"",newaccount.getDate(),newaccount.getGeo());
-                //cookieRepository.insertCookieView(newaccount.getUsername(), newaccount.getCookie());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -108,8 +103,6 @@ public class AccountViewController {
                 }else{
                     try{
                         List<Account> account=accountRepository.findAccountById(id);
-                        //Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
-                        //String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                         Thread.sleep(100+ran.nextInt(200));
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
@@ -322,78 +315,6 @@ public class AccountViewController {
             }
     }
 
-    @PostMapping(value = "/updatecookie", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatecookie(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
-        JSONObject resp=new JSONObject();
-        try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            Long idUsername=accountRepository.findIdUsername(username);
-            if(idUsername==null){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
-
-                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
-                accountRepository.updateAccSubWhileCookieUpdate(idUsername);
-                resp.put("status","true");
-                resp.put("message", "Update cookie "+username+" thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-            }
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    @PostMapping(value = "/updatecookieloginlocal", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatecookieloginlocal(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
-        JSONObject resp=new JSONObject();
-        try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            if(username.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
-            Long idUsername=accountRepository.findIdUsername(username);
-            if(idUsername==null){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-            }else{
-                cookieRepository.updateCookieSub(account.getCookie(),idUsername);
-                accountRepository.updatecookieloginlocal(idUsername);
-                resp.put("status","true");
-                resp.put("message", "Update cookie "+username+" thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-            }
-        }catch (Exception e){
-            resp.put("status","fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @GetMapping(value = "/update",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> update(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String password,@RequestParam(defaultValue = "")  String recover ){
         JSONObject resp=new JSONObject();
@@ -431,39 +352,6 @@ public class AccountViewController {
 
     }
 
-    @GetMapping(value = "/reset",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> reset(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live) {
-        JSONObject resp = new JSONObject();
-        try {
-            if (username.length() == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Username không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
-            Long idUsername=accountRepository.findIdUsername(username);
-            if(idUsername==null) {
-                resp.put("status", "fail");
-                resp.put("message", "Username không tồn tại!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                List<Account> accounts=accountRepository.findAccountById(idUsername);
-                accounts.get(0).setLive(live);
-                accounts.get(0).setRunning(0);
-                accounts.get(0).setVps("");
-                accountRepository.save(accounts.get(0));
-                Long  historieId=historyRepository.getId(username.trim());
-                historyRepository.resetThreadByUsername(historieId);
-                resp.put("status", "true");
-                resp.put("message", "Reset account thành công!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-
-        }catch (Exception e){
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
     @PostMapping(value = "/resetaccnotinvps",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetaccnotinvps(@RequestBody  String listacc,@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "")  String vps) {
         JSONObject resp = new JSONObject();
@@ -487,55 +375,6 @@ public class AccountViewController {
             accountRepository.updateListAccount(vps.trim(),listacc);
             resp.put("status", "true");
             resp.put("message", listacc);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-
-        }catch (Exception e){
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-    @GetMapping(value = "/resetaccountbyvps",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetAccountByVps(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
-        JSONObject resp = new JSONObject();
-        try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
-            if (vps.length() == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Vps không được để trống!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
-            accountRepository.resetAccountByVps(vps.trim());
-            historyRepository.resetThreadByVps(vps.trim());
-            resp.put("status", "true");
-            resp.put("message", "Update thành công!");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-
-        }catch (Exception e){
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-    @GetMapping(value = "/resetaccountbyvpsthan",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetaccountbyvpsthan(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization) {
-        JSONObject resp = new JSONObject();
-        try {
-            List<String> count_vps= accountRepository.getCountByVps();
-            for(int i=0;i<count_vps.size();i++){
-                System.out.println(count_vps.get(i));
-                accountRepository.updatelistaccount(count_vps.get(i).split(",")[0],Integer.parseInt(count_vps.get(i).split(",")[1])- 2*(vpsRepository.getThreadVPS(count_vps.get(i).split(",")[0])));
-                historyRepository.updateHistoryByAccount();
-            }
-            resp.put("status", "true");
-            resp.put("message", "Update thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         }catch (Exception e){

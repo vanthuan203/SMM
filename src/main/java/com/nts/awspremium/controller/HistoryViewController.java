@@ -19,16 +19,10 @@ import java.util.Random;
 @RestController
 @RequestMapping(path = "/historyview")
 public class HistoryViewController {
-    @Autowired
-    private HistoryRepository historyRepository;
-    @Autowired
-    private ChannelRepository channelRepository;
-    @Autowired
-    private ProxyRepository proxyRepository;
+
+
     @Autowired
     private AccountRepository accountRepository;
-    @Autowired
-    private VideoRepository videoRepository;
 
     @Autowired
     private VideoViewRepository videoViewRepository;
@@ -43,15 +37,9 @@ public class HistoryViewController {
     @Autowired
     private HistoryCommentRepository historyCommentRepository;
     @Autowired
-    private HistorySumRepository historySumRepository;
-    @Autowired
     private DataOrderRepository dataOrderRepository;
     @Autowired
     private HistoryViewSumRepository historyViewSumRepository;
-    @Autowired
-    private ProxyHistoryRepository proxyHistoryRepository;
-    @Autowired
-    private IpV4Repository ipV4Repository;
     @Autowired
     private OrderTrue orderTrue;
     @GetMapping(value = "get",produces = "application/hal+json;charset=utf8")
@@ -67,15 +55,6 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        /*
-        if(historyViewRepository.PROCESSLISTVIEW()>=60){
-            resp.put("status", "fail");
-            resp.put("username","");
-            resp.put("fail", "video");
-            resp.put("message", "Không còn video để view!");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
-         */
         Random ran=new Random();
             try{
                 Thread.sleep(ran.nextInt(1000));
@@ -253,18 +232,6 @@ public class HistoryViewController {
                     }
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
-                    //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
-                    /*
-                    if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
-                        //histories.get(0).setTimeget(System.currentTimeMillis());
-                        //historyViewRepository.save(histories.get(0));
-                        resp.put("status", "fail");
-                        resp.put("username",histories.get(0).getUsername());
-                        resp.put("fail", "video");
-                        resp.put("message", "Không còn video để view!");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
-                     */
                     if(buffh==1){
                         if(histories.get(0).getListvideo().length()>600){
                             videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());

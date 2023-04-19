@@ -34,8 +34,6 @@ public class ApiController {
     @Autowired
     private VideoViewRepository videoViewRepository;
     @Autowired
-    private VideoCommentRepository videoCommentRepository;
-    @Autowired
     private BalanceRepository balanceRepository;
     @Autowired
     private VideoViewHistoryRepository videoViewHistoryRepository;
@@ -49,8 +47,6 @@ public class ApiController {
     @Autowired
     private DataOrderRepository dataOrderRepository;
 
-    @Autowired
-    private DataCommentRepository dataCommentRepository;
 
     @PostMapping(value = "/view", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {
