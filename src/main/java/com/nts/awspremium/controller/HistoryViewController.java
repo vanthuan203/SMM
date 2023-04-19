@@ -67,6 +67,7 @@ public class HistoryViewController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        /*
         if(historyViewRepository.PROCESSLISTVIEW()>=60){
             resp.put("status", "fail");
             resp.put("username","");
@@ -74,6 +75,7 @@ public class HistoryViewController {
             resp.put("message", "Không còn video để view!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+         */
         Random ran=new Random();
             try{
                 Thread.sleep(ran.nextInt(1000));
@@ -98,10 +100,10 @@ public class HistoryViewController {
                     }else{
                         if(history.getGeo().equals("vn")){
                             //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
-                            videos=videoViewRepository.getvideoViewVer2VN("");
+                            videos=videoViewRepository.getvideoViewVer2VNTEST("",orderTrue.getValue());
                         }else if(history.getGeo().equals("us")){
                             //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS("");
-                            videos=videoViewRepository.getvideoViewVer2US("");
+                            videos=videoViewRepository.getvideoViewVer2USTEST("",orderTrue.getValue());
                         }else if(history.getGeo().equals("vn-test")){
                             videos=videoViewRepository.getvideoViewNoCheckMaxThreadVNTEST("");
                         }else{
@@ -275,7 +277,7 @@ public class HistoryViewController {
                                 videos=videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                             }else if(histories.get(0).getGeo().equals("us")){
                                 //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                                videos=videoViewRepository.getvideoViewLoopVer2US(histories.get(0).getListvideo());
+                                videos=videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
                             }else{
