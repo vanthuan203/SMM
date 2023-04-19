@@ -254,6 +254,7 @@ public class HistoryViewController {
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
                     //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
+                    /*
                     if(System.currentTimeMillis()-histories.get(0).getTimeget()<(60000L+ (long) ran.nextInt(60000))){
                         //histories.get(0).setTimeget(System.currentTimeMillis());
                         //historyViewRepository.save(histories.get(0));
@@ -263,6 +264,7 @@ public class HistoryViewController {
                         resp.put("message", "Không còn video để view!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                     */
                     if(buffh==1){
                         if(histories.get(0).getListvideo().length()>600){
                             videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
@@ -273,10 +275,8 @@ public class HistoryViewController {
                         //String str = String.join(",",orderTrue.getValue());
                         if(histories.get(0).getListvideo().length()>600){
                             if(histories.get(0).getGeo().equals("vn")){
-                                //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVN(histories.get(0).getListvideo());
                                 videos=videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                             }else if(histories.get(0).getGeo().equals("us")){
-                                //videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadUS(histories.get(0).getListvideo());
                                 videos=videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
@@ -286,12 +286,8 @@ public class HistoryViewController {
                         }else{
                             if(histories.get(0).getGeo().equals("vn")){
                                 videos=videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
-                                //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
-                                //videos=videoViewRepository.getvideoViewVer2VN(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("us")){
                                 videos=videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(),orderTrue.getValue());
-                                //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                                //videos=videoViewRepository.getvideoViewVer2US(histories.get(0).getListvideo());
                             }else if(histories.get(0).getGeo().equals("vn-test")){
                                 videos=videoViewRepository.getvideoViewNoCheckMaxThreadVNTEST(histories.get(0).getListvideo());
                             }else{

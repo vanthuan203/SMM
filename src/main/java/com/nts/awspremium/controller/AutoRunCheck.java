@@ -18,13 +18,17 @@ public class AutoRunCheck {
     public void init() throws InterruptedException {
         new Thread(() -> {
                 while(true) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    try{
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        orderTrue.setValue(videoViewRepository.getListOrderTrueThread());
+                        //System.out.println(String.join(", ", orderTrue.getValue()));
+                    }catch (Exception e){
+                        continue;
                     }
-                    orderTrue.setValue(videoViewRepository.getListOrderTrueThread());
-                    //System.out.println(String.join(", ", orderTrue.getValue()));
                 }
         }).start();
 
