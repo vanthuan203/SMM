@@ -17,6 +17,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "Select count(*) from vps where vps like ?1 and ((select count(*) from account where running=1 and vps like ?1))<threads*2",nativeQuery = true)
     public Integer checkGetAccountByThreadVps(String vps);
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads*17",nativeQuery = true)
+    public Integer checkGetAccount17ByThreadVps(String vps);
+
+    @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads*12",nativeQuery = true)
     public Integer checkGetAccount12ByThreadVps(String vps);
 
     @Query(value = "select * from vps where vps like ?1",nativeQuery = true)

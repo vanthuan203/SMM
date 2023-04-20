@@ -78,14 +78,20 @@ public class AccountViewController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        /*
         if(historyViewRepository.PROCESSLISTVIEW()>=30){
             resp.put("status", "fail");
             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+         */
         try {
             Integer check_get=0;
-            check_get= vpsRepository.checkGetAccount12ByThreadVps(vps.trim());
+            if(geo.equals("vn")) {
+                check_get = vpsRepository.checkGetAccount17ByThreadVps(vps.trim());
+            }else{
+                check_get = vpsRepository.checkGetAccount12ByThreadVps(vps.trim());
+            }
             if(check_get==0){
                 resp.put("status","fail");
                 resp.put("message", "Đã đủ acc cho Vps!");
