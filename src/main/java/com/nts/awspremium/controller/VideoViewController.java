@@ -17,7 +17,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -512,10 +516,12 @@ public class VideoViewController {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                /*
                 if (orderid != videoViewHistories.get(0).getOrderid()) {
                     resp.put("videoview", "Không đủ ĐK bảo hành!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                 */
             }
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
@@ -536,8 +542,11 @@ public class VideoViewController {
 
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistories.get(i).setWaitbh(1);
+                    videoViewHistories.get(i).setTimecheckbh(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000));
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    obj.put("videoview", "Chưa đủ time check bh!");
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                    obj.put("videoview", "Đã lên lịch check BH lúc"+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
 
@@ -644,7 +653,7 @@ public class VideoViewController {
                             } else {
                                 videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                                 videoViewHistoryRepository.save(videoViewHistories.get(i));
-                                obj.put("videoview", "View check < view start!");
+                                obj.put("videoview", "View check < view start! (Chọn hoàn tiền)");
                                 return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                             }
                         } else {
@@ -669,6 +678,154 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "AutoBH", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> AutoBH(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "5") Integer end, @RequestParam(defaultValue = "2") Integer limit, Integer bonus) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoCheckBH(start*24, end*24, limit);
+            JSONArray jsonArray = new JSONArray();
+            Setting setting = settingRepository.getReferenceById(1L);
+            List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
+            videoViewHistoryRepository.updatetimchecknomaxid();
+            for (int i = 0; i < videoViewHistories.size(); i++) {
+                DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                String end_done="End: "+dateFormat.format(videoViewHistories.get(i).getEnddate()) + " | ";
+                JSONObject obj = new JSONObject();
+                if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    obj.put(videoViewHistories.get(i).getVideoid().trim(), "Đơn đang chạy!");
+                    jsonArray.add(obj);
+                    continue;
+                }
+                OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request1 = null;
+
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+
+                Response response1 = client1.newCall(request1).execute();
+
+                String resultJson1 = response1.body().string();
+
+                Object obj1 = new JSONParser().parse(resultJson1);
+
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Không check được view!");
+                    jsonArray.add(obj);
+                    continue;
+                }
+                Iterator k = items.iterator();
+                if (k.hasNext() == false) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Không check được view!");
+                    jsonArray.add(obj);
+                    continue;
+                }
+                while (k.hasNext()) {
+                    try {
+                        JSONObject video = (JSONObject) k.next();
+                        JSONObject statistics = (JSONObject) video.get("statistics");
+                        if (Integer.parseInt(statistics.get("viewCount").toString()) - videoViewHistories.get(i).getViewstart() - videoViewHistories.get(i).getVieworder() < 0) {
+                            if (Integer.parseInt(statistics.get("viewCount").toString()) - (int) videoViewHistories.get(i).getViewstart() > 0) {
+                                int baohanh = 0;
+                                baohanh = (int) ((int) (videoViewHistories.get(i).getViewstart() + videoViewHistories.get(i).getVieworder() - Integer.parseInt(statistics.get("viewCount").toString())));
+                                if (baohanh < 50) {
+                                    baohanh = 50;
+                                } else if (baohanh > videoViewHistories.get(i).getVieworder()) {
+                                    baohanh = videoViewHistories.get(i).getVieworder();
+                                }
+                                float priceorder = 0;
+                                Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
+                                priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                                if (priceorder > (float) admins.get(0).getBalance()) {
+                                    obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Số tiền không đủ!");
+                                    jsonArray.add(obj);
+                                    continue;
+                                }
+
+                                VideoView videoViewhnew = new VideoView();
+                                videoViewhnew.setDuration(videoViewHistories.get(i).getDuration());
+                                videoViewhnew.setInsertdate(System.currentTimeMillis());
+                                videoViewhnew.setView24h(0);
+                                videoViewhnew.setViewtotal(0);
+                                videoViewhnew.setVieworder(baohanh);
+                                videoViewhnew.setUser(admins.get(0).getUsername());
+                                videoViewhnew.setChannelid(videoViewHistories.get(i).getChannelid());
+                                videoViewhnew.setVideotitle(videoViewHistories.get(i).getVideotitle());
+                                videoViewhnew.setVideoid(videoViewHistories.get(i).getVideoid());
+                                videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
+                                int max_thread = service.getThread() + (((int) (baohanh < 1000 ? 1000 : baohanh) / 1000) - 1) * setting.getLevelthread();
+                                if (max_thread <= setting.getMaxthread()) {
+                                    videoViewhnew.setMaxthreads(max_thread);
+                                } else {
+                                    videoViewhnew.setMaxthreads(setting.getMaxthread());
+                                }
+                                videoViewhnew.setPrice(priceorder);
+                                videoViewhnew.setNote(videoViewHistories.get(i).getUser() + "| BHL" + (int) (videoViewHistories.get(i).getNumbh() + 1));
+                                videoViewhnew.setService(videoViewHistories.get(i).getService());
+                                videoViewhnew.setValid(1);
+                                videoViewRepository.save(videoViewhnew);
+                                videoViewHistories.get(i).setNumbh(videoViewHistories.get(i).getNumbh() + 1);
+                                videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                                videoViewHistoryRepository.save(videoViewHistories.get(i));
+                                if (service.getType().equals("Special")) {
+                                    String list_key = dataOrderRepository.getListKeyByOrderid(videoViewHistories.get(i).getOrderid());
+                                    DataOrder dataOrder = new DataOrder();
+                                    dataOrder.setOrderid(videoViewhnew.getOrderid());
+                                    dataOrder.setListvideo(list_key);
+                                    dataOrder.setListkey(list_key);
+                                    dataOrderRepository.save(dataOrder);
+                                }
+
+                                float balance_new = admins.get(0).getBalance() - priceorder;
+                                System.out.println(balance_new);
+                                adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
+                                Balance balance = new Balance();
+                                balance.setUser(admins.get(0).getUsername().trim());
+                                balance.setTime(System.currentTimeMillis());
+                                balance.setTotalblance(balance_new);
+                                balance.setBalance(-priceorder);
+                                balance.setService(service.getService());
+                                balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
+                                balanceRepository.save(balance);
+                                obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+"Bảo hành:" + baohanh +"/"+videoViewHistories.get(i).getVieworder()+" | "+(int)(baohanh/(float)videoViewHistories.get(i).getVieworder()*100)+"%");
+                                jsonArray.add(obj);
+                                continue;
+                            } else {
+                                videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                                videoViewHistoryRepository.save(videoViewHistories.get(i));
+                                obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "View check < view start!");
+                                jsonArray.add(obj);
+                                continue;
+                            }
+                        } else {
+                            videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                            videoViewHistoryRepository.save(videoViewHistories.get(i));
+                            obj.put(videoViewHistories.get(i).getVideoid().trim(), "Không cần bảo hành!");
+                            jsonArray.add(obj);
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+            }
+            resp.put("rep", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping(path = "htview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> htview(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
@@ -701,7 +858,7 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (orderid != videoViewHistories.get(0).getOrderid()) {
-                    resp.put("videoview", "Không đủ ĐK hoàn tiền!("+videoViewHistories.get(0).getOrderid()+")");
+                    resp.put("videoview", "Không đủ ĐK hoàn tiền!(New orderId: "+videoViewHistories.get(0).getOrderid()+")");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
@@ -853,10 +1010,13 @@ public class VideoViewController {
                     resp.put("videoview", "Lịch sử đơn trống!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                /*
                 if (orderid != videoViewHistories.get(0).getOrderid()) {
                     resp.put("videoview", "Không đủ ĐK bảo hành! (OrderId :"+videoViewHistories.get(0).getOrderid()+")");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+
+                 */
             }
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
