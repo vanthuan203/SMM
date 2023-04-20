@@ -555,9 +555,8 @@ public class VideoViewController {
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Đơn đã được bảo hành chưa quá 24h! | " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
-                        jsonArray.add(obj);
-                        continue;
+                        obj.put("videoview", "Bảo hành chưa quá 24h! | " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
 
