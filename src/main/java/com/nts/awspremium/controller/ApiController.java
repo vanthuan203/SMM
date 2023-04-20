@@ -166,6 +166,34 @@ public class ApiController {
                 }
             }
             if (data.getAction().equals("add")) {
+                String[] key={"AIzaSyBDREST_tkBJtwLwP7R_AzhMufMcMQ0W8U",
+                        "AIzaSyBz0U1oenDUX3Grm8Fi15YzXuKnQwApPoU",
+                        "AIzaSyD3rM4Ti-mOr51d50sTZ3j2Zk_FXJBi-Pg",
+                        "AIzaSyDMNegTFfuEpXFjh6SJr6uIkG9rtgsscAg",
+                        "AIzaSyBZYdBJN5nG-oXM_otg7X3cc3Pil2HZJpk",
+                        "AIzaSyAdz8OjRNSbhYLTuGtJpl7EHIfXf2AM_zw",
+                        "AIzaSyBCIiJFQWchkroL9EUWx4WC1toHZUN6e-I",
+                        "AIzaSyBJHNbAzs53GFqcGAIWctCeJ9rcDMYbEsw",
+                        "AIzaSyCtIX1X_38DRcT8UODtk9SaDi7PBAkyNR4",
+                        "AIzaSyCJhgx-pGa7fRLzLF7LlH_P9aF6Mn5hjks",
+                        "AIzaSyBxoTek2x9iUPAXJTlhSM42MAOGvak1dfg",
+                        "AIzaSyArs1DU8lr2ZZOHwHNm9r4fQCJgNk0OpU8",
+                        "AIzaSyB9xxqdqaI6VfZzy0xWfAjbYz_h3r6i6LI",
+                        "AIzaSyARRNkpFjJwi8h6D7DSPDqzU5dN9KYJL7c",
+                        "AIzaSyAWqilV12eEQ3aRCFh7boVwnwT5vGd-fkA",
+                        "AIzaSyBnFcVBXsi5XEjexd6y2qz1DaSU1OyN7O0",
+                        "AIzaSyCOYZxFucHqJdKUlREppWv2x51vWBr01hQ",
+                        "AIzaSyAtHO7oWPc_qfpBDGrhKWdXBe8t6W1PfyI",
+                        "AIzaSyBoNOzrLwmcGegL__Pcawc_HCMO86Zr3DY",
+                        "AIzaSyD3qlV4yE9gGzB8lPQ0oSCJeIOJNVC__W8",
+                        "AIzaSyCJP63LRZf84rvQEhjl3TbW8ZLr9CESwOQ",
+                        "AIzaSyCjRcccCp6JmqHUeGyHS69d6p6EgY-qk4s",
+                        "AIzaSyDazh82pL59xL5WrEJp5ACcQm4NJvWSsBk",
+                        "AIzaSyAhBaXXfGooDevibtZHuD0s98uHmy2uR_Y",
+                        "AIzaSyD5mCaCbu4FtDiVyqInA_FBThkZ5ziuTI0",
+                        "AIzaSyCX4l1yvTaSmt1wxgmzcmrvgfzudn8oYdk",
+                        "AIzaSyDdSn1dGnR03AqjQOX4pN0lPuU2pezrpDM",
+                        "AIzaSyCBmm0tWYu25LDacVcwWsKBlf7AXhy7F7M"};
                 /*
                 if (data.getQuantity() < 100) {
                     resp.put("error", "Min quantity is 100");
@@ -206,7 +234,8 @@ public class ApiController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+                Random rand =new Random();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[rand.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
