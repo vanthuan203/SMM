@@ -549,6 +549,17 @@ public class VideoViewController {
                     obj.put("videoview", "Đã lên lịch check BH lúc"+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
+                List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
+                if (viewHistories.size()>0) {
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                        obj.put("videoview", "Đơn đã được bảo hành chưa quá 24h! | " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        jsonArray.add(obj);
+                        continue;
+                    }
+                }
 
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
@@ -699,6 +710,16 @@ public class VideoViewController {
                     jsonArray.add(obj);
                     continue;
                 }
+                List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
+                if (viewHistories.size()>0) {
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Đơn đã được bảo hành chưa quá 24h!");
+                        jsonArray.add(obj);
+                        continue;
+                    }
+                }
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
@@ -822,7 +843,7 @@ public class VideoViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
-            resp.put("message", e.getStackTrace()[0].getLineNumber());
+            resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
