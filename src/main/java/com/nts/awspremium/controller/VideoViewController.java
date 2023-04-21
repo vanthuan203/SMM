@@ -489,34 +489,6 @@ public class VideoViewController {
 
     @PostMapping(path = "bhview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> bhview(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
-        String[] key={"AIzaSyBDREST_tkBJtwLwP7R_AzhMufMcMQ0W8U",
-                "AIzaSyBz0U1oenDUX3Grm8Fi15YzXuKnQwApPoU",
-                "AIzaSyD3rM4Ti-mOr51d50sTZ3j2Zk_FXJBi-Pg",
-                "AIzaSyDMNegTFfuEpXFjh6SJr6uIkG9rtgsscAg",
-                "AIzaSyBZYdBJN5nG-oXM_otg7X3cc3Pil2HZJpk",
-                "AIzaSyAdz8OjRNSbhYLTuGtJpl7EHIfXf2AM_zw",
-                "AIzaSyBCIiJFQWchkroL9EUWx4WC1toHZUN6e-I",
-                "AIzaSyBJHNbAzs53GFqcGAIWctCeJ9rcDMYbEsw",
-                "AIzaSyCtIX1X_38DRcT8UODtk9SaDi7PBAkyNR4",
-                "AIzaSyCJhgx-pGa7fRLzLF7LlH_P9aF6Mn5hjks",
-                "AIzaSyBxoTek2x9iUPAXJTlhSM42MAOGvak1dfg",
-                "AIzaSyArs1DU8lr2ZZOHwHNm9r4fQCJgNk0OpU8",
-                "AIzaSyB9xxqdqaI6VfZzy0xWfAjbYz_h3r6i6LI",
-                "AIzaSyARRNkpFjJwi8h6D7DSPDqzU5dN9KYJL7c",
-                "AIzaSyAWqilV12eEQ3aRCFh7boVwnwT5vGd-fkA",
-                "AIzaSyBnFcVBXsi5XEjexd6y2qz1DaSU1OyN7O0",
-                "AIzaSyCOYZxFucHqJdKUlREppWv2x51vWBr01hQ",
-                "AIzaSyAtHO7oWPc_qfpBDGrhKWdXBe8t6W1PfyI",
-                "AIzaSyBoNOzrLwmcGegL__Pcawc_HCMO86Zr3DY",
-                "AIzaSyD3qlV4yE9gGzB8lPQ0oSCJeIOJNVC__W8",
-                "AIzaSyCJP63LRZf84rvQEhjl3TbW8ZLr9CESwOQ",
-                "AIzaSyCjRcccCp6JmqHUeGyHS69d6p6EgY-qk4s",
-                "AIzaSyDazh82pL59xL5WrEJp5ACcQm4NJvWSsBk",
-                "AIzaSyAhBaXXfGooDevibtZHuD0s98uHmy2uR_Y",
-                "AIzaSyD5mCaCbu4FtDiVyqInA_FBThkZ5ziuTI0",
-                "AIzaSyCX4l1yvTaSmt1wxgmzcmrvgfzudn8oYdk",
-                "AIzaSyDdSn1dGnR03AqjQOX4pN0lPuU2pezrpDM",
-                "AIzaSyCBmm0tWYu25LDacVcwWsKBlf7AXhy7F7M"};
         JSONObject resp = new JSONObject();
         List<Admin> admin = adminRepository.FindByToken(Authorization.trim());
         if (Authorization.length() == 0 || admin.size() == 0) {
@@ -574,7 +546,7 @@ public class VideoViewController {
                     videoViewHistories.get(i).setTimecheckbh(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000));
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Đã lên lịch check BH lúc"+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
+                    obj.put("videoview", "Bảo hành sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
@@ -583,7 +555,7 @@ public class VideoViewController {
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Bảo hành chưa quá 24h! | " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        obj.put("videoview", "Bảo hành sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -591,8 +563,7 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                Random rand = new Random();
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[rand.nextInt(key.length)]+"&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC_C0GM726zI3iH0LUGh1jLBrbyuLZE5HY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -719,34 +690,6 @@ public class VideoViewController {
     @GetMapping(path = "AutoBH", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> AutoBH(@RequestParam(defaultValue = "1") Integer start, @RequestParam(defaultValue = "5") Integer end, @RequestParam(defaultValue = "2") Integer limit, Integer bonus) {
         JSONObject resp = new JSONObject();
-        String[] key={"AIzaSyBDREST_tkBJtwLwP7R_AzhMufMcMQ0W8U",
-                "AIzaSyBz0U1oenDUX3Grm8Fi15YzXuKnQwApPoU",
-                "AIzaSyD3rM4Ti-mOr51d50sTZ3j2Zk_FXJBi-Pg",
-                "AIzaSyDMNegTFfuEpXFjh6SJr6uIkG9rtgsscAg",
-                "AIzaSyBZYdBJN5nG-oXM_otg7X3cc3Pil2HZJpk",
-                "AIzaSyAdz8OjRNSbhYLTuGtJpl7EHIfXf2AM_zw",
-                "AIzaSyBCIiJFQWchkroL9EUWx4WC1toHZUN6e-I",
-                "AIzaSyBJHNbAzs53GFqcGAIWctCeJ9rcDMYbEsw",
-                "AIzaSyCtIX1X_38DRcT8UODtk9SaDi7PBAkyNR4",
-                "AIzaSyCJhgx-pGa7fRLzLF7LlH_P9aF6Mn5hjks",
-                "AIzaSyBxoTek2x9iUPAXJTlhSM42MAOGvak1dfg",
-                "AIzaSyArs1DU8lr2ZZOHwHNm9r4fQCJgNk0OpU8",
-                "AIzaSyB9xxqdqaI6VfZzy0xWfAjbYz_h3r6i6LI",
-                "AIzaSyARRNkpFjJwi8h6D7DSPDqzU5dN9KYJL7c",
-                "AIzaSyAWqilV12eEQ3aRCFh7boVwnwT5vGd-fkA",
-                "AIzaSyBnFcVBXsi5XEjexd6y2qz1DaSU1OyN7O0",
-                "AIzaSyCOYZxFucHqJdKUlREppWv2x51vWBr01hQ",
-                "AIzaSyAtHO7oWPc_qfpBDGrhKWdXBe8t6W1PfyI",
-                "AIzaSyBoNOzrLwmcGegL__Pcawc_HCMO86Zr3DY",
-                "AIzaSyD3qlV4yE9gGzB8lPQ0oSCJeIOJNVC__W8",
-                "AIzaSyCJP63LRZf84rvQEhjl3TbW8ZLr9CESwOQ",
-                "AIzaSyCjRcccCp6JmqHUeGyHS69d6p6EgY-qk4s",
-                "AIzaSyDazh82pL59xL5WrEJp5ACcQm4NJvWSsBk",
-                "AIzaSyAhBaXXfGooDevibtZHuD0s98uHmy2uR_Y",
-                "AIzaSyD5mCaCbu4FtDiVyqInA_FBThkZ5ziuTI0",
-                "AIzaSyCX4l1yvTaSmt1wxgmzcmrvgfzudn8oYdk",
-                "AIzaSyDdSn1dGnR03AqjQOX4pN0lPuU2pezrpDM",
-                "AIzaSyCBmm0tWYu25LDacVcwWsKBlf7AXhy7F7M"};
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoCheckBH(start*24, end*24, limit);
@@ -761,7 +704,7 @@ public class VideoViewController {
                 if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    obj.put(videoViewHistories.get(i).getVideoid().trim(), "Đơn đang chạy!");
+                    obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Đơn đang chạy!");
                     jsonArray.add(obj);
                     continue;
                 }
@@ -770,7 +713,7 @@ public class VideoViewController {
                     if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Đơn đã được bảo hành chưa quá 24h!");
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Đơn đã được bảo hành chưa quá 24h!");
                         jsonArray.add(obj);
                         continue;
                     }
@@ -778,8 +721,7 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                Random rand =new Random();
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[rand.nextInt(key.length)]+"&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC_C0GM726zI3iH0LUGh1jLBrbyuLZE5HY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -884,7 +826,7 @@ public class VideoViewController {
                         } else {
                             videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                             videoViewHistoryRepository.save(videoViewHistories.get(i));
-                            obj.put(videoViewHistories.get(i).getVideoid().trim(), "Không cần bảo hành!");
+                            obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Không cần bảo hành!");
                             jsonArray.add(obj);
                             continue;
                         }
@@ -907,41 +849,13 @@ public class VideoViewController {
     ResponseEntity<String> htview(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
 
         JSONObject resp = new JSONObject();
-        String[] key={"AIzaSyBDREST_tkBJtwLwP7R_AzhMufMcMQ0W8U",
-                "AIzaSyBz0U1oenDUX3Grm8Fi15YzXuKnQwApPoU",
-                "AIzaSyD3rM4Ti-mOr51d50sTZ3j2Zk_FXJBi-Pg",
-                "AIzaSyDMNegTFfuEpXFjh6SJr6uIkG9rtgsscAg",
-                "AIzaSyBZYdBJN5nG-oXM_otg7X3cc3Pil2HZJpk",
-                "AIzaSyAdz8OjRNSbhYLTuGtJpl7EHIfXf2AM_zw",
-                "AIzaSyBCIiJFQWchkroL9EUWx4WC1toHZUN6e-I",
-                "AIzaSyBJHNbAzs53GFqcGAIWctCeJ9rcDMYbEsw",
-                "AIzaSyCtIX1X_38DRcT8UODtk9SaDi7PBAkyNR4",
-                "AIzaSyCJhgx-pGa7fRLzLF7LlH_P9aF6Mn5hjks",
-                "AIzaSyBxoTek2x9iUPAXJTlhSM42MAOGvak1dfg",
-                "AIzaSyArs1DU8lr2ZZOHwHNm9r4fQCJgNk0OpU8",
-                "AIzaSyB9xxqdqaI6VfZzy0xWfAjbYz_h3r6i6LI",
-                "AIzaSyARRNkpFjJwi8h6D7DSPDqzU5dN9KYJL7c",
-                "AIzaSyAWqilV12eEQ3aRCFh7boVwnwT5vGd-fkA",
-                "AIzaSyBnFcVBXsi5XEjexd6y2qz1DaSU1OyN7O0",
-                "AIzaSyCOYZxFucHqJdKUlREppWv2x51vWBr01hQ",
-                "AIzaSyAtHO7oWPc_qfpBDGrhKWdXBe8t6W1PfyI",
-                "AIzaSyBoNOzrLwmcGegL__Pcawc_HCMO86Zr3DY",
-                "AIzaSyD3qlV4yE9gGzB8lPQ0oSCJeIOJNVC__W8",
-                "AIzaSyCJP63LRZf84rvQEhjl3TbW8ZLr9CESwOQ",
-                "AIzaSyCjRcccCp6JmqHUeGyHS69d6p6EgY-qk4s",
-                "AIzaSyDazh82pL59xL5WrEJp5ACcQm4NJvWSsBk",
-                "AIzaSyAhBaXXfGooDevibtZHuD0s98uHmy2uR_Y",
-                "AIzaSyD5mCaCbu4FtDiVyqInA_FBThkZ5ziuTI0",
-                "AIzaSyCX4l1yvTaSmt1wxgmzcmrvgfzudn8oYdk",
-                "AIzaSyDdSn1dGnR03AqjQOX4pN0lPuU2pezrpDM",
-                "AIzaSyCBmm0tWYu25LDacVcwWsKBlf7AXhy7F7M"};
         List<Admin> admin = adminRepository.FindByToken(Authorization.trim());
         if (Authorization.length() == 0 || admin.size() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        System.out.println(videoid.getVideoid().trim());
+        //System.out.println(videoid.getVideoid().trim());
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByVideoId(videoid.getVideoid().trim());
@@ -959,10 +873,6 @@ public class VideoViewController {
                 videoViewHistories = videoViewHistoryRepository.getVideoBHByOrderId(orderid);
                 if (videoViewHistories.size() == 0) {
                     resp.put("videoview", "Lịch sử đơn trống!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if (orderid != videoViewHistories.get(0).getOrderid()) {
-                    resp.put("videoview", "Không đủ ĐK hoàn tiền!(New orderId: "+videoViewHistories.get(0).getOrderid()+")");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
@@ -985,17 +895,24 @@ public class VideoViewController {
                 }
 
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
-                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    obj.put("videoview", "Chưa đủ time check  hoàn tiền!");
+                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                    obj.put("videoview", "Hoàn sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
-
+                List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
+                if (viewHistories.size()>0) {
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                        obj.put("videoview", "Hoàn sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                    }
+                }
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                Random rand = new Random();
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[rand.nextInt(key.length)]+"&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC_C0GM726zI3iH0LUGh1jLBrbyuLZE5HY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -1088,41 +1005,13 @@ public class VideoViewController {
     ResponseEntity<String> checkbhview(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
 
         JSONObject resp = new JSONObject();
-        String[] key={"AIzaSyBDREST_tkBJtwLwP7R_AzhMufMcMQ0W8U",
-                "AIzaSyBz0U1oenDUX3Grm8Fi15YzXuKnQwApPoU",
-                "AIzaSyD3rM4Ti-mOr51d50sTZ3j2Zk_FXJBi-Pg",
-                "AIzaSyDMNegTFfuEpXFjh6SJr6uIkG9rtgsscAg",
-                "AIzaSyBZYdBJN5nG-oXM_otg7X3cc3Pil2HZJpk",
-                "AIzaSyAdz8OjRNSbhYLTuGtJpl7EHIfXf2AM_zw",
-                "AIzaSyBCIiJFQWchkroL9EUWx4WC1toHZUN6e-I",
-                "AIzaSyBJHNbAzs53GFqcGAIWctCeJ9rcDMYbEsw",
-                "AIzaSyCtIX1X_38DRcT8UODtk9SaDi7PBAkyNR4",
-                "AIzaSyCJhgx-pGa7fRLzLF7LlH_P9aF6Mn5hjks",
-                "AIzaSyBxoTek2x9iUPAXJTlhSM42MAOGvak1dfg",
-                "AIzaSyArs1DU8lr2ZZOHwHNm9r4fQCJgNk0OpU8",
-                "AIzaSyB9xxqdqaI6VfZzy0xWfAjbYz_h3r6i6LI",
-                "AIzaSyARRNkpFjJwi8h6D7DSPDqzU5dN9KYJL7c",
-                "AIzaSyAWqilV12eEQ3aRCFh7boVwnwT5vGd-fkA",
-                "AIzaSyBnFcVBXsi5XEjexd6y2qz1DaSU1OyN7O0",
-                "AIzaSyCOYZxFucHqJdKUlREppWv2x51vWBr01hQ",
-                "AIzaSyAtHO7oWPc_qfpBDGrhKWdXBe8t6W1PfyI",
-                "AIzaSyBoNOzrLwmcGegL__Pcawc_HCMO86Zr3DY",
-                "AIzaSyD3qlV4yE9gGzB8lPQ0oSCJeIOJNVC__W8",
-                "AIzaSyCJP63LRZf84rvQEhjl3TbW8ZLr9CESwOQ",
-                "AIzaSyCjRcccCp6JmqHUeGyHS69d6p6EgY-qk4s",
-                "AIzaSyDazh82pL59xL5WrEJp5ACcQm4NJvWSsBk",
-                "AIzaSyAhBaXXfGooDevibtZHuD0s98uHmy2uR_Y",
-                "AIzaSyD5mCaCbu4FtDiVyqInA_FBThkZ5ziuTI0",
-                "AIzaSyCX4l1yvTaSmt1wxgmzcmrvgfzudn8oYdk",
-                "AIzaSyDdSn1dGnR03AqjQOX4pN0lPuU2pezrpDM",
-                "AIzaSyCBmm0tWYu25LDacVcwWsKBlf7AXhy7F7M"};
         List<Admin> admin = adminRepository.FindByToken(Authorization.trim());
         if (Authorization.length() == 0 || admin.size() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        System.out.println(videoid.getVideoid().trim());
+        //System.out.println(videoid.getVideoid().trim());
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByVideoId(videoid.getVideoid().trim());
@@ -1179,8 +1068,7 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                Random rand =new Random();
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[rand.nextInt(key.length)]+"&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyC_C0GM726zI3iH0LUGh1jLBrbyuLZE5HY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -1300,16 +1188,43 @@ public class VideoViewController {
         }
         try {
             List<VideoViewHistory> orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByVideoId(videoid.trim());
+            if (orderRunnings.size() == 0) {
+                long orderid = 0L;
+                try {
+                    orderid = Long.parseLong(videoid.trim());
+                } catch (Exception e) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByVideoId(orderid);
+                if (orderRunnings.size() == 0) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                /*
+                if (orderid != videoViewHistories.get(0).getOrderid()) {
+                    resp.put("videoview", "Không đủ ĐK bảo hành! (OrderId :"+videoViewHistories.get(0).getOrderid()+")");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+
+                 */
+            }
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
+                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
                 obj.put("viewstart", orderRunnings.get(i).getViewstart());
+                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
+                obj.put("cancel", orderRunnings.get(i).getCancel());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("viewend", orderRunnings.get(i).getViewend());
                 obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
                 obj.put("vieworder", orderRunnings.get(i).getVieworder());
                 obj.put("price", orderRunnings.get(i).getPrice());
