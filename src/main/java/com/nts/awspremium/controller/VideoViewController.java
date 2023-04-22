@@ -705,7 +705,7 @@ public class VideoViewController {
             }else if((System.currentTimeMillis()-autoRefill.getTimelastrun()<1000 * autoRefill.getCron()*60) || ((hour<autoRefill.getTimestart() || hour> autoRefill.getTimend())&&(autoRefill.getTimestart()!=autoRefill.getTimend()))){
                 resp.put("rep", "AutoBH not in Cron");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            } else if (videoViewRepository.getCountOrderByUser("baohanh01@gmail.com")>350) {
+            } else if (videoViewRepository.getCountOrderByUser("baohanh01@gmail.com")>300) {
                 resp.put("rep", "AutoBH Max Order");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
@@ -821,7 +821,7 @@ public class VideoViewController {
                                 }
 
                                 float balance_new = admins.get(0).getBalance() - priceorder;
-                                System.out.println(balance_new);
+                                //System.out.println(balance_new);
                                 adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
                                 Balance balance = new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
