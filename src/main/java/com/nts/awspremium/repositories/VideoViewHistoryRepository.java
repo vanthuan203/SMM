@@ -49,7 +49,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * FROM videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<=?2 and cancel=0 and timecheck!=-1 and user!='baohanh01@gmail.com' and service in(201,202,203,211,212,213) order by timecheck asc,enddate asc  limit ?3",nativeQuery = true)
     public List<VideoViewHistory> getVideoCheckBH(Integer start,Integer end,Integer limit);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and user='baohanh01@gmail.com' order by enddate desc  limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
     public List<VideoViewHistory> getTimeBHByVideoId(String videoid);
 
 

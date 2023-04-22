@@ -544,22 +544,22 @@ public class VideoViewController {
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
 
-                if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
+                if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 12) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistories.get(i).setWaitbh(1);
-                    videoViewHistories.get(i).setTimecheckbh(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000));
+                    videoViewHistories.get(i).setTimecheckbh(videoViewHistories.get(i).getEnddate()+(12 * 60 * 60 * 1000));
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Bảo hành sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
+                    obj.put("videoview", "Bảo hành sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(12 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
-                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 12){
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Bảo hành sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        obj.put("videoview", "Bảo hành sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -728,10 +728,10 @@ public class VideoViewController {
                 }
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
-                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 12){
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Đơn đã được bảo hành chưa quá 24h!");
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+ "Đơn đã được bảo hành chưa quá 12h!");
                         jsonArray.add(obj);
                         continue;
                     }
@@ -918,21 +918,24 @@ public class VideoViewController {
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
 
-                if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
+                if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 12) {
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Hoàn sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(24 * 60 * 60 * 1000)))));
+                    obj.put("videoview", "Hoàn sau: "+dateFormat.format((new Date(videoViewHistories.get(i).getEnddate()+(12 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
+                /*
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
                     if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Hoàn sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate())));
+                        obj.put("videoview", "Hoàn sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
+
+                 */
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
