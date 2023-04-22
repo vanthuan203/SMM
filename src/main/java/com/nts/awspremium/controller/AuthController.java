@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.Admin;
+import com.nts.awspremium.model.AutoRefill;
 import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.Setting;
 import com.nts.awspremium.repositories.*;
@@ -21,6 +22,9 @@ public class AuthController {
     AdminRepository adminRepository;
     @Autowired
     SettingRepository settingRepository;
+
+    @Autowired
+    AutoRefillRepository autoRefillRepository;
     @Autowired
     BalanceRepository balanceRepository;
     @PostMapping(path = "login",produces = "application/hal+json;charset=utf8")
@@ -202,6 +206,73 @@ public class AuthController {
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
+    }
+
+    @GetMapping(path = "autorefill",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> autorefill(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        JSONArray jsonArray =new JSONArray();
+        List<AutoRefill> autoRefill=autoRefillRepository.getAutoRefill();
+        for(int i=0;i<autoRefill.size();i++){
+            JSONObject obj = new JSONObject();
+            obj.put("id", autoRefill.get(i).getId());
+            obj.put("start", autoRefill.get(i).getStart());
+            obj.put("end", autoRefill.get(i).getEnd());
+            obj.put("cron", autoRefill.get(i).getCron());
+            obj.put("enable", autoRefill.get(i).getEnabled());
+            obj.put("timestart", autoRefill.get(i).getTimestart());
+            obj.put("timeend", autoRefill.get(i).getTimend());
+            obj.put("limitorder", autoRefill.get(i).getLimitorder());
+            obj.put("totalrefill", autoRefill.get(i).getTotalrefill());
+            obj.put("timelastrun", autoRefill.get(i).getTimelastrun());
+            jsonArray.add(obj);
+        }
+        resp.put("accounts",jsonArray);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
+    @PostMapping(path = "updateautorefill",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateautorefill(@RequestHeader(defaultValue = "") String Authorization,@RequestBody AutoRefill autoRefill){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> check=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| check.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<AutoRefill> autoRefills=autoRefillRepository.getAutoRefill();
+        autoRefills.get(0).setCron(autoRefill.getCron());
+        autoRefills.get(0).setStart(autoRefill.getStart());
+        autoRefills.get(0).setEnd(autoRefill.getEnd());
+        autoRefills.get(0).setTimestart(autoRefill.getTimestart());
+        autoRefills.get(0).setTimend(autoRefill.getTimend());
+        autoRefills.get(0).setEnabled(autoRefill.getEnabled());
+        autoRefills.get(0).setLimitorder(autoRefill.getLimitorder());
+        autoRefillRepository.save(autoRefills.get(0));
+        JSONObject obj = new JSONObject();
+        obj.put("id", autoRefill.getId());
+        obj.put("start", autoRefill.getStart());
+        obj.put("end", autoRefill.getEnd());
+        obj.put("cron", autoRefill.getCron());
+        obj.put("enable", autoRefill.getEnabled());
+        obj.put("timestart", autoRefill.getTimestart());
+        obj.put("timeend", autoRefill.getTimend());
+        obj.put("limitorder", autoRefill.getLimitorder());
+        obj.put("totalrefill", autoRefill.getTotalrefill());
+        obj.put("timelastrun", autoRefill.getTimelastrun());
+        resp.put("account",obj);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 
     @GetMapping(path = "balance",produces = "application/hal+json;charset=utf8")

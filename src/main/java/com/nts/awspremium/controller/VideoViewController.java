@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +47,9 @@ public class VideoViewController {
 
     @Autowired
     private DataOrderRepository dataOrderRepository;
+
+    @Autowired
+    private AutoRefillRepository autoRefillRepository;
 
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
@@ -692,7 +696,21 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoCheckBH(start*24, end*24, limit);
+            LocalTime currentTime = LocalTime.now();
+            int hour = currentTime.getHour();
+            AutoRefill autoRefill=autoRefillRepository.getReferenceById(1L);
+            if(autoRefill.getEnabled()==0){
+                resp.put("rep", "AutoBH Off");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else if((System.currentTimeMillis()-autoRefill.getTimelastrun()<1000 * autoRefill.getCron()*60) || ((hour<autoRefill.getTimestart() || hour> autoRefill.getTimend())&&(autoRefill.getTimestart()!=autoRefill.getTimend()))){
+                resp.put("rep", "AutoBH not in Cron");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } else if (videoViewRepository.getCountOrderByUser("baohanh01@gmail.com")>350) {
+                resp.put("rep", "AutoBH Max Order");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            int total_refill=0;
+            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoCheckBH(autoRefill.getStart()*24,autoRefill.getEnd()*24,autoRefill.getLimitorder() );
             JSONArray jsonArray = new JSONArray();
             Setting setting = settingRepository.getReferenceById(1L);
             List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
@@ -813,6 +831,9 @@ public class VideoViewController {
                                 balance.setService(service.getService());
                                 balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
                                 balanceRepository.save(balance);
+
+                                total_refill=total_refill+1;
+
                                 obj.put(videoViewHistories.get(i).getVideoid().trim(),end_done+"Bảo hành:" + baohanh +"/"+videoViewHistories.get(i).getVieworder()+" | "+(int)(baohanh/(float)videoViewHistories.get(i).getVieworder()*100)+"%");
                                 jsonArray.add(obj);
                                 continue;
@@ -836,6 +857,9 @@ public class VideoViewController {
                 }
 
             }
+            autoRefill.setTimelastrun(System.currentTimeMillis());
+            autoRefill.setTotalrefill(total_refill);
+            autoRefillRepository.save(autoRefill);
             resp.put("rep", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
