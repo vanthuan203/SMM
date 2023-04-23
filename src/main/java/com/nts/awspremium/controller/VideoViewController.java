@@ -855,7 +855,7 @@ public class VideoViewController {
                             continue;
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        continue;
                     }
                 }
 
