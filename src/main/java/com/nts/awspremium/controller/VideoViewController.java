@@ -51,6 +51,9 @@ public class VideoViewController {
     @Autowired
     private AutoRefillRepository autoRefillRepository;
 
+    @Autowired
+    private GoogleAPIKeyRepository googleAPIKeyRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -82,8 +85,7 @@ public class VideoViewController {
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
             Request request1 = null;
-
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBNcxI9kl_ODPwf49hMSHyohn6Q7IaKdMI&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -567,7 +569,7 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -737,10 +739,11 @@ public class VideoViewController {
                     }
                 }
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
+                List<GoogleAPIKey> keys= googleAPIKeyRepository.getAllByState();
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
-
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+keys.get(0).getKey().trim()+"&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                keys.get(0).setCount(keys.get(0).getCount()+1L);
+                googleAPIKeyRepository.save(keys.get(0));
                 Response response1 = client1.newCall(request1).execute();
 
                 String resultJson1 = response1.body().string();
@@ -1095,7 +1098,7 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyAyZOpEPeztraSXPk0Gwx-YqqZcmMONamQ&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
 
                 Response response1 = client1.newCall(request1).execute();
 
