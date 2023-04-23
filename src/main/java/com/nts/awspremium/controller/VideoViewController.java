@@ -1073,10 +1073,12 @@ public class VideoViewController {
             }
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
+                /*
                 if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
                     resp.put("videoview", "Đã hoàn trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                 */
                 if (videoViewHistories.get(0).getCancel() > 0&&(videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 0) {
                     resp.put("videoview", "Đã hủy trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
