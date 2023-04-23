@@ -916,6 +916,10 @@ public class VideoViewController {
                     resp.put("videoview", "Đã hủy trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if (videoViewHistories.get(0).getPrice() ==0) {
+                    resp.put("videoview", "Đã hoàn 100%");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
@@ -1142,6 +1146,7 @@ public class VideoViewController {
                         obj.put("timestart", videoViewHistories.get(i).getInsertdate());
                         obj.put("timeend", videoViewHistories.get(i).getEnddate());
                         obj.put("vieworder", viewFix);
+                        obj.put("refund",videoViewHistories.get(i).getRefund());
                         obj.put("viewcount", Integer.parseInt(statistics.get("viewCount").toString()));
                         obj.put("viewbh", baohanh);
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
