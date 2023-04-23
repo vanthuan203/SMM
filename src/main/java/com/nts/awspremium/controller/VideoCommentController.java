@@ -1078,7 +1078,7 @@ public class VideoCommentController {
                     balance.setTotalblance(balance_new);
                     balance.setBalance(price_refund);
                     balance.setService(videoBuffh.get(0).getService());
-                    balance.setNote("Hoàn " + (viewthan) + "view cho " + videoBuffh.get(0).getVideoid());
+                    balance.setNote("Hoàn " + (viewthan) + " cmt cho " + videoBuffh.get(0).getVideoid());
                     balanceRepository.save(balance);
                 } else {
                     videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());

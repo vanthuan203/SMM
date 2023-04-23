@@ -1406,7 +1406,8 @@ public class VideoViewController {
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.get(0).getUser());
                     //Hoàn tiền những view chưa buff
                     int viewbuff = videoBuffh.get(0).getViewtotal();
-                    int viewthan=videoBuffh.get(0).getVieworder() - videoBuffh.get(0).getViewtotal()>videoBuffh.get(0).getVieworder()?videoBuffh.get(0).getVieworder():videoBuffh.get(0).getViewtotal();
+                    int viewthan=videoBuffh.get(0).getVieworder() - (videoBuffh.get(0).getViewtotal()>videoBuffh.get(0).getVieworder()?videoBuffh.get(0).getVieworder():videoBuffh.get(0).getViewtotal());
+                    System.out.println(videoBuffh.get(0).getViewtotal()>videoBuffh.get(0).getVieworder()?videoBuffh.get(0).getVieworder():videoBuffh.get(0).getViewtotal());
                     float price_refund = (viewthan / (float) videoBuffh.get(0).getVieworder()) * videoBuffh.get(0).getPrice();
                     //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                     float pricebuffed = (videoBuffh.get(0).getPrice() - price_refund);
@@ -1430,7 +1431,7 @@ public class VideoViewController {
                         balance.setTotalblance(balance_new);
                         balance.setBalance(price_refund);
                         balance.setService(videoBuffh.get(0).getService());
-                        balance.setNote("Hoàn " + (viewthan) + "view cho " + videoBuffh.get(0).getVideoid());
+                        balance.setNote("Hoàn " + (viewthan) + " view cho " + videoBuffh.get(0).getVideoid());
                         balanceRepository.save(balance);
                     }
                 } else {
