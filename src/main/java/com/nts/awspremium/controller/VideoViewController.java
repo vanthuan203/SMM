@@ -1406,29 +1406,33 @@ public class VideoViewController {
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.get(0).getUser());
                     //Hoàn tiền những view chưa buff
                     int viewbuff = videoBuffh.get(0).getViewtotal();
-                    float price_refund = ((videoBuffh.get(0).getVieworder() - videoBuffh.get(0).getViewtotal()) / (float) videoBuffh.get(0).getVieworder()) * videoBuffh.get(0).getPrice();
+                    int viewthan=videoBuffh.get(0).getVieworder() - videoBuffh.get(0).getViewtotal()>videoBuffh.get(0).getVieworder()?videoBuffh.get(0).getVieworder():videoBuffh.get(0).getViewtotal();
+                    float price_refund = (viewthan / (float) videoBuffh.get(0).getVieworder()) * videoBuffh.get(0).getPrice();
                     //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                     float pricebuffed = (videoBuffh.get(0).getPrice() - price_refund);
                     videoBuffhnew.setPrice(pricebuffed);
                     if (viewbuff == 0) {
                         videoBuffhnew.setCancel(1);
-                    } else {
+                    } else if(viewbuff>=videoBuffh.get(0).getVieworder()){
+                        videoBuffhnew.setCancel(0);
+                    }else{
                         videoBuffhnew.setCancel(2);
                     }
                     //hoàn tiền & add thong báo số dư
-                    int viewthan = (int) (videoBuffh.get(0).getVieworder() - viewbuff);
-                    float balance_new = user.get(0).getBalance() + price_refund;
-                    user.get(0).setBalance(balance_new);
-                    adminRepository.save(user.get(0));
-                    //
-                    Balance balance = new Balance();
-                    balance.setUser(user.get(0).getUsername().trim());
-                    balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(balance_new);
-                    balance.setBalance(price_refund);
-                    balance.setService(videoBuffh.get(0).getService());
-                    balance.setNote("Hoàn " + (viewthan) + "view cho " + videoBuffh.get(0).getVideoid());
-                    balanceRepository.save(balance);
+                    if(viewthan>0){
+                        float balance_new = user.get(0).getBalance() + price_refund;
+                        user.get(0).setBalance(balance_new);
+                        adminRepository.save(user.get(0));
+                        //
+                        Balance balance = new Balance();
+                        balance.setUser(user.get(0).getUsername().trim());
+                        balance.setTime(System.currentTimeMillis());
+                        balance.setTotalblance(balance_new);
+                        balance.setBalance(price_refund);
+                        balance.setService(videoBuffh.get(0).getService());
+                        balance.setNote("Hoàn " + (viewthan) + "view cho " + videoBuffh.get(0).getVideoid());
+                        balanceRepository.save(balance);
+                    }
                 } else {
                     videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                     videoBuffhnew.setCancel(0);
