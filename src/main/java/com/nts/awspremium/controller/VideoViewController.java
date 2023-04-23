@@ -975,11 +975,12 @@ public class VideoViewController {
                         List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
                         //Hoàn tiền những view chưa buff
                         int viewcount = Integer.parseInt(statistics.get("viewCount").toString());
-                        int viewthan = videoViewHistories.get(i).getVieworder() + videoViewHistories.get(i).getViewstart() - viewcount;
-                        if (viewthan > videoViewHistories.get(i).getVieworder()) {
-                            viewthan = videoViewHistories.get(i).getVieworder();
+                        int viewFix=videoViewHistories.get(i).getVieworder()>videoViewHistories.get(i).getViewtotal()?videoViewHistories.get(i).getViewtotal():videoViewHistories.get(i).getVieworder();
+                        int viewthan = viewFix + videoViewHistories.get(i).getViewstart() - viewcount;
+                        if (viewthan > viewFix) {
+                            viewthan = viewFix;
                         }
-                        float price_refund = ((viewthan) / (float) videoViewHistories.get(i).getVieworder()) * videoViewHistories.get(i).getPrice();
+                        float price_refund = ((viewthan) / (float) viewFix) * videoViewHistories.get(i).getPrice();
                         //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                         if (videoViewHistories.get(i).getPrice() < price_refund) {
                             price_refund = videoViewHistories.get(i).getPrice();
@@ -987,7 +988,7 @@ public class VideoViewController {
                         float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
                         videoViewHistories.get(i).setPrice(pricebuffed);
                         videoViewHistories.get(i).setViewend(viewcount);
-                        videoViewHistories.get(i).setViewtotal(videoViewHistories.get(i).getVieworder()-viewthan);
+                        videoViewHistories.get(i).setViewtotal(viewFix-viewthan);
                         videoViewHistories.get(i).setRefund(1);
                         if( price_refund == videoViewHistories.get(i).getPrice()){
                             videoViewHistories.get(i).setCancel(1);
@@ -1130,7 +1131,8 @@ public class VideoViewController {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         int baohanh = 0;
-                        baohanh = (int) ((int) (videoViewHistories.get(i).getViewstart() + videoViewHistories.get(i).getVieworder() - Integer.parseInt(statistics.get("viewCount").toString())));
+                        int viewFix=videoViewHistories.get(i).getVieworder()>videoViewHistories.get(i).getViewtotal()?videoViewHistories.get(i).getViewtotal():videoViewHistories.get(i).getVieworder();
+                        baohanh = (int) ((int) (videoViewHistories.get(i).getViewstart() + viewFix - Integer.parseInt(statistics.get("viewCount").toString())));
 
                         obj.put(videoViewHistories.get(i).getVideoid().trim(), "Bảo hành " + baohanh + " view!");
                         obj.put("orderid", videoViewHistories.get(i).getOrderid());
@@ -1139,7 +1141,7 @@ public class VideoViewController {
                         obj.put("videoview", "true");
                         obj.put("timestart", videoViewHistories.get(i).getInsertdate());
                         obj.put("timeend", videoViewHistories.get(i).getEnddate());
-                        obj.put("vieworder", videoViewHistories.get(i).getVieworder());
+                        obj.put("vieworder", viewFix);
                         obj.put("viewcount", Integer.parseInt(statistics.get("viewCount").toString()));
                         obj.put("viewbh", baohanh);
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
