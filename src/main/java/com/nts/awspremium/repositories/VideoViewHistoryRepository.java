@@ -21,6 +21,12 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
             "orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoId(String videoid);
 
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and user!='baohanh01@gmail.com' and (cancel=0 or (refund>0&&cancel>0)) order by insertdate asc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoBHByVideoIdNoMaxOrderId(String videoid);
+
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213) and user!='baohanh01@gmail.com' and cancel=0 order by insertdate asc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoBHByVideoIdNoMaxOrderIdCancel0(String videoid);
+
     @Query(value = "SELECT * FROM videoviewhistory where videoid in(select videoid from videoviewhistory where orderid=?1) and service in(201,202,203,211,212,213) and\n" +
             "            orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByMaxOrderId(Long orderid);
@@ -38,6 +44,9 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public List<VideoViewHistory> getVideoViewHistories();
     @Query(value = "SELECT * from videoviewhistory where  videoid=?1 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByVideoId(String videoid);
+
+    @Query(value = "SELECT * from videoviewhistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
 
     @Query(value = "SELECT * from videoviewhistory where  orderid=?1 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByVideoId(Long orderid);
