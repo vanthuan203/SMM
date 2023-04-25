@@ -21,6 +21,9 @@ public class AccountSubController {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private ProxyRepository proxyRepository;
+
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
                                                  @RequestParam(defaultValue = "1") Integer update){
@@ -96,6 +99,11 @@ public class AccountSubController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        if(proxyRepository.PROCESSLISTSUB()>=30){
+            resp.put("status","fail");
+            resp.put("message","Hết proxy khả dụng!" );
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         /*
         if (vps.indexOf("WS") >= 0 || vps.indexOf("ws") >= 0 || vps.indexOf("Ws") >= 0 ||  vps.indexOf("wS") >= 0) {
             resp.put("status","fail");
@@ -110,9 +118,9 @@ public class AccountSubController {
                 Long id=accountRepository.getAccountSub();
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
-                    resp.put("status","fail");
-                    resp.put("message", "Hết tài khoản thỏa mãn!");
-                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                    resp.put("status", "fail");
+                    resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
                     try{
                         /*
@@ -131,7 +139,7 @@ public class AccountSubController {
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                          */
-                        Thread.sleep(3);
+                        Thread.sleep(300);
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
                             resp.put("status", "fail");

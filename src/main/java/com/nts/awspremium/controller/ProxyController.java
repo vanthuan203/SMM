@@ -327,9 +327,71 @@ public class ProxyController {
 
     }
 
+    @GetMapping(value = "/getrpoxybyusersub", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getrpoxybyusersub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail) {
+        JSONObject resp = new JSONObject();
+        try{
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(username.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để username trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+/*
+            Long id=accountRepository.findIdByUsername(username);
+            String v4 =accountRepository.CheckProxyByIdSub(id);
+            if(v4.length()<5 || v4==null){
+                v4= ipV4Repository.getIpv4ByVps();
+                ipV4Repository.updateUserCountByIpv4(v4);
+                accountRepository.updateProxyById(v4,id);
+            }
+
+            if(proxyfail.length()!=0){
+                proxyGet=proxyRepository.getProxySubT1();
+            }else{
+                proxyGet=proxyRepository.getProxySubByIpv4T1(v4);
+                if(proxyGet.size()==0){
+                    proxyGet=proxyRepository.getProxySubT1();
+                }
+            }
+
+ */
+            if(proxyfail.length()!=0){
+                Integer proxyId= proxyRepository.getIdByProxyFalse(proxyfail.trim(),vps);
+                //System.out.println(proxyId);
+                if(proxyId!=null){
+                    proxyRepository.updaterunningProxyByVps(proxyId);
+                }
+            }
+            Random ran=new Random();
+            List<Proxy> proxyGet=null;
+            Thread.sleep(ran.nextInt(1000));
+            proxyGet=proxyRepository.getProxyAccSub();
+            if(proxyGet.size()==0){
+                resp.put("status","fail");
+                resp.put("message","Hết proxy khả dụng!" );
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
+            resp.put("status","true");
+            resp.put("proxy",proxyGet.get(0).getProxy());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+        resp.put("status", e.getStackTrace()[0].getLineNumber());
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+    }
+
+    }
+
+
     @GetMapping(value = "/getproxysub", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> getproxysub(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail,
-            @RequestParam(defaultValue = "vn") String geo) {
+                                       @RequestParam(defaultValue = "vn") String geo) {
         JSONObject resp = new JSONObject();
         try{
             if(vps.length()==0){
@@ -393,11 +455,13 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {
-        resp.put("status", e.getStackTrace()[0].getLineNumber());
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-    }
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
 
     }
+
+
     @GetMapping(value = "/resetrunningproxy", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetrunningproxy(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxy) {
         JSONObject resp = new JSONObject();
