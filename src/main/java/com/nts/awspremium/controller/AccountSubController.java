@@ -99,7 +99,7 @@ public class AccountSubController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(proxyRepository.PROCESSLISTSUB()>=30){
+        if(proxyRepository.PROCESSLISTSUBGETACC()>=50){
             resp.put("status","fail");
             resp.put("message","Hết proxy khả dụng!" );
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

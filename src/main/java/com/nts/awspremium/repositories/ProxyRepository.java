@@ -99,6 +99,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccSub' and COMMAND='Query' and TIME>0",nativeQuery = true)
     public Integer PROCESSLISTSUB();
 
+    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccSub' and COMMAND='Query'",nativeQuery = true)
+    public Integer PROCESSLISTSUBGETACC();
+
     @Query(value = "SELECT count(*) FROM proxy where proxy=?1",nativeQuery = true)
     public Integer checkproxynull(String proxy);
 

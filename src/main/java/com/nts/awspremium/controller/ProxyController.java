@@ -409,12 +409,14 @@ public class ProxyController {
                 resp.put("message", "Không để Geo trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
+            Random ran=new Random();
+            Thread.sleep(ran.nextInt(1000));
+            /*
             if(proxyRepository.PROCESSLISTSUB()>=50){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-/*
             Long id=accountRepository.findIdByUsername(username);
             String v4 =accountRepository.CheckProxyByIdSub(id);
             if(v4.length()<5 || v4==null){
@@ -440,7 +442,6 @@ public class ProxyController {
                     proxyRepository.updaterunningProxyByVps(proxyId);
                 }
             }
-            Random ran=new Random();
             List<Proxy> proxyGet=null;
             Thread.sleep(ran.nextInt(1000));
             proxyGet=proxyRepository.getProxyByGeo(geo.trim());
