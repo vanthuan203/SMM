@@ -148,7 +148,7 @@ public class HistoryViewController {
                             }else{
                                 resp.put("source", "search");
                             }
-                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==667){
+                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
                             resp.put("source", "suggest");
                         } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
                                 videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
@@ -187,7 +187,7 @@ public class HistoryViewController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==667){
+                        }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
                             if(videos.get(0).getDuration()>1200){
                                 resp.put("video_duration", 900+ran.nextInt(300));
                             }else{
@@ -332,7 +332,7 @@ public class HistoryViewController {
                         }else{
                             resp.put("source", "search");
                         }
-                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==667){
+                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
                         resp.put("source", "suggest");
                     } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
                             videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
@@ -371,7 +371,7 @@ public class HistoryViewController {
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==667){
+                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||  videos.get(0).getService()==667){
                         if(videos.get(0).getDuration()>1200){
                             resp.put("video_duration", 900+ran.nextInt(300));
                         }else{
