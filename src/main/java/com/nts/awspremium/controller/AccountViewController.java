@@ -84,12 +84,7 @@ public class AccountViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         try {
-            Integer check_get=0;
-            if(geo.equals("vn")) {
-                check_get = vpsRepository.checkGetAccount17ByThreadVps(vps.trim());
-            }else{
-                check_get = vpsRepository.checkGetAccount12ByThreadVps(vps.trim());
-            }
+            Integer check_get = vpsRepository.checkGetAccount15ByThreadVps(vps.trim());
             if(check_get==0){
                 resp.put("status","fail");
                 resp.put("message", "Đã đủ acc cho Vps!");

@@ -102,36 +102,9 @@ public class HistoryViewController {
                         resp.put("video_title", videos.get(0).getVideotitle());
                         resp.put("username", history.getUsername());
                         resp.put("geo",accountRepository.getGeoByUsername(username.trim()));
-                        if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
-                            int randLike =ran.nextInt(10000);
-                            if(randLike<700){
-                                resp.put("like","true");
-                            }else{
-                                resp.put("like","fail");
-                            }
-                            int randSub =ran.nextInt(10000);
-                            if(randSub<100){
-                                resp.put("sub","true");
-                            }else{
-                                resp.put("sub","fail");
-                            }
-                        }else if(videos.get(0).getService()<600 || history.getUsername().indexOf("@gmail")<0){
-                            resp.put("like","fail");
-                            resp.put("sub","fail");
-                        }else{
-                            int randLike =ran.nextInt(10000);
-                            if(randLike<300){
-                                resp.put("like","true");
-                            }else{
-                                resp.put("like","fail");
-                            }
-                            int randSub =ran.nextInt(10000);
-                            if(randSub<100){
-                                resp.put("sub","true");
-                            }else{
-                                resp.put("sub","fail");
-                            }
-                        }
+                        resp.put("like","fail");
+                        resp.put("sub","fail");
+
                         String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                         String key="";
                         if(list_key!=null && list_key.length()!=0){
@@ -232,6 +205,7 @@ public class HistoryViewController {
                     }
                 }else{
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
+
                     if(buffh==1){
                         if(histories.get(0).getListvideo().length()>600){
                             videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
@@ -285,36 +259,8 @@ public class HistoryViewController {
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    if(videos.get(0).getService()==701 || videos.get(0).getService()==702){
-                        int randLike =ran.nextInt(10000);
-                        if(randLike<700){
-                            resp.put("like","true");
-                        }else{
-                            resp.put("like","fail");
-                        }
-                        int randSub =ran.nextInt(10000);
-                        if(randSub<100){
-                            resp.put("sub","true");
-                        }else{
-                            resp.put("sub","fail");
-                        }
-                    }else if(videos.get(0).getService()<600 || histories.get(0).getUsername().indexOf("@gmail")<0){
-                        resp.put("like","fail");
-                        resp.put("sub","fail");
-                    }else{
-                        int randLike =ran.nextInt(10000);
-                        if(randLike<300){
-                            resp.put("like","true");
-                        }else{
-                            resp.put("like","fail");
-                        }
-                        int randSub =ran.nextInt(10000);
-                        if(randSub<100){
-                            resp.put("sub","true");
-                        }else{
-                            resp.put("sub","fail");
-                        }
-                    }
+                    resp.put("like","fail");
+                    resp.put("sub","fail");
 
                     String list_key= dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                     String key="";
