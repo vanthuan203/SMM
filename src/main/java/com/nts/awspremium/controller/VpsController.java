@@ -507,4 +507,20 @@ public class VpsController {
         }
     }
 
+    @GetMapping(value = "resettoolbyhistimecheckcron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resettoolbyhistimecheckcron(){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetVPSByHisTimecheck();
+            //accountRepository.resetAccountSubByTimecheck();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
