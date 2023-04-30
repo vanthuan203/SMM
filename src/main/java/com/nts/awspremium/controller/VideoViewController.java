@@ -1370,11 +1370,9 @@ public class VideoViewController {
             String orderid_sum = "";
             Long timestart = 0L;
             Long timeend = 0L;
-            System.out.println(videoViewHistories.size());
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 orderid_sum = orderid_sum + " | " + videoViewHistories.get(i).getOrderid();
                 vieworder_sum = vieworder_sum + (videoViewHistories.get(i).getVieworder() > videoViewHistories.get(i).getViewtotal() ? videoViewHistories.get(i).getViewtotal() : videoViewHistories.get(i).getVieworder());
-                System.out.println(vieworder_sum);
                 viewtotal_sum = viewtotal_sum + videoViewHistories.get(i).getViewtotal();
                 if (i == videoViewHistories.size() - 1) {
                     timestart = videoViewHistories.get(i).getInsertdate();
@@ -1535,7 +1533,6 @@ public class VideoViewController {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
-                        System.out.println(Integer.parseInt(statistics.get("viewCount").toString()) - videoViewHistories.get(i).getViewstart() - vieworder_sum);
                         if (Integer.parseInt(statistics.get("viewCount").toString()) - videoViewHistories.get(i).getViewstart() - vieworder_sum < 0) {
                             if (Integer.parseInt(statistics.get("viewCount").toString()) - (int) videoViewHistories.get(i).getViewstart() > 0) {
                                 int baohanh = 0;
@@ -1543,8 +1540,6 @@ public class VideoViewController {
                                 baohanh = videoViewHistories.get(i).getViewstart() + viewFix - Integer.parseInt(statistics.get("viewCount").toString());
                                 if (baohanh < 50) {
                                     baohanh = 50;
-                                } else if (baohanh > videoViewHistories.get(i).getVieworder()) {
-                                    baohanh = videoViewHistories.get(i).getVieworder();
                                 }
                                 float priceorder = 0;
                                 Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
