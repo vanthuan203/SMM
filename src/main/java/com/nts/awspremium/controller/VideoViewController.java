@@ -852,6 +852,10 @@ public class VideoViewController {
                             continue;
                         }
                     } catch (Exception e) {
+                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), end_done + "Không cần bảo hành!");
+                        jsonArray.add(obj);
                         continue;
                     }
                 }

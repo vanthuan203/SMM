@@ -27,7 +27,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,801,802,811,812,813) and user!='baohanh01@gmail.com' and cancel=0 order by insertdate asc",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoIdNoMaxOrderIdCancel0(String videoid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid in(select videoid from videoviewhistory where orderid=?1) and service in(201,202,203,211,212,213) and\n" +
+    @Query(value = "SELECT * FROM videoviewhistory where videoid in(select videoid from videoviewhistory where orderid=?1) and service in(201,202,203,211,212,213,801,802,811,812,813) and\n" +
             "            orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByMaxOrderId(Long orderid);
 
@@ -55,7 +55,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public List<VideoViewHistory> getVideoViewHistories(String user);
 
 
-    @Query(value = "SELECT * FROM videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<=?2 and cancel=0 and timecheck!=-1 and user!='baohanh01@gmail.com' and service in(201,202,203,211,212,213) order by timecheck asc,enddate asc  limit ?3",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<=?2 and cancel=0 and timecheck!=-1 and user!='baohanh01@gmail.com' and service in(201,202,203,211,212,213,801,802,811,812,813) order by timecheck asc limit ?3",nativeQuery = true)
     public List<VideoViewHistory> getVideoCheckBH(Integer start,Integer end,Integer limit);
 
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,801,802,811,812,813) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
@@ -64,6 +64,6 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set timecheck=-1 where timecheck!=-1 and orderid not in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory group by videoid) as p) and cancel not in(1,2)",nativeQuery = true)
+    @Query(value = "update videoviewhistory set timecheck=-1 where timecheck!=-1 and user!='baohanh01@gmail.com' and orderid not in( SELECT  * FROM (SELECT  MAX(orderid) FROM  videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) and cancel not in(1,2)",nativeQuery = true)
     public Integer updatetimchecknomaxid();
 }
