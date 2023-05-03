@@ -19,11 +19,12 @@ public class Service {
     private String note;
     private String geo;
     private Integer enabled;
+    private Integer maxorder;
     public Service() {
     }
 
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -35,6 +36,15 @@ public class Service {
         this.note = note;
         this.geo = geo;
         this.enabled = enabled;
+        this.maxorder = maxorder;
+    }
+
+    public Integer getMaxorder() {
+        return maxorder;
+    }
+
+    public void setMaxorder(Integer maxorder) {
+        this.maxorder = maxorder;
     }
 
     public Integer getEnabled() {

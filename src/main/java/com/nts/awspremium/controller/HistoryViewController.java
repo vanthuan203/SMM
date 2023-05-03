@@ -75,7 +75,13 @@ public class HistoryViewController {
                     history.setGeo(accountRepository.getGeoByUsername(username.trim()));
                     history.setTimeget(System.currentTimeMillis());
                     if(buffh==1){
-                        videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff("");
+                        if(history.getGeo().equals("vn")){
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
+                            videos=videoViewRepository.getvideoBuffHVer2VNTEST("",orderTrue.getValue());
+                        }else if(history.getGeo().equals("us")){
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS("");
+                            videos=videoViewRepository.getvideoBuffHVer2USTEST("",orderTrue.getValue());
+                        }
                     }else{
                         if(history.getGeo().equals("vn")){
                             //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
@@ -121,7 +127,8 @@ public class HistoryViewController {
                             }else{
                                 resp.put("source", "search");
                             }
-                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
+                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803
+                                || videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
                             resp.put("source", "suggest");
                         } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
                                 videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
@@ -166,7 +173,7 @@ public class HistoryViewController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==998){
+                        }else if(videos.get(0).getService()==998 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
                             if(videos.get(0).getDuration()>1920){
                                 resp.put("video_duration", 1800+ran.nextInt(120));
                             }else{
@@ -207,10 +214,12 @@ public class HistoryViewController {
                     List<HistoryView> histories=historyViewRepository.getHistoriesById(historieId);
 
                     if(buffh==1){
-                        if(histories.get(0).getListvideo().length()>600){
-                            videos=videoViewRepository.getvideoViewLoopNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
-                        }else{
-                            videos=videoViewRepository.getvideoViewNoCheckMaxThreadViewBuff(histories.get(0).getListvideo());
+                        if(histories.get(0).getGeo().equals("vn")){
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN("");
+                            videos=videoViewRepository.getvideoBuffHVer2VNTEST(histories.get(0).getListvideo(),orderTrue.getValue());
+                        }else if(histories.get(0).getGeo().equals("us")){
+                            //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS("");
+                            videos=videoViewRepository.getvideoBuffHVer2USTEST(histories.get(0).getListvideo(),orderTrue.getValue());
                         }
                     }else{
                         //String str = String.join(",",orderTrue.getValue());
@@ -278,7 +287,8 @@ public class HistoryViewController {
                         }else{
                             resp.put("source", "search");
                         }
-                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
+                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803
+                            || videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
                         resp.put("source", "suggest");
                     } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
                             videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
@@ -317,13 +327,13 @@ public class HistoryViewController {
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||  videos.get(0).getService()==667){
+                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
                         if(videos.get(0).getDuration()>1200){
                             resp.put("video_duration", 900+ran.nextInt(300));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==998){
+                    }else if(videos.get(0).getService()==998 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
                         if(videos.get(0).getDuration()>1920){
                             resp.put("video_duration", 1800+ran.nextInt(120));
                         }else{

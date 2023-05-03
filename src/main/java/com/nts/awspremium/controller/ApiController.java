@@ -179,7 +179,7 @@ public class ApiController {
                 Service service = serviceRepository.getService(data.getService());
                 Setting setting = settingRepository.getReferenceById(1L);
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
-                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0)) {
+                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder()<=videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -273,6 +273,7 @@ public class ApiController {
                         videoViewhnew.setInsertdate(System.currentTimeMillis());
                         videoViewhnew.setView24h(0);
                         videoViewhnew.setViewtotal(0);
+                        videoViewhnew.setTimetotal(0);
                         videoViewhnew.setVieworder(data.getQuantity());
                         videoViewhnew.setUser(admins.get(0).getUsername());
                         videoViewhnew.setChannelid(snippet.get("channelId").toString());
