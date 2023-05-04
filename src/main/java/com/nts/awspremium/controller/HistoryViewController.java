@@ -120,20 +120,23 @@ public class HistoryViewController {
                         resp.put("suggest_type","fail");
                         resp.put("suggest_key",key.length()==0?videos.get(0).getVideotitle():key);
                         resp.put("suggest_video","");
-                        if(videos.get(0).getService()==666 || videos.get(0).getService()==111 || videos.get(0).getService()==801 || videos.get(0).getService()==600 || videos.get(0).getService()==599||
-                                videos.get(0).getService()==201 ){
+                        if(videos.get(0).getService()==666 || videos.get(0).getService()==111 || videos.get(0).getService()==801 ||
+                                videos.get(0).getService()==600 || videos.get(0).getService()==599|| videos.get(0).getService()==201 ){
                             if(ran.nextInt(10000)>5000){
                                 resp.put("source", "dtn");
                             }else{
                                 resp.put("source", "search");
                             }
-                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803
-                                || videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
+                        }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 ||
+                                videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||
+                                videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901 ||
+                                videos.get(0).getService()==204 || videos.get(0).getService()==803 || videos.get(0).getService()==804){
                             resp.put("source", "suggest");
-                        } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
-                                videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
-                                videos.get(0).getService()==811 || videos.get(0).getService()==812||videos.get(0).getService()==813 ||
-                                videos.get(0).getService()==211 || videos.get(0).getService()==212||videos.get(0).getService()==213){
+                        } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||
+                                videos.get(0).getService()==999 || videos.get(0).getService()==998 || videos.get(0).getService()==113 ||
+                                videos.get(0).getService()==122||videos.get(0).getService()==123|| videos.get(0).getService()==811 ||
+                                videos.get(0).getService()==812||videos.get(0).getService()==813 || videos.get(0).getService()==211 ||
+                                videos.get(0).getService()==212||videos.get(0).getService()==213){
                             int rand =ran.nextInt(10000);
                             if(rand<5000){
                                 resp.put("source", "suggest");
@@ -152,7 +155,8 @@ public class HistoryViewController {
                             resp.put("source", "dtn");
                         }
 
-                        if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 || videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
+                        if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 ||
+                                videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
                                 videos.get(0).getService()==111 || videos.get(0).getService()==112 || videos.get(0).getService()==113||
                                 videos.get(0).getService()==801 || videos.get(0).getService()==802 || videos.get(0).getService()==811 ||
                                 videos.get(0).getService()==201 || videos.get(0).getService()==202||videos.get(0).getService()==211){
@@ -161,46 +165,28 @@ public class HistoryViewController {
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 || videos.get(0).getService()==212){
+                        }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 ||
+                                videos.get(0).getService()==212 || videos.get(0).getService()==204 || videos.get(0).getService()==803){
                             if(videos.get(0).getDuration()>540){
                                 resp.put("video_duration", 300+ran.nextInt(240));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
+                        }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 ||
+                                videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||
+                                videos.get(0).getService()==667 || videos.get(0).getService()==804){
                             if(videos.get(0).getDuration()>1200){
                                 resp.put("video_duration", 900+ran.nextInt(300));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==998 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
+                        }else if(videos.get(0).getService()==301 || videos.get(0).getService()==901){
                             if(videos.get(0).getDuration()>1920){
                                 resp.put("video_duration", 1800+ran.nextInt(120));
                             }else{
                                 resp.put("video_duration", videos.get(0).getDuration());
                             }
-                        }else if(videos.get(0).getService()==999){
-                            if(videos.get(0).getDuration()>3720){
-                                resp.put("video_duration", 3600+ran.nextInt(120));
-                            }else{
-                                resp.put("video_duration", videos.get(0).getDuration());
-                            }
-                        }else if(videos.get(0).getService()==701){
-                            int ran_time=(int)(1800*(Math.random()*(1-0.6+1)+0.6));
-                            if(ran_time>videos.get(0).getDuration()){
-                                resp.put("video_duration",videos.get(0).getDuration() );
-                            }else{
-                                resp.put("video_duration",ran_time );
-                            }
-                        }else if(videos.get(0).getService()==702){
-                            int ran_time=(int)(3600*(Math.random()*(1-0.6+1)+0.6));
-                            if(ran_time>videos.get(0).getDuration()){
-                                resp.put("video_duration",videos.get(0).getDuration() );
-                            }else{
-                                resp.put("video_duration",ran_time );
-                            }
                         }
-
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }else{
                         historyViewRepository.save(history);
@@ -280,20 +266,23 @@ public class HistoryViewController {
                     resp.put("suggest_type","fail");
                     resp.put("suggest_key",key.length()==0?videos.get(0).getVideotitle():key);
                     resp.put("suggest_video","");
-                    if(videos.get(0).getService()==666 || videos.get(0).getService()==111 || videos.get(0).getService()==801 || videos.get(0).getService()==600 || videos.get(0).getService()==599||
-                            videos.get(0).getService()==201 ){
+                    if(videos.get(0).getService()==666 || videos.get(0).getService()==111 || videos.get(0).getService()==801 ||
+                            videos.get(0).getService()==600 || videos.get(0).getService()==599|| videos.get(0).getService()==201 ){
                         if(ran.nextInt(10000)>5000){
                             resp.put("source", "dtn");
                         }else{
                             resp.put("source", "search");
                         }
-                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 || videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803
-                            || videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
+                    }else  if(videos.get(0).getService()==668 || videos.get(0).getService()==112 || videos.get(0).getService()==802 ||
+                            videos.get(0).getService()==202 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||
+                            videos.get(0).getService()==667 || videos.get(0).getService()==301 || videos.get(0).getService()==901 ||
+                            videos.get(0).getService()==204 || videos.get(0).getService()==803 || videos.get(0).getService()==804){
                         resp.put("source", "suggest");
-                    } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||videos.get(0).getService()==999 || videos.get(0).getService()==998 ||
-                            videos.get(0).getService()==113 || videos.get(0).getService()==122||videos.get(0).getService()==123||
-                            videos.get(0).getService()==811 || videos.get(0).getService()==812||videos.get(0).getService()==813 ||
-                            videos.get(0).getService()==211 || videos.get(0).getService()==212||videos.get(0).getService()==213){
+                    } else if(videos.get(0).getService()==669 || videos.get(0).getService()==688||videos.get(0).getService()==689||
+                            videos.get(0).getService()==999 || videos.get(0).getService()==998 || videos.get(0).getService()==113 ||
+                            videos.get(0).getService()==122||videos.get(0).getService()==123|| videos.get(0).getService()==811 ||
+                            videos.get(0).getService()==812||videos.get(0).getService()==813 || videos.get(0).getService()==211 ||
+                            videos.get(0).getService()==212||videos.get(0).getService()==213){
                         int rand =ran.nextInt(10000);
                         if(rand<5000){
                             resp.put("source", "suggest");
@@ -312,7 +301,8 @@ public class HistoryViewController {
                         resp.put("source", "dtn");
                     }
 
-                    if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 || videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
+                    if(videos.get(0).getService()==666 || videos.get(0).getService()==668 || videos.get(0).getService()==669 ||
+                            videos.get(0).getService()==600 || videos.get(0).getService()==599 ||
                             videos.get(0).getService()==111 || videos.get(0).getService()==112 || videos.get(0).getService()==113||
                             videos.get(0).getService()==801 || videos.get(0).getService()==802 || videos.get(0).getService()==811 ||
                             videos.get(0).getService()==201 || videos.get(0).getService()==202||videos.get(0).getService()==211){
@@ -321,43 +311,26 @@ public class HistoryViewController {
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 || videos.get(0).getService()==212){
+                    }else if(videos.get(0).getService()==688 || videos.get(0).getService()==122 || videos.get(0).getService()==812 ||
+                            videos.get(0).getService()==212 || videos.get(0).getService()==204 || videos.get(0).getService()==803){
                         if(videos.get(0).getDuration()>540){
                             resp.put("video_duration", 300+ran.nextInt(240));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 || videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 || videos.get(0).getService()==667){
+                    }else if(videos.get(0).getService()==689 || videos.get(0).getService()==123 || videos.get(0).getService()==813 ||
+                            videos.get(0).getService()==213 || videos.get(0).getService()==203 || videos.get(0).getService()==803 ||
+                            videos.get(0).getService()==667 || videos.get(0).getService()==804){
                         if(videos.get(0).getDuration()>1200){
                             resp.put("video_duration", 900+ran.nextInt(300));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
-                    }else if(videos.get(0).getService()==998 || videos.get(0).getService()==301 || videos.get(0).getService()==901){
+                    }else if(videos.get(0).getService()==301 || videos.get(0).getService()==901){
                         if(videos.get(0).getDuration()>1920){
                             resp.put("video_duration", 1800+ran.nextInt(120));
                         }else{
                             resp.put("video_duration", videos.get(0).getDuration());
-                        }
-                    }else if(videos.get(0).getService()==999){
-                        if(videos.get(0).getDuration()>3720){
-                            resp.put("video_duration", 3600+ran.nextInt(120));
-                        }else{
-                            resp.put("video_duration", videos.get(0).getDuration());
-                        }
-                    }else if(videos.get(0).getService()==701){
-                        int ran_time=(int)(1800*(Math.random()*(1-0.6+1)+0.6));
-                        if(ran_time>videos.get(0).getDuration()){
-                            resp.put("video_duration",videos.get(0).getDuration() );
-                        }else{
-                            resp.put("video_duration",ran_time );
-                        }
-                    }else if(videos.get(0).getService()==702){
-                        int ran_time=(int)(3600*(Math.random()*(1-0.6+1)+0.6));
-                        if(ran_time>videos.get(0).getDuration()){
-                            resp.put("video_duration",videos.get(0).getDuration() );
-                        }else{
-                            resp.put("video_duration",ran_time );
                         }
                     }
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

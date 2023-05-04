@@ -13,5 +13,6 @@ public class ServiceOption {
     private Integer dtn;
     private Integer mintime;
     private Integer maxtime;
+    private Integer fixtime;
 
 }

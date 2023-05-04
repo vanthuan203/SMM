@@ -18,6 +18,7 @@ public class Vps {
     private Integer threads;
     private Integer vpsreset;
     private Integer timereset;
+    private Long timeresettool;
     private Integer dayreset;
     private String ipv4;
     private Integer countipv4;
@@ -26,6 +27,28 @@ public class Vps {
     private Integer ext;
     private Integer get_account;
     public Vps() {
+    }
+
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Long timeresettool, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger, Integer ext, Integer get_account) {
+        this.id = id;
+        this.vps = vps;
+        this.urlapi = urlapi;
+        this.token = token;
+        this.vpsoption = vpsoption;
+        this.state = state;
+        this.running = running;
+        this.timecheck = timecheck;
+        this.threads = threads;
+        this.vpsreset = vpsreset;
+        this.timereset = timereset;
+        this.timeresettool = timeresettool;
+        this.dayreset = dayreset;
+        this.ipv4 = ipv4;
+        this.countipv4 = countipv4;
+        this.namevps = namevps;
+        this.changefinger = changefinger;
+        this.ext = ext;
+        this.get_account = get_account;
     }
 
     public Integer getDayreset() {
@@ -42,27 +65,6 @@ public class Vps {
 
     public void setDayreset(Integer dayreset) {
         this.dayreset = dayreset;
-    }
-
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger, Integer ext, Integer get_account) {
-        this.id = id;
-        this.vps = vps;
-        this.urlapi = urlapi;
-        this.token = token;
-        this.vpsoption = vpsoption;
-        this.state = state;
-        this.running = running;
-        this.timecheck = timecheck;
-        this.threads = threads;
-        this.vpsreset = vpsreset;
-        this.timereset = timereset;
-        this.dayreset = dayreset;
-        this.ipv4 = ipv4;
-        this.countipv4 = countipv4;
-        this.namevps = namevps;
-        this.changefinger = changefinger;
-        this.ext = ext;
-        this.get_account = get_account;
     }
 
     public Integer getGet_account() {
@@ -191,5 +193,12 @@ public class Vps {
 
     public void setCountipv4(Integer countipv4) {
         this.countipv4 = countipv4;
+    }
+    public Long getTimeresettool() {
+        return timeresettool;
+    }
+
+    public void setTimeresettool(Long timeresettool) {
+        this.timeresettool = timeresettool;
     }
 }

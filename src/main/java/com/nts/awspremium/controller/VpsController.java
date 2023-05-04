@@ -263,7 +263,7 @@ public class VpsController {
     ResponseEntity<String> resetBasByCron(){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetBasByCron();
+            vpsRepository.resetBasByCron(System.currentTimeMillis());
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
