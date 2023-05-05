@@ -20,11 +20,15 @@ public class Service {
     private String geo;
     private Integer enabled;
     private Integer maxorder;
+    private Integer search;
+    private Integer suggest;
+    private Integer dtn;
+    private Integer mintime;
+    private Integer maxtime;
     public Service() {
     }
 
-
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer mintime, Integer maxtime) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -37,6 +41,11 @@ public class Service {
         this.geo = geo;
         this.enabled = enabled;
         this.maxorder = maxorder;
+        this.search = search;
+        this.suggest = suggest;
+        this.dtn = dtn;
+        this.mintime = mintime;
+        this.maxtime = maxtime;
     }
 
     public Integer getMaxorder() {
@@ -133,5 +142,45 @@ public class Service {
 
     public void setMax(Integer max) {
         this.max = max;
+    }
+
+    public Integer getSearch() {
+        return search;
+    }
+
+    public void setSearch(Integer search) {
+        this.search = search;
+    }
+
+    public Integer getSuggest() {
+        return suggest;
+    }
+
+    public void setSuggest(Integer suggest) {
+        this.suggest = suggest;
+    }
+
+    public Integer getDtn() {
+        return dtn;
+    }
+
+    public void setDtn(Integer dtn) {
+        this.dtn = dtn;
+    }
+
+    public Integer getMintime() {
+        return mintime;
+    }
+
+    public void setMintime(Integer mintime) {
+        this.mintime = mintime;
+    }
+
+    public Integer getMaxtime() {
+        return maxtime;
+    }
+
+    public void setMaxtime(Integer maxtime) {
+        this.maxtime = maxtime;
     }
 }
