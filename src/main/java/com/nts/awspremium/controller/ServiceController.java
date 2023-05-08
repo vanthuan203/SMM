@@ -88,12 +88,26 @@ public class ServiceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         List<Service> admins=serviceRepository.GetServiceById(service.getService());
-        admins.get(0).setNote(service.getNote());
+        //admins.get(0).setNote(service.getNote());
         admins.get(0).setMax(service.getMax());
         admins.get(0).setMin(service.getMin());
         admins.get(0).setRate(service.getRate());
-
         admins.get(0).setName(service.getName());
+        admins.get(0).setGeo(service.getGeo());
+        admins.get(0).setCategory(service.getCategory());
+        admins.get(0).setEnabled(service.getEnabled());
+        admins.get(0).setMaxorder(service.getMaxorder());
+        admins.get(0).setSearch(service.getSearch());
+        admins.get(0).setSuggest(service.getSuggest());
+        admins.get(0).setDtn(service.getDtn());
+        admins.get(0).setMintime(service.getMintime());
+        admins.get(0).setMaxtime(service.getMaxtime());
+        admins.get(0).setMaxtimerefill(service.getMaxtimerefill());
+        admins.get(0).setRefill(service.getRefill());
+        admins.get(0).setThread(service.getThread());
+        admins.get(0).setType(service.getType());
+        admins.get(0).setChecktime(service.getChecktime());
+
         serviceRepository.save(admins.get(0));
         JSONObject obj = new JSONObject();
         obj.put("service", admins.get(0).getService());
@@ -101,8 +115,20 @@ public class ServiceController {
         obj.put("min", admins.get(0).getMin());
         obj.put("max", admins.get(0).getMax());
         obj.put("name",admins.get(0).getName());
-        obj.put("note",admins.get(0).getNote());
+        obj.put("geo",admins.get(0).getGeo());
         obj.put("category",admins.get(0).getCategory());
+        obj.put("enabled",admins.get(0).getEnabled());
+        obj.put("maxorder",admins.get(0).getMaxorder());
+        obj.put("search",admins.get(0).getSearch());
+        obj.put("suggest",admins.get(0).getSuggest());
+        obj.put("dtn",admins.get(0).getDtn());
+        obj.put("mintime",admins.get(0).getMintime());
+        obj.put("maxtime",admins.get(0).getMaxtime());
+        obj.put("maxtimerefill",admins.get(0).getMaxtimerefill());
+        obj.put("refill",admins.get(0).getRefill());
+        obj.put("thread",admins.get(0).getThread());
+        obj.put("type",admins.get(0).getType());
+        obj.put("checktime",admins.get(0).getChecktime());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
@@ -144,7 +170,7 @@ public class ServiceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray =new JSONArray();
-        List<Service> admins=serviceRepository.getAllService();
+        List<Service> admins=serviceRepository.getAllServiceByWeb();
         for(int i=0;i<admins.size();i++){
             JSONObject obj = new JSONObject();
             obj.put("service", admins.get(i).getService());
@@ -152,8 +178,20 @@ public class ServiceController {
             obj.put("min", admins.get(i).getMin());
             obj.put("max", admins.get(i).getMax());
             obj.put("name",admins.get(i).getName());
-            obj.put("note",admins.get(i).getNote());
+            obj.put("geo",admins.get(i).getGeo());
             obj.put("category",admins.get(i).getCategory());
+            obj.put("enabled",admins.get(i).getEnabled());
+            obj.put("maxorder",admins.get(i).getMaxorder());
+            obj.put("search",admins.get(i).getSearch());
+            obj.put("suggest",admins.get(i).getSuggest());
+            obj.put("dtn",admins.get(i).getDtn());
+            obj.put("mintime",admins.get(i).getMintime());
+            obj.put("maxtime",admins.get(i).getMaxtime());
+            obj.put("maxtimerefill",admins.get(i).getMaxtimerefill());
+            obj.put("refill",admins.get(i).getRefill());
+            obj.put("thread",admins.get(i).getThread());
+            obj.put("type",admins.get(i).getType());
+            obj.put("checktime",admins.get(i).getChecktime());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);

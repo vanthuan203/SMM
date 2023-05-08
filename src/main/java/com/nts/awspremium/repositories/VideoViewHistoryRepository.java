@@ -14,24 +14,27 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * from videoviewhistory where orderid=?1",nativeQuery = true)
     public VideoViewHistory getVideoViewHisById(Long orderid);
-    @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
+    @Query(value = "SELECT videoid FROM videoviewhistory where viewend is null and service in (select service from service where refill=1) and cancel!=1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=5 order by enddate desc limit 50",nativeQuery = true)
     public List<String> getOrderHistorythan5h();
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) and \n" +
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and \n" +
             "orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoId(String videoid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) and user!='baohanh01@gmail.com' and (cancel=0 or (refund>0&&cancel>0)) order by insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and user!='baohanh01@gmail.com' and (cancel=0 or (refund>0&&cancel>0)) order by insertdate asc",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoIdNoMaxOrderId(String videoid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) and user!='baohanh01@gmail.com' and cancel=0 order by insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=(select videoid from videoviewhistory where orderid=?1 limit 1) and service in (select service from service where refill=1) and user!='baohanh01@gmail.com' and (cancel=0 or (refund>0&&cancel>0)) order by insertdate asc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoBHByOrderidNoMaxOrderId(Long orderid);
+
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and user!='baohanh01@gmail.com' and cancel=0 order by insertdate asc",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoIdNoMaxOrderIdCancel0(String videoid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid in(select videoid from videoviewhistory where orderid=?1) and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) and\n" +
+    @Query(value = "SELECT * FROM videoviewhistory where videoid in(select videoid from videoviewhistory where orderid=?1) and service in (select service from service where refill=1) and\n" +
             "            orderid in( SELECT  * FROM (SELECT  MAX(orderid) FROM videoviewhistory where user!='baohanh01@gmail.com' group by videoid) as p) limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByMaxOrderId(Long orderid);
 
-    @Query(value = "SELECT * FROM videoviewhistory where orderid=?1 and service in(201,202,203,211,212,213,801,802,811,812,813) and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where orderid=?1 and service in (select service from service where refill=1) and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByOrderId(Long orderid);
 
     @Modifying
@@ -55,10 +58,10 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public List<VideoViewHistory> getVideoViewHistories(String user);
 
 
-    @Query(value = "SELECT * FROM videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<=?2 and cancel=0 and timecheck!=-1 and user!='baohanh01@gmail.com' and service in(201,202,203,211,212,213,301,801,802,811,812,813,901) order by timecheck asc limit ?3",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<=?2 and cancel=0 and timecheck!=-1 and user!='baohanh01@gmail.com' and service in (select service from service where refill=1) order by timecheck asc limit ?3",nativeQuery = true)
     public List<VideoViewHistory> getVideoCheckBH(Integer start,Integer end,Integer limit);
 
-    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in(201,202,203,211,212,213,801,802,811,812,813) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
     public List<VideoViewHistory> getTimeBHByVideoId(String videoid);
 
 

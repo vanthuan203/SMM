@@ -61,13 +61,13 @@ public class ApiController {
                 JSONArray arr = new JSONArray();
                 float rate;
                 for (int i = 0; i < services.size(); i++) {
-                    rate=services.get(i).getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
+                    rate = services.get(i).getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                     JSONObject serviceBuffH = new JSONObject();
                     serviceBuffH.put("service", services.get(i).getService());
                     serviceBuffH.put("name", services.get(i).getName());
                     serviceBuffH.put("type", services.get(i).getType());
                     serviceBuffH.put("category", services.get(i).getCategory());
-                    serviceBuffH.put("rate",rate );
+                    serviceBuffH.put("rate", rate);
                     serviceBuffH.put("min", services.get(i).getMin());
                     serviceBuffH.put("max", services.get(i).getMax());
                     arr.add(serviceBuffH);
@@ -88,11 +88,11 @@ public class ApiController {
                     VideoViewHistory videoHistory = videoViewHistoryRepository.getVideoViewHisById(data.getOrder());
                     if (video != null) {
                         resp.put("start_count", video.getViewstart());
-                        resp.put("current_count", video.getViewtotal()+video.getViewstart());
+                        resp.put("current_count", video.getViewtotal() + video.getViewstart());
                         resp.put("charge", video.getPrice());
-                        if(video.getMaxthreads()==0){
+                        if (video.getMaxthreads() == 0) {
                             resp.put("status", "Processing");
-                        }else{
+                        } else {
                             resp.put("status", "In progress");
                         }
                         resp.put("remains", video.getVieworder() - video.getViewtotal());
@@ -128,9 +128,9 @@ public class ApiController {
                         videoview.put("start_count", v.getViewstart());
                         videoview.put("current_count", v.getViewstart() + v.getViewtotal());
                         videoview.put("charge", v.getPrice());
-                        if(v.getMaxthreads()==0){
+                        if (v.getMaxthreads() == 0) {
                             videoview.put("status", "Processing");
-                        }else{
+                        } else {
                             videoview.put("status", "In progress");
                         }
                         //videoview.put("status", "In progress");
@@ -144,7 +144,7 @@ public class ApiController {
                         JSONObject videohisview = new JSONObject();
                         if (videoViewHistory != null) {
                             videohisview.put("start_count", vh.getViewstart());
-                            videohisview.put("current_count", vh.getViewtotal()+ vh.getViewstart());
+                            videohisview.put("current_count", vh.getViewtotal() + vh.getViewstart());
                             videohisview.put("charge", vh.getPrice());
                             if (vh.getCancel() == 1) {
                                 videohisview.put("status", "Canceled");
@@ -169,9 +169,14 @@ public class ApiController {
             if (data.getAction().equals("add")) {
 
                 Service service = serviceRepository.getService(data.getService());
+                if (service == null) {
+                    resp.put("error", "Invalid service");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+                }
                 Setting setting = settingRepository.getReferenceById(1L);
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
-                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder()<=videoViewRepository.getCountOrderByService(data.getService())) {
+                        (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -183,8 +188,8 @@ public class ApiController {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (data.getQuantity()>service.getMax() || data.getQuantity()<service.getMin()) {
-                    resp.put("error", "Min/Max order is: "+service.getMin()+"/"+service.getMax());
+                if (data.getQuantity() > service.getMax() || data.getQuantity() < service.getMin()) {
+                    resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 ////////////////////////////////
@@ -235,11 +240,11 @@ public class ApiController {
                             resp.put("error", "Videos under 60 seconds");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900 && (data.getService() == 203 || data.getService() == 667) ){
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900 && (data.getService() == 203 || data.getService() == 667)) {
                             resp.put("error", "Video under 15 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800 && (data.getService() == 301 || data.getService() == 901) ){
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800 && (data.getService() == 301 || data.getService() == 901)) {
                             resp.put("error", "Video under 30 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
@@ -255,7 +260,7 @@ public class ApiController {
                          */
                         float priceorder = 0;
                         int time = 0;
-                        priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate())/ 100)*((float) (100 - admins.get(0).getDiscount()) / 100);
+                        priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                         if (priceorder > (float) admins.get(0).getBalance()) {
                             resp.put("error", "Your balance not enough");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -269,14 +274,14 @@ public class ApiController {
                          */
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
-                        if(snippet.get("liveBroadcastContent").toString().equals("none")){
-                            int max_thread = service.getThread() + ((int)(data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        if (snippet.get("liveBroadcastContent").toString().equals("none")) {
+                            int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
                             if (max_thread <= setting.getMaxthread()) {
                                 videoViewhnew.setMaxthreads(max_thread);
                             } else {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
-                        }else{
+                        } else {
                             videoViewhnew.setMaxthreads(0);
                         }
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());

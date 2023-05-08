@@ -1,6 +1,5 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
@@ -11,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(path = "/historyview")
-public class HistoryViewController {
+@RequestMapping(path = "/historyviewtest")
+public class HistoryViewTestController {
 
 
     @Autowired
@@ -42,6 +41,7 @@ public class HistoryViewController {
     private HistoryViewSumRepository historyViewSumRepository;
     @Autowired
     private OrderTrue orderTrue;
+
     @Autowired
     private ServiceRepository serviceRepository;
 

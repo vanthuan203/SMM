@@ -14,10 +14,13 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "SELECT * FROM service where enabled=1 and type!=\"Custom Comments\"",nativeQuery = true)
     public List<Service> getAllService();
 
+    @Query(value = "SELECT * FROM service ",nativeQuery = true)
+    public List<Service> getAllServiceByWeb();
+
     @Query(value = "SELECT * FROM service where enabled=1 and type=\"Custom Comments\"",nativeQuery = true)
     public List<Service> getAllServiceCmt();
 
-    @Query(value = "SELECT * FROM service where service=?1 limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where service=?1 and enabled=1 limit 1",nativeQuery = true)
     public Service getService(Integer service);
 
     @Query(value = "Select count(*) from admin where token=?1",nativeQuery = true)

@@ -67,10 +67,12 @@ public class VideoViewController {
                 resp.put("videoview", "Service not found ");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            /*
             if (videoView.getVieworder() > service.getMax() || videoView.getVieworder() < service.getMin()) {
                 resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+             */
             if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                     (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(videoView.getService())) {
                 resp.put("videoview", "System busy try again!");
@@ -631,7 +633,7 @@ public class VideoViewController {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         if (Integer.parseInt(statistics.get("viewCount").toString()) - videoViewHistories.get(i).getViewstart() - videoViewHistories.get(i).getVieworder() < 0) {
-                            if (Integer.parseInt(statistics.get("viewCount").toString()) - (int) videoViewHistories.get(i).getViewstart() > 0) {
+                            if (Integer.parseInt(statistics.get("viewCount").toString()) - (int) videoViewHistories.get(i).getViewstart() >= 0) {
                                 int baohanh = 0;
                                 baohanh = (int) ((int) (videoViewHistories.get(i).getViewstart() + videoViewHistories.get(i).getVieworder() - Integer.parseInt(statistics.get("viewCount").toString())));
                                 if (baohanh < 50) {
@@ -1403,8 +1405,18 @@ public class VideoViewController {
             Setting setting = settingRepository.getReferenceById(1L);
             List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
             if (videoViewHistories.size() == 0) {
-                resp.put("videoview", "Lịch sử đơn trống!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                long orderid = 0L;
+                try {
+                    orderid = Long.parseLong(videoid.getVideoid().trim());
+                } catch (Exception e) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                videoViewHistories = videoViewHistoryRepository.getVideoBHByOrderidNoMaxOrderId(orderid);
+                if (videoViewHistories.size() == 0) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
             }
             int vieworder_sum = 0;
             int viewtotal_sum = 0;
