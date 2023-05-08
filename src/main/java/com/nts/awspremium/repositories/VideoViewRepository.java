@@ -46,6 +46,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT count(*) from videoview where videoid=?1",nativeQuery = true)
     public Integer getCountVideoId(String videoid);
 
+    @Query(value = "SELECT count(*) from videoview where videoid=?1 and user!='baohanh01@gmail.com'",nativeQuery = true)
+    public Integer getCountVideoIdNotIsBH(String videoid);
+
     @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0) order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderView();
 
@@ -125,6 +128,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Transactional
     @Query(value = "DELETE FROM videoview where videoid=?1",nativeQuery = true)
     public void deletevideoByVideoId(String videoid);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM videoview where videoid=?1 and user='baohanh01@gmail.com'",nativeQuery = true)
+    public void deletevideoByVideoIdBH(String videoid);
 
 
     @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where checktime=0)",nativeQuery = true)

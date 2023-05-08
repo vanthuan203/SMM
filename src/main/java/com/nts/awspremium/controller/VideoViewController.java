@@ -960,7 +960,7 @@ public class VideoViewController {
                     resp.put("videoview", "Đã hoàn 100%");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
+                if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     obj.put("videoview", "Đơn đang chạy!");
@@ -1044,7 +1044,7 @@ public class VideoViewController {
                         float balance_new = user.get(0).getBalance() + price_refund;
                         user.get(0).setBalance(balance_new);
                         adminRepository.save(user.get(0));
-                        //
+                        videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
                         Balance balance = new Balance();
                         balance.setUser(user.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
@@ -1117,7 +1117,7 @@ public class VideoViewController {
                     resp.put("videoview", "Đã hoàn 100%");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
+                if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     obj.put("videoview", "Đơn đang chạy!");
@@ -1135,7 +1135,7 @@ public class VideoViewController {
                 float balance_new = user.get(0).getBalance() + price_refund;
                 user.get(0).setBalance(balance_new);
                 adminRepository.save(user.get(0));
-                videoViewRepository.deletevideoByVideoId(videoViewHistories.get(i).getVideoid());
+                videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
                 Balance balance = new Balance();
                 balance.setUser(user.get(0).getUsername().trim());
                 balance.setTime(System.currentTimeMillis());
@@ -1394,13 +1394,13 @@ public class VideoViewController {
                     resp.put("videoview", "Đã hủy trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                /*
                 if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     obj.put("videoview", "Đơn đang chạy!");
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
-                /*
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
