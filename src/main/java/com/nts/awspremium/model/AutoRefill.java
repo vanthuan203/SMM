@@ -20,11 +20,13 @@ public class AutoRefill {
     private Integer totalrefill;
     private Integer limitorder;
 
+    private Integer limitrefillorder;
+
 
     public AutoRefill() {
     }
 
-    public AutoRefill(Long id, Integer start, Integer end, Integer cron, Integer enabled, Integer timestart, Integer timend, Long timelastrun, Integer totalrefill, Integer limitorder) {
+    public AutoRefill(Long id, Integer start, Integer end, Integer cron, Integer enabled, Integer timestart, Integer timend, Long timelastrun, Integer totalrefill, Integer limitorder, Integer limitrefillorder) {
         this.id = id;
         this.start = start;
         this.end = end;
@@ -35,6 +37,7 @@ public class AutoRefill {
         this.timelastrun = timelastrun;
         this.totalrefill = totalrefill;
         this.limitorder = limitorder;
+        this.limitrefillorder = limitrefillorder;
     }
 
     public Long getId() {
@@ -115,5 +118,13 @@ public class AutoRefill {
 
     public void setLimitorder(Integer limitorder) {
         this.limitorder = limitorder;
+    }
+
+    public Integer getLimitrefillorder() {
+        return limitrefillorder;
+    }
+
+    public void setLimitrefillorder(Integer limitrefillorder) {
+        this.limitrefillorder = limitrefillorder;
     }
 }

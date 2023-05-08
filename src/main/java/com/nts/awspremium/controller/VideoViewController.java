@@ -743,7 +743,7 @@ public class VideoViewController {
             } else if ((System.currentTimeMillis() - autoRefill.getTimelastrun() < 1000 * autoRefill.getCron() * 60) || ((hour < autoRefill.getTimestart() || hour > autoRefill.getTimend()) && (autoRefill.getTimestart() != autoRefill.getTimend()))) {
                 resp.put("rep", "AutoBH not in Cron");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            } else if (videoViewRepository.getCountOrderByUser("baohanh01@gmail.com") > 300) {
+            } else if (videoViewRepository.getCountOrderByUser("baohanh01@gmail.com") > autoRefill.getLimitrefillorder()) {
                 resp.put("rep", "AutoBH Max Order");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
@@ -1066,6 +1066,92 @@ public class VideoViewController {
                         throw new RuntimeException(e);
                     }
                 }
+            }
+            resp.put("rep", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            System.out.println(e.getStackTrace()[0].getLineNumber());
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping(path = "ht100view", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> ht100view(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
+
+        JSONObject resp = new JSONObject();
+        List<Admin> admin = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admin.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        //System.out.println(videoid.getVideoid().trim());
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByVideoId(videoid.getVideoid().trim());
+            JSONArray jsonArray = new JSONArray();
+            Setting setting = settingRepository.getReferenceById(1L);
+            List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
+            if (videoViewHistories.size() == 0) {
+                long orderid = 0L;
+                try {
+                    orderid = Long.parseLong(videoid.getVideoid().trim());
+                } catch (Exception e) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                videoViewHistories = videoViewHistoryRepository.getVideoBHByOrderId(orderid);
+                if (videoViewHistories.size() == 0) {
+                    resp.put("videoview", "Lịch sử đơn trống!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }
+
+            for (int i = 0; i < videoViewHistories.size(); i++) {
+                JSONObject obj = new JSONObject();
+                List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
+                if (videoViewHistories.get(0).getPrice() == 0) {
+                    resp.put("videoview", "Đã hoàn 100%");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                if (videoViewRepository.getCountVideoId(videoViewHistories.get(i).getVideoid().trim()) > 0) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    obj.put("videoview", "Đơn đang chạy!");
+                    return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                }
+                int viewthan=videoViewHistories.get(i).getVieworder()>videoViewHistories.get(i).getViewtotal()?videoViewHistories.get(i).getViewtotal():videoViewHistories.get(i).getVieworder();
+                Float price_refund=videoViewHistories.get(i).getPrice();
+                videoViewHistories.get(i).setPrice(0F);
+                videoViewHistories.get(i).setViewtotal(0);
+                videoViewHistories.get(i).setRefund(1);
+                videoViewHistories.get(i).setCancel(1);
+
+                videoViewHistoryRepository.save(videoViewHistories.get(i));
+                //hoàn tiền & add thong báo số dư
+                float balance_new = user.get(0).getBalance() + price_refund;
+                user.get(0).setBalance(balance_new);
+                adminRepository.save(user.get(0));
+                videoViewRepository.deletevideoByVideoId(videoViewHistories.get(i).getVideoid());
+                Balance balance = new Balance();
+                balance.setUser(user.get(0).getUsername().trim());
+                balance.setTime(System.currentTimeMillis());
+                balance.setTotalblance(balance_new);
+                balance.setBalance(price_refund);
+                balance.setService(videoViewHistories.get(i).getService());
+                balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                balanceRepository.save(balance);
+
+                obj.put(videoViewHistories.get(i).getVideoid().trim(), "Hoàn  " + viewthan + " view!");
+                obj.put("videoview", "true");
+                obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
+                obj.put("balance", admins.get(0).getBalance());
+                obj.put("price", price_refund);
+                obj.put("time", viewthan);
+                return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
             }
             resp.put("rep", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
