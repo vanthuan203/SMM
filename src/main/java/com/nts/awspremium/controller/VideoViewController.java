@@ -320,7 +320,7 @@ public class VideoViewController {
                 System.out.println(snippet.get("liveBroadcastContent").toString());
                 if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                     VideoView videoView = videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
-                    Service service = serviceRepository.getService(videoView.getService());
+                    Service service = serviceRepository.getInfoService(videoView.getService());
                     int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000) - 1) * setting.getLevelthread();
                     if (max_thread > setting.getMaxthread()) {
                         max_thread = setting.getMaxthread();
@@ -642,7 +642,7 @@ public class VideoViewController {
                                     baohanh = videoViewHistories.get(i).getVieworder();
                                 }
                                 float priceorder = 0;
-                                Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
+                                Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
                                 priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                                 if (priceorder > (float) admins.get(0).getBalance()) {
                                     obj.put("videoview", "Số tiền không đủ!");
@@ -817,7 +817,7 @@ public class VideoViewController {
                                     baohanh = videoViewHistories.get(i).getVieworder();
                                 }
                                 float priceorder = 0;
-                                Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
+                                Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
                                 priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                                 if (priceorder > (float) admins.get(0).getBalance()) {
                                     obj.put(videoViewHistories.get(i).getVideoid().trim(), end_done + "Số tiền không đủ!");
@@ -1015,7 +1015,7 @@ public class VideoViewController {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject statistics = (JSONObject) video.get("statistics");
-                        Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
+                        Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
                         List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
                         //Hoàn tiền những view chưa buff
                         int viewcount = Integer.parseInt(statistics.get("viewCount").toString());
@@ -1214,14 +1214,17 @@ public class VideoViewController {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     viewCount = Integer.parseInt(statistics.get("viewCount").toString());
+                    if(videoViewHistories.get(0).getViewstart()>viewCount){
+                        obj.put("videoview", "view HT < view Start");
+                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                    }
                 } catch (Exception e) {
                     System.out.println(e.getStackTrace()[0].getLineNumber());
                     throw new RuntimeException(e);
                 }
             }
             /////////////////////////////////////////////////////////////////////////////////////////
-
-            Service service = serviceRepository.getService(videoViewHistories.get(0).getService());
+            Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
             List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(0).getUser());
             int vieworder_sum = 0;
             int viewthan_sum = 0;
@@ -1259,11 +1262,13 @@ public class VideoViewController {
                 if (viewFix < viewBH) {
                     int viewthan = viewFix;
                     viewthan_sum = viewthan_sum + viewthan;
-                    float price_refund = ((viewthan) / (float) viewFix) * videoViewHistories.get(i).getPrice();
+                    float price_refund = videoViewHistories.get(i).getPrice();
+                    System.out.println(price_refund+"|"+viewthan);
                     //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                     if (videoViewHistories.get(i).getPrice() < price_refund) {
                         price_refund = videoViewHistories.get(i).getPrice();
                     }
+
                     price_refund_sum = price_refund_sum + price_refund;
                     float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
                     videoViewHistories.get(i).setPrice(pricebuffed);
@@ -1280,7 +1285,6 @@ public class VideoViewController {
                     float balance_new = user.get(0).getBalance() + price_refund;
                     user.get(0).setBalance(balance_new);
                     adminRepository.save(user.get(0));
-                    //
                     Balance balance = new Balance();
                     balance.setUser(user.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
@@ -1675,11 +1679,16 @@ public class VideoViewController {
                         int baohanh = 0;
                         int viewFix = vieworder_sum;
                         baohanh = videoViewHistories.get(i).getViewstart() + viewFix - Integer.parseInt(statistics.get("viewCount").toString());
+                        System.out.println(videoViewHistories.get(i).getViewstart()+"|"+Integer.parseInt(statistics.get("viewCount").toString()));
+                        if(videoViewHistories.get(i).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())){
+                            obj.put("videoview", "view HT < view Start");
+                            return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                        }
                         if (baohanh < 50) {
                             baohanh = 50;
                         }
                         float priceorder = 0;
-                        Service service = serviceRepository.getService(videoViewHistories.get(i).getService());
+                        Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
                         priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                         if (priceorder > (float) admins.get(0).getBalance()) {
                             obj.put("videoview", "Số tiền không đủ!");
@@ -1973,7 +1982,7 @@ public class VideoViewController {
                 videoBuffhnew.setTimecheck(0L);
                 //videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                 if (cancel == 1) {
-                    Service service = serviceRepository.getService(videoBuffh.get(0).getService());
+                    Service service = serviceRepository.getInfoService(videoBuffh.get(0).getService());
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.get(0).getUser());
                     //Hoàn tiền những view chưa buff
                     int viewbuff = videoBuffh.get(0).getViewtotal();
@@ -2215,7 +2224,7 @@ public class VideoViewController {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 float priceorder = 0;
                 if (videoBuffh.getVieworder() != video.get(0).getVieworder()) {
-                    Service service = serviceRepository.getService(video.get(0).getService());
+                    Service service = serviceRepository.getInfoService(video.get(0).getService());
                     priceorder = ((videoBuffh.getVieworder() - video.get(0).getVieworder())) * (video.get(0).getPrice() / video.get(0).getVieworder());
 
                     if (priceorder > (float) admins.get(0).getBalance()) {

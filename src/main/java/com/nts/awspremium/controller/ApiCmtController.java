@@ -168,7 +168,7 @@ public class ApiCmtController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
-                Service service = serviceRepository.getService(data.getService());
+                Service service = serviceRepository.getServiceCmt(data.getService());
                 if (service == null) {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

@@ -233,7 +233,7 @@ public class ApiController {
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0&&service.getLive()==0) {
-                            resp.put("error", "This video is a livestream(pre) video");
+                            resp.put("error", "This video is a livestream video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 60&&service.getLive()==0) {
@@ -245,6 +245,14 @@ public class ApiController {
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==30) {
+                            resp.put("error", "Video under 30 minutes");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 3600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==60) {
+                            resp.put("error", "Video under 30 minutes");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 7200&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==120) {
                             resp.put("error", "Video under 30 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
@@ -282,7 +290,7 @@ public class ApiController {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
                         } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
-                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*0.15));
+                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*setting.getBonus()));
                         }else{
                             videoViewhnew.setMaxthreads(0);
                         }
