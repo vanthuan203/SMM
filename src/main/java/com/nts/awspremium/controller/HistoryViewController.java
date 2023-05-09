@@ -97,7 +97,7 @@ public class HistoryViewController {
                     history.setRunning(1);
                     historyViewRepository.save(history);
 
-                    Service service = serviceRepository.getService(videos.get(0).getService());
+                    Service service = serviceRepository.getInfoService(videos.get(0).getService());
 
                     resp.put("channel_id", videos.get(0).getChannelid());
                     resp.put("status", "true");
