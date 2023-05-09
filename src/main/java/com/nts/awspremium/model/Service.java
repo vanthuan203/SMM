@@ -28,10 +28,11 @@ public class Service {
     private Integer refill;
     private Integer maxtimerefill;
     private Integer checktime;
+    private Integer live;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -52,6 +53,7 @@ public class Service {
         this.refill = refill;
         this.maxtimerefill = maxtimerefill;
         this.checktime = checktime;
+        this.live = live;
     }
 
     public Integer getMaxorder() {
@@ -209,8 +211,15 @@ public class Service {
     public Integer getChecktime() {
         return checktime;
     }
-
     public void setChecktime(Integer checktime) {
         this.checktime = checktime;
+    }
+
+    public Integer getLive() {
+        return live;
+    }
+
+    public void setLive(Integer live) {
+        this.live = live;
     }
 }

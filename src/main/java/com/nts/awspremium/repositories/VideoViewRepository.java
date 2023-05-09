@@ -23,6 +23,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where checktime=1 and mintime>=30) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoBuffHVer2USTEST(String listvideo, List<String> orderid);
 
+    @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoLiveVer2VNTEST(String listvideo, List<String> orderid);
+
+    @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoView> getvideoLiveVer2USTEST(String listvideo, List<String> orderid);
+
     @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
             "             from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "             group by orderid having total<maxthreads) as t",nativeQuery = true)

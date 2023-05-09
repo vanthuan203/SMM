@@ -83,6 +83,12 @@ public class HistoryViewController {
                     } else if (history.getGeo().equals("us")) {
                         videos = videoViewRepository.getvideoBuffHVer2USTEST("", orderTrue.getValue());
                     }
+                }else if(buffh == 2){
+                    if (history.getGeo().equals("vn")) {
+                        videos = videoViewRepository.getvideoLiveVer2VNTEST("", orderTrue.getValue());
+                    } else {
+                        videos = videoViewRepository.getvideoLiveVer2USTEST("", orderTrue.getValue());
+                    }
                 } else {
                     if (history.getGeo().equals("vn")) {
                         videos = videoViewRepository.getvideoViewVer2VNTEST("", orderTrue.getValue());
@@ -98,7 +104,7 @@ public class HistoryViewController {
                     historyViewRepository.save(history);
 
                     Service service = serviceRepository.getInfoService(videos.get(0).getService());
-
+                    resp.put("live",service.getLive()==1?"true":"fail");
                     resp.put("channel_id", videos.get(0).getChannelid());
                     resp.put("status", "true");
                     resp.put("video_id", videos.get(0).getVideoid());
@@ -130,12 +136,14 @@ public class HistoryViewController {
                     }
                     resp.put("source", arrSource.get(ran.nextInt(arrSource.size())));
 
-                    if (service.getMintime() != service.getMaxtime()) {
+                    if (service.getMintime() != service.getMaxtime()&&service.getLive()==0) {
                         if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                             resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60));
                         } else {
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
+                    }else if(service.getLive()==1){
+                        resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0));
                     } else {
                         if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                             resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0));
@@ -161,6 +169,12 @@ public class HistoryViewController {
                     } else if (histories.get(0).getGeo().equals("us")) {
                         videos = videoViewRepository.getvideoBuffHVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
                     }
+                }else if(buffh == 2){
+                    if (histories.get(0).getGeo().equals("vn")) {
+                        videos = videoViewRepository.getvideoLiveVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
+                    } else {
+                        videos = videoViewRepository.getvideoLiveVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
+                    }
                 } else {
 
                     if (histories.get(0).getGeo().equals("vn")) {
@@ -183,12 +197,13 @@ public class HistoryViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
 
-                Service service = serviceRepository.getService(videos.get(0).getService());
+                Service service = serviceRepository.getInfoService(videos.get(0).getService());
 
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 histories.get(0).setVps(vps);
                 histories.get(0).setRunning(1);
                 historyViewRepository.save(histories.get(0));
+                resp.put("live",service.getLive()==1?"true":"fail");
                 resp.put("channel_id", videos.get(0).getChannelid());
                 resp.put("status", "true");
                 resp.put("video_id", videos.get(0).getVideoid());
@@ -225,12 +240,14 @@ public class HistoryViewController {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-                if (service.getMintime() != service.getMaxtime()) {
+                if (service.getMintime() != service.getMaxtime()&&service.getLive()==0) {
                     if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                         resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60));
                     } else {
                         resp.put("video_duration", videos.get(0).getDuration());
                     }
+                }else if(service.getLive()==1){
+                    resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0));
                 } else {
                     if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                         resp.put("video_duration", service.getMintime() * 60 + ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0));

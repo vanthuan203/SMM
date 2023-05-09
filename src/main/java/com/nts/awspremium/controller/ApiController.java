@@ -232,19 +232,19 @@ public class ApiController {
                             resp.put("error", "Service not found ");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
-                            resp.put("error", "This video is a livestream video");
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0&&service.getLive()==0) {
+                            resp.put("error", "This video is a livestream(pre) video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 60) {
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 60&&service.getLive()==0) {
                             resp.put("error", "Videos under 60 seconds");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900 && (data.getService() == 203 || data.getService() == 667)) {
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==15) {
                             resp.put("error", "Video under 15 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800 && (data.getService() == 301 || data.getService() == 901)) {
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==30) {
                             resp.put("error", "Video under 30 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
@@ -281,7 +281,9 @@ public class ApiController {
                             } else {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
-                        } else {
+                        } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
+                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*0.15));
+                        }else{
                             videoViewhnew.setMaxthreads(0);
                         }
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());

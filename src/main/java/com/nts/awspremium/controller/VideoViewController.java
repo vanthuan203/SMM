@@ -297,7 +297,7 @@ public class VideoViewController {
 
         Request request1 = null;
 
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
 
         Response response1 = client1.newCall(request1).execute();
 

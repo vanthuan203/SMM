@@ -106,6 +106,7 @@ public class ServiceController {
         admins.get(0).setRefill(service.getRefill());
         admins.get(0).setThread(service.getThread());
         admins.get(0).setType(service.getType());
+        admins.get(0).setLive(service.getLive());
         admins.get(0).setChecktime(service.getChecktime());
 
         serviceRepository.save(admins.get(0));
@@ -128,6 +129,7 @@ public class ServiceController {
         obj.put("refill",admins.get(0).getRefill());
         obj.put("thread",admins.get(0).getThread());
         obj.put("type",admins.get(0).getType());
+        obj.put("live",admins.get(0).getLive());
         obj.put("checktime",admins.get(0).getChecktime());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -187,6 +189,7 @@ public class ServiceController {
             obj.put("dtn",admins.get(i).getDtn());
             obj.put("mintime",admins.get(i).getMintime());
             obj.put("maxtime",admins.get(i).getMaxtime());
+            obj.put("live",admins.get(i).getLive());
             obj.put("maxtimerefill",admins.get(i).getMaxtimerefill());
             obj.put("refill",admins.get(i).getRefill());
             obj.put("thread",admins.get(i).getThread());
