@@ -294,7 +294,7 @@ public class ApiController {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
                         } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
-                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*setting.getBonus()));
+                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*(setting.getBonus()/100F)));
                         }else{
                             videoViewhnew.setMaxthreads(0);
                         }
