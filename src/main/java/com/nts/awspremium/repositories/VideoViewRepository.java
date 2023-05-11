@@ -65,6 +65,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where maxthreads=0 order by insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderPending();
 
+    @Query(value = "SELECT * FROM videoview where maxthreads=0 and service in (select service from service where live=1) order by insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderLivePending();
+
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user!='baohanh01@gmail.com' group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder();
 
@@ -94,8 +97,8 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE videoview set viewtotal=?1,view24h=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
-    public void updateViewOrderByVideoId(Integer viewtotal,Integer view24h,Long timeupdate,String videoid);
+    @Query(value = "UPDATE videoview set viewtotal=?1,view24h=?2,timeupdate=?3,maxthreads=?4 where videoid=?5",nativeQuery = true)
+    public void updateViewOrderByVideoId(Integer viewtotal,Integer view24h,Long timeupdate,Integer maxthreads,String videoid);
 
     @Modifying
     @Transactional
@@ -114,6 +117,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT sum(vieworder) as total FROM videoview",nativeQuery = true)
     public Integer getCountViewBuffOrder();
+
 
     @Query(value = "SELECT *  FROM videoview where orderid=?1 limit 1",nativeQuery = true)
     public VideoView getInfoByOrderId(Long orderid);
