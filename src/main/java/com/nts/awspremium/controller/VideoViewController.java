@@ -501,6 +501,7 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
+            Setting setting = settingRepository.getReferenceById(1L);
             List<String> viewBuff;
             List<String> viewBuff24h;
             List<VideoView> videoViewList = videoViewRepository.getAllOrderView();
@@ -515,7 +516,7 @@ public class VideoViewController {
                     }
                 }
                 try {
-                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(),serviceRepository.IsOrderLive(videoViewList.get(i).getService())>0?(videoViewList.get(i).getMaxthreads()-viewtotal):videoViewList.get(i).getMaxthreads(), videoViewList.get(i).getVideoid());
+                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(),serviceRepository.IsOrderLive(videoViewList.get(i).getService())>0?(videoViewList.get(i).getVieworder()+(int)(videoViewList.get(i).getVieworder()*(setting.getBonus()/100F))-viewtotal):videoViewList.get(i).getMaxthreads(), videoViewList.get(i).getVideoid());
                 } catch (Exception e) {
 
                 }
