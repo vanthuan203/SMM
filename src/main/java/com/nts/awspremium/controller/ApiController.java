@@ -293,10 +293,16 @@ public class ApiController {
                             } else {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
+                            videoViewhnew.setTimestart(System.currentTimeMillis());
+                            videoViewhnew.setMinstart(service.getMaxtime());
                         } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
                             videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*(setting.getBonus()/100F)));
+                            videoViewhnew.setTimestart(System.currentTimeMillis());
+                            videoViewhnew.setMinstart(service.getMaxtime());
                         }else{
                             videoViewhnew.setMaxthreads(0);
+                            videoViewhnew.setTimestart(0L);
+                            videoViewhnew.setMinstart(service.getMaxtime());
                         }
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                         videoViewhnew.setInsertdate(System.currentTimeMillis());

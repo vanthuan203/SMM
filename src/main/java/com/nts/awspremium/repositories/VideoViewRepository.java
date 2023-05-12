@@ -55,7 +55,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT count(*) from videoview where videoid=?1 and user!='baohanh01@gmail.com'",nativeQuery = true)
     public Integer getCountVideoIdNotIsBH(String videoid);
 
-    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0) order by timeupdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0 ) order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderView();
 
     @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=1) order by timeupdate asc",nativeQuery = true)
@@ -92,8 +92,8 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
-    public void updatePendingOrderByVideoId(Integer viewstart,Integer maxthreads,Long timeupdate,String videoid);
+    @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timestart=?3 where videoid=?4",nativeQuery = true)
+    public void updatePendingOrderByVideoId(Integer viewstart,Integer maxthreads,Long timestart,String videoid);
 
     @Modifying
     @Transactional
@@ -145,8 +145,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public void deletevideoByVideoIdBH(String videoid);
 
 
-    @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where checktime=0)",nativeQuery = true)
+    @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where checktime=0 and live=0)",nativeQuery = true)
     public List<VideoView> getOrderFullView();
+
+    @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where live=1) and round((UNIX_TIMESTAMP()-timestart/1000)/60)>=(minstart+5)",nativeQuery = true)
+    public List<VideoView> getOrderFullLive();
+
     @Query(value = "select * from videoview where timetotal>(1800*vieworder + 1800*vieworder*(select bonus/100 from setting where id=1))  and viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where mintime=120 and checktime=1)",nativeQuery = true)
     public List<VideoView> getOrderFullTime120m();
     @Query(value = "select * from videoview where timetotal>(1800*vieworder + 1800*vieworder*(select bonus/100 from setting where id=1))  and viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where mintime=60 and checktime=1)",nativeQuery = true)

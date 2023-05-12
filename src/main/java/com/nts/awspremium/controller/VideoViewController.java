@@ -516,7 +516,7 @@ public class VideoViewController {
                     }
                 }
                 try {
-                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(),serviceRepository.IsOrderLive(videoViewList.get(i).getService())>0?(videoViewList.get(i).getVieworder()+(int)(videoViewList.get(i).getVieworder()*(setting.getBonus()/100F))-viewtotal):videoViewList.get(i).getMaxthreads(), videoViewList.get(i).getVideoid());
+                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(),videoViewList.get(i).getMaxthreads(), videoViewList.get(i).getVideoid());
                 } catch (Exception e) {
 
                 }
@@ -2136,6 +2136,52 @@ public class VideoViewController {
         }
     }
 
+
+    @GetMapping(path = "updateorderlivedonecron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateorderlivedonecron() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            //historyRepository.updateHistoryByAccount();
+            List<VideoView> videoBuffh = videoViewRepository.getOrderFullLive();
+            for (int i = 0; i < videoBuffh.size(); i++) {
+                Long enddate = System.currentTimeMillis();
+
+                VideoViewHistory videoBuffhnew = new VideoViewHistory();
+                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
+                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
+                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
+                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
+                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
+                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
+                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
+                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
+                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
+                videoBuffhnew.setCancel(0);
+                videoBuffhnew.setNumbh(0);
+                videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
+                videoBuffhnew.setEnddate(enddate);
+                videoBuffhnew.setService(videoBuffh.get(i).getService());
+                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
+                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
+                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
+                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
+                try {
+                    videoViewHistoryRepository.save(videoBuffhnew);
+                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
+                } catch (Exception e) {
+
+                }
+            }
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(path = "updateorderbuffh30mdonecron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateorderbuffh30mdonecron() {

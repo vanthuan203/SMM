@@ -149,7 +149,13 @@ public class HistoryViewController {
                             resp.put("video_duration", videos.get(0).getDuration());
                         }
                     }else if(service.getLive()==1){
-                        resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));
+                        int min_check=(int)((service.getMintime()*0.15)>30?30:(service.getMintime()*0.15));
+                        if((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60<min_check){
+                            resp.put("video_duration", service.getMintime() * 60 + (service.getMintime() >= 15 ? 120 : 0));
+                        }else{
+                            int time_live=videos.get(0).getMinstart()-(int)((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60);
+                            resp.put("video_duration", (time_live>0?time_live:0) * 60 + (service.getMintime() >= 15 ? 120 : 0));
+                        }
                     } else {
                         if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                             resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));
@@ -259,7 +265,13 @@ public class HistoryViewController {
                         resp.put("video_duration", videos.get(0).getDuration());
                     }
                 }else if(service.getLive()==1){
-                    resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));
+                    int min_check=(int)((service.getMintime()*0.15)>30?30:(service.getMintime()*0.15));
+                    if((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60<min_check){
+                        resp.put("video_duration", service.getMintime() * 60 + (service.getMintime() >= 15 ? 120 : 0));
+                    }else{
+                        int time_live=videos.get(0).getMinstart()-(int)((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60);
+                        resp.put("video_duration", (time_live>0?time_live:0) * 60 + (service.getMintime() >= 15 ? 120 : 0));
+                    }
                 } else {
                     if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                         resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));

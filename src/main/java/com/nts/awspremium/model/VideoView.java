@@ -14,6 +14,8 @@ public class VideoView {
     private String channeltitle;
     private Integer viewstart;
     private Long insertdate;
+    private Long timestart;
+    private Integer minstart;
     private Integer maxthreads;
     private Long duration;
     private Integer service;
@@ -31,7 +33,7 @@ public class VideoView {
     public VideoView() {
     }
 
-    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid) {
+    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -39,6 +41,8 @@ public class VideoView {
         this.channeltitle = channeltitle;
         this.viewstart = viewstart;
         this.insertdate = insertdate;
+        this.timestart = timestart;
+        this.minstart = minstart;
         this.maxthreads = maxthreads;
         this.duration = duration;
         this.service = service;
@@ -212,5 +216,21 @@ public class VideoView {
 
     public void setPrice(Float price) {
         this.price = price;
+    }
+
+    public Long getTimestart() {
+        return timestart;
+    }
+
+    public void setTimestart(Long timestart) {
+        this.timestart = timestart;
+    }
+
+    public Integer getMinstart() {
+        return minstart;
+    }
+
+    public void setMinstart(Integer minstart) {
+        this.minstart = minstart;
     }
 }
