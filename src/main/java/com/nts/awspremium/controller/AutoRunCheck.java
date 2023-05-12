@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Random;
 
 @Component
 public class AutoRunCheck {
@@ -16,11 +17,13 @@ public class AutoRunCheck {
 
     @PostConstruct
     public void init() throws InterruptedException {
-        new Thread(() -> {
+        try{
+            new Thread(() -> {
+                //Random rand =new Random();
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(100);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -30,7 +33,11 @@ public class AutoRunCheck {
                         continue;
                     }
                 }
-        }).start();
+            }).start();
+        }catch (Exception e){
+
+        }
+
 
 
     }
