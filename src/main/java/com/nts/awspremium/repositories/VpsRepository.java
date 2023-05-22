@@ -22,6 +22,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads*15",nativeQuery = true)
     public Integer checkGetAccount15ByThreadVps(String vps);
 
+    @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads*2",nativeQuery = true)
+    public Integer checkGetAccount2ByThreadVps(String vps);
+
     @Query(value = "select * from vps where vps like ?1",nativeQuery = true)
     public List<Vps> findVPS(String vps);
 
@@ -33,6 +36,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Query(value = "SELECT timereset FROM vps WHERE id=(select max(id) from vps)",nativeQuery = true)
     public Integer findTimeIdMax();
+    @Query(value = "SELECT sum(threads) FROM AccPremium.vps where vpsoption='live'",nativeQuery = true)
+    public Integer getSumThreadLive();
+
     @Query(value = "SELECT threads FROM vps WHERE vps=?1",nativeQuery = true)
     public Integer getThreadVPS(String vps);
 

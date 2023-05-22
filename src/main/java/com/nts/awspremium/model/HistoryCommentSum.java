@@ -11,16 +11,26 @@ public class HistoryCommentSum {
     private String username;
     private Long orderid;
     private Long commentid;
+    private String commnent;
     private Long time;
     public HistoryCommentSum() {
     }
 
-    public HistoryCommentSum(Long id, String username, Long orderid, Long commentid, Long time) {
+    public HistoryCommentSum(Long id, String username, Long orderid, Long commentid, String commnent, Long time) {
         this.id = id;
         this.username = username;
         this.orderid = orderid;
         this.commentid = commentid;
+        this.commnent = commnent;
         this.time = time;
+    }
+
+    public String getCommnent() {
+        return commnent;
+    }
+
+    public void setCommnent(String commnent) {
+        this.commnent = commnent;
     }
 
     public Long getId() {

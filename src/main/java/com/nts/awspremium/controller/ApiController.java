@@ -45,6 +45,9 @@ public class ApiController {
     @Autowired
     private DataOrderRepository dataOrderRepository;
 
+    @Autowired
+    private VpsRepository vpsRepository;
+
 
     @PostMapping(value = "/view", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {
@@ -175,6 +178,14 @@ public class ApiController {
 
                 }
                 Setting setting = settingRepository.getReferenceById(1L);
+                /*
+                if(service.getLive()==1){
+                    if((int)(vpsRepository.getSumThreadLive()*0.8)+10000<=videoViewRepository.getSumThreadLive()+data.getQuantity()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                }
+                 */
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                         (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");

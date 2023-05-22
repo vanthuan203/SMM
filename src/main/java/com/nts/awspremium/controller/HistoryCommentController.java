@@ -274,6 +274,7 @@ public class HistoryCommentController {
                 historySum.setUsername(username);
                 historySum.setTime(System.currentTimeMillis());
                 historySum.setCommentid(comment_id);
+                historySum.setCommnent(dataCommentRepository.getCommentByCommentId(comment_id));
                 historySum.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
                 try {
                     historyCommentSumRepository.save(historySum);
@@ -283,7 +284,7 @@ public class HistoryCommentController {
                     } catch (Exception f) {
                     }
                 }
-                if (historyCommentRepository.getListVideoById(historieId).length() > 60) {
+                if (historyCommentRepository.getListVideoById(historieId).length() > 100) {
                     historyCommentRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyCommentRepository.updateListVideo(videoid, historieId);

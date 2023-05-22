@@ -165,6 +165,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT videoview.videoid,sum(historyviewsum.duration) as total,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate and service in(select service from service where checktime=1) group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo();
 
+    @Query(value = "SELECT sum(maxthreads) FROM AccPremium.videoview where service in(select service from service where live=1)",nativeQuery = true)
+    public Integer getSumThreadLive();
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE videoview set timetotal=?1,viewtotal=?2 where videoid=?3",nativeQuery = true)

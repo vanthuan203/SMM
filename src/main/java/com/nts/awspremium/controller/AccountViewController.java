@@ -84,11 +84,20 @@ public class AccountViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         try {
-            Integer check_get = vpsRepository.checkGetAccount15ByThreadVps(vps.trim());
-            if(check_get==0){
-                resp.put("status","fail");
-                resp.put("message", "Đã đủ acc cho Vps!");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            if(geo.equals("live")){
+                Integer check_get = vpsRepository.checkGetAccount2ByThreadVps(vps.trim());
+                if(check_get==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Đã đủ acc cho Vps!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }
+            }else{
+                Integer check_get = vpsRepository.checkGetAccount15ByThreadVps(vps.trim());
+                if(check_get==0){
+                    resp.put("status","fail");
+                    resp.put("message", "Đã đủ acc cho Vps!");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }
             }
             Thread.sleep(ran.nextInt(500));
             Long idbyVps=accountRepository.getaccountByVps(vps.trim());
