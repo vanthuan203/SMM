@@ -19,11 +19,11 @@ public class AutoRunCheck {
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
-                Random rand =new Random();
+                //Random rand =new Random();
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(rand.nextInt(300)+200);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }

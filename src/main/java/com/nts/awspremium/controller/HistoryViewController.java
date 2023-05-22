@@ -134,6 +134,15 @@ public class HistoryViewController {
                     for (int i = 0; i < service.getDtn(); i++) {
                         arrSource.add("dtn");
                     }
+                    for (int i = 0; i < service.getEmbed(); i++) {
+                        arrSource.add("embed");
+                    }
+                    for (int i = 0; i < service.getDirect(); i++) {
+                        arrSource.add("direct");
+                    }
+                    for (int i = 0; i < service.getExternal(); i++) {
+                        arrSource.add("external");
+                    }
                     String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
                     if(source_view.equals("suggest")&&service.getType().equals("Special")){
                         resp.put("suggest_type", "true");
@@ -243,6 +252,15 @@ public class HistoryViewController {
                 }
                 for (int i = 0; i < service.getDtn(); i++) {
                     arrSource.add("dtn");
+                }
+                for (int i = 0; i < service.getEmbed(); i++) {
+                    arrSource.add("embed");
+                }
+                for (int i = 0; i < service.getDirect(); i++) {
+                    arrSource.add("direct");
+                }
+                for (int i = 0; i < service.getExternal(); i++) {
+                    arrSource.add("external");
                 }
                 String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
                 if(source_view.equals("suggest")&&service.getType().equals("Special")){

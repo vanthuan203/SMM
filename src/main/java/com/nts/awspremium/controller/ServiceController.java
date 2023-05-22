@@ -100,6 +100,9 @@ public class ServiceController {
         admins.get(0).setSearch(service.getSearch());
         admins.get(0).setSuggest(service.getSuggest());
         admins.get(0).setDtn(service.getDtn());
+        admins.get(0).setDirect(service.getDirect());
+        admins.get(0).setEmbed(service.getEmbed());
+        admins.get(0).setExternal(service.getExternal());
         admins.get(0).setMintime(service.getMintime());
         admins.get(0).setMaxtime(service.getMaxtime());
         admins.get(0).setMaxtimerefill(service.getMaxtimerefill());
@@ -123,6 +126,9 @@ public class ServiceController {
         obj.put("search",admins.get(0).getSearch());
         obj.put("suggest",admins.get(0).getSuggest());
         obj.put("dtn",admins.get(0).getDtn());
+        obj.put("direct",admins.get(0).getDirect());
+        obj.put("embed",admins.get(0).getEmbed());
+        obj.put("external",admins.get(0).getExternal());
         obj.put("mintime",admins.get(0).getMintime());
         obj.put("maxtime",admins.get(0).getMaxtime());
         obj.put("maxtimerefill",admins.get(0).getMaxtimerefill());
@@ -186,6 +192,9 @@ public class ServiceController {
             obj.put("maxorder",admins.get(i).getMaxorder());
             obj.put("search",admins.get(i).getSearch());
             obj.put("suggest",admins.get(i).getSuggest());
+            obj.put("direct",admins.get(i).getDirect());
+            obj.put("embed",admins.get(i).getEmbed());
+            obj.put("external",admins.get(i).getExternal());
             obj.put("dtn",admins.get(i).getDtn());
             obj.put("mintime",admins.get(i).getMintime());
             obj.put("maxtime",admins.get(i).getMaxtime());

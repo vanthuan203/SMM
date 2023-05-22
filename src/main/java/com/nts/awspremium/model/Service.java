@@ -23,6 +23,9 @@ public class Service {
     private Integer search;
     private Integer suggest;
     private Integer dtn;
+    private Integer direct;
+    private Integer embed;
+    private Integer external;
     private Integer mintime;
     private Integer maxtime;
     private Integer refill;
@@ -32,7 +35,7 @@ public class Service {
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -48,6 +51,9 @@ public class Service {
         this.search = search;
         this.suggest = suggest;
         this.dtn = dtn;
+        this.direct = direct;
+        this.embed = embed;
+        this.external = external;
         this.mintime = mintime;
         this.maxtime = maxtime;
         this.refill = refill;
@@ -221,5 +227,29 @@ public class Service {
 
     public void setLive(Integer live) {
         this.live = live;
+    }
+
+    public Integer getDirect() {
+        return direct;
+    }
+
+    public void setDirect(Integer direct) {
+        this.direct = direct;
+    }
+
+    public Integer getEmbed() {
+        return embed;
+    }
+
+    public void setEmbed(Integer embed) {
+        this.embed = embed;
+    }
+
+    public Integer getExternal() {
+        return external;
+    }
+
+    public void setExternal(Integer external) {
+        this.external = external;
     }
 }

@@ -56,7 +56,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 and videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrderCheckCancel(String user);
 
-    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videoview.videoid=?1",nativeQuery = true)
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videocomment.videoid=?1",nativeQuery = true)
     public List<OrderCommentRunning> getVideoViewById(String videoid);
 
     @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.orderid=videocomment.orderid where  time>=videocomment.insertdate group by videocomment.orderid order by insertdate desc",nativeQuery = true)
