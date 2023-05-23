@@ -69,6 +69,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where state=1 and running=0 and geo=?1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyByGeo(String geo);
 
+    @Query(value = "select * from proxy where state=1 and running=0 and geo='live' order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyByGeoNoCheckTime();
+
     @Query(value = "select * from proxy where state=1 and running=0 and geo='sub' and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=10 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyAccSub();
 

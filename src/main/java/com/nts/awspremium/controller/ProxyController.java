@@ -444,7 +444,11 @@ public class ProxyController {
             }
             List<Proxy> proxyGet=null;
             Thread.sleep(ran.nextInt(1000));
-            proxyGet=proxyRepository.getProxyByGeo(geo.trim());
+            if(geo.trim().equals("live")){
+                proxyGet=proxyRepository.getProxyByGeoNoCheckTime();
+            }else{
+                proxyGet=proxyRepository.getProxyByGeo(geo.trim());
+            }
             if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );

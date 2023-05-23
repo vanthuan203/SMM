@@ -1964,7 +1964,7 @@ public class VideoViewController {
             obj.put("view24h", videoView.getView24h());
             obj.put("viewtotal", videoView.getViewtotal());
             obj.put("price", videoView.getPrice());
-            if (videoView.getService() == 669 || videoView.getService() == 688 || videoView.getService() == 689) {
+            if (serviceRepository.getService(videoView.getService()).getType().equals("Special")) {
                 obj.put("keyword", dataOrderRepository.getListKeyByOrderid(orderid));
             } else {
                 obj.put("keyword", "");
