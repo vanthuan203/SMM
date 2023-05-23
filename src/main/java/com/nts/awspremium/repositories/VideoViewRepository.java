@@ -110,6 +110,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "update videoview set valid=1 where videoid=?1",nativeQuery = true)
     public void updateOrderCheck(String videoid);
 
+    @Query(value = "SELECT * FROM videoview where valid=0 order by insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderCheckCancel();
+
     @Modifying
     @Transactional
     @Query(value = "update videoview set valid=0 where videoid=?1 and valid=1",nativeQuery = true)

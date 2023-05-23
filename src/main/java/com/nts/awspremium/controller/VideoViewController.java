@@ -583,6 +583,45 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "DeleteOrderNotValidCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> DeleteOrderNotValidCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            List<VideoView> videoViews=videoViewRepository.getAllOrderCheckCancel();
+            for(int i=0;i<videoViews.size();i++){
+
+                OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request1 = null;
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id)&part=id&id=" + videoViews.get(i).getVideoid().trim()).get().build();
+
+                Response response1 = client1.newCall(request1).execute();
+
+                String resultJson1 = response1.body().string();
+
+                Object obj1 = new JSONParser().parse(resultJson1);
+
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                   continue;
+                }
+                //System.out.println(items);
+                Iterator k = items.iterator();
+                if (k.hasNext() == false) {
+                    delete("1",videoViews.get(i).getVideoid().trim(),1);
+                    continue;
+                }
+            }
+            resp.put("status", true);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(path = "bhview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> bhview(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
