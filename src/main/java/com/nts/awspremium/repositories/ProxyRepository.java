@@ -152,6 +152,8 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "update proxy set running=0,vps='' where  id=?1",nativeQuery = true)
     public Integer updaterunningProxyByVps(Integer id);
 
+    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccSub' and COMMAND='Query' and TIME>0",nativeQuery = true)
+    public Integer PROCESSLISTVIEW();
 
     @Modifying
     @Transactional

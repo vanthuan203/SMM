@@ -1,21 +1,23 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.model.CheckProsetListTrue;
 import com.nts.awspremium.model.OrderTrue;
+import com.nts.awspremium.repositories.HistoryViewRepository;
+import com.nts.awspremium.repositories.ProxyRepository;
 import com.nts.awspremium.repositories.VideoViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Random;
 
 @Component
-public class AutoRunCheck {
+public class AutoCheckProsetList {
     @Autowired
-    private VideoViewRepository videoViewRepository;
+    private ProxyRepository proxyRepository;
     @Autowired
-    private OrderTrue orderTrue;
+    private CheckProsetListTrue checkProsetListTrue;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
@@ -23,12 +25,12 @@ public class AutoRunCheck {
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        orderTrue.setValue(videoViewRepository.getListOrderTrueThread());
-                        //System.out.println(String.join(", ", orderTrue.getValue()));
+                        checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
+                        //System.out.println(checkProsetListTrue.getValue());
                     }catch (Exception e){
                         continue;
                     }
@@ -37,9 +39,6 @@ public class AutoRunCheck {
         }catch (Exception e){
 
         }
-
-
-
     }
 }
 

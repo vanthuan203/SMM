@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.ProxyAPI;
+import com.nts.awspremium.model.CheckProsetListTrue;
 import com.nts.awspremium.model.IpV4;
 import com.nts.awspremium.model.Proxy;
 import com.nts.awspremium.repositories.AccountRepository;
@@ -36,6 +37,8 @@ public class ProxyController {
     private AccountRepository accountRepository;
     @Autowired
     private IpV4Repository ipV4Repository;
+    @Autowired
+    private CheckProsetListTrue checkProsetListTrue;
     @PostMapping(value="/create",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> create(@RequestBody Proxy proxy, @RequestHeader(defaultValue = "") String Authorization ){
         JSONObject resp = new JSONObject();
@@ -407,6 +410,11 @@ public class ProxyController {
             if(geo.length()==0){
                 resp.put("status","fail");
                 resp.put("message", "Không để Geo trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(checkProsetListTrue.getValue()>=50){
+                resp.put("status","fail");
+                resp.put("message", "Đợi proxy...");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             Random ran=new Random();
