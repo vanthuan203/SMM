@@ -370,9 +370,7 @@ public class ProxyController {
                     proxyRepository.updaterunningProxyByVps(proxyId);
                 }
             }
-            Random ran=new Random();
             List<Proxy> proxyGet=null;
-            Thread.sleep(ran.nextInt(1000));
             proxyGet=proxyRepository.getProxyAccSub();
             if(proxyGet.size()==0){
                 resp.put("status","fail");
@@ -417,8 +415,6 @@ public class ProxyController {
                 resp.put("message", "Đợi proxy...");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            Random ran=new Random();
-            Thread.sleep(ran.nextInt(1000));
             /*
             if(proxyRepository.PROCESSLISTSUB()>=50){
                 resp.put("status","fail");
@@ -451,7 +447,6 @@ public class ProxyController {
                 }
             }
             List<Proxy> proxyGet=null;
-            Thread.sleep(ran.nextInt(1000));
             if(geo.trim().equals("live")){
                 proxyGet=proxyRepository.getProxyByGeoNoCheckTime();
             }else{
