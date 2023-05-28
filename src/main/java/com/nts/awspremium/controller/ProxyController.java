@@ -371,6 +371,7 @@ public class ProxyController {
                 }
             }
             List<Proxy> proxyGet=null;
+            proxyGet=proxyRepository.getProxyAccSub();
             if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );
