@@ -25,7 +25,7 @@ public class AutoCheckProsetList {
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(2000);
+                            Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }

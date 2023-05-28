@@ -111,8 +111,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT count(*) FROM proxy where state=1 and",nativeQuery = true)
     public Integer countProxy();
 
-    @Query(value = "SELECT id FROM proxy where proxy=?1 limit 1 ",nativeQuery = true)
-    public Integer getIdByProxy(String proxy);
+    @Query(value = "SELECT id FROM proxy where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
+    public Integer getIdByProxy(String proxy,String vps);
+
+    @Query(value = "SELECT running FROM proxy where id=?1 limit 1 ",nativeQuery = true)
+    public Integer getRunningProxyById(Integer id);
 
     @Query(value = "SELECT id FROM proxy where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
     public Integer getIdByProxyFalse(String proxy,String vps);
@@ -144,7 +147,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update proxy set running=0,vps='' where  vps like ?1 ",nativeQuery = true)
+    @Query(value = "update proxy set running=0,vps='' where  vps=?1 ",nativeQuery = true)
     public Integer updaterunningByVps(String vps);
 
     @Modifying
@@ -172,6 +175,6 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE proxy set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=2 and running=1",nativeQuery = true)
+    @Query(value = "UPDATE proxy set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=1 and running=1",nativeQuery = true)
     public Integer ResetProxyThan2h();
 }

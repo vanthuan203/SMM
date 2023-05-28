@@ -371,10 +371,16 @@ public class ProxyController {
                 }
             }
             List<Proxy> proxyGet=null;
-            proxyGet=proxyRepository.getProxyAccSub();
             if(proxyGet.size()==0){
                 resp.put("status","fail");
                 resp.put("message","Hết proxy khả dụng!" );
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            Random random =new Random();
+            Thread.sleep(500+random.nextInt(500));
+            if(proxyRepository.getRunningProxyById(proxyGet.get(0).getId())==1){
+                resp.put("status","fail");
+                resp.put("message","Proxy đã được sử dụng! Thử lại" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
@@ -457,6 +463,13 @@ public class ProxyController {
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            Random random =new Random();
+            Thread.sleep(500+random.nextInt(500));
+            if(proxyRepository.getRunningProxyById(proxyGet.get(0).getId())==1){
+                resp.put("status","fail");
+                resp.put("message","Proxy đã được sử dụng! Thử lại" );
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
             resp.put("status","true");
             resp.put("proxy",proxyGet.get(0).getProxy());
@@ -484,8 +497,10 @@ public class ProxyController {
                 resp.put("message", "Không để proxy trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            Integer proxyId= proxyRepository.getIdByProxy(proxy.trim());
-            proxyRepository.updaterunningProxyByVps(proxyId);
+            Integer proxyId= proxyRepository.getIdByProxy(proxy.trim(),vps.trim());
+            if(proxyId!=null){
+                proxyRepository.updaterunningProxyByVps(proxyId);
+            }
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
@@ -504,7 +519,7 @@ public class ProxyController {
                 resp.put("message", "Không để vps trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            proxyRepository.updaterunningByVps(vps.trim()+"%");
+            proxyRepository.updaterunningByVps(vps.trim());
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
