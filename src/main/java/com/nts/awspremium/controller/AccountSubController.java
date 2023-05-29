@@ -29,21 +29,15 @@ public class AccountSubController {
     @Autowired CookieRepository cookieRepository;
 
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
+    ResponseEntity<String> createaccount(@RequestBody Account newaccount,
                                                  @RequestParam(defaultValue = "1") Integer update){
         JSONObject resp = new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
-
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         try{
             Long id= accountRepository.findIdByUsername(newaccount.getUsername().trim());
             if(id!=null){
                 if(update==1) {
                     accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",id);
+                    cookieRepository.updateCookieSub(newaccount.getCookie(),id);
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -54,6 +48,7 @@ public class AccountSubController {
                 }
             }else{
                 accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(),"","", newaccount.getRunning(), newaccount.getVps(), newaccount.getDate());
+                cookieRepository.insertCookieSub(newaccount.getUsername(),newaccount.getCookie());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -474,15 +469,9 @@ public class AccountSubController {
 
 
     @PostMapping(value = "/updateinfo", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateinfo(@RequestBody Account account,@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization ){
+    ResponseEntity<String> updateinfo(@RequestBody Account account,@RequestParam(defaultValue = "")  String username){
         JSONObject resp=new JSONObject();
         try{
-            Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-            if(checktoken==0){
-                resp.put("status","fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-            }
             if(username.length()==0){
                 resp.put("status","fail");
                 resp.put("message", "Username không được để trống!");
@@ -490,8 +479,9 @@ public class AccountSubController {
             }
             Long idUsername=accountRepository.findIdUsername(username.trim());
             if(idUsername==null){
-                resp.put("status","fail");
-                resp.put("message", "Username không tồn tại!");
+                createaccount(account,1);
+                resp.put("status","true");
+                resp.put("message", "Insert " +username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
             }else{
                 List<Account> accounts=accountRepository.findAccountById(idUsername);
@@ -504,12 +494,13 @@ public class AccountSubController {
                 if(account.getRecover().length()>0){
                     accounts.get(0).setRecover(account.getRecover().trim());
                 }
+                accounts.get(0).setLive(account.getLive());
                 accountRepository.save(accounts.get(0));
                 if(account.getCookie().length()>0){
                     cookieRepository.updateCookieByUsername(account.getCookie(),username.trim());
                 }
                 resp.put("status","true");
-                resp.put("message", "Update cookie "+username+" thành công!");
+                resp.put("message", "Update info "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
             }
