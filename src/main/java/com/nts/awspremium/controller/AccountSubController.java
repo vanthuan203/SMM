@@ -14,7 +14,6 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path ="/sub")
-
 public class AccountSubController {
     @Autowired
     private AccountRepository accountRepository;
@@ -23,6 +22,11 @@ public class AccountSubController {
 
     @Autowired
     private ProxyRepository proxyRepository;
+
+    @Autowired
+    private CheckProsetListTrue checkProsetListTrue;
+
+    @Autowired CookieRepository cookieRepository;
 
     @PostMapping(value = "/create",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestHeader(defaultValue = "") String Authorization,
@@ -86,22 +90,16 @@ public class AccountSubController {
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "")  String vps){
         JSONObject resp = new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(proxyRepository.PROCESSLISTSUBGETACC()>=50){
+        if(checkProsetListTrue.getValue()>=20){
             resp.put("status","fail");
-            resp.put("message","Hết proxy khả dụng!" );
+            resp.put("message","Get acc không thành công! Thử lại" );
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         /*
@@ -156,7 +154,7 @@ public class AccountSubController {
                         //resp.put("endtrial",account.get(0).getEndtrial());
                         resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
-                        resp.put("cookie","");
+                        resp.put("cookie",cookieRepository.findCookieSubById(id));
                         //resp.put("encodefinger",encodefingerSub);
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
@@ -183,7 +181,7 @@ public class AccountSubController {
                     resp.put("username",accountbyVps.get(0).getUsername());
                     resp.put("password",accountbyVps.get(0).getPassword());
                     resp.put("recover",accountbyVps.get(0).getRecover());
-                    resp.put("cookie","");
+                    resp.put("cookie",cookieRepository.findCookieSubById(idbyVps));
                     //resp.put("encodefinger",encodefingerSub);
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }catch (Exception e){
@@ -409,16 +407,9 @@ public class AccountSubController {
         }
     }
     @GetMapping(value = "/getinfo",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "")  String username,@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "")  String username){
             JSONObject resp=new JSONObject();
             try{
-                Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-                if(checktoken==0){
-
-                    resp.put("status","fail");
-                    resp.put("message", "Token het han!");
-                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-                }
                 if(username.length()==0){
                     resp.put("status","fail");
                     resp.put("message", "Username không được để trống!");
@@ -436,6 +427,8 @@ public class AccountSubController {
                     //resp.put("username",accounts.get(0).getUsername());
                     resp.put("password",accountinfo[0]);
                     resp.put("recover",accountinfo[1]);
+                    resp.put("oldpassword",accountinfo[2]);
+                    resp.put("cookie",cookieRepository.findCookieSubById(idUsername));
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }catch (Exception e){
@@ -505,10 +498,16 @@ public class AccountSubController {
                 if(account.getPassword().length()>0){
                     accounts.get(0).setPassword(account.getPassword().trim());
                 }
+                if(account.getOldpassword().length()>0){
+                    accounts.get(0).setOldpassword(account.getOldpassword().trim());
+                }
                 if(account.getRecover().length()>0){
                     accounts.get(0).setRecover(account.getRecover().trim());
                 }
                 accountRepository.save(accounts.get(0));
+                if(account.getCookie().length()>0){
+                    cookieRepository.updateCookieByUsername(account.getCookie(),username.trim());
+                }
                 resp.put("status","true");
                 resp.put("message", "Update cookie "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

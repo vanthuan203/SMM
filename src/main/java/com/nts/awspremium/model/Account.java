@@ -10,6 +10,7 @@ public class Account {
     private Long id;
     private String username;
     private String password;
+    private String oldpassword;
     private String recover;
     private Integer live;
     private String encodefinger;
@@ -27,26 +28,11 @@ public class Account {
     public Account() {
     }
 
-    public Integer getTimebuff() {
-        return timebuff;
-    }
-
-    public void setTimebuff(Integer timebuff) {
-        this.timebuff = timebuff;
-    }
-
-    public String getProxy2() {
-        return proxy2;
-    }
-
-    public void setProxy2(String proxy2) {
-        this.proxy2 = proxy2;
-    }
-
-    public Account(Long id, String username, String password, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
+    public Account(Long id, String username, String password, String oldpassword, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.oldpassword = oldpassword;
         this.recover = recover;
         this.live = live;
         this.encodefinger = encodefinger;
@@ -61,6 +47,30 @@ public class Account {
         this.date = date;
         this.geo = geo;
         this.timebuff = timebuff;
+    }
+
+    public String getOldpassword() {
+        return oldpassword;
+    }
+
+    public void setOldpassword(String oldpassword) {
+        this.oldpassword = oldpassword;
+    }
+
+    public Integer getTimebuff() {
+        return timebuff;
+    }
+
+    public void setTimebuff(Integer timebuff) {
+        this.timebuff = timebuff;
+    }
+
+    public String getProxy2() {
+        return proxy2;
+    }
+
+    public void setProxy2(String proxy2) {
+        this.proxy2 = proxy2;
     }
 
     public Long getId() {

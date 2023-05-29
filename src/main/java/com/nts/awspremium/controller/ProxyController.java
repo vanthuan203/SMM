@@ -417,7 +417,7 @@ public class ProxyController {
                 resp.put("message", "Không để Geo trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            if(checkProsetListTrue.getValue()>=50){
+            if(checkProsetListTrue.getValue()>=20){
                 resp.put("status","fail");
                 resp.put("message", "Đợi proxy...");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
