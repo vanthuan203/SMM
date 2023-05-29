@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.Random;
 
 @Component
 public class AutoCheckProsetList {
@@ -21,16 +22,16 @@ public class AutoCheckProsetList {
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
-                //Random rand =new Random();
+                Random rand =new Random();
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(100+rand.nextInt(300));
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                         checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
-                        //System.out.println(checkProsetListTrue.getValue());
+                        System.out.println(checkProsetListTrue.getValue());
                     }catch (Exception e){
                         continue;
                     }
