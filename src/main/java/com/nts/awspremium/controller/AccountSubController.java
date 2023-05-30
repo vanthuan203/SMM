@@ -24,6 +24,10 @@ public class AccountSubController {
     private ProxyRepository proxyRepository;
 
     @Autowired
+    private VpsRepository vpsRepository;
+
+
+    @Autowired
     private CheckProsetListTrue checkProsetListTrue;
 
     @Autowired CookieRepository cookieRepository;
@@ -108,6 +112,14 @@ public class AccountSubController {
         try {
             Long idbyVps=accountRepository.getAccountSubByVps(vps);
             if(idbyVps==null){
+                Integer check_get = vpsRepository.checkGetAccountAccSub(vps.trim());
+                if(check_get==0){
+                    if(check_get==0){
+                        resp.put("status","fail");
+                        resp.put("message", "Đã đủ acc cho Vps!");
+                        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                    }
+                }
                 Long id=accountRepository.getAccountSub();
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
