@@ -112,7 +112,7 @@ public class AccountSubController {
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status", "fail");
-                    resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                    resp.put("message", "Get account không thành công, thử lại sau ít phút!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
                     try{
