@@ -129,7 +129,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')>0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffhGmail(String geo);
 
-    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  (live!=5 or live is null) order by rand()  limit 1",nativeQuery = true)
+    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  live<2 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSub();
 
     @Query(value = "SELECT id  FROM account where live=0 and running=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1  order by rand()  limit 1",nativeQuery = true)
@@ -147,7 +147,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountBufhByVps(String vps);
 
-    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  (live!=5 or live is null) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live<2 order by rand() limit 1",nativeQuery = true)
     public Long getAccountSubByVps(String vps);
 
     @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand() limit 1",nativeQuery = true)
