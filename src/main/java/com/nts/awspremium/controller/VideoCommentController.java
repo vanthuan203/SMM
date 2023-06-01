@@ -1215,6 +1215,26 @@ public class VideoCommentController {
         }
     }
 
+    @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> refund(@RequestParam(defaultValue = "0") Long orderid) {
+        JSONObject resp = new JSONObject();
+        if(orderid==0){
+            resp.put("status", "fail");
+            resp.put("message", "OrderId không được trống!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        try {
+            videoCommentHistoryRepository.updateRefund(orderid);
+            resp.put("status", "true");
+            resp.put("message", "Refund đơn thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(path = "update", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestBody VideoComment videoBuffh) {

@@ -21,7 +21,10 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
 
     @Query(value = "SELECT * from videocommenthistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
     public List<VideoCommentHistory> getVideoViewHistories(String user);
-
+    @Modifying
+    @Transactional
+    @Query(value = "update videocommenthistory set price=0,commenttotal=0,cancel=1 where orderid=?1",nativeQuery = true)
+    public void updateRefund(Long orderid);
 
 
 }
