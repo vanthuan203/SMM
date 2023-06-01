@@ -230,7 +230,27 @@ public class AccountViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "/resetaccountbyusername",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live) {
+        JSONObject resp = new JSONObject();
+        try {
+            if (username.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            Long idUsername=accountRepository.findIdUsername(username.trim());
+            accountRepository.resetAccountByUsername(live,idUsername);
+            resp.put("status", "true");
+            resp.put("message", "Reset Account thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
+        }catch (Exception e){
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping(value = "/countgmailsbyendtrial",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> countgmailsbyendtrial(@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();

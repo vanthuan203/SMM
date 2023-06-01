@@ -755,7 +755,7 @@ public class AccountSubController {
 
 
     @GetMapping(value = "/resetaccountbyusername",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live,@RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "0")  Integer live) {
         JSONObject resp = new JSONObject();
         try {
             if (username.length() == 0) {
