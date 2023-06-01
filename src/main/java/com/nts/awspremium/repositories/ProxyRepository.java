@@ -40,7 +40,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Query(value = "select * from proxy where state=1 and running=0 and INSTR(typeproxy,'hcport')>0 and ipv4 NOT LIKE ?1 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyHcPortBuffTest(String ipv4);
-    @Query(value = "SELECT ipv4,200 as totalport,timecheck,state,\"\" as geo,numcheck FROM ipv4 order by numcheck desc;",nativeQuery = true)
+    @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxy.geo,ipv4.numcheck,proxy.typeproxy FROM ipv4 left join proxy on ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4  order by numcheck desc;",nativeQuery = true)
     public List<String> getListProxyV4();
 /*
     @Query(value = "select * from proxy where state=1 and  INSTR(typeproxy,(select geo from account where username=?1))>0 and proxy NOT LIKE ?2 order by timeget asc,rand() limit 1",nativeQuery = true)
