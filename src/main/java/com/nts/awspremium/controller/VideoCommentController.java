@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -1216,15 +1218,17 @@ public class VideoCommentController {
     }
 
     @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> refund(@RequestParam(defaultValue = "0") Long orderid) {
+    ResponseEntity<String> refund(@RequestParam(defaultValue = "") String orderid) {
         JSONObject resp = new JSONObject();
-        if(orderid==0){
+        if(orderid.length()==0){
             resp.put("status", "fail");
             resp.put("message", "OrderId không được trống!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+        List<String> ordersArrInput = new ArrayList<>();
+        ordersArrInput.addAll(Arrays.asList(orderid.split(",")));
         try {
-            videoCommentHistoryRepository.updateRefund(orderid);
+            videoCommentHistoryRepository.updateRefund(ordersArrInput);
             resp.put("status", "true");
             resp.put("message", "Refund đơn thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

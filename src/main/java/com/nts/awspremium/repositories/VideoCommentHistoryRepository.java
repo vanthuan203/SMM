@@ -23,8 +23,8 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
     public List<VideoCommentHistory> getVideoViewHistories(String user);
     @Modifying
     @Transactional
-    @Query(value = "update videocommenthistory set price=0,commenttotal=0,cancel=1 where orderid=?1",nativeQuery = true)
-    public void updateRefund(Long orderid);
+    @Query(value = "update videocommenthistory set price=0,commenttotal=0,cancel=1 where orderid in(?1)",nativeQuery = true)
+    public void updateRefund(List<String> list_orderid);
 
 
 }
