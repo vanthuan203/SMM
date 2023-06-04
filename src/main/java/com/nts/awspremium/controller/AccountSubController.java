@@ -506,6 +506,9 @@ public class AccountSubController {
                 if(account.getRecover().length()>0){
                     accounts.get(0).setRecover(account.getRecover().trim());
                 }
+                if(account.vps().length()>0){
+                    accounts.get(0).setVps(account.getVps().trim());
+                }
                 accounts.get(0).setLive(account.getLive());
                 accountRepository.save(accounts.get(0));
                 if(account.getCookie().length()>0){
