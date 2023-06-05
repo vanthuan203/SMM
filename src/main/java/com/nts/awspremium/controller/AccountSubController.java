@@ -213,6 +213,7 @@ public class AccountSubController {
                         }
                         //account.get(0).setVps("");
                         account.get(0).setRunning(1);
+                        account.get(0).setEndtrial(System.currentTimeMillis());
                         accountRepository.save(account.get(0));
                         resp.put("status","true");
                         resp.put("username",account.get(0).getUsername());
@@ -220,6 +221,7 @@ public class AccountSubController {
                         resp.put("recover",account.get(0).getRecover());
                         resp.put("live",account.get(0).getLive());
                         resp.put("date",account.get(0).getDate());
+                        resp.put("oldpassword",account.get(0).getOldpassword()==null?"":account.get(0).getOldpassword());
                         //resp.put("cookie",account.get(0).getCookie());
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){

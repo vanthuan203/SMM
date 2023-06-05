@@ -135,7 +135,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where live=0 and running=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1  order by rand()  limit 1",nativeQuery = true)
     public Long getAccountNeedLogin();
 
-    @Query(value = "SELECT id  FROM account where live not in (5,1) and running=0 order by rand()  limit 1",nativeQuery = true)
+    @Query(value = "SELECT id  FROM account where live not in (5,1)  and running=0 and round((UNIX_TIMESTAMP()-endtrial/1000)/60/60/24)>=7 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSubNeedLogin();
 
     @Query(value = "SELECT id  FROM account where live!=1 and live!=2 and live!=5 and running=0 order by rand()  limit 1",nativeQuery = true)
