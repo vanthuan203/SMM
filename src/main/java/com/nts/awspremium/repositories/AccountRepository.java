@@ -66,8 +66,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,running=0 where id=?6",nativeQuery = true)
-    public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,Long id);
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,timeupdateinfo=?6 where id=?7",nativeQuery = true)
+    public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,Long timeupdateinfo,Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,vps=?4 where id=?5",nativeQuery = true)
@@ -129,7 +129,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')>0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffhGmail(String geo);
 
-    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  live=1 order by rand()  limit 1",nativeQuery = true)
+    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  live=1 and round((UNIX_TIMESTAMP()-timeupdateinfo/1000)/60/60/24)>=7 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSub();
 
     @Query(value = "SELECT id  FROM account where live=0 and running=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1  order by rand()  limit 1",nativeQuery = true)
@@ -147,16 +147,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountBufhByVps(String vps);
 
-    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live=1 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live=1 and round((UNIX_TIMESTAMP()-timeupdateinfo/1000)/60/60/24)>=7 order by rand() limit 1",nativeQuery = true)
     public Long getAccountSubByVps(String vps);
-
-    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 order by rand() limit 1",nativeQuery = true)
-    public Long getaccountByVpsbuffh(String vps);
-    @Query(value = "SELECT count(*) FROM account where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and username=?1",nativeQuery = true)
-    public Integer checkEndTrial(String username);
-
-    @Query(value = "SELECT count(*) FROM account where round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and id=?1",nativeQuery = true)
-    public Integer checkEndTrialByID(Long id);
 
     @Query(value = "SELECT count(*) FROM account where live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
     public Integer getCountGmails();

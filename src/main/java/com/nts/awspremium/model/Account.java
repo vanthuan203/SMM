@@ -15,6 +15,7 @@ public class Account {
     private Integer live;
     private String encodefinger;
     private String cookie;
+    private Long timeupdateinfo;
     private Long endtrial;
     private String endtrialstring;
     private String vps;
@@ -28,7 +29,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, String username, String password, String oldpassword, String recover, Integer live, String encodefinger, String cookie, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
+    public Account(Long id, String username, String password, String oldpassword, String recover, Integer live, String encodefinger, String cookie, Long timeupdateinfo, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -37,6 +38,7 @@ public class Account {
         this.live = live;
         this.encodefinger = encodefinger;
         this.cookie = cookie;
+        this.timeupdateinfo = timeupdateinfo;
         this.endtrial = endtrial;
         this.endtrialstring = endtrialstring;
         this.vps = vps;
@@ -47,6 +49,14 @@ public class Account {
         this.date = date;
         this.geo = geo;
         this.timebuff = timebuff;
+    }
+
+    public Long getTimeupdateinfo() {
+        return timeupdateinfo;
+    }
+
+    public void setTimeupdateinfo(Long timeupdateinfo) {
+        this.timeupdateinfo = timeupdateinfo;
     }
 
     public String getOldpassword() {

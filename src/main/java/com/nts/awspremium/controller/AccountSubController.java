@@ -40,7 +40,7 @@ public class AccountSubController {
             Long id= accountRepository.findIdByUsername(newaccount.getUsername().trim());
             if(id!=null){
                 if(update==1) {
-                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",id);
+                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getTimeupdateinfo()>0?newaccount.getTimeupdateinfo():0,id);
                     cookieRepository.updateCookieSub(newaccount.getCookie(),id);
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
@@ -207,14 +207,8 @@ public class AccountSubController {
 
 
     @GetMapping(value = "/getlogin", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getlogin(@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getlogin(){
         JSONObject resp = new JSONObject();
-        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
-        if(checktoken==0){
-            resp.put("status","fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
-        }
         try {
                 Long id=accountRepository.getAccountSubNeedLogin();
                 List<Account> account=accountRepository.findAccountById(id);
@@ -510,6 +504,9 @@ public class AccountSubController {
                 }
                 if(account.getVps().length()>0){
                     accounts.get(0).setVps(account.getVps().trim());
+                }
+                if(account.getTimeupdateinfo()>0){
+                    accounts.get(0).setTimeupdateinfo(account.getTimeupdateinfo());
                 }
                 accounts.get(0).setLive(account.getLive());
                 accountRepository.save(accounts.get(0));
