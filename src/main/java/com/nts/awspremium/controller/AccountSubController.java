@@ -40,7 +40,7 @@ public class AccountSubController {
             Long id= accountRepository.findIdByUsername(newaccount.getUsername().trim());
             if(id!=null){
                 if(update==1) {
-                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getTimeupdateinfo()>0?newaccount.getTimeupdateinfo():0,id);
+                    accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getTimeupdateinfo()>0?System.currentTimeMillis():0,id);
                     cookieRepository.updateCookieSub(newaccount.getCookie(),id);
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
@@ -51,7 +51,7 @@ public class AccountSubController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }
             }else{
-                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(), newaccount.getDate(),newaccount.getTimeupdateinfo()>0?newaccount.getTimeupdateinfo():0);
+                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(), newaccount.getDate(),newaccount.getTimeupdateinfo()>0?System.currentTimeMillis():0);
                 cookieRepository.insertCookieSub(newaccount.getUsername(),newaccount.getCookie());
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
@@ -482,7 +482,7 @@ public class AccountSubController {
                     accounts.get(0).setVps(account.getVps().trim());
                 }
                 if(account.getTimeupdateinfo()>0){
-                    accounts.get(0).setTimeupdateinfo(account.getTimeupdateinfo());
+                    accounts.get(0).setTimeupdateinfo(System.currentTimeMillis());
                 }
                 accounts.get(0).setLive(account.getLive());
                 accountRepository.save(accounts.get(0));
