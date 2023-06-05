@@ -41,7 +41,12 @@ public class AccountSubController {
             if(id!=null){
                 if(update==1) {
                     accountRepository.updateAccountSub(newaccount.getPassword(),newaccount.getRecover(),newaccount.getLive(),"","",newaccount.getTimeupdateinfo()>0?System.currentTimeMillis():0,id);
-                    cookieRepository.updateCookieSub(newaccount.getCookie(),id);
+                    Long id_cookie= cookieRepository.findIdSubByUsername(newaccount.getUsername().trim());
+                    if(id_cookie==null){
+                        cookieRepository.insertCookieSub(newaccount.getUsername(),newaccount.getCookie());
+                    }else{
+                        cookieRepository.updateCookieSub(newaccount.getCookie(),id_cookie);
+                    }
                     resp.put("status","true");
                     resp.put("message", "Update "+newaccount.getUsername()+" thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -52,7 +57,12 @@ public class AccountSubController {
                 }
             }else{
                 accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(),newaccount.getLive(), newaccount.getDate(),newaccount.getTimeupdateinfo()>0?System.currentTimeMillis():0);
-                cookieRepository.insertCookieSub(newaccount.getUsername(),newaccount.getCookie());
+                Long id_cookie= cookieRepository.findIdSubByUsername(newaccount.getUsername().trim());
+                if(id_cookie==null){
+                    cookieRepository.insertCookieSub(newaccount.getUsername(),newaccount.getCookie());
+                }else{
+                    cookieRepository.updateCookieSub(newaccount.getCookie(),id_cookie);
+                }
                 resp.put("status","true");
                 resp.put("message", "Insert "+newaccount.getUsername()+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
