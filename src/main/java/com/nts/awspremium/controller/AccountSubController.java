@@ -224,7 +224,7 @@ public class AccountSubController {
                     return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                 }else{
                     try{
-                        Thread.sleep(2);
+                        Thread.sleep(300);
                         Integer accountcheck=accountRepository.checkAccountById(id);
                         if(accountcheck==0){
                             resp.put("status", "fail");
@@ -238,6 +238,8 @@ public class AccountSubController {
                         resp.put("username",account.get(0).getUsername());
                         resp.put("password",account.get(0).getPassword());
                         resp.put("recover",account.get(0).getRecover());
+                        resp.put("live",account.get(0).getLive());
+                        resp.put("date",account.get(0).getDate());
                         //resp.put("cookie",account.get(0).getCookie());
                         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
                     }catch(Exception e){
@@ -506,6 +508,9 @@ public class AccountSubController {
                 if(account.getRecover().length()>0){
                     accounts.get(0).setRecover(account.getRecover().trim());
                 }
+                if(account.getVps().length()>0){
+                    accounts.get(0).setVps(account.getVps().trim());
+                }
                 accounts.get(0).setLive(account.getLive());
                 accountRepository.save(accounts.get(0));
                 if(account.getCookie().length()>0){
@@ -514,7 +519,6 @@ public class AccountSubController {
                 resp.put("status","true");
                 resp.put("message", "Update info "+username+" thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
             }
         }catch (Exception e){
             resp.put("status","fail");
