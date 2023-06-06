@@ -193,10 +193,10 @@ public class AccountSubController {
 
 
     @GetMapping(value = "/getlogin", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getlogin(){
+    ResponseEntity<String> getlogin(@RequestParam(defaultValue = "0") Integer live){
         JSONObject resp = new JSONObject();
         try {
-                Long id=accountRepository.getAccountSubNeedLogin();
+                Long id=accountRepository.getAccountSubNeedLogin(live);
                 List<Account> account=accountRepository.findAccountById(id);
                 if(account.size()==0){
                     resp.put("status","fail");
