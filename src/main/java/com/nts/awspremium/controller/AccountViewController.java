@@ -342,6 +342,60 @@ public class AccountViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
     }
+    @GetMapping(value = "/getrecover",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getrecover(){
+        JSONObject resp=new JSONObject();
+        try{
+
+            Long idUsername=accountRepository.GetIdRecoverRand();
+            if(idUsername==null){
+                resp.put("status","fail");
+                resp.put("message", "Đổi recover mới!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }else{
+                String account=accountRepository.getInfoRecover(idUsername);
+                String[] accountinfo=account.split(",");
+                resp.put("status","true");
+                resp.put("username",accountinfo[0]);
+                resp.put("password",accountinfo[1]);
+                resp.put("recover",accountinfo[2]);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message",e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "/getinforecover",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getinforecover(@RequestParam(defaultValue = "")  String username){
+        JSONObject resp=new JSONObject();
+        try{
+            if(username.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+            }
+            Long idUsername=accountRepository.findIdUsernameRecover(username);
+            if(idUsername==null){
+                resp.put("status","fail");
+                resp.put("message", "Đổi recover mới!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }else{
+                String account=accountRepository.getInfo(idUsername);
+                String[] accountinfo=account.split(",");
+                resp.put("status","true");
+                //resp.put("username",accounts.get(0).getUsername());
+                resp.put("password",accountinfo[0]);
+                resp.put("recover",accountinfo[1]);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message",e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value = "/update",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> update(@RequestParam(defaultValue = "")  String username,@RequestParam(defaultValue = "")  String password,@RequestParam(defaultValue = "")  String recover ){

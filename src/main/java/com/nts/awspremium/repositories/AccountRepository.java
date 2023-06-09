@@ -16,6 +16,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdUsername(String username);
 
+    @Query(value = "Select id from account where username=?1 and live=1 limit 1",nativeQuery = true)
+    public Long findIdUsernameRecover(String username);
+    @Query(value = "SELECT id FROM AccPremium.account where username like '%nguyenthanh.com.vn' and live=1 order by rand() limit 1;",nativeQuery = true)
+    public Long GetIdRecoverRand();
+
     @Query(value = "Select vps,count(*) from account where vps in (select vps from vps where vpsoption=\"Buffh\") group by vps having count(*)>500  limit 20",nativeQuery = true)
     public List<String> getCountByVps();
 
@@ -107,6 +112,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer checkAccountById(Long id);
     @Query(value = "Select password,recover,oldpassword from account where id=?1 limit 1",nativeQuery = true)
     public String getInfo(Long id);
+
+    @Query(value = "Select username,password,recover,oldpassword from account where id=?1 limit 1",nativeQuery = true)
+    public String getInfoRecover(Long id);
     @Query(value = "Select count(*) from account where id=?1 and live=1 limit 1",nativeQuery = true)
     public Integer getCookieAccSub(Long id);
     @Query(value = "Select count(*) from account where id=?1 and vps like ?2 limit 1",nativeQuery = true)
