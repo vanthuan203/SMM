@@ -365,6 +365,25 @@ public class AccountViewController {
         }
     }
 
+    @GetMapping(value = "/checkrecover", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkrecover(@RequestParam(defaultValue = "") String recover) {
+        JSONObject resp = new JSONObject();
+        try {
+           if(recoverRepository.checkRecover(recover)==0){
+               resp.put("status", "fail");
+               resp.put("message","Recover không tồn tại!");
+           }else{
+               resp.put("status", "true");
+               resp.put("message","Recover hợp lệ!");
+           }
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/getinforecover", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getinforecover(@RequestParam(defaultValue = "") String username) {
         JSONObject resp = new JSONObject();

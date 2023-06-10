@@ -10,4 +10,7 @@ import javax.transaction.Transactional;
 public interface RecoverRepository extends JpaRepository<Recover,String> {
     @Query(value = "SELECT * from recover order by timeget asc limit 1",nativeQuery = true)
     public Recover getRecover();
+
+    @Query(value = "SELECT count(*) from recover where username=?1",nativeQuery = true)
+    public Integer checkRecover(String username);
 }
