@@ -463,7 +463,7 @@ public class HistoryViewController {
                     if (histories.get(0).getGeo().equals("vn")) {
                         videos = videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
                     } else {
-                        videos = videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
                     }
                 }
                 if (videos.size() > 0) {
