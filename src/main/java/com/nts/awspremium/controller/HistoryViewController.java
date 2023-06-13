@@ -354,7 +354,7 @@ public class HistoryViewController {
                     }
                 } else {
                     if (history.getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTEST("", orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy("", orderTrue.getValue());
                     } else {
                         videos = videoViewRepository.getvideoViewVer2USTESTNoProxy("", orderTrue.getValue());
                     }
@@ -461,7 +461,7 @@ public class HistoryViewController {
                     }
                 } else {
                     if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
                     } else {
                         videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
                     }
