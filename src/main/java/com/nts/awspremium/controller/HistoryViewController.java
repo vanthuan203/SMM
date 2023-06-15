@@ -406,7 +406,7 @@ public class HistoryViewController {
                     for (int i = 0; i < service.getExternal(); i++) {
                         arrSource.add("external");
                     }
-                    if(service.getService()==753||service.getService()==153){
+                    if(service.getService()==753||service.getService()==153||service.getService()==754||service.getService()==154){
                         resp.put("live","true");
                     }
                     String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
@@ -527,7 +527,7 @@ public class HistoryViewController {
                 for (int i = 0; i < service.getExternal(); i++) {
                     arrSource.add("external");
                 }
-                if(service.getService()==753||service.getService()==153){
+                if(service.getService()==753||service.getService()==153||service.getService()==754||service.getService()==154){
                     resp.put("live","true");
                 }
                 String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
