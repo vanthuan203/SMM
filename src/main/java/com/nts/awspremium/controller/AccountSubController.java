@@ -487,8 +487,14 @@ public class AccountSubController {
 
 
     @PostMapping(value = "/updateinfo", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateinfo(@RequestBody Account account, @RequestParam(defaultValue = "") String username) {
+    ResponseEntity<String> updateinfo(@RequestBody Account account, @RequestParam(defaultValue = "") String username,@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
         try {
             if (username.length() == 0) {
                 resp.put("status", "fail");
