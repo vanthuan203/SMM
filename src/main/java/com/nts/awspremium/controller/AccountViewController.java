@@ -347,8 +347,14 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/getrecover", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getrecover() {
+    ResponseEntity<String> getrecover(@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             Recover recover = recoverRepository.getRecover();
             recover.setTimeget(System.currentTimeMillis());
@@ -366,8 +372,14 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/checkrecover", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkrecover(@RequestParam(defaultValue = "") String recover) {
+    ResponseEntity<String> checkrecover(@RequestParam(defaultValue = "") String recover,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
            if(recoverRepository.checkRecover(recover)==0){
                resp.put("status", "fail");
@@ -385,8 +397,14 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/getinforecover", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getinforecover(@RequestParam(defaultValue = "") String username) {
+    ResponseEntity<String> getinforecover(@RequestParam(defaultValue = "") String username,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             if (username.length() == 0) {
                 resp.put("status", "fail");

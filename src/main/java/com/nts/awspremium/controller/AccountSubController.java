@@ -33,6 +33,9 @@ public class AccountSubController {
     @Autowired
     CookieRepository cookieRepository;
 
+    @Autowired
+    private RecoverRepository recoverRepository;
+
     @PostMapping(value = "/create", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount,
                                          @RequestParam(defaultValue = "1") Integer update) {
@@ -198,6 +201,88 @@ public class AccountSubController {
 
     }
 
+    @GetMapping(value = "/checkrecover", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkrecover(@RequestParam(defaultValue = "") String recover,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if(recoverRepository.checkRecover(recover)==0){
+                resp.put("status", "fail");
+                resp.put("message","Recover không tồn tại!");
+            }else{
+                resp.put("status", "true");
+                resp.put("message","Recover hợp lệ!");
+            }
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getinforecover", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getinforecover(@RequestParam(defaultValue = "") String username,@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if (username.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Username không được để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            Recover recover = recoverRepository.getInfoRecover(username);
+            if (recover == null) {
+                resp.put("status", "fail");
+                resp.put("message", "Recover không tồn tại!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } else {
+                resp.put("status", "true");
+                //resp.put("username",accounts.get(0).getUsername());
+                resp.put("password", recover.getPassword());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getrecover", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getrecover(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Recover recover = recoverRepository.getRecover();
+            recover.setTimeget(System.currentTimeMillis());
+            recover.setCount(recover.getCount()+1);
+            recoverRepository.save(recover);
+            resp.put("status", "true");
+            resp.put("username", recover.getUsername());
+            resp.put("password", recover.getPassword());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value = "/getlogin", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getlogin(@RequestParam(defaultValue = "0") Integer live, @RequestHeader(defaultValue = "") String Authorization) {
