@@ -13,4 +13,6 @@ public interface RecoverRepository extends JpaRepository<Recover,String> {
 
     @Query(value = "SELECT count(*) from recover where username=?1",nativeQuery = true)
     public Integer checkRecover(String username);
+    @Query(value = "SELECT * from recover where username=?1 limit 1",nativeQuery = true)
+    public Recover getInfoRecover(String username);
 }

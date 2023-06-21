@@ -393,18 +393,15 @@ public class AccountViewController {
                 resp.put("message", "Username không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            Long idUsername = accountRepository.findIdUsernameRecover(username);
-            if (idUsername == null) {
+            Recover recover = recoverRepository.getInfoRecover(username);
+            if (recover == null) {
                 resp.put("status", "fail");
-                resp.put("message", "Đổi recover mới!");
+                resp.put("message", "Recover không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                String account = accountRepository.getInfo(idUsername);
-                String[] accountinfo = account.split(",");
                 resp.put("status", "true");
                 //resp.put("username",accounts.get(0).getUsername());
-                resp.put("password", accountinfo[0]);
-                resp.put("recover", accountinfo[1]);
+                resp.put("password", recover.getPassword());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         } catch (Exception e) {
