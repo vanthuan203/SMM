@@ -17,6 +17,10 @@ import java.util.List;
 public class AccountSubController {
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountSubRepository accountSubRepository;
+
     @Autowired
     private AdminRepository adminRepository;
 
@@ -35,16 +39,14 @@ public class AccountSubController {
 
     @Autowired
     private RecoverRepository recoverRepository;
-
     @PostMapping(value = "/create", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> createaccount(@RequestBody Account newaccount,
-                                         @RequestParam(defaultValue = "1") Integer update) {
+    ResponseEntity<String> createaccount(@RequestBody Account newaccount,@RequestParam(defaultValue = "1") Integer update) {
         JSONObject resp = new JSONObject();
         try {
             Long id = accountRepository.findIdByUsername(newaccount.getUsername().trim());
             if (id != null) {
                 if (update == 1) {
-                    accountRepository.updateAccountSub(newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), "", "", newaccount.getTimeupdateinfo() > 0 ? System.currentTimeMillis() : 0, id);
+                    accountRepository.updateAccountSub(newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), newaccount.getVps()==null?"": newaccount.getVps(),  newaccount.getRunning(), newaccount.getTimeupdateinfo() > 0 ? System.currentTimeMillis() : 0, id);
                     Long id_cookie = cookieRepository.findIdSubByUsername(newaccount.getUsername().trim());
                     if (id_cookie == null) {
                         cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());
@@ -60,7 +62,7 @@ public class AccountSubController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             } else {
-                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(), newaccount.getDate(), newaccount.getTimeupdateinfo() > 0 ? System.currentTimeMillis() : 0);
+                accountRepository.insertAccountSub(newaccount.getUsername(), newaccount.getPassword(), newaccount.getRecover(), newaccount.getLive(),newaccount.getRunning(),newaccount.getVps()==null?"":newaccount.getVps(), newaccount.getDate(), newaccount.getTimeupdateinfo() > 0 ? System.currentTimeMillis() : 0);
                 Long id_cookie = cookieRepository.findIdSubByUsername(newaccount.getUsername().trim());
                 if (id_cookie == null) {
                     cookieRepository.insertCookieSub(newaccount.getUsername(), newaccount.getCookie());

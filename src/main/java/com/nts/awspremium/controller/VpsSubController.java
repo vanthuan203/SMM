@@ -149,7 +149,6 @@ public class VpsSubController {
         try{
             //proxyRepository.updaterunningByVps(vps.trim()+"%");
             List<Vps> vpscheck =vpsRepository.findVPS(vps.trim());
-
             Integer resetSub=0;
 
             Date date=new Date();
@@ -158,6 +157,7 @@ public class VpsSubController {
             cal.add(Calendar.DATE, 1); //minus number would decrement the days
 
             if(vpscheck.size()>0){
+                System.out.println(vpscheck.size());
                 if(date.getDate()>vpscheck.get(0).getDayreset() && date.getMonth()==cal.getTime().getMonth()){
                     //System.out.println(date.getDate());
                     resetSub=1;

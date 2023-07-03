@@ -1,20 +1,21 @@
 package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.Account;
+import com.nts.awspremium.model.AccountSub;
 import com.nts.awspremium.model.VpsRunning;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.persistence.Entity;
 import javax.transaction.Transactional;
-import java.security.PublicKey;
 import java.util.List;
-import java.util.Optional;
 
-public interface AccountRepository extends JpaRepository<Account,Long> {
+public interface AccountSubRepository extends JpaRepository<AccountSub,Long> {
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdUsername(String username);
+
+    @Query(value = "Select count(*) from account where username=?1 limit 1",nativeQuery = true)
+    public Long checkexistAccountByUsername(String username);
 
     @Query(value = "Select id from account where username=?1 and live=1 limit 1",nativeQuery = true)
     public Long findIdUsernameRecover(String username);
@@ -25,7 +26,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public List<String> getCountByVps();
 
 
-    @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
+    @Query(value = "Select id from accountsub where username=?1 limit 1",nativeQuery = true)
     public Long findIdByUsername(String username);
 
     @Query(value = "Select proxy,proxy2 from account where id=?1 limit 1",nativeQuery = true)
@@ -38,8 +39,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public Integer findUsernameByVps(String username,String vps);
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO account(username,password,recover,live,encodefinger,cookie,endtrial,endtrialstring,running,vps) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,0,'')",nativeQuery = true)
-    public void insertAccount(String username,String password,String recover,Integer live,String encodefinger,String cookie,Long endtrial,String endtrialstring);
+    @Query(value = "INSERT INTO accountsub(username,password,recover,oldpassword,live,insertdate,timeupdateinfo,running,vps,timecheck,note) VALUES(?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)",nativeQuery = true)
+    public void insertAccountSub(String username,String password,String recover,String oldpassword,Integer live,Long insertdate,Long timeupdateinfo,Integer running,String vps,Long  timecheck,String note);
 
     @Modifying
     @Transactional
@@ -52,8 +53,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     public void insertAccountView(String username,String password,String recover,Integer live,String encodefinger,String cookie,Integer running,String vps,String date,String geo);
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO account(username,password,recover,live,running,vps,date,timeupdateinfo) VALUES(?1,?2,?3,?4,?5,?6,?7,?8)",nativeQuery = true)
-    public void insertAccountSub(String username,String password,String recover,Integer live,Integer running,String vps,String date,Long timeupdateinfo);
+    @Query(value = "INSERT INTO account(username,password,recover,live,running,vps,date,timeupdateinfo) VALUES(?1,?2,?3,?4,0,'',?5,?6)",nativeQuery = true)
+    public void insertAccountSub(String username,String password,String recover,Integer live,String date,Long timeupdateinfo);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,endtrial=?6,endtrialstring=?7 where username=?8",nativeQuery = true)
@@ -71,8 +72,8 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,vps=?4,running=?5,timeupdateinfo=?6 where id=?7",nativeQuery = true)
-    public void updateAccountSub(String password,String recover,Integer live,String vps,Integer running,Long timeupdateinfo,Long id);
+    @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,encodefinger=?4,cookie=?5,timeupdateinfo=?6,running=0 where id=?7",nativeQuery = true)
+    public void updateAccountSub(String password,String recover,Integer live,String encodefinger,String cookie,Long timeupdateinfo,Long id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET password=?1,recover=?2,live=?3,vps=?4 where id=?5",nativeQuery = true)
@@ -137,7 +138,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and live=1 and geo=?1 and INSTR(username,'@gmail.com')>0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountBuffhGmail(String geo);
 
-    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  live=1 order by rand()  limit 1",nativeQuery = true)
+    @Query(value = "SELECT id  FROM account where (vps is null or vps='' or vps=' ') and running=0 and  live=1 and round((UNIX_TIMESTAMP()-timeupdateinfo/1000)/60/60/24)>=7 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSub();
 
     @Query(value = "SELECT id  FROM account where live=0 and running=0 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1  order by rand()  limit 1",nativeQuery = true)
@@ -155,7 +156,7 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountBufhByVps(String vps);
 
-    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live=1 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live=1 and round((UNIX_TIMESTAMP()-timeupdateinfo/1000)/60/60/24)>=7 order by rand() limit 1",nativeQuery = true)
     public Long getAccountSubByVps(String vps);
 
     @Query(value = "SELECT count(*) FROM account where live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1",nativeQuery = true)
