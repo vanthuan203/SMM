@@ -139,9 +139,9 @@ public class AccountSubController {
                                 break;
                             }
                         }
+                         */
                         Long idCookieSub= cookieRepository.findIdSubByUsername(account.get(0).getUsername().trim());
                         String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
-                         */
                         Thread.sleep(300);
                         Integer accountcheck = accountRepository.checkAccountById(id);
                         if (accountcheck == 0) {
@@ -159,8 +159,8 @@ public class AccountSubController {
                         //resp.put("endtrial",account.get(0).getEndtrial());
                         resp.put("password", account.get(0).getPassword());
                         resp.put("recover", account.get(0).getRecover());
-                        resp.put("cookie", cookieRepository.findCookieSubById(id));
-                        //resp.put("encodefinger",encodefingerSub);
+                        resp.put("cookie", cookieSub);
+                        resp.put("oldpassword",account.get(0).getOldpassword());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     } catch (Exception e) {
                         resp.put("status", "fail");
@@ -182,12 +182,14 @@ public class AccountSubController {
                     accountbyVps.get(0).setRunning(1);
                     accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
                     accountRepository.save(accountbyVps.get(0));
+                    Long idCookieSub= cookieRepository.findIdSubByUsername(accountbyVps.get(0).getUsername());
+                    String cookieSub= cookieRepository.findCookieSubById(idCookieSub);
                     resp.put("status", "true");
                     resp.put("username", accountbyVps.get(0).getUsername());
                     resp.put("password", accountbyVps.get(0).getPassword());
                     resp.put("recover", accountbyVps.get(0).getRecover());
-                    resp.put("cookie", cookieRepository.findCookieSubById(idbyVps));
-                    //resp.put("encodefinger",encodefingerSub);
+                    resp.put("cookie", cookieSub);
+                    resp.put("oldpassword",accountbyVps.get(0).getOldpassword());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 } catch (Exception e) {
                     resp.put("status", "fail");
