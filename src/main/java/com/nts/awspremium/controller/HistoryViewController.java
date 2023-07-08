@@ -781,12 +781,19 @@ public class HistoryViewController {
 
 
     @GetMapping(value = "delnamebyvps", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delnamebyvps(@RequestParam(defaultValue = "") String vps) {
+    ResponseEntity<String> delnamebyvps(@RequestParam(defaultValue = "") String vps) throws InterruptedException {
         JSONObject resp = new JSONObject();
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(historyViewRepository.PROCESSLISTVIEW()>=30){
+            Random ran = new Random();
+            Thread.sleep(1000+ran.nextInt(2000));
+            resp.put("status","fail");
+            resp.put("message", "Đợi reset threads...");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         try {
             historyViewRepository.resetThreadViewByVps(vps.trim());
