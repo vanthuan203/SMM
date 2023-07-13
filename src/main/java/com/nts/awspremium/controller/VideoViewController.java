@@ -2314,6 +2314,28 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> refund(@RequestParam(defaultValue = "") String orderid) {
+        JSONObject resp = new JSONObject();
+        if(orderid.length()==0){
+            resp.put("status", "fail");
+            resp.put("message", "OrderId không được trống!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        List<String> ordersArrInput = new ArrayList<>();
+        ordersArrInput.addAll(Arrays.asList(orderid.split(",")));
+        try {
+            videoViewHistoryRepository.updateRefund(ordersArrInput);
+            resp.put("status", "true");
+            resp.put("message", "Refund đơn thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "updateordercheck", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateordercheck(@RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();

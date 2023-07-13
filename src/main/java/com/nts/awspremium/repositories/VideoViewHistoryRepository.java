@@ -64,6 +64,10 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
     public List<VideoViewHistory> getTimeBHByVideoId(String videoid);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update videoviewhistory set price=0,viewtotal=0,cancel=1 where orderid in(?1)",nativeQuery = true)
+    public void updateRefund(List<String> list_orderid);
 
     @Modifying
     @Transactional
