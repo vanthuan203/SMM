@@ -26,6 +26,8 @@ public class VpsController {
     @Autowired
     private HistoryViewRepository historyViewRepository;
     @Autowired
+    private HistoryCommentRepository historyCommentRepository;
+    @Autowired
     private ProxyRepository proxyRepository;
     @Autowired
     private AccountRepository accountRepository;
@@ -487,7 +489,9 @@ public class VpsController {
             for(int i=0;i<vpsArr.length;i++){
                 vpsRepository.deleteByVps(vpsArr[i].trim());
                 accountRepository.resetAccountByVps(vpsArr[i].trim());
-                historyViewRepository.resetThreadViewByVps(vpsArr[i].trim());
+                historyViewRepository.resetHistoryViewByVps(vpsArr[i].trim());
+                historyCommentRepository.resetThreadViewByVps(vpsArr[i].trim());
+                proxyRepository.updaterunningByVps(vpsArr[i].trim());
                 //proxyRepository.updaterunningByVps(vps.trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());

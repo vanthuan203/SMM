@@ -22,6 +22,9 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Query(value = "SELECT id FROM historyview where username=?1 limit 1",nativeQuery = true)
     public Long getId(String username);
 
+    @Query(value = "SELECT id FROM AccPremium.historyview where running=0 and typeproxy not in (select ipv4 from ipv4 where state=1) and vps=?1 order by timeget asc limit 1;",nativeQuery = true)
+    public Long getAccToView(String vps);
+
     @Query(value = "SELECT id FROM historyview where vps like ?1 and running=0 and username not in (select username from historysum where round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by username having sum(duration)>= 65000  order by sum(duration) asc) order by timeget asc limit 1",nativeQuery = true)
     public Long getIdAccBuff(String vps);
 
@@ -55,13 +58,23 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0,geo='',typeproxy='' where vps=?1",nativeQuery = true)
+    public Integer resetHistoryViewByVps(String vps);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0 where vps=?1",nativeQuery = true)
     public Integer resetThreadViewByVps(String vps);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,vps='' where id=?1",nativeQuery = true)
-    public Integer resetThreadById(Long id);
+    @Query(value = "UPDATE historyview SET running=0,vps='',proxy='' where username=?1",nativeQuery = true)
+    public Integer resetHistoryByUsername(String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE historyview SET running=0,vps='',proxy='',typeproxy='',geo='' where id=?1",nativeQuery = true)
+    public Integer resetHistoryById(Long id);
 
 
     @Modifying

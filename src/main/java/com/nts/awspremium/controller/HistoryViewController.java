@@ -309,147 +309,25 @@ public class HistoryViewController {
 
 
     @GetMapping(value = "getview", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getview(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "0") Integer buffh) {
+    ResponseEntity<String> getview(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "0") Integer buffh) {
         JSONObject resp = new JSONObject();
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (username.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Username không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         Random ran = new Random();
         try {
             Thread.sleep(ran.nextInt(1000));
-            Long historieId = historyViewRepository.getId(username);
+            Long historieId = historyViewRepository.getAccToView(vps.trim());
+            if(historieId==null){
+                resp.put("status", "fail");
+                resp.put("fail", "user");
+                resp.put("message", "Không còn user để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             List<VideoView> videos = null;
-            if (historieId == null) {
-                HistoryView history = new HistoryView();
-                history.setId(System.currentTimeMillis());
-                history.setUsername(username);
-                history.setListvideo("");
-                history.setProxy("");
-                history.setRunning(0);
-                history.setVps(vps);
-                history.setVideoid("");
-                history.setOrderid(0L);
-                history.setChannelid("");
-                //System.out.println(accountRepository.getGeoByUsername(username.trim()));
-                history.setGeo(accountRepository.getGeoByUsername(username.trim()));
-                history.setTimeget(System.currentTimeMillis());
-                if (buffh == 1) {
-                    if (history.getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoBuffHVer2VNTEST("", orderTrue.getValue());
-                    } else if (history.getGeo().equals("us")) {
-                        videos = videoViewRepository.getvideoBuffHVer2USTEST("", orderTrue.getValue());
-                    }
-                }else if(buffh == 2){
-                    if (history.getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoLiveVer2VNTEST("", orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoLiveVer2USTEST("", orderTrue.getValue());
-                    }
-                } else {
-                    if (history.getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy("", orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoViewVer2USTESTNoProxy("", orderTrue.getValue());
-                    }
-                }
-                if (videos.size() > 0) {
-                    history.setVideoid(videos.get(0).getVideoid());
-                    history.setOrderid(videos.get(0).getOrderid());
-                    history.setChannelid(videos.get(0).getChannelid());
-                    history.setRunning(1);
-                    historyViewRepository.save(history);
-
-                    Service service = serviceRepository.getInfoService(videos.get(0).getService());
-                    resp.put("live",service.getLive()==1?"true":"fail");
-                    resp.put("channel_id", videos.get(0).getChannelid());
-                    resp.put("status", "true");
-                    resp.put("video_id", videos.get(0).getVideoid());
-                    resp.put("video_title", videos.get(0).getVideotitle());
-                    resp.put("username", history.getUsername());
-                    resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    resp.put("like", "fail");
-                    resp.put("sub", "fail");
-
-                    String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
-                    String key = "";
-                    if (list_key != null && list_key.length() != 0) {
-                        String[] keyArr = list_key.split(",");
-                        key = keyArr[ran.nextInt(keyArr.length)];
-                    }
-                    resp.put("suggest_type", "fail");
-                    resp.put("suggest_key", key.length() == 0 ? videos.get(0).getVideotitle() : key);
-                    resp.put("suggest_video", "");
-
-                    List<String> arrSource = new ArrayList<>();
-                    for (int i = 0; i < service.getSuggest(); i++) {
-                        arrSource.add("suggest");
-                    }
-                    for (int i = 0; i < service.getSearch(); i++) {
-                        arrSource.add("search");
-                    }
-                    for (int i = 0; i < service.getDtn(); i++) {
-                        arrSource.add("dtn");
-                    }
-                    for (int i = 0; i < service.getEmbed(); i++) {
-                        arrSource.add("embed");
-                    }
-                    for (int i = 0; i < service.getDirect(); i++) {
-                        arrSource.add("direct");
-                    }
-                    for (int i = 0; i < service.getExternal(); i++) {
-                        arrSource.add("external");
-                    }
-                    if(service.getService()==753||service.getService()==153||service.getService()==754||service.getService()==154){
-                        resp.put("live","true");
-                    }
-                    String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
-                    if(source_view.equals("suggest")&&service.getType().equals("Special")){
-                        resp.put("suggest_type", "true");
-                    }else if(source_view.equals("search")&&service.getType().equals("Special")){
-                        resp.put("video_title", key.length() == 0 ? videos.get(0).getVideotitle() : key);
-                    }
-                    resp.put("source",source_view);
-
-                    if (service.getMintime() != service.getMaxtime()&&service.getLive()==0) {
-                        if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
-                            resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));
-                        } else {
-                            resp.put("video_duration", videos.get(0).getDuration());
-                        }
-                    }else if(service.getLive()==1){
-                        int min_check=(int)((service.getMintime()*0.15)>30?30:(service.getMintime()*0.15));
-                        if((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60<min_check){
-                            resp.put("video_duration", service.getMintime() * 60 + (service.getMintime() >= 15 ? 120 : 0));
-                        }else{
-                            int time_live=videos.get(0).getMinstart()-(int)((System.currentTimeMillis()-videos.get(0).getTimestart())/1000/60);
-                            resp.put("video_duration", (time_live>0?time_live:0) * 60 + (service.getMintime() >= 15 ? 120 : 0));
-                        }
-                    } else {
-                        if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
-                            resp.put("video_duration", service.getMintime() * 60 + (service.getMintime()<service.getMaxtime()?(ran.nextInt((service.getMaxtime() - service.getMintime()) * 60 + service.getMaxtime() >= 15 ? 120 : 0)):0));
-                        } else {
-                            resp.put("video_duration", videos.get(0).getDuration());
-                        }
-                    }
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                } else {
-                    historyViewRepository.save(history);
-                    resp.put("status", "fail");
-                    resp.put("username", history.getUsername());
-                    resp.put("fail", "video");
-                    resp.put("message", "Không còn video để view!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-            } else {
                 List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
-
                 if (buffh == 1) {
                     if (histories.get(0).getGeo().equals("vn")) {
                         videos = videoViewRepository.getvideoBuffHVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
@@ -464,9 +342,9 @@ public class HistoryViewController {
                     }
                 } else {
                     if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
                     } else {
-                        videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
                     }
                 }
                 if (videos.size() > 0) {
@@ -475,9 +353,7 @@ public class HistoryViewController {
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
                 } else {
-                    historyViewRepository.save(histories.get(0));
                     resp.put("status", "fail");
-                    resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
                     resp.put("message", "Không còn video để view!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -486,7 +362,6 @@ public class HistoryViewController {
                 Service service = serviceRepository.getInfoService(videos.get(0).getService());
 
                 histories.get(0).setTimeget(System.currentTimeMillis());
-                histories.get(0).setVps(vps);
                 histories.get(0).setRunning(1);
                 historyViewRepository.save(histories.get(0));
                 resp.put("live",service.getLive()==1?"true":"fail");
@@ -495,9 +370,10 @@ public class HistoryViewController {
                 resp.put("video_id", videos.get(0).getVideoid());
                 resp.put("video_title", videos.get(0).getVideotitle());
                 resp.put("username", histories.get(0).getUsername());
-                resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                resp.put("geo", histories.get(0).getGeo());
                 resp.put("like", "fail");
                 resp.put("sub", "fail");
+                resp.put("proxy", histories.get(0).getProxy());
 
                 String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                 String key = "";
@@ -566,9 +442,10 @@ public class HistoryViewController {
                     }
                 }
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
+            } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
 
-        } catch (Exception e) {
+    } catch (Exception e) {
             resp.put("status", "fail");
             resp.put("fail", "sum");
             resp.put("message", e.getMessage());
@@ -578,7 +455,7 @@ public class HistoryViewController {
 
     @GetMapping(value = "/updatevideoid", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestParam(defaultValue = "") String username,
-                                         @RequestParam(defaultValue = "") String videoid, @RequestParam(defaultValue = "") String channelid, @RequestParam(defaultValue = "0") Integer duration) {
+                                         @RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");

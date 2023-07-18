@@ -1,10 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.StringUtils;
-import com.nts.awspremium.model.Account;
-import com.nts.awspremium.model.History;
-import com.nts.awspremium.model.Proxy;
-import com.nts.awspremium.model.Recover;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +24,9 @@ public class AccountViewController {
 
     @Autowired
     private HistoryViewRepository historyViewRepository;
+
+    @Autowired
+    private ProxyRepository proxyRepository;
 
     @Autowired
     private VpsRepository vpsRepository;
@@ -71,9 +71,15 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo) {
+    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
-        Random ran = new Random();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         if (vps.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Tên vps không để trống");
@@ -84,6 +90,7 @@ public class AccountViewController {
             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
+        Random ran = new Random();
         try {
             if (geo.equals("live")) {
                 Integer check_get = vpsRepository.checkGetAccount2ByThreadVps(vps.trim());
@@ -93,7 +100,7 @@ public class AccountViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             } else {
-                Integer check_get = vpsRepository.checkGetAccount15ByThreadVps(vps.trim());
+                Integer check_get = vpsRepository.checkGetAccount5ByThreadVps(vps.trim());
                 if (check_get == 0) {
                     resp.put("status", "fail");
                     resp.put("message", "Đã đủ acc cho Vps!");
@@ -119,11 +126,50 @@ public class AccountViewController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        if(account.get(0).getProxy()== null|| account.get(0).getProxy().length()==0){
+                            List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim());
+                            if(proxies.size()!=0){
+                                account.get(0).setProxy(proxies.get(0).getProxy());
+                                proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
+                            }else{
+                                account.get(0).setProxy("0:0");
+                            }
+                        }
                         account.get(0).setVps(vps.trim());
                         account.get(0).setRunning(1);
                         account.get(0).setTimecheck(System.currentTimeMillis());
                         accountRepository.save(account.get(0));
 
+                        Long historieId = historyViewRepository.getId(account.get(0).getUsername());
+                        if (historieId == null) {
+                            HistoryView history = new HistoryView();
+                            history.setId(System.currentTimeMillis());
+                            history.setUsername(account.get(0).getUsername());
+                            history.setListvideo("");
+                            history.setProxy(account.get(0).getProxy());
+                            history.setTypeproxy((account.get(0).getProxy().split(":"))[0]);
+                            history.setRunning(0);
+                            history.setVps(vps);
+                            history.setVideoid("");
+                            history.setOrderid(0L);
+                            history.setChannelid("");
+                            history.setGeo(account.get(0).getGeo());
+                            history.setTimeget(System.currentTimeMillis());
+                            historyViewRepository.save(history);
+                        }else {
+                            List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
+                            histories.get(0).setListvideo("");
+                            histories.get(0).setProxy(account.get(0).getProxy());
+                            histories.get(0).setTypeproxy((account.get(0).getProxy().split(":"))[0]);
+                            histories.get(0).setRunning(0);
+                            histories.get(0).setVps(vps);
+                            histories.get(0).setVideoid("");
+                            histories.get(0).setOrderid(0L);
+                            histories.get(0).setChannelid("");
+                            histories.get(0).setGeo(account.get(0).getGeo());
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            historyViewRepository.save(histories.get(0));
+                        }
 
                         resp.put("status", "true");
                         resp.put("username", account.get(0).getUsername());
@@ -140,14 +186,53 @@ public class AccountViewController {
             } else {
                 try {
                     List<Account> accountbyVps = accountRepository.findAccountById(idbyVps);
+                    if(accountbyVps.get(0).getProxy()==null || accountbyVps.get(0).getProxy().length()==0){
+                        List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim());
+                        if(proxies.size()!=0){
+                            accountbyVps.get(0).setProxy(proxies.get(0).getProxy());
+                            proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
+                        }else{
+                            accountbyVps.get(0).setProxy("0:0");
+                        }
+                    }
                     accountbyVps.get(0).setVps(vps.trim());
                     accountbyVps.get(0).setRunning(1);
                     accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
                     accountRepository.save(accountbyVps.get(0));
 
+                    Long historieId = historyViewRepository.getId(accountbyVps.get(0).getUsername());
+                    if (historieId == null) {
+                        HistoryView history = new HistoryView();
+                        history.setId(System.currentTimeMillis());
+                        history.setUsername(accountbyVps.get(0).getUsername());
+                        history.setListvideo("");
+                        history.setProxy(accountbyVps.get(0).getProxy());
+                        history.setTypeproxy((accountbyVps.get(0).getProxy().split(":"))[0]);
+                        history.setRunning(0);
+                        history.setVps(vps);
+                        history.setVideoid("");
+                        history.setOrderid(0L);
+                        history.setChannelid("");
+                        history.setGeo(accountbyVps.get(0).getGeo());
+                        history.setTimeget(System.currentTimeMillis());
+                        historyViewRepository.save(history);
+                    }else {
+                        List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
+                        histories.get(0).setListvideo("");
+                        histories.get(0).setProxy(accountbyVps.get(0).getProxy());
+                        histories.get(0).setTypeproxy((accountbyVps.get(0).getProxy().split(":"))[0]);
+                        histories.get(0).setRunning(0);
+                        histories.get(0).setVps(vps);
+                        histories.get(0).setVideoid("");
+                        histories.get(0).setOrderid(0L);
+                        histories.get(0).setChannelid("");
+                        histories.get(0).setGeo(accountbyVps.get(0).getGeo());
+                        histories.get(0).setTimeget(System.currentTimeMillis());
+                        historyViewRepository.save(histories.get(0));
+                    }
+
                     resp.put("status", "true");
                     resp.put("username", accountbyVps.get(0).getUsername());
-                    resp.put("endtrial", accountbyVps.get(0).getEndtrial());
                     resp.put("recover", accountbyVps.get(0).getRecover());
                     resp.put("cookie", "");
                     resp.put("password", accountbyVps.get(0).getPassword());
@@ -167,8 +252,15 @@ public class AccountViewController {
 
 
     @GetMapping(value = "/getlogin", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getlogin() {
+    ResponseEntity<String> getlogin(@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             Long id = accountRepository.getAccountNeedLogin();
             if (id == null) {
@@ -231,8 +323,15 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/resetaccountbyusername", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "0") Integer live) {
+    ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "0") Integer live,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             if (username.length() == 0) {
                 resp.put("status", "fail");
@@ -240,6 +339,9 @@ public class AccountViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             Long idUsername = accountRepository.findIdUsername(username.trim());
+            Long idHistory=historyViewRepository.getId(username.trim());
+            proxyRepository.updaterunningProxy(accountRepository.getProxyByUsername(username.trim()));
+            historyViewRepository.resetHistoryById(idHistory);
             accountRepository.resetAccountByUsername(live, idUsername);
             resp.put("status", "true");
             resp.put("message", "Reset Account thành công!");
@@ -252,30 +354,16 @@ public class AccountViewController {
         }
     }
 
-    @GetMapping(value = "/countgmailsbyendtrial", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> countgmailsbyendtrial(@RequestHeader(defaultValue = "") String Authorization) {
+    @GetMapping(value = "/checkaccount", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
-        try {
-            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-            if (checktoken == 0) {
-                resp.put("status", "fail");
-                resp.put("message", "Token expired");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
 
-            Integer allgmail = accountRepository.getCountGmailBuffh();
-            resp.put("counts", allgmail);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
             resp.put("status", "fail");
-            resp.put("message", e.getMessage());
+            resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    @GetMapping(value = "/checkaccount", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkaccount(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
-        JSONObject resp = new JSONObject();
         try {
             //Thread.sleep((long)(Math.random() * 10000));
             if (username.length() == 0) {
@@ -317,8 +405,15 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/getinfo", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "") String username) {
+    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "") String username,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             if (username.length() == 0) {
                 resp.put("status", "fail");
@@ -430,8 +525,15 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/update", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> update(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String password, @RequestParam(defaultValue = "") String recover) {
+    ResponseEntity<String> update(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String password, @RequestParam(defaultValue = "") String recover,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try {
             if (username.length() == 0) {
                 resp.put("status", "fail");
