@@ -155,6 +155,9 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountBufhByVps(String vps);
 
+    @Query(value = "SELECT proxy FROM account where username=?1 limit 1",nativeQuery = true)
+    public String getProxyByUsername(String username);
+
     @Query(value = "SELECT id FROM account where vps=?1 and running=0 and  live=1 order by rand() limit 1",nativeQuery = true)
     public Long getAccountSubByVps(String vps);
 

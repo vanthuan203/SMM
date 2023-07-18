@@ -69,6 +69,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where state=1 and running=0 and geo=?1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyByGeo(String geo);
 
+    @Query(value = "select * from proxy where running=0 and geo=?1 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyFixAccountByGeo(String geo);
+
     @Query(value = "select * from proxy where state=1 and running=0 and geo='live' order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyByGeoNoCheckTime();
 
@@ -154,6 +157,11 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Transactional
     @Query(value = "update proxy set running=0,vps='' where  id=?1",nativeQuery = true)
     public Integer updaterunningProxyByVps(Integer id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update proxy set running=0,vps='' where  proxy=?1",nativeQuery = true)
+    public Integer updaterunningProxy(String proxy);
 
     @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccSub' and COMMAND='Query' and TIME>0",nativeQuery = true)
     public Integer PROCESSLISTVIEW();

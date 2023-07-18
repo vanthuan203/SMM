@@ -93,6 +93,7 @@ public class HistoryCommentController {
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", history.getUsername());
                     resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                    resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
                     /*
                     if(dataCommentRepository.checkCommentDone(videos.get(0).getOrderid())>0){
                         resp.put("status", "fail");
@@ -226,6 +227,7 @@ public class HistoryCommentController {
                 resp.put("video_title", videos.get(0).getVideotitle());
                 resp.put("username", histories.get(0).getUsername());
                 resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
                 if (ran.nextInt(10000) > 5000) {
                     resp.put("source", "dtn");
                 } else {
