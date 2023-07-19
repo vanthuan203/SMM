@@ -754,6 +754,52 @@ public class ProxyController {
 
     }
 
+    @GetMapping(value = "/checkproxyviewlist", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkproxyviewlist(@RequestParam(defaultValue = "1") Integer cron) {
+        List<String> proxys= ipV4Repository.getListIpv4(cron);
+        JSONObject resp = new JSONObject();
+        //System.out.println(proxys);
+        //String[] proxys=proxylist.split("\r\n");
+        try{
+            String list_check="";
+            Integer sum_error=0;
+            for(int i=0;i<proxys.size();i++){
+                JSONObject obj = new JSONObject();
+                Random ran=new Random();
+                Integer ranproxy=ran.nextInt(99)+13000;
+                //System.out.println(proxys.get(i)+":"+ranproxy.toString()+":tunghoanh:Dung1234@");
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":doanchinh:Chinhchu123$")) {
+                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
+                    Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
+                    if(checkState>0){
+                        proxyRepository.updateState(1,proxys.get(i)+"%");
+                    }
+                }else{
+                    Integer checkState=proxyRepository.checkState(1,proxys.get(i)+"%");
+                    if(checkState>0){
+                        proxyRepository.updateState(0,proxys.get(i)+"%");
+                    }
+                    proxyRepository.updateState(0,proxys.get(i)+"%");
+                    List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i)+"%");
+                    if (stateAndCheck.get(0).getNumcheck()>=4){
+                        list_check=list_check+","+proxys.get(i);
+                        sum_error++;
+                    }
+                    ipV4Repository.updateIpv4Error(System.currentTimeMillis(),proxys.get(i)+"%");
+                }
+            }
+            resp.put("list:",list_check);
+            resp.put("sum:",sum_error);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+
+        } catch (Exception e) {
+            resp.put("status",e);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+
+    }
+
 
 
     @GetMapping(value = "/addproxusub", produces = "application/hal_json;charset=utf8")
