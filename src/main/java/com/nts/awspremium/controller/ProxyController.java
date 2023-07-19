@@ -766,9 +766,9 @@ public class ProxyController {
             for(int i=0;i<proxys.size();i++){
                 JSONObject obj = new JSONObject();
                 Random ran=new Random();
-                Integer ranproxy=ran.nextInt(99)+13000;
+                Integer ranproxy=ran.nextInt(300)+13000;
                 //System.out.println(proxys.get(i)+":"+ranproxy.toString()+":tunghoanh:Dung1234@");
-                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":doanchinh:Chinhchu123$")) {
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":doanchinh:Chinhchu123@")) {
                     ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
                     Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
                     if(checkState>0){
