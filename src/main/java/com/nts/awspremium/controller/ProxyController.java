@@ -113,7 +113,7 @@ public class ProxyController {
     ResponseEntity<String> addipv4(@RequestParam String ipv4){
         JSONObject resp = new JSONObject();
         try{
-            String[] ipv4list = ipv4.split("\n");
+            String[] ipv4list = ipv4.split(",");
             for(int i=0;i<ipv4list.length;i++){
                 if(ipV4Repository.checkIpv4(ipv4list[i].trim())==0){
                     IpV4 ipV4=new IpV4();
