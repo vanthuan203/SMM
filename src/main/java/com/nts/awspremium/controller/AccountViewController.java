@@ -322,6 +322,27 @@ public class AccountViewController {
         }
     }
 
+    @GetMapping(value = "/sumgmails", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> subgmails(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+
+            Integer allgmail = accountRepository.getCountGmailBuffh();
+            resp.put("counts", allgmail);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/resetaccountbyusername", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetaccountbyusername(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "0") Integer live,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
