@@ -375,6 +375,7 @@ public class HistoryViewController {
 
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 histories.get(0).setRunning(1);
+                String [] proxy=histories.get(0).getProxy().split(":");
                 historyViewRepository.save(histories.get(0));
                 resp.put("live",service.getLive()==1?"true":"fail");
                 resp.put("channel_id", videos.get(0).getChannelid());
@@ -385,7 +386,7 @@ public class HistoryViewController {
                 resp.put("geo", histories.get(0).getGeo());
                 resp.put("like", "fail");
                 resp.put("sub", "fail");
-                resp.put("proxy", histories.get(0).getProxy());
+                resp.put("proxy", proxy[0]+":"+proxy[1]+":1:1");
 
                 String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                 String key = "";
