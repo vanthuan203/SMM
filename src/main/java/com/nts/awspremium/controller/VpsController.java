@@ -195,7 +195,7 @@ public class VpsController {
     }
 
     @GetMapping(value = "checkresetvps",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkresetvps(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+    ResponseEntity<String> checkresetvps(@RequestParam(defaultValue = "") String vps){
         JSONObject resp=new JSONObject();
         if (vps.length() == 0) {
             resp.put("status", "fail");
