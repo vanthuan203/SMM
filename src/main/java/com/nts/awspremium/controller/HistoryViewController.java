@@ -96,6 +96,7 @@ public class HistoryViewController {
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
                 } else {
+                    histories.get(0).setTimeget(System.currentTimeMillis());
                     historyViewRepository.save(histories.get(0));
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
@@ -230,6 +231,7 @@ public class HistoryViewController {
                     if (histories.get(0).getGeo().equals("vn")) {
                         System.out.println("OKE");
                         videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
+                        System.out.println(histories.get(0).getUsername());
                     } else {
                         videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
                     }
@@ -257,12 +259,16 @@ public class HistoryViewController {
                         histories.get(0).setOrderid(videos.get(0).getOrderid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
                     } else {
+                        histories.get(0).setTimeget(System.currentTimeMillis());
+                        historyViewRepository.save(histories.get(0));
                         resp.put("status", "fail");
                         resp.put("fail", "video");
                         resp.put("message", "Không còn video để view!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }else{
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    historyViewRepository.save(histories.get(0));
                     resp.put("status", "fail");
                     resp.put("fail", "video");
                     resp.put("message", "Không còn video để view!");
