@@ -149,8 +149,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "SELECT id  FROM account where live!=1 and live!=2 and live!=5 and running=0 order by rand()  limit 1",nativeQuery = true)
     public Long getAccountSubByWhere();
 
-    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
-    public Long getaccountByVps(String vps);
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=1 and geo=?2 order by rand() limit 1",nativeQuery = true)
+    public Long getaccountByVps(String vps,String geo);
+
+    @Query(value = "SELECT id FROM account where vps=?1 and running=0 and live=1 and geo=?2 order by rand() limit 1",nativeQuery = true)
+    public Long getaccountCmtByVps(String vps,String geo);
 
     @Query(value = "SELECT id FROM account where vps like ?1 and running=0 and live=1 order by rand() limit 1",nativeQuery = true)
     public Long getaccountBufhByVps(String vps);
