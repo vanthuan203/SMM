@@ -76,10 +76,14 @@ public class HistoryCommentController {
                 history.setOrderid(0L);
                 history.setGeo(accountRepository.getGeoByUsername(username.trim()));
                 history.setTimeget(System.currentTimeMillis());
-                if (history.getGeo().equals("vn")) {
+                if (history.getGeo().equals("cmt-vn") || history.getGeo().equals("vn")) {
                     videos = videoCommentRepository.getvideoCommentVN("");
-                } else if (history.getGeo().equals("us")) {
+                } else if (history.getGeo().equals("cmt-us") || history.getGeo().equals("us")) {
                     videos = videoCommentRepository.getvideoCommentUS("");
+                }else{
+                    resp.put("status", "fail");
+                    resp.put("message", "Username không cmt!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videos.size() > 0) {
                     history.setVideoid(videos.get(0).getVideoid());
