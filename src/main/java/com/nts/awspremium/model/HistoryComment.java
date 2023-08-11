@@ -1,13 +1,12 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Table(name = "historycomment")
 @Entity
 public class HistoryComment {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
     private String listvideo;

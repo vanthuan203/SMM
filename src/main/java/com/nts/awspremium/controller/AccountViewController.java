@@ -152,20 +152,37 @@ public class AccountViewController {
                         if(cmt==0){
                             Long historieId = historyViewRepository.getId(account.get(0).getUsername());
                             if (historieId == null) {
-                                HistoryView history = new HistoryView();
-                                history.setId(System.currentTimeMillis());
-                                history.setUsername(account.get(0).getUsername());
-                                history.setListvideo("");
-                                history.setProxy(account.get(0).getProxy());
-                                history.setTypeproxy((account.get(0).getProxy().split(":"))[0]);
-                                history.setRunning(0);
-                                history.setVps(vps);
-                                history.setVideoid("");
-                                history.setOrderid(0L);
-                                history.setChannelid("");
-                                history.setGeo(account.get(0).getGeo());
-                                history.setTimeget(System.currentTimeMillis());
-                                historyViewRepository.save(history);
+                                try{
+                                    HistoryView history = new HistoryView();
+                                    history.setUsername(account.get(0).getUsername());
+                                    history.setListvideo("");
+                                    history.setProxy(account.get(0).getProxy());
+                                    history.setTypeproxy((account.get(0).getProxy().split(":"))[0]);
+                                    history.setRunning(0);
+                                    history.setVps(vps);
+                                    history.setVideoid("");
+                                    history.setOrderid(0L);
+                                    history.setChannelid("");
+                                    history.setGeo(account.get(0).getGeo());
+                                    history.setTimeget(System.currentTimeMillis());
+                                    historyViewRepository.save(history);
+                                }catch (Exception e){
+                                    Thread.sleep(10+ran.nextInt(1000));
+                                    HistoryView history = new HistoryView();
+                                    history.setUsername(account.get(0).getUsername());
+                                    history.setListvideo("");
+                                    history.setProxy(account.get(0).getProxy());
+                                    history.setTypeproxy((account.get(0).getProxy().split(":"))[0]);
+                                    history.setRunning(0);
+                                    history.setVps(vps);
+                                    history.setVideoid("");
+                                    history.setOrderid(0L);
+                                    history.setChannelid("");
+                                    history.setGeo(account.get(0).getGeo());
+                                    history.setTimeget(System.currentTimeMillis());
+                                    historyViewRepository.save(history);
+                                }
+
                             }else {
                                 List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
                                 histories.get(0).setListvideo("");
@@ -213,20 +230,36 @@ public class AccountViewController {
                     if(cmt==0){
                         Long historieId = historyViewRepository.getId(accountbyVps.get(0).getUsername());
                         if (historieId == null) {
-                            HistoryView history = new HistoryView();
-                            history.setId(System.currentTimeMillis());
-                            history.setUsername(accountbyVps.get(0).getUsername());
-                            history.setListvideo("");
-                            history.setProxy(accountbyVps.get(0).getProxy());
-                            history.setTypeproxy((accountbyVps.get(0).getProxy().split(":"))[0]);
-                            history.setRunning(0);
-                            history.setVps(vps);
-                            history.setVideoid("");
-                            history.setOrderid(0L);
-                            history.setChannelid("");
-                            history.setGeo(accountbyVps.get(0).getGeo());
-                            history.setTimeget(System.currentTimeMillis());
-                            historyViewRepository.save(history);
+                            try{
+                                HistoryView history = new HistoryView();
+                                history.setUsername(accountbyVps.get(0).getUsername());
+                                history.setListvideo("");
+                                history.setProxy(accountbyVps.get(0).getProxy());
+                                history.setTypeproxy((accountbyVps.get(0).getProxy().split(":"))[0]);
+                                history.setRunning(0);
+                                history.setVps(vps);
+                                history.setVideoid("");
+                                history.setOrderid(0L);
+                                history.setChannelid("");
+                                history.setGeo(accountbyVps.get(0).getGeo());
+                                history.setTimeget(System.currentTimeMillis());
+                                historyViewRepository.save(history);
+                            }catch (Exception e){
+                                Thread.sleep(10+ran.nextInt(1000));
+                                HistoryView history = new HistoryView();
+                                history.setUsername(accountbyVps.get(0).getUsername());
+                                history.setListvideo("");
+                                history.setProxy(accountbyVps.get(0).getProxy());
+                                history.setTypeproxy((accountbyVps.get(0).getProxy().split(":"))[0]);
+                                history.setRunning(0);
+                                history.setVps(vps);
+                                history.setVideoid("");
+                                history.setOrderid(0L);
+                                history.setChannelid("");
+                                history.setGeo(accountbyVps.get(0).getGeo());
+                                history.setTimeget(System.currentTimeMillis());
+                                historyViewRepository.save(history);
+                            }
                         }else {
                             List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
                             histories.get(0).setListvideo("");

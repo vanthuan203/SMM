@@ -68,7 +68,6 @@ public class HistoryCommentController {
             List<VideoComment> videos = null;
             if (historieId == null) {
                 HistoryComment history = new HistoryComment();
-                history.setId(System.currentTimeMillis());
                 history.setUsername(username);
                 history.setListvideo("");
                 history.setRunning(0);
