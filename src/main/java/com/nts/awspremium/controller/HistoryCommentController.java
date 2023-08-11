@@ -90,13 +90,6 @@ public class HistoryCommentController {
                     history.setOrderid(videos.get(0).getOrderid());
                     history.setRunning(1);
                     historyCommentRepository.save(history);
-                    resp.put("channel_id", videos.get(0).getChannelid());
-                    resp.put("status", "true");
-                    resp.put("video_id", videos.get(0).getVideoid());
-                    resp.put("video_title", videos.get(0).getVideotitle());
-                    resp.put("username", history.getUsername());
-                    resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
                     /*
                     if(dataCommentRepository.checkCommentDone(videos.get(0).getOrderid())>0){
                         resp.put("status", "fail");
@@ -134,6 +127,13 @@ public class HistoryCommentController {
                         resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                    resp.put("channel_id", videos.get(0).getChannelid());
+                    resp.put("status", "true");
+                    resp.put("video_id", videos.get(0).getVideoid());
+                    resp.put("video_title", videos.get(0).getVideotitle());
+                    resp.put("username", history.getUsername());
+                    resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                    resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
                     if (ran.nextInt(10000) > 5000) {
                         resp.put("source", "dtn");
                     } else {
@@ -165,12 +165,16 @@ public class HistoryCommentController {
                     resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (histories.get(0).getGeo().equals("vn")) {
+                if (histories.get(0).getGeo().equals("vn") || histories.get(0).getGeo().equals("cmt-vn")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
                     videos = videoCommentRepository.getvideoCommentVN(histories.get(0).getListvideo());
-                } else if (histories.get(0).getGeo().equals("us")) {
+                } else if (histories.get(0).getGeo().equals("us") || histories.get(0).getGeo().equals("cmt-us")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
                     videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo());
+                }else{
+                    resp.put("status", "fail");
+                    resp.put("message", "Username không cmt!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videos.size() > 0) {
                     histories.get(0).setTimeget(System.currentTimeMillis());
