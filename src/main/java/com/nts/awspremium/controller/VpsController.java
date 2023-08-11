@@ -183,7 +183,7 @@ public class VpsController {
                 vpsRepository.save(vpsnew);
                 resp.put("status", "true");
                 resp.put("option","Pending");
-                resp.put("vpsreset",0);
+                resp.put("vpsreset",2);
                 //resp.put("message", "Vps thêm thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }

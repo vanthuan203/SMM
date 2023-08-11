@@ -38,6 +38,9 @@ public class HistoryCommentController {
     @Autowired
     private HistoryCommentSumRepository historyCommentSumRepository;
 
+    @Autowired
+    private VpsRepository vpsRepository;
+
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
@@ -46,6 +49,11 @@ public class HistoryCommentController {
             resp.put("status", "fail");
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(vpsRepository.checkRunning(vps.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Vps không chạy cmt!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         if (username.length() == 0) {
             resp.put("status", "fail");
