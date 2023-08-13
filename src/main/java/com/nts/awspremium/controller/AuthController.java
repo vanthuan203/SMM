@@ -49,6 +49,26 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(path = "queryadmin",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> queryadmin(@RequestBody String query){
+        JSONObject resp=new JSONObject();
+        try{
+            adminRepository.queryAdmin("select count(*) from admin");
+
+                resp.put("status","true");
+                resp.put("message", "Thành công!");
+                resp.put("queryAdmin",adminRepository.queryAdmin("select count(*) from admin"));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @GetMapping(path = "verify_token",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> verify_token(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();

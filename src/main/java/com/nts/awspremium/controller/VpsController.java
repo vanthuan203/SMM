@@ -206,12 +206,13 @@ public class VpsController {
             List<Vps> vpscheck =vpsRepository.findVPS(vps.trim());
 
             if(vpscheck.size()>0){
+                vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpsRepository.save(vpscheck.get(0));
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
             }else{
-
                 resp.put("status", "fail");
                 resp.put("vpsreset","NULL");
                 //resp.put("message", "Vps thêm thành công!");
