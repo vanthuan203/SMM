@@ -11,19 +11,19 @@ import java.util.List;
 
 public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
-    @Query(value = "SELECT * FROM videoview where service>600 and service not in(751,752,753,754) and service not in (select service from service where (checktime=1 and mintime>=30) or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service not in(751,752,753,754) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VNTEST(String listvideo, List<String> orderid);
 
     @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoBuffHVer2VNTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where service<600  and service not in(151,152,153,154)  and service not in (select service from service where (checktime=1 and mintime>=30) or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service<600 and service not in(151,152,153,154) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2USTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where service in(151,152,153,154) and service not in (select service from service where (checktime=1 and mintime>=30) or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(151,152,153,154) and  INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2USTESTNoProxy(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where service in(751,752,753,754) and service not in (select service from service where (checktime=1 and mintime>=30) or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(751,752,753,754) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VNTESTNoProxy(String listvideo, List<String> orderid);
 
     @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
@@ -169,6 +169,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "select * from videoview where timetotal>(900*vieworder + 900*vieworder*(select bonus/100 from setting where id=1))  and viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where mintime=15 and checktime=1)",nativeQuery = true)
     public List<VideoView> getOrderFullTime15m();
+
+    @Query(value = "select * from videoview where timetotal>(600*vieworder + 600*vieworder*(select bonus/100 from setting where id=1))  and viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where mintime=10 and checktime=1)",nativeQuery = true)
+    public List<VideoView> getOrderFullTime10m();
 
 
     @Query(value = "SELECT videoview.videoid,sum(historyviewsum.duration) as total,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate and service in(select service from service where checktime=1) group by videoview.videoid order by insertdate desc",nativeQuery = true)
