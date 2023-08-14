@@ -126,6 +126,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT count(*) FROM proxy where state=?1 and proxy like ?2 limit 1",nativeQuery = true)
     public Integer checkState(Integer state,String ipv4);
 
+    @Query(value = "SELECT count(*) FROM proxy where state=1 and proxy=(select proxy from account where username=?1 limit 1) limit 1",nativeQuery = true)
+    public Integer checkProxyLiveByUsername(String username);
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM proxyhistory where round((UNIX_TIMESTAMP()-id/1000)/60/60) >3",nativeQuery = true)

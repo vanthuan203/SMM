@@ -40,6 +40,8 @@ public class HistoryCommentController {
 
     @Autowired
     private VpsRepository vpsRepository;
+    @Autowired
+    private ProxyRepository proxyRepository;
 
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
@@ -59,6 +61,11 @@ public class HistoryCommentController {
             resp.put("status", "fail");
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Proxy die!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         /*
         if (historyViewRepository.PROCESSLISTVIEW() >= 40) {
