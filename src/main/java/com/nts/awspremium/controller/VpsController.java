@@ -22,6 +22,9 @@ public class VpsController {
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
+    private VideoViewRepository viewRepository;
+
+    @Autowired
     private VpsRepository vpsRepository;
     @Autowired
     private HistoryViewRepository historyViewRepository;
@@ -180,6 +183,7 @@ public class VpsController {
                 vpsnew.setGet_account(1);
                 vpsnew.setChangefinger(0);
                 vpsnew.setTimecheck(System.currentTimeMillis());
+                vpsnew.setTimeresettool(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
                 resp.put("status", "true");
                 resp.put("option","Pending");
@@ -208,8 +212,18 @@ public class VpsController {
             if(vpscheck.size()>0){
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
+                List<VideoView> videoViews=viewRepository.getvideoPreTrue();
+                if(videoViews.size()!=0){
+                    resp.put("time_start",videoViews.get(0).getInsertdate());
+                    resp.put("option","live");
+                }else {
+                    resp.put("time_start",0L);
+                    resp.put("option",vpscheck.get(0).getVpsoption());
+                }
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
+
+                resp.put("threads",vpscheck.get(0).getThreads());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
             }else{

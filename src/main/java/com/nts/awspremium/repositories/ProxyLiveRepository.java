@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
+public interface ProxyLiveRepository extends JpaRepository<ProxyLive, Integer> {
     @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<5 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy();
 
@@ -121,7 +121,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT id FROM proxy where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
     public Integer getIdByProxy(String proxy,String vps);
 
-    @Query(value = "SELECT id FROM proxy where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
+    @Query(value = "SELECT id FROM proxylive where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
     public Integer getIdByProxyLive(String proxy,String vps);
 
     @Query(value = "SELECT running FROM proxy where id=?1 limit 1 ",nativeQuery = true)
@@ -166,7 +166,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update proxy set running=0,vps='' where  vps=?1 ",nativeQuery = true)
+    @Query(value = "update proxylive set running=0,vps='' where  vps=?1 ",nativeQuery = true)
     public Integer updaterunningByVps(String vps);
 
     @Modifying
@@ -177,7 +177,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update proxy set running=0,vps='' where  id=?1",nativeQuery = true)
+    @Query(value = "update proxylive set running=0,vps='' where  id=?1",nativeQuery = true)
     public Integer updaterunningProxyLiveByVps(Integer id);
 
 
@@ -212,6 +212,6 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE proxy set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=1 and running=1",nativeQuery = true)
+    @Query(value = "UPDATE proxylive set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=1 and running=1",nativeQuery = true)
     public Integer ResetProxyThan2h();
 }

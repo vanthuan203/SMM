@@ -84,7 +84,7 @@ public class VideoViewController {
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
             Request request1 = null;
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBNcxI9kl_ODPwf49hMSHyohn6Q7IaKdMI&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBNcxI9kl_ODPwf49hMSHyohn6Q7IaKdMI&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration),liveStreamingDetails(scheduledStartTime))&part=liveStreamingDetails,snippet,statistics,contentDetails&id=" + videolist).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -127,14 +127,21 @@ public class VideoViewController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     JSONObject snippet = (JSONObject) video.get("snippet");
-                    if (!snippet.get("liveBroadcastContent").toString().equals("none")) {
+                    Long scheduledStartTime=0L;
+                    if (!snippet.get("liveBroadcastContent").toString().equals("none")&&service.getLive()==0) {
                         resp.put("error", "This video is not a pure public video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }else if(snippet.get("liveBroadcastContent").toString().equals("upcoming")&&service.getLive()==1){
+                        JSONObject liveStreamingDetails = (JSONObject) video.get("liveStreamingDetails");
+                        Instant instant = Instant.parse(liveStreamingDetails.get("scheduledStartTime").toString());
+                        scheduledStartTime=instant.toEpochMilli();
+                        System.out.println("Giá trị long time: " + scheduledStartTime);
                     }
+
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     VideoView videoViewhnew = new VideoView();
                     videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
-                    videoViewhnew.setInsertdate(System.currentTimeMillis());
+                    videoViewhnew.setInsertdate(scheduledStartTime==0?System.currentTimeMillis():scheduledStartTime);
                     videoViewhnew.setView24h(0);
                     videoViewhnew.setViewtotal(0);
                     videoViewhnew.setTimetotal(0);
@@ -170,7 +177,7 @@ public class VideoViewController {
                     //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
 
                 } catch (Exception e) {
-                    resp.put("videoview", "error");
+                    resp.put("videoview", e.getMessage());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
