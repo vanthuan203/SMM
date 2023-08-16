@@ -61,7 +61,7 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0,geo='',typeproxy='' where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE historyview SET running=0,videoid='',orderid=0,geo='',typeproxy='',vps='',proxy='' where vps=?1",nativeQuery = true)
     public Integer resetHistoryViewByVps(String vps);
 
     @Modifying

@@ -136,7 +136,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT id FROM proxylive where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
     public Integer getIdByProxyLiveFalse(String proxy,String vps);
 
-    @Query(value = "SELECT count(*) FROM proxy where state=?1 and proxy like ?2 limit 1",nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM proxy where state=?1 and ipv4=?2 limit 1",nativeQuery = true)
     public Integer checkState(Integer state,String ipv4);
 
     @Query(value = "SELECT count(*) FROM proxy where state=1 and proxy=(select proxy from account where username=?1 limit 1) limit 1",nativeQuery = true)
@@ -196,7 +196,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE proxy set state=?1  where ipv4 like ?2 ",nativeQuery = true)
+    @Query(value = "UPDATE proxy set state=?1  where ipv4=?2 ",nativeQuery = true)
     public Integer updateState(Integer state,String ipv4);
 
     @Modifying

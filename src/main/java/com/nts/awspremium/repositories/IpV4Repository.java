@@ -45,10 +45,10 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "Update ipv4 SET state=1,timecheck=?1,numcheck=0 where ipv4 like ?2",nativeQuery = true)
+    @Query(value = "Update ipv4 SET state=1,timecheck=?1,numcheck=0 where ipv4=?2",nativeQuery = true)
     public void updateIpv4Ok(Long timecheck, String ipv4 );
 
-    @Query(value = "SELECT * from ipv4 where ipv4 like ?1",nativeQuery = true)
+    @Query(value = "SELECT * from ipv4 where ipv4=?1",nativeQuery = true)
     public List<IpV4> getStateByIpv4(String ipv4);
 
     @Query(value = "SELECT count(*) from ipv4 where ipv4=?1",nativeQuery = true)
@@ -56,7 +56,7 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "Update ipv4 SET state=0,timecheck=?1,numcheck=numcheck+1 where ipv4 like ?2",nativeQuery = true)
+    @Query(value = "Update ipv4 SET state=0,timecheck=?1,numcheck=numcheck+1 where ipv4=?2",nativeQuery = true)
     public void updateIpv4Error(Long timecheck, String ipv4 );
 
     @Modifying

@@ -861,15 +861,15 @@ public class ProxyController {
                 Integer ranproxy=ran.nextInt(300)+13000;
                 //System.out.println(proxys.get(i)+":"+ranproxy.toString()+":tunghoanh:Dung1234@");
                 if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":doanchinh:Chinhchu123@")) {
-                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i)+"%");
-                    Integer checkState=proxyRepository.checkState(0,proxys.get(i)+"%");
+                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i));
+                    Integer checkState=proxyRepository.checkState(0,proxys.get(i));
                     if(checkState>0){
-                        proxyRepository.updateState(1,proxys.get(i)+"%");
+                        proxyRepository.updateState(1,proxys.get(i));
                     }
                 }else{
-                    Integer checkState=proxyRepository.checkState(1,proxys.get(i)+"%");
+                    Integer checkState=proxyRepository.checkState(1,proxys.get(i));
                     if(checkState>0){
-                        proxyRepository.updateState(0,proxys.get(i)+"%");
+                        proxyRepository.updateState(0,proxys.get(i));
                     }
                     proxyRepository.updateState(0,proxys.get(i)+"%");
                     List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i)+"%");
