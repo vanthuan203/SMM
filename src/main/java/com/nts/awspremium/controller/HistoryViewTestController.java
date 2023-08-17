@@ -128,6 +128,7 @@ public class HistoryViewTestController {
             resp.put("status", "true");
             resp.put("video_id", videos.get(0).getVideoid());
             resp.put("video_title", videos.get(0).getVideotitle());
+            resp.put("geo", videos.get(0).getInsertdate());
             resp.put("username", histories.get(0).getUsername());
             resp.put("like", "fail");
             resp.put("sub", "fail");
