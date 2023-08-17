@@ -105,6 +105,25 @@ public class HistoryViewTestController {
             histories.get(0).setTimeget(System.currentTimeMillis());
             histories.get(0).setRunning(1);
             historyViewRepository.save(histories.get(0));
+            if(videos.get(0).getInsertdate()>=System.currentTimeMillis()){
+                List<Long> arrTime = new ArrayList<>();
+                for (int i = 0; i < 15; i++) {
+                    arrTime.add(0L);
+                }
+                for (int i = 0; i < 15; i++) {
+                    arrTime.add(ran.nextInt((int)(videos.get(0).getDuration()*0.1))* 1000 +videos.get(0).getInsertdate());
+                }
+                for (int i = 0; i < 25; i++) {
+                    arrTime.add((int)(videos.get(0).getDuration()*0.1)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.4))* 1000 +videos.get(0).getInsertdate());
+                }
+                for (int i = 0; i < 35; i++) {
+                    arrTime.add((int)(videos.get(0).getDuration()*0.4)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.6))* 1000 +videos.get(0).getInsertdate());
+                }
+
+                resp.put("time_start", arrTime.get(ran.nextInt(arrTime.size())));
+            }else{
+                resp.put("time_start", 0);
+            }
             resp.put("channel_id", videos.get(0).getChannelid());
             resp.put("status", "true");
             resp.put("video_id", videos.get(0).getVideoid());
