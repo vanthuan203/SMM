@@ -212,6 +212,6 @@ public interface ProxyLiveRepository extends JpaRepository<ProxyLive, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE proxylive set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=1 and running=1",nativeQuery = true)
-    public Integer ResetProxyThan2h();
+    @Query(value = "UPDATE proxylive set running=0,vps='' where  round((UNIX_TIMESTAMP()-timeget/1000)/60/60) >=4 and running=1",nativeQuery = true)
+    public Integer ResetProxyThan4h();
 }

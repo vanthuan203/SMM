@@ -31,6 +31,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "select * from vps where vps=?1",nativeQuery = true)
     public List<Vps> findVPS(String vps);
 
+    @Query(value = "select count(*) from vps where changefinger=1 and vps=?1",nativeQuery = true)
+    public Integer CheckVPSLiveTrue(String vps);
+
     @Query(value = "select state from vps where vps like ?1",nativeQuery = true)
     public Integer getState(String vps);
 

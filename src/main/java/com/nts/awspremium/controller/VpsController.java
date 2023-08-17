@@ -213,7 +213,7 @@ public class VpsController {
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
                 List<VideoView> videoViews=viewRepository.getvideoPreTrue();
-                if(videoViews.size()!=0){
+                if(videoViews.size()!=0&&vpsRepository.CheckVPSLiveTrue(vps.trim())==1){
                     resp.put("time_start",videoViews.get(0).getInsertdate());
                     resp.put("option","live");
                 }else {

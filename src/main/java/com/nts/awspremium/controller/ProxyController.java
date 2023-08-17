@@ -612,12 +612,11 @@ public class ProxyController {
 
     }
 
-    @GetMapping(value = "/resetproxyByCron", produces = "application/hal_json;charset=utf8")
+    @GetMapping(value = "/resetproxyLiveByCron", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetproxyByCron() {
         JSONObject resp = new JSONObject();
         try{
-            proxyRepository.ResetProxyThan2h();
-            proxyLiveRepository.ResetProxyThan2h();
+            proxyLiveRepository.ResetProxyThan4h();
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
