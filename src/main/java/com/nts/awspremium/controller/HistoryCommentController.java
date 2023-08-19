@@ -62,10 +62,18 @@ public class HistoryCommentController {
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        String proxies="";
         if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
-            resp.put("status", "fail");
-            resp.put("message", "Proxy die!");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn") || accountRepository.getGeoByUsername(username.trim()).equals("vn")) {
+                proxies=proxyRepository.getProxyRandByGeo("vn");
+            } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us") || accountRepository.getGeoByUsername(username.trim()).equals("us")) {
+                proxies=proxyRepository.getProxyRandByGeo("us");
+            }
+            if(proxies.length()==0){
+                resp.put("status", "fail");
+                resp.put("message", "Proxy die!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
         }
         /*
         if (historyViewRepository.PROCESSLISTVIEW() >= 40) {
@@ -148,7 +156,7 @@ public class HistoryCommentController {
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", history.getUsername());
                     resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
+                    resp.put("proxy",proxies.length()==0?accountRepository.getProxyByUsername(username.trim()):proxies);
                     if (ran.nextInt(10000) > 5000) {
                         resp.put("source", "dtn");
                     } else {
@@ -249,7 +257,7 @@ public class HistoryCommentController {
                 resp.put("video_title", videos.get(0).getVideotitle());
                 resp.put("username", histories.get(0).getUsername());
                 resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                resp.put("proxy", accountRepository.getProxyByUsername(username.trim()));
+                resp.put("proxy", proxies.length()==0?accountRepository.getProxyByUsername(username.trim()):proxies);
                 if (ran.nextInt(10000) > 5000) {
                     resp.put("source", "dtn");
                 } else {

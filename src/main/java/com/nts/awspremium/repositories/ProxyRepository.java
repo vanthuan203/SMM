@@ -73,6 +73,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where running=0 and geo=?1 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyFixAccountByGeo(String geo);
 
+    @Query(value = "select proxy from proxy where running=0 and geo=?1 order by rand() limit 1",nativeQuery = true)
+    public String getProxyRandByGeo(String geo);
+
     @Query(value = "select * from proxy where state=1 and running=0 and geo='live' order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyByGeoNoCheckTime();
 
