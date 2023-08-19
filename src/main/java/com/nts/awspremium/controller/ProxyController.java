@@ -813,7 +813,7 @@ public class ProxyController {
                     if(checkState>0){
                         proxyRepository.updateState(0,proxys.get(i));
                     }
-                    proxyRepository.updateState(0,proxys.get(i));
+                    //proxyRepository.updateState(0,proxys.get(i));
                     List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i));
                     if (stateAndCheck.get(0).getNumcheck()>=4){
                         list_check=list_check+","+proxys.get(i);
@@ -870,7 +870,7 @@ public class ProxyController {
                     if(checkState>0){
                         proxyRepository.updateState(0,proxys.get(i));
                     }
-                    proxyRepository.updateState(0,proxys.get(i));
+                    //proxyRepository.updateState(0,proxys.get(i));
                     List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i));
                     if (stateAndCheck.get(0).getNumcheck()>=4){
                         list_check=list_check+","+proxys.get(i);
