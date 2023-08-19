@@ -107,7 +107,7 @@ public class HistoryViewTestController {
             historyViewRepository.save(histories.get(0));
             if(videos.get(0).getInsertdate()>=System.currentTimeMillis()){
                 List<Long> arrTime = new ArrayList<>();
-                for (int i = 0; i < 15; i++) {
+                for (int i = 0; i < 20; i++) {
                     arrTime.add(0L);
                 }
                 for (int i = 0; i < 15; i++) {
@@ -116,7 +116,7 @@ public class HistoryViewTestController {
                 for (int i = 0; i < 25; i++) {
                     arrTime.add((int)(videos.get(0).getDuration()*0.1)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.4))* 1000 +videos.get(0).getInsertdate());
                 }
-                for (int i = 0; i < 35; i++) {
+                for (int i = 0; i < 40; i++) {
                     arrTime.add((int)(videos.get(0).getDuration()*0.4)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.6))* 1000 +videos.get(0).getInsertdate());
                 }
 
