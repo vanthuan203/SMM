@@ -211,6 +211,30 @@ public class ServiceController {
 
 
     }
+    @GetMapping(path = "getallgeo",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getallgeo(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > alluser=serviceRepository.GetAllGeoService();
+        String listuser="";
+        for(int i=0;i<alluser.size();i++){
+            if(i==0){
+                listuser=alluser.get(0);
+            }else{
+                listuser=listuser+","+alluser.get(i);
+            }
+
+        }
+        resp.put("geo",listuser);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+    }
 
     @GetMapping(path = "setting",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> setting(@RequestHeader(defaultValue = "") String Authorization){

@@ -80,6 +80,8 @@ public class VpsController {
                     obj.put("total",total);
                     obj.put("acccount", totalacc);
                     obj.put("ext", vps.get(i).getExt());
+                    obj.put("cmt", vps.get(i).getCmt());
+                    obj.put("proxy", vps.get(i).getProxy());
                     obj.put("view24h",totalview);
                     jsonArray.add(obj);
                 }
@@ -120,6 +122,8 @@ public class VpsController {
                 vpsnew.setChangefinger(0);
                 vpsnew.setVpsoption("Pending");
                 vpsnew.setUrlapi("");
+                vpsnew.setCmt(1);
+                vpsnew.setProxy(1);
                 vpsnew.setToken("");
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
@@ -161,6 +165,7 @@ public class VpsController {
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 resp.put("get_account",vpscheck.get(0).getGet_account());
+                resp.put("proxy",vpscheck.get(0).getProxy());
                 resp.put("ext",vpscheck.get(0).getExt());
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
@@ -180,6 +185,8 @@ public class VpsController {
                 vpsnew.setVpsreset(0);
                 vpsnew.setThreads(0);
                 vpsnew.setExt(1);
+                vpsnew.setCmt(1);
+                vpsnew.setProxy(1);
                 vpsnew.setGet_account(1);
                 vpsnew.setChangefinger(0);
                 vpsnew.setTimecheck(System.currentTimeMillis());
@@ -309,6 +316,8 @@ public class VpsController {
                     vpsupdate.get(0).setThreads(vps.getThreads());
                     vpsupdate.get(0).setExt(vps.getExt());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
+                    vpsupdate.get(0).setCmt(vps.getCmt());
+                    vpsupdate.get(0).setProxy(vps.getProxy());
                     //vpsupdate.get(0).setUrlapi(vps.getVpsoption().contains("Cheat") ? "accpremium-env.ap-southeast-1.elasticbeanstalk.com" : vps.getVpsoption().contains("Pending") ? "" : "cheatviewapi-env-2.ap-southeast-1.elasticbeanstalk.com");
                     //vpsupdate.get(0).setToken(vps.getVpsoption().contains("Cheat") ? "1" : vps.getVpsoption().contains("Pending") ? "" : "0");
                     //vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
@@ -329,6 +338,8 @@ public class VpsController {
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("get_account",  vps.getGet_account());
                     obj.put("ext",  vps.getExt());
+                    obj.put("cmt",  vps.getCmt());
+                    obj.put("proxy",  vps.getProxy());
                     obj.put("total",historyViewRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){
@@ -369,6 +380,8 @@ public class VpsController {
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setGet_account(vps.getGet_account());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
+                    vpsupdate.get(0).setProxy(vps.getProxy());
+                    vpsupdate.get(0).setCmt(vps.getCmt());
                     vpsupdate.get(0).setExt(vps.getExt());
                     vpsRepository.save(vpsupdate.get(0));
 
@@ -381,6 +394,9 @@ public class VpsController {
                     obj.put("threads",  vpsupdate.get(0).getThreads());
                     obj.put("vpsreset",  vps.getVpsreset());
                     obj.put("get_account",  vps.getGet_account());
+                    obj.put("ext",  vps.getExt());
+                    obj.put("proxy",  vps.getProxy());
+                    obj.put("cmt",  vps.getCmt());
                     obj.put("total",historyViewRepository.getrunningbyVps(vpsupdate.get(0).getVps().trim()));
                     obj.put("view24h",0);
                     if(vpsArr.length==1){

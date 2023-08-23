@@ -52,7 +52,7 @@ public class HistoryCommentController {
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if(vpsRepository.checkRunning(vps.trim())==0){
+        if(vpsRepository.checkVpsCmtTrue(vps.trim())==0){
             resp.put("status", "fail");
             resp.put("message", "Vps không chạy cmt!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

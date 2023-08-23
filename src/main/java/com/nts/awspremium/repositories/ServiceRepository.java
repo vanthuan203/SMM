@@ -13,7 +13,8 @@ import java.util.List;
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "SELECT * FROM service where enabled=1 and type!=\"Custom Comments\"",nativeQuery = true)
     public List<Service> getAllService();
-
+    @Query(value = "Select geo from service group by geo",nativeQuery = true)
+    public List<String> GetAllGeoService();
     @Query(value = "SELECT * FROM service ",nativeQuery = true)
     public List<Service> getAllServiceByWeb();
 

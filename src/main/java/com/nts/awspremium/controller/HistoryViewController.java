@@ -66,29 +66,9 @@ public class HistoryViewController {
                 List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
 
                 if (buffh == 1) {
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoBuffHVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else if (histories.get(0).getGeo().equals("us")) {
-                        videos = videoViewRepository.getvideoBuffHVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
-                }else if(buffh == 2){
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoLiveVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoLiveVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
-                }else if(buffh == 3){
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
-                } else {
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
+                    videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                }else {
+                    videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                 }
                 if (videos.size() > 0) {
                     histories.get(0).setTimeget(System.currentTimeMillis());
@@ -216,31 +196,9 @@ public class HistoryViewController {
             List<VideoView> videos = null;
                 List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
                 if (buffh == 1) {
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoBuffHVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else if (histories.get(0).getGeo().equals("us")) {
-                        videos = videoViewRepository.getvideoBuffHVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
-                }else if(buffh == 2){
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoLiveVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoLiveVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
-                }else if(buffh == 3){
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        System.out.println("OKE");
-                        videos = videoViewRepository.getvideoViewVer2VNTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
-                        System.out.println(histories.get(0).getUsername());
-                    } else {
-                        videos = videoViewRepository.getvideoViewVer2USTESTNoProxy(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
+                    videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                 }else {
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoViewVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else {
-                        videos = videoViewRepository.getvideoViewVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
+                    videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                 }
                 if (videos.size() > 0) {
                     histories.get(0).setTimeget(System.currentTimeMillis());
@@ -248,11 +206,7 @@ public class HistoryViewController {
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
                 } else if(buffh == 0) {
-                    if (histories.get(0).getGeo().equals("vn")) {
-                        videos = videoViewRepository.getvideoBuffHVer2VNTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    } else if (histories.get(0).getGeo().equals("us")) {
-                        videos = videoViewRepository.getvideoBuffHVer2USTEST(histories.get(0).getListvideo(), orderTrue.getValue());
-                    }
+                    videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                     if (videos.size() > 0) {
                         histories.get(0).setTimeget(System.currentTimeMillis());
                         histories.get(0).setVideoid(videos.get(0).getVideoid());
