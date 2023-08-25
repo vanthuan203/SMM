@@ -2170,6 +2170,16 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "getkey", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getkey() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+        keys.get(0).setCount(keys.get(0).getCount() + 1L);
+        googleAPIKeyRepository.save(keys.get(0));
+        resp.put("key", keys.get(0).getKey());
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
     @GetMapping(path = "getinfo", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getinfo(@RequestParam(defaultValue = "") Long orderid) {
         JSONObject resp = new JSONObject();
