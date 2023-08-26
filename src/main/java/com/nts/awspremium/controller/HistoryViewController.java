@@ -44,6 +44,8 @@ public class HistoryViewController {
     private OrderTrue orderTrue;
     @Autowired
     private ServiceRepository serviceRepository;
+    @Autowired
+    private SettingRepository settingRepository;
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "0") Integer buffh) {
@@ -64,12 +66,16 @@ public class HistoryViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             } else {
                 List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
-
+                int checkRedirect=0;
                 if (buffh == 1) {
                     videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                 }else {
-                    if(ran.nextInt(1000)<150){
+                    if(ran.nextInt(1000)<settingRepository.getRedirect()){
+                        checkRedirect=1;
                         videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                        if(videos.size()==0){
+                            videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                        }
                     }else{
                         videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                     }
@@ -79,7 +85,7 @@ public class HistoryViewController {
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
-                } else if(buffh==0&&ran.nextInt(1000)<350) {
+                } else if(buffh==0&&ran.nextInt(1000)<settingRepository.getRedirect()*2&&checkRedirect==0) {
                     videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                     if (videos.size() > 0) {
                         histories.get(0).setTimeget(System.currentTimeMillis());

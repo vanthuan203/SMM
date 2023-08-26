@@ -22,6 +22,10 @@ public class AuthController {
     AdminRepository adminRepository;
     @Autowired
     SettingRepository settingRepository;
+    @Autowired
+    HistoryViewRepository historyViewRepository;
+    @Autowired
+    VideoViewRepository videoViewRepository;
 
     @Autowired
     AutoRefillRepository autoRefillRepository;
@@ -223,6 +227,21 @@ public class AuthController {
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+    @GetMapping(path = "updateRedirectCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRedirectCron(){
+        JSONObject resp = new JSONObject();
+        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*0.8){
+            float agt=historyViewRepository.getThreadRunningView()/videoViewRepository.getCountThreadView();
+            System.out.println(agt);
+            settingRepository.updateRedirect(settingRepository.getRedirect()<100?100:(settingRepository.getRedirect()-100));
+        }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
+            settingRepository.updateRedirect(settingRepository.getRedirect()>=600?600:(settingRepository.getRedirect()+100));
+        }
+        resp.put("redirect=",settingRepository.getRedirect());
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 

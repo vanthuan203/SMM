@@ -19,11 +19,12 @@ public class Setting {
     private Integer leveluser;
 
     private Integer cmtcountuser;
+    private Integer redirect;
 
     public Setting() {
     }
 
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Integer leveluser, Integer cmtcountuser) {
+    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Integer leveluser, Integer cmtcountuser, Integer redirect) {
         this.id = id;
         this.maxorder = maxorder;
         this.mintimebuff = mintimebuff;
@@ -35,6 +36,7 @@ public class Setting {
         this.levelthread = levelthread;
         this.leveluser = leveluser;
         this.cmtcountuser = cmtcountuser;
+        this.redirect = redirect;
     }
 
     public Integer getLevelthread() {
@@ -119,6 +121,14 @@ public class Setting {
 
     public Integer getCmtcountuser() {
         return cmtcountuser;
+    }
+
+    public Integer getRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(Integer redirect) {
+        this.redirect = redirect;
     }
 
     public void setCmtcountuser(Integer cmtcountuser) {

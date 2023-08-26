@@ -107,6 +107,11 @@ public interface HistoryViewRepository extends JpaRepository<HistoryView,Long> {
     @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM historyview where running=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
 
+    @Query(value = "SELECT count(*) FROM AccPremium.historyview where running=1 and orderid in(select orderid from videoview where service in(select service from service where maxtime<30));",nativeQuery = true)
+    public Integer getThreadRunningView();
+
+
+
     @Query(value = "SELECT vps,1 as time,count(*) as total FROM AccPremium.historyviewsum where round((UNIX_TIMESTAMP()-id/1000)/60/60) <24 group by vps",nativeQuery = true)
     public List<VpsRunning> getvpsview();
 
