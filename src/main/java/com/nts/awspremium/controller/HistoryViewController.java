@@ -68,14 +68,18 @@ public class HistoryViewController {
                 if (buffh == 1) {
                     videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                 }else {
-                    videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                    if(ran.nextInt(1000)<150){
+                        videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                    }else{
+                        videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
+                    }
                 }
                 if (videos.size() > 0) {
                     histories.get(0).setTimeget(System.currentTimeMillis());
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
                     histories.get(0).setChannelid(videos.get(0).getChannelid());
-                } else if(buffh==0&&ran.nextInt(1000)<200) {
+                } else if(buffh==0&&ran.nextInt(1000)<350) {
                     videos = videoViewRepository.getvideoBuffHByGeo(histories.get(0).getGeo().trim(),histories.get(0).getListvideo(), orderTrue.getValue());
                     if (videos.size() > 0) {
                         histories.get(0).setTimeget(System.currentTimeMillis());
