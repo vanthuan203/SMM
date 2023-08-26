@@ -235,16 +235,12 @@ public class AuthController {
     ResponseEntity<String> updateRedirectCron(){
         JSONObject resp = new JSONObject();
         if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*0.8){
-            float agt=historyViewRepository.getThreadRunningView()/videoViewRepository.getCountThreadView();
-            System.out.println(agt);
-            settingRepository.updateRedirect(settingRepository.getRedirect()<100?100:(settingRepository.getRedirect()-100));
+            settingRepository.updateRedirect(settingRepository.getRedirect()==0?0:(settingRepository.getRedirect()-100));
         }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
             settingRepository.updateRedirect(settingRepository.getRedirect()>=600?600:(settingRepository.getRedirect()+100));
         }
         resp.put("redirect=",settingRepository.getRedirect());
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
-
-
     }
 
     @GetMapping(path = "autorefill",produces = "application/hal+json;charset=utf8")
