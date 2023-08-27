@@ -33,13 +33,15 @@ public class AccountViewController {
     @Autowired
     private RecoverRepository recoverRepository;
 
+    @Autowired
+    private CheckProsetListTrue checkProsetListTrue;
+
     @PostMapping(value = "/create", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> createaccount(@RequestBody Account newaccount, @RequestHeader(defaultValue = "") String Authorization,
                                          @RequestParam(defaultValue = "1") Integer update) {
         JSONObject resp = new JSONObject();
         Integer checktoken = adminRepository.FindAdminByToken(Authorization);
         if (checktoken == 0) {
-
             resp.put("status", "fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
@@ -71,8 +73,9 @@ public class AccountViewController {
     }
 
     @GetMapping(value = "/get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo,@RequestParam(defaultValue = "0") Integer cmt,@RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> getAccount(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo,@RequestParam(defaultValue = "0") Integer cmt,@RequestHeader(defaultValue = "") String Authorization) throws InterruptedException {
         JSONObject resp = new JSONObject();
+        Random ran = new Random();
         Integer checktoken = adminRepository.FindAdminByToken(Authorization);
         if (checktoken == 0) {
             resp.put("status", "fail");
@@ -84,12 +87,17 @@ public class AccountViewController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        if(checkProsetListTrue.getValue()>=50){
+            resp.put("status", "fail");
+            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+            Thread.sleep(ran.nextInt(1000));
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         if (historyViewRepository.PROCESSLISTVIEW() >= 50) {
             resp.put("status", "fail");
             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
-        Random ran = new Random();
         try {
             if (cmt==0) {
                 Integer check_get = vpsRepository.checkGetAccount5ByThreadVps(vps.trim(),geo.trim());

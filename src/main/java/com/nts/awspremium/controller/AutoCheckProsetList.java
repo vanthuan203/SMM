@@ -16,9 +16,11 @@ public class AutoCheckProsetList {
     @Autowired
     private ProxyRepository proxyRepository;
     @Autowired
+    private HistoryViewRepository historyViewRepository ;
+    @Autowired
     private CheckProsetListTrue checkProsetListTrue;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
@@ -26,11 +28,12 @@ public class AutoCheckProsetList {
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(100+rand.nextInt(300));
+                            Thread.sleep(100+rand.nextInt(200));
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
+                        //checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
+                        checkProsetListTrue.setValue(historyViewRepository.PROCESSLISTVIEW());
                         //System.out.println(checkProsetListTrue.getValue());
                     }catch (Exception e){
                         continue;
