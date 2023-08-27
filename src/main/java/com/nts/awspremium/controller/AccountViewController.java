@@ -93,11 +93,6 @@ public class AccountViewController {
             Thread.sleep(ran.nextInt(1000));
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
-        if (historyViewRepository.PROCESSLISTVIEW() >= 50) {
-            resp.put("status", "fail");
-            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
         try {
             if (cmt==0) {
                 Integer check_get = vpsRepository.checkGetAccount5ByThreadVps(vps.trim(),geo.trim());
