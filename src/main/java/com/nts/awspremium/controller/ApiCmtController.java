@@ -260,6 +260,7 @@ public class ApiCmtController {
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                         videoViewhnew.setInsertdate(System.currentTimeMillis());
                         videoViewhnew.setCommenttotal(0);
+                        videoViewhnew.setValid(1);
                         videoViewhnew.setCommentorder(data.getQuantity());
                         videoViewhnew.setUser(admins.get(0).getUsername());
                         videoViewhnew.setChannelid(snippet.get("channelId").toString());

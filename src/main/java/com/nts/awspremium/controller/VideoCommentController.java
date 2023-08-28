@@ -1206,7 +1206,7 @@ public class VideoCommentController {
     ResponseEntity<String> updatecheckcancel(@RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
         try {
-            videoViewRepository.updateCheckCancel(videoid.trim());
+            videoCommentRepository.updateCheckCancel(videoid.trim());
             resp.put("status", "true"+videoid);
             resp.put("message", "update trạng thái đơn thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -1216,6 +1216,46 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "DeleteOrderNotValidCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> DeleteOrderNotValidCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            List<VideoComment> videoComments=videoCommentRepository.getAllOrderCheckCancel();
+            for(int i=0;i<videoComments.size();i++){
+
+                OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request1 = null;
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id)&part=id&id=" + videoComments.get(i).getVideoid().trim()).get().build();
+
+                Response response1 = client1.newCall(request1).execute();
+
+                String resultJson1 = response1.body().string();
+
+                Object obj1 = new JSONParser().parse(resultJson1);
+
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                    continue;
+                }
+                //System.out.println(items);
+                Iterator k = items.iterator();
+                if (k.hasNext() == false) {
+                    delete("1",videoComments.get(i).getVideoid().trim(),1);
+                    continue;
+                }
+            }
+            resp.put("status", true);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> refund(@RequestParam(defaultValue = "") String orderid) {

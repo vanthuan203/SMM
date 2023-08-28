@@ -44,6 +44,14 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT * FROM videocomment order by timeupdate asc",nativeQuery = true)
     public List<VideoComment> getAllOrder();
 
+    @Modifying
+    @Transactional
+    @Query(value = "update videocomment set valid=0 where videoid=?1 and valid=1",nativeQuery = true)
+    public void updateCheckCancel(String videoid);
+
+    @Query(value = "SELECT * FROM videocomment where valid=0 order by insertdate asc",nativeQuery = true)
+    public List<VideoComment> getAllOrderCheckCancel();
+
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrder();
 
