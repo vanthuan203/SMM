@@ -43,6 +43,8 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
 
     @Query(value = "SELECT * FROM videocomment order by timeupdate asc",nativeQuery = true)
     public List<VideoComment> getAllOrder();
+    @Query(value = "SELECT count(*) from videocomment where service=?1",nativeQuery = true)
+    public Integer getCountOrderByService(Integer service);
 
     @Modifying
     @Transactional
