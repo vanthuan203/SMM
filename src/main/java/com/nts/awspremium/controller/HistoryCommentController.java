@@ -236,6 +236,16 @@ public class HistoryCommentController {
                 Thread.sleep(ran.nextInt(1000)+500);
                 String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                 if(comment!=null){
+                    if(historyCommentSumRepository.checkCommentIdTrue(Long.parseLong(comment.split(",")[0]))>0){
+                        dataCommentRepository.updateRunningCommentDone(Long.parseLong(comment.split(",")[0]));
+                        histories.get(0).setRunning(0);
+                        historyCommentRepository.save(histories.get(0));
+                        resp.put("status", "fail");
+                        resp.put("username", histories.get(0).getUsername());
+                        resp.put("fail", "video");
+                        resp.put("message", "Không còn video để comment!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
                 }else{
@@ -301,25 +311,27 @@ public class HistoryCommentController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                dataCommentRepository.updateRunningCommentDone(comment_id);
-                HistoryCommentSum historySum = new HistoryCommentSum();
-                historySum.setUsername(username);
-                historySum.setTime(System.currentTimeMillis());
-                historySum.setCommentid(comment_id);
-                historySum.setCommnent(dataCommentRepository.getCommentByCommentId(comment_id));
-                historySum.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
-                try {
-                    historyCommentSumRepository.save(historySum);
-                } catch (Exception e) {
+                if(historyCommentSumRepository.checkCommentIdTrue(comment_id)==0){
+                    dataCommentRepository.updateRunningCommentDone(comment_id);
+                    HistoryCommentSum historySum = new HistoryCommentSum();
+                    historySum.setUsername(username);
+                    historySum.setTime(System.currentTimeMillis());
+                    historySum.setCommentid(comment_id);
+                    historySum.setCommnent(dataCommentRepository.getCommentByCommentId(comment_id));
+                    historySum.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
                     try {
                         historyCommentSumRepository.save(historySum);
-                    } catch (Exception f) {
+                    } catch (Exception e) {
+                        try {
+                            historyCommentSumRepository.save(historySum);
+                        } catch (Exception f) {
+                        }
                     }
-                }
-                if (historyCommentRepository.getListVideoById(historieId).length() > 100) {
-                    historyCommentRepository.updateListVideoNew(videoid, historieId);
-                } else {
-                    historyCommentRepository.updateListVideo(videoid, historieId);
+                    if (historyCommentRepository.getListVideoById(historieId).length() > 100) {
+                        historyCommentRepository.updateListVideoNew(videoid, historieId);
+                    } else {
+                        historyCommentRepository.updateListVideo(videoid, historieId);
+                    }
                 }
                 resp.put("status", "true");
                 resp.put("message", "Update videoid vào history thành công!");
