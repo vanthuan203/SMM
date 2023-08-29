@@ -112,27 +112,27 @@ public class VideoViewController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() != 0&&service.getLive()==1) {
-                        resp.put("error", "This video is not a livestream video");
+                        resp.put("videoview", "This video is not a livestream video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==10) {
-                        resp.put("error", "Video under 10 minutes");
+                        resp.put("videoview", "Video under 10 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==15) {
-                        resp.put("error", "Video under 15 minutes");
+                        resp.put("videoview", "Video under 15 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==30) {
-                        resp.put("error", "Video under 30 minutes");
+                        resp.put("videoview", "Video under 30 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 3600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==60) {
-                        resp.put("error", "Video under 60 minutes");
+                        resp.put("videoview", "Video under 60 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 7200&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==120) {
-                        resp.put("error", "Video under 120 minutes");
+                        resp.put("videoview", "Video under 120 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     float priceorder = 0;
@@ -145,7 +145,7 @@ public class VideoViewController {
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     Long scheduledStartTime=0L;
                     if (!snippet.get("liveBroadcastContent").toString().equals("none")&&service.getLive()==0) {
-                        resp.put("error", "This video is not a pure public video");
+                        resp.put("videoview", "This video is not a pure public video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }else if(snippet.get("liveBroadcastContent").toString().equals("upcoming")&&service.getLive()==1){
                         JSONObject liveStreamingDetails = (JSONObject) video.get("liveStreamingDetails");
