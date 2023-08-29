@@ -230,6 +230,11 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET running=0 where vps=?1",nativeQuery = true)
     public void updateRunningByVPs(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET running=0 where vps=?1 and geo like 'cmt%'",nativeQuery = true)
+    public void updateRunningAccCmtByVPs(String vps);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET timecheck=?1,running=1 where id=?2",nativeQuery = true)

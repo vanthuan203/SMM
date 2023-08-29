@@ -488,6 +488,23 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value="/resetrunningacccmtbyvps",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetrunningacccmtbyvps(@RequestParam String vps){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] vpslist = vps.split(",");
+            for(int i=0;i<vpslist.length;i++){
+                accountRepository.updateRunningAccCmtByVPs(vpslist[i].trim());
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
     @DeleteMapping(path = "delete",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
         JSONObject resp = new JSONObject();
