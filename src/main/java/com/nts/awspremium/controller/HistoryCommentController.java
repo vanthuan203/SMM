@@ -195,7 +195,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment 2!");
+                    resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (histories.get(0).getGeo().equals("vn") || histories.get(0).getGeo().equals("cmt-vn")) {
@@ -219,7 +219,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment 1!");
+                    resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 /*
@@ -253,7 +253,7 @@ public class HistoryCommentController {
                         resp.put("status", "fail");
                         resp.put("username", histories.get(0).getUsername());
                         resp.put("fail", "video");
-                        resp.put("message", "Không còn video để comment 3!");
+                        resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     resp.put("comment_id", comment.split(",")[0]);
@@ -264,7 +264,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment 4!");
+                    resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 histories.get(0).setTimeget(System.currentTimeMillis());
