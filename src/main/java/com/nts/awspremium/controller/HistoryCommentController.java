@@ -139,6 +139,16 @@ public class HistoryCommentController {
                     Thread.sleep(ran.nextInt(1000)+500);
                     String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                     if(comment!=null){
+                        if(historyCommentSumRepository.checkCommentIdTrue(Long.parseLong(comment.split(",")[0]))>0){
+                            dataCommentRepository.updateRunningCommentDone(Long.parseLong(comment.split(",")[0]));
+                            history.setRunning(0);
+                            historyCommentRepository.save(history);
+                            resp.put("status", "fail");
+                            resp.put("username", history.getUsername());
+                            resp.put("fail", "video");
+                            resp.put("message", "Không còn video để comment!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
                     }else{
@@ -185,7 +195,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment!");
+                    resp.put("message", "Không còn video để comment 2!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (histories.get(0).getGeo().equals("vn") || histories.get(0).getGeo().equals("cmt-vn")) {
@@ -209,7 +219,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment!");
+                    resp.put("message", "Không còn video để comment 1!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 /*
@@ -243,7 +253,7 @@ public class HistoryCommentController {
                         resp.put("status", "fail");
                         resp.put("username", histories.get(0).getUsername());
                         resp.put("fail", "video");
-                        resp.put("message", "Không còn video để comment!");
+                        resp.put("message", "Không còn video để comment 3!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     resp.put("comment_id", comment.split(",")[0]);
@@ -254,7 +264,7 @@ public class HistoryCommentController {
                     resp.put("status", "fail");
                     resp.put("username", histories.get(0).getUsername());
                     resp.put("fail", "video");
-                    resp.put("message", "Không còn video để comment!");
+                    resp.put("message", "Không còn video để comment 4!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 histories.get(0).setTimeget(System.currentTimeMillis());
