@@ -374,9 +374,10 @@ public class VideoViewController {
         OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
         Request request1 = null;
-
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
-
+        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
+        keys.get(0).setCount(keys.get(0).getCount() + 1L);
+        googleAPIKeyRepository.save(keys.get(0));
         Response response1 = client1.newCall(request1).execute();
 
         String resultJson1 = response1.body().string();
@@ -615,7 +616,10 @@ public class VideoViewController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id)&part=id&id=" + videoViews.get(i).getVideoid().trim()).get().build();
+                List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,contentDetails(regionRestriction(blocked)))&part=id,contentDetails&id=" + videoViews.get(i).getVideoid().trim()).get().build();
+                keys.get(0).setCount(keys.get(0).getCount() + 1L);
+                googleAPIKeyRepository.save(keys.get(0));
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -633,6 +637,27 @@ public class VideoViewController {
                 if (k.hasNext() == false) {
                     delete("1",videoViews.get(i).getVideoid().trim(),1);
                     continue;
+                }else{
+                    while (k.hasNext()) {
+                        try {
+                            JSONObject video = (JSONObject) k.next();
+                            JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                            JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
+                            if(regionRestriction!=null){
+                                if(regionRestriction.get("blocked").toString().indexOf("VN")>0&&videoViewRepository.getServiceByVideoId(videoViews.get(i).getVideoid().trim(),"vn")>0){
+                                    delete("1",videoViews.get(i).getVideoid().trim(),1);
+                                }else if(regionRestriction.get("blocked").toString().indexOf("US")>0&&videoViewRepository.getServiceByVideoId(videoViews.get(i).getVideoid().trim(),"us")>0){
+                                    delete("1",videoViews.get(i).getVideoid().trim(),1);
+                                }else{
+                                    videoViewRepository.updateOrderCheck(videoViews.get(i).getVideoid().trim());
+                                }
+                            }else{
+                                videoViewRepository.updateOrderCheck(videoViews.get(i).getVideoid().trim());
+                            }
+                        }catch (Exception e){
+                            break;
+                        }
+                    }
                 }
             }
             resp.put("status", true);
@@ -2665,7 +2690,7 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         try {
             videoViewRepository.updateCheckCancel(videoid.trim());
-            resp.put("status", "true" + videoid);
+            resp.put("status", "true");
             resp.put("message", "update trạng thái đơn thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

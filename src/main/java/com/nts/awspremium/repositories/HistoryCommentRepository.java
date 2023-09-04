@@ -49,7 +49,7 @@ public interface HistoryCommentRepository extends JpaRepository<HistoryComment,L
     public Integer PROCESSLISTVIEW();
     @Modifying
     @Transactional
-    @Query(value = "update historycomment set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15 and running=1",nativeQuery = true)
+    @Query(value = "update historycomment set running=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20 and running=1",nativeQuery = true)
     public Integer resetThreadThan15mcron();
     @Modifying
     @Transactional

@@ -354,6 +354,36 @@ public class HistoryCommentController {
         }
     }
 
+    @GetMapping(value = "/checkcmttrue", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkcmttrue(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "0") Long comment_id ) {
+        JSONObject resp = new JSONObject();
+        if (username.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Username không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (comment_id == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "comment_id không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if(historyCommentSumRepository.checkCommentIdTrue(comment_id)>0||dataCommentRepository.getCommentByCommentIdAndUsername(comment_id,username.trim())==0){
+                resp.put("status", "fail");
+                resp.put("message", "Không cmt!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                resp.put("status", "true");
+                resp.put("message", "Sẵn sàng cmt!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/update", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestParam(defaultValue = "") String username,
                                   @RequestParam(defaultValue = "") String videoid, @RequestParam(defaultValue = "") String channelid, @RequestParam(defaultValue = "0") Integer duration) {

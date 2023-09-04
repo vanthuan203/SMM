@@ -113,6 +113,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where time>=videoview.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> get24hViewBuff();
 
+
+    @Query(value = "SELECT count(*) FROM videoview where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
+    public Integer getServiceByVideoId(String videoid,String geo);
     @Modifying
     @Transactional
     @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timestart=?3 where videoid=?4",nativeQuery = true)
@@ -140,6 +143,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Transactional
     @Query(value = "update videoview set valid=0 where videoid=?1 and valid=1",nativeQuery = true)
     public void updateCheckCancel(String videoid);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update videoview set valid=1 where  valid=0",nativeQuery = true)
+    public void updateCheckCancelDone();
 
     @Query(value = "SELECT sum(vieworder) as total FROM videoview",nativeQuery = true)
     public Integer getCountViewBuffOrder();

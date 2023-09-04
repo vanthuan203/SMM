@@ -54,6 +54,9 @@ public class VideoCommentController {
     @Autowired
     private DataOrderRepository dataOrderRepository;
 
+    @Autowired
+    private GoogleAPIKeyRepository googleAPIKeyRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -1227,7 +1230,10 @@ public class VideoCommentController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id)&part=id&id=" + videoComments.get(i).getVideoid().trim()).get().build();
+                List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,contentDetails(regionRestriction(blocked)))&part=id,contentDetails&id=" + videoComments.get(i).getVideoid().trim()).get().build();
+                keys.get(0).setCount(keys.get(0).getCount() + 1L);
+                googleAPIKeyRepository.save(keys.get(0));
 
                 Response response1 = client1.newCall(request1).execute();
 
@@ -1245,6 +1251,27 @@ public class VideoCommentController {
                 if (k.hasNext() == false) {
                     delete("1",videoComments.get(i).getVideoid().trim(),1);
                     continue;
+                }else {
+                    while (k.hasNext()) {
+                        try {
+                            JSONObject video = (JSONObject) k.next();
+                            JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                            JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
+                            if (regionRestriction != null) {
+                                if (regionRestriction.get("blocked").toString().indexOf("VN") > 0 && videoViewRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "vn") > 0) {
+                                    delete("1", videoComments.get(i).getVideoid().trim(), 1);
+                                } else if (regionRestriction.get("blocked").toString().indexOf("US") > 0 && videoViewRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "us") > 0) {
+                                    delete("1", videoComments.get(i).getVideoid().trim(), 1);
+                                } else {
+                                    videoCommentRepository.updateOrderCheck(videoComments.get(i).getVideoid().trim());
+                                }
+                            } else {
+                                videoCommentRepository.updateOrderCheck(videoComments.get(i).getVideoid().trim());
+                            }
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
                 }
             }
             resp.put("status", true);
