@@ -346,7 +346,7 @@ public class VideoCommentController {
         try {
             List<String> viewBuff;
             List<VideoComment> videoViewList = videoCommentRepository.getAllOrder();
-            viewBuff = videoCommentRepository.getTotalCommentBuff();
+            viewBuff = videoCommentRepository.getTotalCommentBuffByDataComment();
 
             for (int i = 0; i < videoViewList.size(); i++) {
                 int viewtotal = 0;
@@ -1158,6 +1158,7 @@ public class VideoCommentController {
         try {
             //historyRepository.updateHistoryByAccount();
             List<VideoComment> videoComments = videoCommentRepository.getOrderThreadNull();
+            Setting setting = settingRepository.getReferenceById(1L);
             for (int i = 0; i < videoComments.size(); i++) {
                 String[] comments = videoComments.get(i).getListcomment().split("\n");
                 System.out.println(comments);
@@ -1175,7 +1176,12 @@ public class VideoCommentController {
                     dataCommentRepository.save(dataComment);
                 }
                 Service service = serviceRepository.getService(videoComments.get(i).getService());
-                videoComments.get(i).setMaxthreads(service.getThread());
+                int max_thread = service.getThread() + ((int)(videoComments.get(i).getCommentorder() / 30)<1?0:(int)(videoComments.get(i).getCommentorder() / 30) - 1)*5;
+                 if (max_thread <= 50) {
+                     videoComments.get(i).setMaxthreads(max_thread);
+                 } else {
+                     videoComments.get(i).setMaxthreads(50);
+                 }
                 videoCommentRepository.save(videoComments.get(i));
             }
             resp.put("status", "true");
