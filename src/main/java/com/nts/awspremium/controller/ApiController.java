@@ -96,7 +96,7 @@ public class ApiController {
                         resp.put("start_count", video.getViewstart());
                         resp.put("current_count", video.getViewtotal() + video.getViewstart());
                         resp.put("charge", video.getPrice());
-                        if (video.getMaxthreads() == 0) {
+                        if (video.getMaxthreads() <= 0) {
                             resp.put("status", "Processing");
                         } else {
                             resp.put("status", "In progress");
