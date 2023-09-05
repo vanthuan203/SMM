@@ -46,6 +46,9 @@ public class ApiController {
     private DataOrderRepository dataOrderRepository;
 
     @Autowired
+    private LimitServiceRepository limitServiceRepository;
+
+    @Autowired
     private VpsRepository vpsRepository;
 
 
@@ -186,6 +189,13 @@ public class ApiController {
                     }
                 }
                  */
+                Integer limitService=limitServiceRepository.getLimitByServiceAndUser(admins.get(0).getUsername().trim(),service.getService());
+                if(limitService!=null){
+                    if(videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())>=limitService){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                }
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                         (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");
@@ -299,12 +309,18 @@ public class ApiController {
                         VideoView videoViewhnew = new VideoView();
                         if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                             int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                            if (max_thread <= setting.getMaxthread()) {
+                            if (max_thread <= setting.getMaxthread()&&limitService==null) {
                                 videoViewhnew.setMaxthreads(max_thread);
-                            } else {
+                            } else if(limitService!=null) {
+                                videoViewhnew.setMaxthreads(-1);
+                            }else {
                                 videoViewhnew.setMaxthreads(setting.getMaxthread());
                             }
-                            videoViewhnew.setTimestart(System.currentTimeMillis());
+                            if(limitService!=null){
+                                videoViewhnew.setTimestart(0L);
+                            }else{
+                                videoViewhnew.setTimestart(System.currentTimeMillis());
+                            }
                             videoViewhnew.setMinstart(service.getMaxtime());
                         } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
                             videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*(setting.getBonus()/100F)));

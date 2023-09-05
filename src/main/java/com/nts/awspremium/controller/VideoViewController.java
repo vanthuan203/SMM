@@ -51,6 +51,9 @@ public class VideoViewController {
     @Autowired
     private GoogleAPIKeyRepository googleAPIKeyRepository;
 
+    @Autowired
+    private LimitServiceRepository limitServiceRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -386,6 +389,10 @@ public class VideoViewController {
 
         JSONObject jsonObject1 = (JSONObject) obj1;
         JSONArray items = (JSONArray) jsonObject1.get("items");
+        if(items==null){
+            resp.put("status", "fail");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         JSONArray jsonArray = new JSONArray();
         Iterator k = items.iterator();
         Setting setting = settingRepository.getReferenceById(1L);
@@ -408,6 +415,31 @@ public class VideoViewController {
                 resp.put("status", e);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+    @GetMapping(value = "/updateRunningOrder701", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder701() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
+        Setting setting = settingRepository.getReferenceById(1L);
+        for (int i = 0; i < videoViews.size(); i++) {
+            Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(0).getUser().trim(),videoViews.get(0).getService());
+            if(limitService!=null){
+                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(0).getUser().trim(),videoViews.get(0).getService())>=limitService){
+                    break;
+                }
+            }
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000) - 1) * setting.getLevelthread();
+            if (max_thread > setting.getMaxthread()) {
+                max_thread = setting.getMaxthread();
+            }
+            videoViews.get(0).setMaxthreads(max_thread);
+            videoViews.get(0).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
 
         }
         resp.put("status", "true");

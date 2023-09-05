@@ -9,13 +9,13 @@ public class LimitService {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer service;
-    private Integer user;
+    private String user;
     private Integer maxorder;
 
     public LimitService() {
     }
 
-    public LimitService(Long id, Integer service, Integer user, Integer maxorder) {
+    public LimitService(Long id, Integer service, String user, Integer maxorder) {
         this.id = id;
         this.service = service;
         this.user = user;
@@ -38,11 +38,11 @@ public class LimitService {
         this.service = service;
     }
 
-    public Integer getUser() {
+    public String getUser() {
         return user;
     }
 
-    public void setUser(Integer user) {
+    public void setUser(String user) {
         this.user = user;
     }
 

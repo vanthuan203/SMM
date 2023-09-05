@@ -66,6 +66,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT count(*) from videoview where user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);
 
+    @Query(value = "SELECT count(*) from videoview where user=?1 and service=?2 and maxthreads=-1",nativeQuery = true)
+    public Integer getCountOrderByUserAndService(String user,Integer service);
+
+    @Query(value = "SELECT count(*) from videoview where user=?1 and service=?2 and maxthreads!=-1",nativeQuery = true)
+    public Integer getCountOrderRunningByUserAndService(String user,Integer service);
+
     @Query(value = "SELECT count(*) from videoview where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 
@@ -87,6 +93,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT * FROM videoview where maxthreads=0 order by insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderPending();
+
+    @Query(value = "SELECT * FROM videoview where maxthreads=-1 order by insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderPending701();
 
     @Query(value = "SELECT * FROM videoview where maxthreads=0 and service in (select service from service where live=1) and viewtotal=0 order by insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderLivePending();
