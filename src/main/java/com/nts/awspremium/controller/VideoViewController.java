@@ -420,15 +420,22 @@ public class VideoViewController {
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
-    @GetMapping(value = "/updateRunningOrder701", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRunningOrder701() throws IOException, ParseException {
+    @GetMapping(value = "/updateRunningOrder701Cron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder701Cron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
         Setting setting = settingRepository.getReferenceById(1L);
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour>15||hour<14){
+            resp.put("status", "fail");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         for (int i = 0; i < videoViews.size(); i++) {
-            Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(0).getUser().trim(),videoViews.get(0).getService());
+            Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(0).getUser().trim(),videoViews.get(0).getService())>=limitService){
+                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService){
                     break;
                 }
             }
@@ -437,8 +444,42 @@ public class VideoViewController {
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
-            videoViews.get(0).setMaxthreads(max_thread);
-            videoViews.get(0).setTimestart(System.currentTimeMillis());
+            videoViews.get(i).setMaxthreads(max_thread);
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
+
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateRunningOrder701", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder701(@RequestParam(defaultValue = "1") Integer limit,@RequestParam(defaultValue = "") String user,@RequestParam(defaultValue = "8000") Integer vieworder,@RequestParam(defaultValue = "1") Integer limituser) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews;
+        if(user.length()!=0){
+            videoViews = videoViewRepository.getAllOrderPending701(user.trim(),vieworder,limit);
+        }else{
+            videoViews = videoViewRepository.getAllOrderPending701(vieworder,limit);
+        }
+
+        Setting setting = settingRepository.getReferenceById(1L);
+        for (int i = 0; i < videoViews.size(); i++) {
+            if(limituser==1){
+                Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+                if(limitService!=null){
+                    if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService){
+                        continue;
+                    }
+                }
+            }
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000) - 1) * setting.getLevelthread();
+            if (max_thread > setting.getMaxthread()) {
+                max_thread = setting.getMaxthread();
+            }
+            videoViews.get(i).setMaxthreads(max_thread);
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
         }
@@ -2781,6 +2822,9 @@ public class VideoViewController {
                     }
                 }
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
+                if(video.get(0).getMaxthreads()==-1&&videoBuffh.getMaxthreads()!=-1){
+                    video.get(0).setTimestart(System.currentTimeMillis());
+                }
                 video.get(0).setVieworder(videoBuffh.getVieworder());
                 video.get(0).setNote(videoBuffh.getNote());
                 video.get(0).setPrice(videoBuffh.getPrice() + priceorder);
@@ -2832,6 +2876,9 @@ public class VideoViewController {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 float priceorder = 0;
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
+                if(video.get(0).getMaxthreads()==-1&&videoBuffh.getMaxthreads()!=-1){
+                    video.get(0).setTimestart(System.currentTimeMillis());
+                }
                 videoViewRepository.save(video.get(0));
 
                 List<OrderViewRunning> orderRunnings = videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
