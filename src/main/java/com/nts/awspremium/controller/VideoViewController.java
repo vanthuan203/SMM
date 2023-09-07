@@ -174,6 +174,8 @@ public class VideoViewController {
                     videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
                     videoViewhnew.setValid(1);
+                    videoViewhnew.setTimestart(System.currentTimeMillis());
+                    videoViewhnew.setMinstart(service.getMaxtime());
                     videoViewRepository.save(videoViewhnew);
 
                     float balance_new = admins.get(0).getBalance() - priceorder;
