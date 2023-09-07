@@ -2831,7 +2831,7 @@ public class VideoViewController {
                     }
                 }
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
-                if(video.get(0).getMaxthreads()==-1&&videoBuffh.getMaxthreads()!=-1){
+                if(video.get(0).getTimestart()==0){
                     video.get(0).setTimestart(System.currentTimeMillis());
                 }
                 video.get(0).setVieworder(videoBuffh.getVieworder());
@@ -2885,7 +2885,7 @@ public class VideoViewController {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 float priceorder = 0;
                 video.get(0).setMaxthreads(videoBuffh.getMaxthreads());
-                if(video.get(0).getMaxthreads()==-1&&videoBuffh.getMaxthreads()!=-1){
+                if(video.get(0).getTimestart()==0){
                     video.get(0).setTimestart(System.currentTimeMillis());
                 }
                 videoViewRepository.save(video.get(0));
