@@ -2388,6 +2388,7 @@ public class VideoViewController {
                 videoBuffhnew.setNote(videoBuffh.get(0).getNote());
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(0).getTimestart());
                 //videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                 if (cancel == 1) {
                     Service service = serviceRepository.getInfoService(videoBuffh.get(0).getService());
@@ -2466,6 +2467,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
@@ -2513,6 +2515,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
@@ -2559,6 +2562,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
@@ -2604,6 +2608,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
@@ -2650,6 +2655,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
@@ -2696,6 +2702,7 @@ public class VideoViewController {
                 videoBuffhnew.setCancel(0);
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());

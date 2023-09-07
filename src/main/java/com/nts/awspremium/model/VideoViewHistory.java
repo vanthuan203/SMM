@@ -30,10 +30,12 @@ public class VideoViewHistory {
     private Integer refund=0;
     private Integer waitbh=0;
     private Long timecheckbh=0L;
+
+    private Long timestart=0L;
     public VideoViewHistory() {
     }
 
-    public VideoViewHistory(Long orderid, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer viewtotal, Integer timetotal, Integer cancel, Long insertdate, Long enddate, Integer vieworder, Integer service, Integer maxthreads, Long duration, String channeltitle, String note, String user, Float price, Long timecheck, Integer numbh, Integer refund, Integer waitbh, Long timecheckbh) {
+    public VideoViewHistory(Long orderid, String videoid, String videotitle, String channelid, Integer viewstart, Integer viewend, Integer viewtotal, Integer timetotal, Integer cancel, Long insertdate, Long enddate, Integer vieworder, Integer service, Integer maxthreads, Long duration, String channeltitle, String note, String user, Float price, Long timecheck, Integer numbh, Integer refund, Integer waitbh, Long timecheckbh, Long timestart) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -58,6 +60,7 @@ public class VideoViewHistory {
         this.refund = refund;
         this.waitbh = waitbh;
         this.timecheckbh = timecheckbh;
+        this.timestart = timestart;
     }
 
     public Integer getTimetotal() {
@@ -255,5 +258,13 @@ public class VideoViewHistory {
 
     public void setNumbh(Integer numbh) {
         this.numbh = numbh;
+    }
+
+    public Long getTimestart() {
+        return timestart;
+    }
+
+    public void setTimestart(Long timestart) {
+        this.timestart = timestart;
     }
 }
