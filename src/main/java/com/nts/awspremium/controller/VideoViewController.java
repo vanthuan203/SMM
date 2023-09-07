@@ -2193,7 +2193,8 @@ public class VideoViewController {
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("timestart", orderRunnings.get(i).getTimestart());
+                obj.put("timecheckbh", orderRunnings.get(i).getTimecheckbh());
                 obj.put("viewend", orderRunnings.get(i).getViewend());
                 obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
                 obj.put("vieworder", orderRunnings.get(i).getVieworder());
@@ -2244,7 +2245,8 @@ public class VideoViewController {
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
-                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("timestart", orderRunnings.get(i).getTimestart());
+                obj.put("timecheckbh", orderRunnings.get(i).getTimecheckbh());
                 obj.put("viewend", orderRunnings.get(i).getViewend());
                 obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
                 obj.put("vieworder", orderRunnings.get(i).getVieworder());
