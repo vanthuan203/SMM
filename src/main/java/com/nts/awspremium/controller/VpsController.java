@@ -284,10 +284,10 @@ public class VpsController {
     }
 
     @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> resetBasByCron(){
+    ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetBasByCron(System.currentTimeMillis());
+            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){

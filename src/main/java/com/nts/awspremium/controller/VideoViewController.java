@@ -87,6 +87,7 @@ public class VideoViewController {
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
             Request request1 = null;
+
             request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBNcxI9kl_ODPwf49hMSHyohn6Q7IaKdMI&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration),liveStreamingDetails(scheduledStartTime))&part=liveStreamingDetails,snippet,statistics,contentDetails&id=" + videolist).get().build();
 
             Response response1 = client1.newCall(request1).execute();
@@ -253,7 +254,8 @@ public class VideoViewController {
     @GetMapping(value = "/updateviewendcron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateviewendcron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
-        List<String> listvideo = videoViewHistoryRepository.getOrderHistorythan5h();
+        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEnd(10);
+        System.out.println(listvideo);
         if (listvideo.size() == 0) {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -270,9 +272,10 @@ public class VideoViewController {
         OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
         Request request1 = null;
-
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
-
+        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
+        keys.get(0).setCount(keys.get(0).getCount() + 1L);
+        googleAPIKeyRepository.save(keys.get(0));
         Response response1 = client1.newCall(request1).execute();
 
         String resultJson1 = response1.body().string();
@@ -289,7 +292,7 @@ public class VideoViewController {
                 JSONObject video = (JSONObject) k.next();
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
-                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
+                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
                 //jsonArray.add(obj);
             } catch (Exception e) {
                 resp.put("status", e);
@@ -430,7 +433,7 @@ public class VideoViewController {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour>15||hour<14){
+        if(hour>=15||hour<14){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -438,7 +441,7 @@ public class VideoViewController {
             Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
                 if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService){
-                    break;
+                    continue;
                 }
             }
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());

@@ -226,7 +226,7 @@ public class VideoCommentController {
                 JSONObject video = (JSONObject) k.next();
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
-                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
+                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
                 //jsonArray.add(obj);
             } catch (Exception e) {
                 resp.put("status", e);

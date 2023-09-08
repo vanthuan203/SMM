@@ -11,7 +11,7 @@ public class VideoViewHistory {
     private String videotitle;
     private String channelid;
     private Integer viewstart;
-    private Integer viewend;
+    private Integer viewend=0;
     private Integer viewtotal;
     private Integer timetotal;
     private Integer cancel;
