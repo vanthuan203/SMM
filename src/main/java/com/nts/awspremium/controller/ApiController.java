@@ -97,7 +97,7 @@ public class ApiController {
                         resp.put("current_count", video.getViewtotal() + video.getViewstart());
                         resp.put("charge", video.getPrice());
                         if (video.getMaxthreads() <= 0) {
-                            resp.put("status", "Processing");
+                            resp.put("status", "Pending");
                         } else {
                             resp.put("status", "In progress");
                         }
@@ -134,8 +134,8 @@ public class ApiController {
                         videoview.put("start_count", v.getViewstart());
                         videoview.put("current_count", v.getViewstart() + v.getViewtotal());
                         videoview.put("charge", v.getPrice());
-                        if (v.getMaxthreads() == 0) {
-                            videoview.put("status", "Processing");
+                        if (v.getMaxthreads() <=0) {
+                            videoview.put("status", "Pending");
                         } else {
                             videoview.put("status", "In progress");
                         }
