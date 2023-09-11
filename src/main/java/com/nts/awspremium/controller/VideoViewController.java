@@ -107,6 +107,7 @@ public class VideoViewController {
                 resp.put("videoview", "Fail check video!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            Setting setting = settingRepository.getReferenceById(1L);
             while (k.hasNext()) {
                 try {
                     JSONObject video = (JSONObject) k.next();
@@ -170,7 +171,15 @@ public class VideoViewController {
                     videoViewhnew.setVideotitle(snippet.get("title").toString());
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    videoViewhnew.setMaxthreads(videoView.getMaxthreads());
+                    if(videoView.getService()==701){
+                        int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000)-1) *50;
+                        if (max_thread > setting.getMaxthread()) {
+                            max_thread = setting.getMaxthread();
+                        }
+                        videoViewhnew.setMaxthreads(max_thread);
+                    }else{
+                        videoViewhnew.setMaxthreads(videoView.getMaxthreads());
+                    }
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
@@ -445,7 +454,7 @@ public class VideoViewController {
                 }
             }
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000) - 1) * setting.getLevelthread();
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
@@ -479,7 +488,7 @@ public class VideoViewController {
                 }
             }
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000) - 1) * setting.getLevelthread();
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) * 50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
