@@ -554,6 +554,58 @@ public class VideoViewController {
         }
     }
 
+    @GetMapping(path = "getorderviewpending", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getorderviewpending(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<OrderViewRunning> orderRunnings;
+            if (user.length() == 0) {
+                orderRunnings = videoViewRepository.getOrderPending();
+
+            } else {
+                orderRunnings = videoViewRepository.getOrder(user.trim());
+            }
+
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderRunnings.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(i).getOrderId());
+                obj.put("videoid", orderRunnings.get(i).getVideoId());
+                obj.put("videotitle", orderRunnings.get(i).getVideoTitle());
+                obj.put("viewstart", orderRunnings.get(i).getViewStart());
+                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
+                obj.put("insertdate", orderRunnings.get(i).getInsertDate());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("vieworder", orderRunnings.get(i).getViewOrder());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("duration", orderRunnings.get(i).getDuration());
+                obj.put("service", orderRunnings.get(i).getService());
+                obj.put("user", orderRunnings.get(i).getUser());
+
+                obj.put("view24h", orderRunnings.get(i).getView24h());
+                obj.put("viewtotal", orderRunnings.get(i).getViewTotal());
+                obj.put("price", orderRunnings.get(i).getPrice());
+                jsonArray.add(obj);
+            }
+
+            resp.put("total", orderRunnings.size());
+            resp.put("videoview", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "getorderviewcheckcannel", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getorderviewcheckcannel(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
