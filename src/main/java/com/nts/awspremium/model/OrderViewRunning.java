@@ -8,6 +8,7 @@ public interface OrderViewRunning {
     Integer getMaxthreads();
     Integer getViewStart();
     Long getInsertDate();
+    Long getTimeStart();
     String getNote();
     Long getDuration();
     String getUser();

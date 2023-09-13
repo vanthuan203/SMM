@@ -531,6 +531,7 @@ public class VideoViewController {
                 obj.put("viewstart", orderRunnings.get(i).getViewStart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertDate());
+                obj.put("timestart", orderRunnings.get(i).getTimeStart());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("vieworder", orderRunnings.get(i).getViewOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
@@ -570,7 +571,7 @@ public class VideoViewController {
                 orderRunnings = videoViewRepository.getOrderPending();
 
             } else {
-                orderRunnings = videoViewRepository.getOrder(user.trim());
+                orderRunnings = videoViewRepository.getOrderPending(user.trim());
             }
 
             JSONArray jsonArray = new JSONArray();
@@ -583,6 +584,7 @@ public class VideoViewController {
                 obj.put("viewstart", orderRunnings.get(i).getViewStart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertDate());
+                obj.put("timestart", orderRunnings.get(i).getTimeStart());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("vieworder", orderRunnings.get(i).getViewOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
@@ -635,6 +637,7 @@ public class VideoViewController {
                 obj.put("viewstart", orderRunnings.get(i).getViewStart());
                 obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertDate());
+                obj.put("timestart", orderRunnings.get(i).getTimeStart());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("vieworder", orderRunnings.get(i).getViewOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
