@@ -492,7 +492,7 @@ public class VideoViewController {
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
-            videoViews.get(i).setMaxthreads(max_thread);
+            videoViews.get(i).setMaxthreads(1);
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
@@ -2925,6 +2925,58 @@ public class VideoViewController {
                 obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
                 obj.put("view24h", orderRunnings.get(0).getView24h());
                 obj.put("price", videoBuffh.getPrice() + priceorder);
+
+                jsonArray.add(obj);
+            }
+            resp.put("videoview", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateRefundHis", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRefundHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            String[] videoidIdArr = orderid.split(",");
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < videoidIdArr.length; i++) {
+                VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                video.setViewtotal(0);
+                video.setCancel(1);
+                video.setPrice(0F);
+                videoViewHistoryRepository.save(video);
+
+                List<OrderViewRunning> orderRunnings = videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", video.getOrderid());
+                obj.put("videoid", video.getVideoid());
+                obj.put("videotitle", video.getVideotitle());
+                obj.put("viewstart", video.getViewstart());
+                obj.put("maxthreads", video.getMaxthreads());
+                obj.put("insertdate", video.getInsertdate());
+                obj.put("user", video.getUser());
+                obj.put("note", video.getNote());
+                obj.put("duration", video.getDuration());
+                obj.put("enddate", video.getEnddate());
+                obj.put("cancel", video.getCancel());
+                obj.put("timestart",video.getTimestart());
+                obj.put("timecheckbh", video.getTimecheckbh());
+                obj.put("viewend", video.getViewend());
+                obj.put("viewtotal", video.getViewtotal());
+                obj.put("vieworder", video.getVieworder());
+                obj.put("price", video.getPrice());
+                obj.put("service", video.getService());
 
                 jsonArray.add(obj);
             }
