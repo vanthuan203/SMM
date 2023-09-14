@@ -70,7 +70,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timeresettool/1000)/60/60)>=24 limit ?2",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timeresettool/1000)/60/60)>=48 limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
 
     @Modifying

@@ -172,7 +172,7 @@ public class VideoViewController {
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     if(videoView.getService()==701){
-                        int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000)-1) *(videoView.getVieworder()<6000?25:50);
+                        int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000)-1) *50;
                         if (max_thread > setting.getMaxthread()) {
                             max_thread = setting.getMaxthread();
                         }
@@ -454,7 +454,7 @@ public class VideoViewController {
                 }
             }
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *(videoViews.get(i).getVieworder()<6000?25:50);
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
@@ -488,11 +488,11 @@ public class VideoViewController {
                 }
             }
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *(videoViews.get(i).getVieworder()<6000?25:50);
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
-            videoViews.get(i).setMaxthreads(1);
+            videoViews.get(i).setMaxthreads(max_thread);
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
@@ -2295,7 +2295,8 @@ public class VideoViewController {
             ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
             List<VideoViewHistory> orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput);
             if (orderRunnings.size() == 0) {
-                resp.put("videoview", "Lịch sử đơn trống!");
+                resp.put("status", "fail");
+                resp.put("total", orderRunnings.size());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             JSONArray jsonArray = new JSONArray();
@@ -2322,7 +2323,6 @@ public class VideoViewController {
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
-
             resp.put("total", orderRunnings.size());
             resp.put("videoview", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
