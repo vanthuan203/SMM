@@ -15,7 +15,8 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
 
     @Query(value = "SELECT * from videocommenthistory where orderid=?1",nativeQuery = true)
     public VideoCommentHistory getVideoViewHisById(Long orderid);
-
+    @Query(value = "SELECT * from videocommenthistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
+    public List<VideoCommentHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
     @Query(value = "SELECT * from videocommenthistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
     public List<VideoCommentHistory> getVideoViewHistories();
 

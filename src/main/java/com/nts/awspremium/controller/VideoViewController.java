@@ -2957,7 +2957,6 @@ public class VideoViewController {
                 video.setPrice(0F);
                 videoViewHistoryRepository.save(video);
 
-                List<OrderViewRunning> orderRunnings = videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
                 JSONObject obj = new JSONObject();
                 obj.put("orderid", video.getOrderid());
                 obj.put("videoid", video.getVideoid());

@@ -910,27 +910,39 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<VideoViewHistory> orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByVideoId(videoid.trim());
+            List<String> ordersArrInput = new ArrayList<>();
+            ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
+            List<VideoCommentHistory> orderRunnings = videoCommentHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput);
+            if (orderRunnings.size() == 0) {
+                resp.put("status", "fail");
+                resp.put("total", orderRunnings.size());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
-                obj.put("viewstart", orderRunnings.get(i).getViewstart());
+                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
+                obj.put("commentstart", orderRunnings.get(i).getCommentstart());
+                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
-                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
-                obj.put("vieworder", orderRunnings.get(i).getVieworder());
+                obj.put("cancel", orderRunnings.get(i).getCancel());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("commentend", orderRunnings.get(i).getCommentend());
+                obj.put("commenttotal", orderRunnings.get(i).getCommenttotal());
+                obj.put("commentorder", orderRunnings.get(i).getCommentorder());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
-
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("videocomment", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -1382,6 +1394,56 @@ public class VideoCommentController {
                 obj.put("user", orderRunnings.get(0).getUser());
                 obj.put("commenttotal", orderRunnings.get(0).getCommentTotal());
                 obj.put("price", videoBuffh.getPrice() + priceorder);
+
+                jsonArray.add(obj);
+            }
+            resp.put("videocomment", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateRefundHis", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRefundHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            String[] videoidIdArr = orderid.split(",");
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < videoidIdArr.length; i++) {
+                VideoCommentHistory video = videoCommentHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                video.setCommenttotal(0);
+                video.setCancel(1);
+                video.setPrice(0F);
+                videoCommentHistoryRepository.save(video);
+
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", video.getOrderid());
+                obj.put("videoid", video.getVideoid());
+                obj.put("videotitle", video.getVideotitle());
+                obj.put("commentstart",video.getCommentstart());
+                obj.put("maxthreads", video.getMaxthreads());
+                obj.put("insertdate", video.getInsertdate());
+                obj.put("user", video.getUser());
+                obj.put("note", video.getNote());
+                obj.put("duration", video.getDuration());
+                obj.put("enddate", video.getEnddate());
+                obj.put("cancel", video.getCancel());
+                //obj.put("home_rate", orderRunnings.get(i).get());
+                obj.put("commentend", video.getCommentend());
+                obj.put("commenttotal", video.getCommenttotal());
+                obj.put("commentorder", video.getCommentorder());
+                obj.put("price", video.getPrice());
+                obj.put("service", video.getService());
 
                 jsonArray.add(obj);
             }
