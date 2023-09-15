@@ -11,15 +11,17 @@ public class LimitService {
     private Integer service;
     private String user;
     private Integer maxorder;
+    private Integer maxrunning;
 
     public LimitService() {
     }
 
-    public LimitService(Long id, Integer service, String user, Integer maxorder) {
+    public LimitService(Long id, Integer service, String user, Integer maxorder, Integer maxrunning) {
         this.id = id;
         this.service = service;
         this.user = user;
         this.maxorder = maxorder;
+        this.maxrunning = maxrunning;
     }
 
     public Long getId() {
@@ -52,5 +54,13 @@ public class LimitService {
 
     public void setMaxorder(Integer maxorder) {
         this.maxorder = maxorder;
+    }
+
+    public Integer getMaxrunning() {
+        return maxrunning;
+    }
+
+    public void setMaxrunning(Integer maxrunning) {
+        this.maxrunning = maxrunning;
     }
 }

@@ -66,10 +66,10 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT count(*) from videoview where user=?1",nativeQuery = true)
     public Integer getCountOrderByUser(String user);
 
-    @Query(value = "SELECT count(*) from videoview where user=?1 and service=?2 and maxthreads=-1",nativeQuery = true)
+    @Query(value = "SELECT sum(vieworder) from videoview where user=?1 and service=?2 and maxthreads=-1",nativeQuery = true)
     public Integer getCountOrderByUserAndService(String user,Integer service);
 
-    @Query(value = "SELECT count(*) from videoview where user=?1 and service=?2 and maxthreads!=-1",nativeQuery = true)
+    @Query(value = "SELECT sum(vieworder) from videoview where user=?1 and service=?2 and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByUserAndService(String user,Integer service);
 
     @Query(value = "SELECT count(*) from videoview where service=?1",nativeQuery = true)

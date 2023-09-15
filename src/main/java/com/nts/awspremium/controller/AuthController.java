@@ -1,9 +1,6 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Admin;
-import com.nts.awspremium.model.AutoRefill;
-import com.nts.awspremium.model.Balance;
-import com.nts.awspremium.model.Setting;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -31,6 +28,9 @@ public class AuthController {
     AutoRefillRepository autoRefillRepository;
     @Autowired
     BalanceRepository balanceRepository;
+
+    @Autowired
+    LimitServiceRepository limitServiceRepository;
     @PostMapping(path = "login",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> login(@RequestBody Admin admin){
         JSONObject resp=new JSONObject();
@@ -172,6 +172,30 @@ public class AuthController {
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 
+    @PostMapping(path = "updatelimit",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatelimit(@RequestHeader(defaultValue = "") String Authorization,@RequestBody LimitService limitService){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> check=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| check.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<LimitService> setting1=limitServiceRepository.getLimitById(limitService.getId());
+        setting1.get(0).setMaxrunning(limitService.getMaxrunning());
+        setting1.get(0).setMaxorder(limitService.getMaxorder());
+        limitServiceRepository.save(setting1.get(0));
+        JSONObject obj = new JSONObject();
+        obj.put("id", limitService.getId());
+        obj.put("user", limitService.getUser());
+        obj.put("service", limitService.getService());
+        obj.put("maxorder", limitService.getMaxorder());
+        obj.put("maxrunning", limitService.getMaxrunning());
+        resp.put("accountlimit",obj);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+    }
+
     @GetMapping(path = "list",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> list(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
@@ -227,6 +251,32 @@ public class AuthController {
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+    @GetMapping(path = "limitservice",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> limitservice(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        JSONArray jsonArray =new JSONArray();
+        List<LimitService> limitServices=limitServiceRepository.getLimitServiceAll();
+        for(int i=0;i<limitServices.size();i++){
+            JSONObject obj = new JSONObject();
+            obj.put("id", limitServices.get(i).getId());
+            obj.put("user", limitServices.get(i).getUser());
+            obj.put("service", limitServices.get(i).getService());
+            obj.put("maxorder", limitServices.get(i).getMaxorder());
+            obj.put("maxrunning", limitServices.get(i).getMaxrunning());
+            jsonArray.add(obj);
+        }
+        resp.put("accountlimit",jsonArray);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 

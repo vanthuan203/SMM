@@ -439,18 +439,19 @@ public class VideoViewController {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.HOUR_OF_DAY);
         if(hour>=15||hour<14){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         for (int i = 0; i < videoViews.size(); i++) {
-            Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
+            Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService){
+                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
                     continue;
                 }
             }
-            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
@@ -476,15 +477,15 @@ public class VideoViewController {
 
         Setting setting = settingRepository.getReferenceById(1L);
         for (int i = 0; i < videoViews.size(); i++) {
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             if(limituser==1){
-                Integer limitService=limitServiceRepository.getLimitByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+                Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
                 if(limitService!=null){
-                    if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService){
+                    if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
                         continue;
                     }
                 }
             }
-            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
