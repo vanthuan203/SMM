@@ -172,19 +172,16 @@ public class VideoViewController {
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     if(videoView.getService()==701){
-                        int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000)-1) *50;
-                        if (max_thread > setting.getMaxthread()) {
-                            max_thread = setting.getMaxthread();
-                        }
-                        videoViewhnew.setMaxthreads(max_thread);
+                        videoViewhnew.setTimestart(0L);
+                        videoViewhnew.setMaxthreads(-1);
                     }else{
+                        videoViewhnew.setTimestart(System.currentTimeMillis());
                         videoViewhnew.setMaxthreads(videoView.getMaxthreads());
                     }
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setNote(videoView.getNote());
                     videoViewhnew.setService(videoView.getService());
                     videoViewhnew.setValid(1);
-                    videoViewhnew.setTimestart(System.currentTimeMillis());
                     videoViewhnew.setMinstart(service.getMaxtime());
                     videoViewRepository.save(videoViewhnew);
 
