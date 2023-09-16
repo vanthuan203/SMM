@@ -1421,10 +1421,24 @@ public class VideoCommentController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
                 VideoCommentHistory video = videoCommentHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                float price_refund=video.getPrice();
                 video.setCommenttotal(0);
                 video.setCancel(1);
                 video.setPrice(0F);
                 videoCommentHistoryRepository.save(video);
+                List<Admin> user = adminRepository.getAdminByUser(video.getUser());
+                float balance_new = user.get(0).getBalance() + price_refund;
+                user.get(0).setBalance(balance_new);
+                adminRepository.save(user.get(0));
+                //
+                Balance balance = new Balance();
+                balance.setUser(user.get(0).getUsername().trim());
+                balance.setTime(System.currentTimeMillis());
+                balance.setTotalblance(balance_new);
+                balance.setBalance(price_refund);
+                balance.setService(video.getService());
+                balance.setNote("Hoàn " + (video.getCommentorder()) + " comment cho " + video.getVideoid());
+                balanceRepository.save(balance);
 
                 JSONObject obj = new JSONObject();
                 obj.put("orderid", video.getOrderid());
