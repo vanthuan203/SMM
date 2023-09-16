@@ -448,11 +448,11 @@ public class VideoViewController {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
+                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
                     continue;
                 }
             }
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 500)-1) *25;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
@@ -481,12 +481,12 @@ public class VideoViewController {
             if(limituser==1){
                 Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
                 if(limitService!=null){
-                    if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
+                    if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
                         continue;
                     }
                 }
             }
-            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 1000)-1) *50;
+            int max_thread = service.getThread() + ((int) (videoViews.get(i).getVieworder() / 500)-1) *25;
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
@@ -589,7 +589,7 @@ public class VideoViewController {
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("service", orderRunnings.get(i).getService());
                 obj.put("user", orderRunnings.get(i).getUser());
-
+                obj.put("priority", orderRunnings.get(i).getPriority());
                 obj.put("view24h", orderRunnings.get(i).getView24h());
                 obj.put("viewtotal", orderRunnings.get(i).getViewTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
@@ -2914,6 +2914,7 @@ public class VideoViewController {
                 obj.put("viewstart", orderRunnings.get(0).getViewStart());
                 obj.put("maxthreads", orderRunnings.get(0).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(0).getInsertDate());
+                obj.put("timestart", orderRunnings.get(0).getTimeStart());
                 obj.put("total", orderRunnings.get(0).getTotal());
                 obj.put("note", orderRunnings.get(0).getNote());
                 obj.put("duration", orderRunnings.get(0).getDuration());
@@ -3016,6 +3017,8 @@ public class VideoViewController {
                 obj.put("viewstart", orderRunnings.get(0).getViewStart());
                 obj.put("maxthreads", videoBuffh.getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(0).getInsertDate());
+                obj.put("timestart", orderRunnings.get(0).getTimeStart());
+                obj.put("t", orderRunnings.get(0).getInsertDate());
                 obj.put("total", orderRunnings.get(0).getTotal());
                 obj.put("note", orderRunnings.get(0).getNote());
                 obj.put("duration", orderRunnings.get(0).getDuration());
@@ -3025,6 +3028,113 @@ public class VideoViewController {
                 obj.put("view24h", orderRunnings.get(0).getView24h());
                 obj.put("price", orderRunnings.get(0).getPrice());
                 obj.put("vieworder", orderRunnings.get(0).getViewOrder());
+
+
+                jsonArray.add(obj);
+            }
+            resp.put("videoview", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "updatepriority", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatepriority(@RequestHeader(defaultValue = "") String Authorization, @RequestBody VideoView videoBuffh) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            String[] videoidIdArr = videoBuffh.getVideoid().split("\n");
+            JSONArray jsonArray = new JSONArray();
+            for (int i = 0; i < videoidIdArr.length; i++) {
+                List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                video.get(0).setPriority(videoBuffh.getPriority());
+                videoViewRepository.save(video.get(0));
+
+                List<OrderViewRunning> orderRunnings = videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(0).getOrderId());
+                obj.put("videoid", orderRunnings.get(0).getVideoId());
+                obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
+                obj.put("viewstart", orderRunnings.get(0).getViewStart());
+                obj.put("maxthreads", videoBuffh.getMaxthreads());
+                obj.put("insertdate", orderRunnings.get(0).getInsertDate());
+                obj.put("timestart", orderRunnings.get(0).getTimeStart());
+                obj.put("total", orderRunnings.get(0).getTotal());
+                obj.put("note", orderRunnings.get(0).getNote());
+                obj.put("duration", orderRunnings.get(0).getDuration());
+                obj.put("service", orderRunnings.get(0).getService());
+                obj.put("user", orderRunnings.get(0).getUser());
+                obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
+                obj.put("view24h", orderRunnings.get(0).getView24h());
+                obj.put("price", orderRunnings.get(0).getPrice());
+                obj.put("vieworder", orderRunnings.get(0).getViewOrder());
+                obj.put("priority", orderRunnings.get(0).getPriority());
+
+
+                jsonArray.add(obj);
+            }
+            resp.put("videoview", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updatethreadpending", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatethreadpending(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String videoid) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        Setting setting = settingRepository.getReferenceById(1L);
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            String[] videoidIdArr = videoid.split(",");
+            JSONArray jsonArray = new JSONArray();
+            for (int i = videoidIdArr.length-1;i >=0; i--) {
+                List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                Service service = serviceRepository.getInfoService(video.get(0).getService());
+                int max_thread = service.getThread() + ((int) (video.get(0).getVieworder() / 500)-1) *25;
+                if (max_thread > setting.getMaxthread()) {
+                    max_thread = setting.getMaxthread();
+                }
+                video.get(0).setMaxthreads(max_thread);
+                video.get(0).setTimestart(System.currentTimeMillis());
+                videoViewRepository.save(video.get(0));
+
+                List<OrderViewRunning> orderRunnings = videoViewRepository.getVideoViewById(videoidIdArr[i].trim());
+                JSONObject obj = new JSONObject();
+                obj.put("orderid", orderRunnings.get(0).getOrderId());
+                obj.put("videoid", orderRunnings.get(0).getVideoId());
+                obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
+                obj.put("viewstart", orderRunnings.get(0).getViewStart());
+                obj.put("maxthreads", orderRunnings.get(0).getMaxthreads());
+                obj.put("insertdate", orderRunnings.get(0).getInsertDate());
+                obj.put("timestart", orderRunnings.get(0).getTimeStart());
+                obj.put("total", orderRunnings.get(0).getTotal());
+                obj.put("note", orderRunnings.get(0).getNote());
+                obj.put("duration", orderRunnings.get(0).getDuration());
+                obj.put("service", orderRunnings.get(0).getService());
+                obj.put("user", orderRunnings.get(0).getUser());
+                obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
+                obj.put("view24h", orderRunnings.get(0).getView24h());
+                obj.put("price", orderRunnings.get(0).getPrice());
+                obj.put("vieworder", orderRunnings.get(0).getViewOrder());
+                obj.put("priority", orderRunnings.get(0).getPriority());
 
 
                 jsonArray.add(obj);

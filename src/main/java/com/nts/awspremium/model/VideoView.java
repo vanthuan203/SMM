@@ -29,11 +29,12 @@ public class VideoView {
     private Long timeupdate;
     private Float price;
     private Integer valid;
+    private Integer priority=0;
 
     public VideoView() {
     }
 
-    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid) {
+    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid, Integer priority) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -56,6 +57,7 @@ public class VideoView {
         this.timeupdate = timeupdate;
         this.price = price;
         this.valid = valid;
+        this.priority = priority;
     }
 
     public Integer getTimetotal() {
@@ -232,5 +234,13 @@ public class VideoView {
 
     public void setMinstart(Integer minstart) {
         this.minstart = minstart;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

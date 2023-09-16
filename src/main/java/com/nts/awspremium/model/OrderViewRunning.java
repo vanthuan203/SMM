@@ -17,5 +17,6 @@ public interface OrderViewRunning {
     Integer getView24h();
     Float getPrice();
     Integer getService();
+    Integer getPriority();
     Long getTimeUpdate();
 }

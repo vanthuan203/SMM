@@ -191,7 +191,7 @@ public class ApiController {
                  */
                 Integer limitService=limitServiceRepository.getLimitPendingByServiceAndUser(admins.get(0).getUsername().trim(),service.getService());
                 if(limitService!=null){
-                    if(videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())>=limitService*service.getMax()){
+                    if(videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())==null?false:videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())>=limitService*service.getMax()){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
