@@ -3108,6 +3108,9 @@ public class VideoViewController {
             for (int i = videoidIdArr.length-1;i >=0; i--) {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 Service service = serviceRepository.getInfoService(video.get(0).getService());
+                if(videoViewRepository.getCountOrderRunningByService(video.get(0).getService())==null?false:videoViewRepository.getCountOrderRunningByService(video.get(0).getService())>=setting.getMaxorder()*service.getMax()){
+                    break;
+                }
                 int max_thread = service.getThread() + ((int) (video.get(0).getVieworder() / 500)-1) *25;
                 if (max_thread > setting.getMaxthread()) {
                     max_thread = setting.getMaxthread();
