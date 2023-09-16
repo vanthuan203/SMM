@@ -490,7 +490,7 @@ public class VideoViewController {
             if (max_thread > setting.getMaxthread()) {
                 max_thread = setting.getMaxthread();
             }
-            videoViews.get(i).setMaxthreads(1);
+            videoViews.get(i).setMaxthreads(max_thread);
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
