@@ -11,42 +11,42 @@ import java.util.List;
 
 public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service in(select service from service where geo=?1 and mintime<30 and live=0) and INSTR(?2,videoid)=0 and orderid in (?3) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(select service from service where geo=?1 and mintime<30 and live=0) and INSTR(?2,videoid)=0 and orderid in (?3) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewByGeo(String geo, String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service in(select service from service where geo=?1 and mintime>=30 and live=0) and INSTR(?2,videoid)=0 and orderid in (?3) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(select service from service where geo=?1 and mintime>=30 and live=0) and INSTR(?2,videoid)=0 and orderid in (?3) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoBuffHByGeo(String geo, String listvideo, List<String> orderid);
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service>600 and service not in(751,752,753,754) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service not in(751,752,753,754) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VNTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service>600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoBuffHVer2VNTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service<600 and service not in(151,152,153,154) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service<600 and service not in(151,152,153,154) and service not in (select service from service where mintime>=30 or live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2USTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service in(151,152,153,154) and  INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(151,152,153,154) and  INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2USTESTNoProxy(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service in(751,752,753,754) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service in(751,752,753,754) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoViewVer2VNTESTNoProxy(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service<600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where checktime=1 and mintime>=30 and live=0) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoBuffHVer2USTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service>600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoLiveVer2VNTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service<600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where live=1) and INSTR(?1,videoid)=0 and  orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoLiveVer2USTEST(String listvideo, List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service>600 and service in (select service from service where live=1) and  orderid in (?1) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where live=1) and  orderid in (?1) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoPreVer2VNTEST(List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where maxthreads>0 and service<600 and service in (select service from service where live=1) and  orderid in (?1) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where live=1) and  orderid in (?1) order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoPreVer2USTEST(List<String> orderid);
 
-    @Query(value = "SELECT * FROM videoview where  maxthreads>0 and service>600 and service in (select service from service where live=1) and round((insertdate/1000-UNIX_TIMESTAMP())/60)<=30 limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where service>600 and service in (select service from service where live=1) and round((insertdate/1000-UNIX_TIMESTAMP())/60)<=30 limit 1",nativeQuery = true)
     public List<VideoView> getvideoPreTrue();
 
     @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
