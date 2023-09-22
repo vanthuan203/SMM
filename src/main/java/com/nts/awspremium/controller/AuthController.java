@@ -289,7 +289,7 @@ public class AuthController {
     ResponseEntity<String> updateRedirectCron(){
         Setting setting = settingRepository.getReferenceById(1L);
         JSONObject resp = new JSONObject();
-        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*setting.getThreadmin()){
+        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*(setting.getThreadmin()/100)){
             settingRepository.updateRedirect(settingRepository.getRedirect()==0?0:(settingRepository.getRedirect()-100));
         }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
             settingRepository.updateRedirect(settingRepository.getRedirect()>=1000?1000:(settingRepository.getRedirect()+100));
