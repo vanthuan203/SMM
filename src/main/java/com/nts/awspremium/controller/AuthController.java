@@ -161,6 +161,7 @@ public class AuthController {
         setting1.get(0).setMaxorder(setting.getMaxorder());
         setting1.get(0).setMaxordervn(setting.getMaxordervn());
         setting1.get(0).setMaxorderus(setting.getMaxorderus());
+        setting1.get(0).setThreadmin(setting.getThreadmin());
         settingRepository.save(setting1.get(0));
         JSONObject obj = new JSONObject();
         obj.put("id", setting.getId());
@@ -168,6 +169,8 @@ public class AuthController {
         obj.put("bonus", setting.getBonus());
         obj.put("maxordervn", setting.getMaxordervn());
         obj.put("maxorderus", setting.getMaxorderus());
+        obj.put("maxorder", setting.getMaxorder());
+        obj.put("threadmin", setting.getThreadmin());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
@@ -248,6 +251,7 @@ public class AuthController {
             obj.put("maxorder", setting.get(i).getMaxorder());
             obj.put("maxordervn", setting.get(i).getMaxordervn());
             obj.put("maxorderus", setting.get(i).getMaxorderus());
+            obj.put("threadmin", setting.get(i).getThreadmin());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
@@ -283,8 +287,9 @@ public class AuthController {
     }
     @GetMapping(path = "updateRedirectCron",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateRedirectCron(){
+        Setting setting = settingRepository.getReferenceById(1L);
         JSONObject resp = new JSONObject();
-        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*0.85){
+        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*setting.getThreadmin()){
             settingRepository.updateRedirect(settingRepository.getRedirect()==0?0:(settingRepository.getRedirect()-100));
         }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
             settingRepository.updateRedirect(settingRepository.getRedirect()>=1000?1000:(settingRepository.getRedirect()+100));
