@@ -62,7 +62,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update vps set vpsreset=1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps )",nativeQuery = true)
+    @Query(value = "update vps set vpsreset=1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0",nativeQuery = true)
     public void resetVPSByHisTimecheck();
 
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads",nativeQuery = true)
