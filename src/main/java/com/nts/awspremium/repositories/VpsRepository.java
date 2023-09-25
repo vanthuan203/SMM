@@ -62,7 +62,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "update vps set vpsreset=1,timeresettool=?1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0",nativeQuery = true)
+    @Query(value = "update vps set vpsreset=1,timeresettool=?1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0 limit 15",nativeQuery = true)
     public void resetVPSByHisTimecheck(Long timeresettool);
 
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads",nativeQuery = true)
@@ -70,7 +70,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timeresettool/1000)/60/60)>=48 limit ?2",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timeresettool/1000)/60/60)>=48 order by rand() limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
 
     @Modifying
