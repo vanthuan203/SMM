@@ -338,7 +338,7 @@ public class VpsSubController {
     ResponseEntity<String> resetvpsbytimecheck(){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetVPSByTimecheck();
+            vpsRepository.resetVPSByTimecheck(System.currentTimeMillis());
             //accountRepository.resetAccountSubByTimecheck();
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

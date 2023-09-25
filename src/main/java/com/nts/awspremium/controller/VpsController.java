@@ -317,6 +317,32 @@ public class VpsController {
         }
     }
 
+    @GetMapping(value = "resetVPSByName",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetVPSByName(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String vps){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            vpsRepository.updateRestartVpsByName(System.currentTimeMillis(),vps.trim());
+            resp.put("status", "true");
+            resp.put("message", "Restart "+vps.trim());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(value = "update",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Vps vps){
@@ -583,7 +609,7 @@ public class VpsController {
     ResponseEntity<String> resettoolbyhistimecheckcron(){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetVPSByHisTimecheck();
+            vpsRepository.resetVPSByHisTimecheck(System.currentTimeMillis());
             //accountRepository.resetAccountSubByTimecheck();
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

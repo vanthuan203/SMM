@@ -57,13 +57,13 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15 and round((UNIX_TIMESTAMP()-timecheck/1000)/60)<30 ",nativeQuery = true)
-    public void resetVPSByTimecheck();
+    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=15 and round((UNIX_TIMESTAMP()-timecheck/1000)/60)<30 ",nativeQuery = true)
+    public void resetVPSByTimecheck(Long timeresettool);
 
     @Modifying
     @Transactional
-    @Query(value = "update vps set vpsreset=1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0",nativeQuery = true)
-    public void resetVPSByHisTimecheck();
+    @Query(value = "update vps set vpsreset=1,timeresettool=?1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0",nativeQuery = true)
+    public void resetVPSByHisTimecheck(Long timeresettool);
 
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads",nativeQuery = true)
     public Integer checkGetAccountAccSub(String vps);
@@ -77,6 +77,11 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Transactional
     @Query(value = "UPDATE vps set timeresettool=0",nativeQuery = true)
     public void resetTimeResetTool();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where vps=?2",nativeQuery = true)
+    public void updateRestartVpsByName(Long timeresettool,String vps);
 
     @Modifying
     @Transactional
