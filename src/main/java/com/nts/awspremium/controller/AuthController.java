@@ -162,6 +162,7 @@ public class AuthController {
         setting1.get(0).setMaxordervn(setting.getMaxordervn());
         setting1.get(0).setMaxorderus(setting.getMaxorderus());
         setting1.get(0).setThreadmin(setting.getThreadmin());
+        setting1.get(0).setRedirect(setting.getRedirect());
         settingRepository.save(setting1.get(0));
         JSONObject obj = new JSONObject();
         obj.put("id", setting.getId());
@@ -171,6 +172,7 @@ public class AuthController {
         obj.put("maxorderus", setting.getMaxorderus());
         obj.put("maxorder", setting.getMaxorder());
         obj.put("threadmin", setting.getThreadmin());
+        obj.put("redirect", setting.getRedirect());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
@@ -252,6 +254,7 @@ public class AuthController {
             obj.put("maxordervn", setting.get(i).getMaxordervn());
             obj.put("maxorderus", setting.get(i).getMaxorderus());
             obj.put("threadmin", setting.get(i).getThreadmin());
+            obj.put("redirect", setting.get(i).getRedirect());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);

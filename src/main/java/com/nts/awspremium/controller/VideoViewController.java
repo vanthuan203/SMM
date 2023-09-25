@@ -448,7 +448,7 @@ public class VideoViewController {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax()){
+                if((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax())||limitService==0){
                     continue;
                 }
             }
