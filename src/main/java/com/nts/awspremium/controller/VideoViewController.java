@@ -2468,9 +2468,8 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
-                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid());
-                String[] info = infoQ.split(",");
-                if(Integer.parseInt(info[0])>=2){
+                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(),orderRunnings.get(i).getOrderid());
+                if(infoQ!=null){
                     obj.put("info", infoQ);
                 }else{
                     obj.put("info", "");
@@ -3145,8 +3144,13 @@ public class VideoViewController {
                 balance.setService(video.getService());
                 balance.setNote("Hoàn " + (video.getVieworder()) + " view cho " + video.getVideoid());
                 balanceRepository.save(balance);
-
+                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video.getVideoid(),video.getOrderid());
                 JSONObject obj = new JSONObject();
+                if(infoQ!=null){
+                    obj.put("info", infoQ);
+                }else{
+                    obj.put("info", "");
+                }
                 obj.put("orderid", video.getOrderid());
                 obj.put("videoid", video.getVideoid());
                 obj.put("videotitle", video.getVideotitle());
@@ -3195,6 +3199,12 @@ public class VideoViewController {
                 htviewfindorder(video.getOrderid(),"1");
                 VideoViewHistory video_refil = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 JSONObject obj = new JSONObject();
+                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video_refil.getVideoid(),video_refil.getOrderid());
+                if(infoQ!=null){
+                    obj.put("info", infoQ);
+                }else{
+                    obj.put("info", "");
+                }
                 obj.put("orderid", video_refil.getOrderid());
                 obj.put("videoid", video_refil.getVideoid());
                 obj.put("videotitle", video_refil.getVideotitle());
