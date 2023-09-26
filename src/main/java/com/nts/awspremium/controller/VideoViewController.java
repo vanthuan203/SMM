@@ -2468,6 +2468,13 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
+                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid());
+                String[] info = infoQ.split(",");
+                if(Integer.parseInt(info[0])>=2){
+                    obj.put("info", infoQ);
+                }else{
+                    obj.put("info", "");
+                }
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
                 obj.put("videotitle", orderRunnings.get(i).getVideotitle());

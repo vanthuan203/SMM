@@ -40,7 +40,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3",nativeQuery = true)
+    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and round((UNIX_TIMESTAMP()-timestart/1000)/60/60)>84",nativeQuery = true)
     public Integer updateviewend(Integer viewend,Long timecheckbh, String videoid);
 
 
@@ -51,6 +51,8 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * from videoviewhistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
+    @Query(value = "SELECT count(*),sum(vieworder),sum(viewtotal),viewstart from videoviewhistory where  videoid=?1 order by insertdate asc",nativeQuery = true)
+    public String getInfoSumOrderByVideoId(String videoid);
 
     @Query(value = "SELECT * from videoviewhistory where  orderid=?1 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByVideoId(Long orderid);
