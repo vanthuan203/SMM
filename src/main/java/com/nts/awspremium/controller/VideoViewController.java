@@ -1587,12 +1587,6 @@ public class VideoViewController {
                     obj.put("videoview", "Đơn đang chạy!");
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
-
-                if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 12) {
-                    DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Hoàn sau: " + dateFormat.format((new Date(videoViewHistories.get(i).getEnddate() + (12 * 60 * 60 * 1000)))));
-                    return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
-                }
                 /*
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
