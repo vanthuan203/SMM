@@ -87,6 +87,11 @@ public class AccountViewController {
             resp.put("message", "Tên vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+        if(vpsRepository.checkVpsGetAccountTrue(vps.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Đã đủ acc cho Vps!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         if(checkProsetListTrue.getValue()>=50){
             resp.put("status", "fail");
             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
