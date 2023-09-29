@@ -120,10 +120,12 @@ public class VideoViewController {
                         resp.put("videoview", "This video is not a livestream video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                    /*
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==10) {
                         resp.put("videoview", "Video under 10 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                     */
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==15) {
                         resp.put("videoview", "Video under 15 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
