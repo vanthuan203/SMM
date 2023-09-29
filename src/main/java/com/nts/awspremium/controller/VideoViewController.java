@@ -173,7 +173,7 @@ public class VideoViewController {
                     videoViewhnew.setVideotitle(snippet.get("title").toString());
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    if(videoView.getService()==701){
+                    if(videoView.getService()==701 || videoView.getService()==703){
                         videoViewhnew.setTimestart(0L);
                         videoViewhnew.setMaxthreads(-1);
                     }else{
@@ -459,6 +459,28 @@ public class VideoViewController {
                 max_thread = setting.getMaxthread();
             }
             videoViews.get(i).setMaxthreads(max_thread);
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
+
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateRunningOrder703Cron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder703Cron() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
+        Setting setting = settingRepository.getReferenceById(1L);
+        for (int i = 0; i < videoViews.size(); i++) {
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
+            Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+            if(limitService!=null){
+                if((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax())||limitService==0){
+                    continue;
+                }
+            }
+            videoViews.get(i).setMaxthreads(service.getThread());
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
