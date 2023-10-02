@@ -472,11 +472,20 @@ public class VideoViewController {
         JSONObject resp = new JSONObject();
         List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
         Setting setting = settingRepository.getReferenceById(1L);
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour>=12&&hour<14){
+            resp.put("status", "fail");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
         for (int i = 0; i < videoViews.size(); i++) {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax())||limitService==0){
+                if((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax())||limitService==0||
+                        (videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=setting.getMaxorder()*service.getMax())){
                     continue;
                 }
             }
