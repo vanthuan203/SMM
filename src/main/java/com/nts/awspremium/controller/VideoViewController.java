@@ -1690,7 +1690,7 @@ public class VideoViewController {
                         videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
                         videoViewHistories.get(i).setViewtotal(viewFix - viewthan);
                         videoViewHistories.get(i).setRefund(1);
-                        if (price_refund == videoViewHistories.get(i).getPrice()) {
+                        if (videoViewHistories.get(i).getViewtotal()==0) {
                             videoViewHistories.get(i).setCancel(1);
                         } else {
                             videoViewHistories.get(i).setCancel(2);
