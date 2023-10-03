@@ -263,7 +263,6 @@ public class VideoViewController {
     ResponseEntity<String> updateviewendcron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEnd(25);
-        System.out.println(listvideo);
         if (listvideo.size() == 0) {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -308,6 +307,7 @@ public class VideoViewController {
             }
 
         }
+
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }

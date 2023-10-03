@@ -40,7 +40,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and round((UNIX_TIMESTAMP()-timestart/1000)/60/60)>84",nativeQuery = true)
+    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP())), '%Y-%m-%d')",nativeQuery = true)
     public Integer updateviewend(Integer viewend,Long timecheckbh, String videoid);
 
 
