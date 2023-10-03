@@ -76,6 +76,18 @@ public class VideoViewController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
              */
+            Integer limitService=limitServiceRepository.getLimitPendingByServiceAndUser(admins.get(0).getUsername().trim(),service.getService());
+            if(limitService!=null){
+                if((videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())==null?false:videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())>=limitService*service.getMax())||limitService==0){
+                    resp.put("error", "System busy try again");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }else{
+                if(service.getChecktime()==1){
+                    resp.put("error", "System busy try again");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }
             if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                     (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(videoView.getService())) {
                 resp.put("videoview", "System busy try again!");
@@ -173,7 +185,7 @@ public class VideoViewController {
                     videoViewhnew.setVideotitle(snippet.get("title").toString());
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    if(videoView.getService()==701 || videoView.getService()==703){
+                    if(service.getChecktime()==1){
                         videoViewhnew.setTimestart(0L);
                         videoViewhnew.setMaxthreads(-1);
                     }else{
