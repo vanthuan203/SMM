@@ -73,6 +73,11 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT viewstart FROM videoviewhistory where videoid=?1 order by viewstart asc limit 1",nativeQuery = true)
     public Integer getViewStart3701(String videoid);
 
+    @Query(value = "SELECT count(*)\n" +
+            "FROM videoviewhistory\n" +
+            "WHERE service=?1 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP()-3*60*60)), '%Y-%m-%d') and user=?2 and cancel!=1",nativeQuery = true)
+    public Integer getCountOrderDoneByServiceAndUserInOneDay(Integer service,String user);
+
     @Modifying
     @Transactional
     @Query(value = "update videoviewhistory set price=0,viewtotal=0,cancel=1 where orderid in(?1)",nativeQuery = true)

@@ -484,7 +484,7 @@ public class VideoViewController {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())>=limitService*service.getMax())||limitService==0||
+                if(((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?(videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())*service.getMax()):(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())+videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())*service.getMax()))>=limitService*service.getMax())||limitService==0||
                         (videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())>=setting.getMaxorder()*service.getMax())){
                     continue;
                 }
