@@ -362,8 +362,6 @@ public class VideoViewController {
                 JSONObject video = (JSONObject) k.next();
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
-                System.out.println(Integer.parseInt(statistics.get("viewCount").toString()));
-                System.out.println(video.get("id").toString());
                 videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
                 //jsonArray.add(obj);
             } catch (Exception e) {
