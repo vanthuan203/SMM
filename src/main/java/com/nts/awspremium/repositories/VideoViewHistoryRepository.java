@@ -60,7 +60,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories(String user);
 
-    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP())), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
+    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*3*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP())), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEnd(Integer limit);
 
 
@@ -73,7 +73,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT viewstart FROM videoviewhistory where videoid=?1 order by viewstart asc limit 1",nativeQuery = true)
     public Integer getViewStart3701(String videoid);
 
-    @Query(value = "SELECT count(*)\n" +
+    @Query(value = "SELECT sum(vieworder)\n" +
             "FROM videoviewhistory\n" +
             "WHERE service=?1 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP()-3*60*60)), '%Y-%m-%d') and user=?2 and cancel!=1",nativeQuery = true)
     public Integer getCountOrderDoneByServiceAndUserInOneDay(Integer service,String user);

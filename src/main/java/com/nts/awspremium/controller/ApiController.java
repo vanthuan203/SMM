@@ -270,6 +270,10 @@ public class ApiController {
                             resp.put("error", "Videos under 60 seconds");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==10) {
+                            resp.put("error", "Video under 10 minutes");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==15) {
                             resp.put("error", "Video under 15 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -279,11 +283,11 @@ public class ApiController {
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 3600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==60) {
-                            resp.put("error", "Video under 30 minutes");
+                            resp.put("error", "Video under 60 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 7200&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==120) {
-                            resp.put("error", "Video under 30 minutes");
+                            resp.put("error", "Video under 120 minutes");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                         /*

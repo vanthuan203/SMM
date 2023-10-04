@@ -31,6 +31,12 @@ public class AuthController {
 
     @Autowired
     LimitServiceRepository limitServiceRepository;
+
+    @Autowired
+    ServiceRepository serviceRepository;
+
+    @Autowired
+    VideoViewHistoryRepository videoViewHistoryRepository;
     @PostMapping(path = "login",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> login(@RequestBody Admin admin){
         JSONObject resp=new JSONObject();
@@ -275,12 +281,17 @@ public class AuthController {
         JSONArray jsonArray =new JSONArray();
         List<LimitService> limitServices=limitServiceRepository.getLimitServiceAll();
         for(int i=0;i<limitServices.size();i++){
+            Service service = serviceRepository.getInfoService(limitServices.get(i).getService());
             JSONObject obj = new JSONObject();
             obj.put("id", limitServices.get(i).getId());
             obj.put("user", limitServices.get(i).getUser());
             obj.put("service", limitServices.get(i).getService());
             obj.put("maxorder", limitServices.get(i).getMaxorder());
             obj.put("maxrunning", limitServices.get(i).getMaxrunning());
+            obj.put("countorder", videoViewRepository.getCountOrderByUserAndService(limitServices.get(i).getUser().trim(),limitServices.get(i).getService())==null?0:(int)(videoViewRepository.getCountOrderByUserAndService(limitServices.get(i).getUser().trim(),limitServices.get(i).getService())/service.getMax()));
+            obj.put("countdone", (videoViewRepository.getCountOrderRunningByUserAndService(limitServices.get(i).getUser().trim(),limitServices.get(i).getService())==null?
+                    ( videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(limitServices.get(i).getService(),limitServices.get(i).getUser().trim())==null?0:videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(limitServices.get(i).getService(),limitServices.get(i).getUser().trim())/service.getMax() ):
+                    ((videoViewRepository.getCountOrderRunningByUserAndService(limitServices.get(i).getUser().trim(),limitServices.get(i).getService())+(videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(limitServices.get(i).getService(),limitServices.get(i).getUser().trim())==null?0:videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(limitServices.get(i).getService(),limitServices.get(i).getUser().trim())))/service.getMax())));
             jsonArray.add(obj);
         }
         resp.put("accountlimit",jsonArray);

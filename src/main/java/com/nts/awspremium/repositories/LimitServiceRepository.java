@@ -14,7 +14,7 @@ public interface LimitServiceRepository extends JpaRepository<LimitService,Strin
     @Query(value = "SELECT maxrunning from limitservice where user=?1 and service=?2 limit 1",nativeQuery = true)
     public Integer getLimitRunningByServiceAndUser(String user,Integer service);
 
-    @Query(value = "SELECT * FROM  limitservice order by service asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM  limitservice where service in(select service from service where enabled=1) order by service asc",nativeQuery = true)
     public List<LimitService> getLimitServiceAll();
 
     @Query(value = "SELECT * FROM  limitservice where id=?1 limit 1",nativeQuery = true)

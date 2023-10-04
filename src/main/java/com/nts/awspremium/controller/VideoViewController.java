@@ -132,12 +132,10 @@ public class VideoViewController {
                         resp.put("videoview", "This video is not a livestream video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    /*
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 600&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==10) {
                         resp.put("videoview", "Video under 10 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                     */
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==15) {
                         resp.put("videoview", "Video under 15 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -496,8 +494,11 @@ public class VideoViewController {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
             if(limitService!=null){
-                if(((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?(videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())*service.getMax()):(videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())+videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())*service.getMax()))>=limitService*service.getMax())||limitService==0||
-                        (videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())>=setting.getMaxorder()*service.getMax())){
+                if(((videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())==null?
+                        (videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())==null?0:videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())):
+                        (videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService())+(videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim())==null?0:videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim()))))>=limitService*service.getMax())
+                        ||limitService==0
+                        ||(videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())==null?false:videoViewRepository.getCountOrderRunningByService(videoViews.get(i).getService())>=setting.getMaxorder()*service.getMax())){
                     continue;
                 }
             }
