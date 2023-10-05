@@ -230,7 +230,8 @@ public class ApiController {
                 if(last_order_done!=null){
                     if(System.currentTimeMillis()-last_order_done<0){
                         Date date = new Date(last_order_done);
-                        Format format = new SimpleDateFormat("HH:mm yyyy/MM/dd");
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm yyyy/MM/dd");
+                        format.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
                         resp.put("error", "Please order after "+ format.format(date)+ " GMT+7");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
