@@ -45,7 +45,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>5",nativeQuery = true)
+    @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8",nativeQuery = true)
     public Integer updateviewendthan5h(Integer viewend,String videoid);
 
 
