@@ -20,6 +20,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
@@ -223,6 +225,15 @@ public class ApiController {
                 if (videolist == null) {
                     resp.put("error", "Cant filter videoid from link");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                Long last_order_done=videoViewHistoryRepository.checkOrderDoneThan48h(videolist.trim());
+                if(last_order_done!=null){
+                    if(System.currentTimeMillis()-last_order_done<0){
+                        Date date = new Date(last_order_done);
+                        Format format = new SimpleDateFormat("HH:mm yyyy/MM/dd");
+                        resp.put("error", "Please order after "+ format.format(date)+ " GMT+7");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                 }
                 //VIDEOOOOOOOOOOOOOOO
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();

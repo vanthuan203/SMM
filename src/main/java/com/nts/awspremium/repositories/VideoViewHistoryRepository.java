@@ -48,6 +48,9 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8",nativeQuery = true)
     public Integer updateviewendthan5h(Integer viewend,String videoid);
 
+    @Query(value = "SELECT (enddate+48*60*60*1000) from videoviewhistory where videoid=?1 order by enddate desc limit 1",nativeQuery = true)
+    public Long checkOrderDoneThan48h(String videoid);
+
 
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories();
@@ -68,7 +71,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP())), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEnd(Integer limit);
 
-    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and viewend=0 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8 and service in(select service from service where checktime=1) order by enddate asc limit ?1",nativeQuery = true)
+    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and viewend=0 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<24 and service in(select service from service where checktime=1) order by enddate asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEndThan5h(Integer limit);
 
 
