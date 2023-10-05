@@ -79,12 +79,12 @@ public class VideoViewController {
             Integer limitService=limitServiceRepository.getLimitPendingByServiceAndUser(admins.get(0).getUsername().trim(),service.getService());
             if(limitService!=null){
                 if((videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())==null?false:videoViewRepository.getCountOrderByUserAndService(admins.get(0).getUsername().trim(),service.getService())>=limitService*service.getMax())||limitService==0){
-                    resp.put("error", "System busy try again");
+                    resp.put("videoview", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }else{
                 if(service.getChecktime()==1){
-                    resp.put("error", "System busy try again");
+                    resp.put("videoview", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
