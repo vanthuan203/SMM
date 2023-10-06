@@ -328,6 +328,15 @@ public class ApiController {
                          */
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
+
+                        int thread_set = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        if (thread_set <= setting.getMaxthread()){
+                            videoViewhnew.setThreadset(thread_set);
+                        }else{
+                            videoViewhnew.setThreadset(setting.getMaxthread());
+                            thread_set=setting.getMaxthread();
+                        }
+
                         if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                             /*
                             int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
@@ -344,13 +353,6 @@ public class ApiController {
                                 videoViewhnew.setTimestart(System.currentTimeMillis());
                             }
                              */
-                            int thread_set = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                            if (thread_set <= setting.getMaxthread()){
-                                videoViewhnew.setThreadset(thread_set);
-                            }else{
-                                videoViewhnew.setThreadset(setting.getMaxthread());
-                                thread_set=setting.getMaxthread();
-                            }
                             if(limitService!=null) {
                                 videoViewhnew.setMaxthreads(-1);
                                 videoViewhnew.setTimestart(0L);

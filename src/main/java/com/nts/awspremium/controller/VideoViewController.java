@@ -2837,9 +2837,18 @@ public class VideoViewController {
     @GetMapping(path = "updateThreadByThreadSet", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateThreadByThreadSet() {
         JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Random ran = new Random();
         try {
-            videoViewRepository.updateThreadByThreadSet();
+            Thread.sleep(ran.nextInt(1000));
+            videoViewRepository.updateThreadByThreadSet5m();
+            Thread.sleep(ran.nextInt(1000));
+            videoViewRepository.updateThreadByThreadSet10m();
+            Thread.sleep(ran.nextInt(1000));
+            videoViewRepository.updateThreadByThreadSet15m();
+            Thread.sleep(ran.nextInt(1000));
+            videoViewRepository.updateThreadByThreadSet20m();
+            Thread.sleep(ran.nextInt(1000));
+            videoViewRepository.updateThreadByThreadSet30m();
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -3475,11 +3484,7 @@ public class VideoViewController {
                 if(videoViewRepository.getCountOrderRunningByService(video.get(0).getService())==null?false:videoViewRepository.getCountOrderRunningByService(video.get(0).getService())>=setting.getMaxorder()*service.getMax()){
                     break;
                 }
-                int max_thread = service.getThread() + ((int) (video.get(0).getVieworder() / 500)-1) *25;
-                if (max_thread > setting.getMaxthread()) {
-                    max_thread = setting.getMaxthread();
-                }
-                video.get(0).setMaxthreads(max_thread);
+                video.get(0).setMaxthreads((int)(video.get(0).getThreadset()*0.05));
                 video.get(0).setTimestart(System.currentTimeMillis());
                 videoViewRepository.save(video.get(0));
 
