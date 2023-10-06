@@ -17,6 +17,7 @@ public class VideoView {
     private Long timestart;
     private Integer minstart;
     private Integer maxthreads;
+    private Integer threadset;
     private Long duration;
     private Integer service;
     private String note;
@@ -34,7 +35,7 @@ public class VideoView {
     public VideoView() {
     }
 
-    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid, Integer priority) {
+    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Integer threadset, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid, Integer priority) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -45,6 +46,7 @@ public class VideoView {
         this.timestart = timestart;
         this.minstart = minstart;
         this.maxthreads = maxthreads;
+        this.threadset = threadset;
         this.duration = duration;
         this.service = service;
         this.note = note;
@@ -242,5 +244,13 @@ public class VideoView {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
+    }
+
+    public Integer getThreadset() {
+        return threadset;
+    }
+
+    public void setThreadset(Integer threadset) {
+        this.threadset = threadset;
     }
 }

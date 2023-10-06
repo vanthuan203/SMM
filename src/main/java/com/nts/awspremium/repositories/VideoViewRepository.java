@@ -202,7 +202,10 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "DELETE FROM videoview where videoid=?1 and user='baohanh01@gmail.com'",nativeQuery = true)
     public void deletevideoByVideoIdBH(String videoid);
 
-
+    @Modifying
+    @Transactional
+    @Query(value = "update videoview set maxthreads=maxthreads+cast(threadset*0.05 as UNSIGNED) where maxthreads<threadset and maxthreads>0 and timestart>0",nativeQuery = true)
+    public void updateThreadByThreadSet();
     @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where checktime=0 and live=0)",nativeQuery = true)
     public List<VideoView> getOrderFullView();
 

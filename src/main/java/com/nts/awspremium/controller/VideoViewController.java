@@ -184,11 +184,18 @@ public class VideoViewController {
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     if(service.getChecktime()==1){
+                        int thread_set = service.getThread() + ((int) (videoView.getVieworder() / 1000) - 1) * setting.getLevelthread();
+                        if (thread_set <= setting.getMaxthread()){
+                            videoViewhnew.setThreadset(thread_set);
+                        }else{
+                            videoViewhnew.setThreadset(setting.getMaxthread());
+                        }
                         videoViewhnew.setTimestart(0L);
                         videoViewhnew.setMaxthreads(-1);
                     }else{
                         videoViewhnew.setTimestart(System.currentTimeMillis());
                         videoViewhnew.setMaxthreads(videoView.getMaxthreads());
+                        videoViewhnew.setThreadset(videoView.getMaxthreads());
                     }
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setNote(videoView.getNote());
@@ -479,12 +486,7 @@ public class VideoViewController {
                 JSONObject snippet = (JSONObject) video.get("snippet");
                 if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                     VideoView videoView = videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
-                    Service service = serviceRepository.getInfoService(videoView.getService());
-                    int max_thread = service.getThread() + ((int) (videoView.getVieworder() / 1000) - 1) * setting.getLevelthread();
-                    if (max_thread > setting.getMaxthread()) {
-                        max_thread = setting.getMaxthread();
-                    }
-                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()), max_thread, System.currentTimeMillis(), video.get("id").toString());
+                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()), (int)(videoView.getThreadset()*0.05), System.currentTimeMillis(), video.get("id").toString());
                 }
             } catch (Exception e) {
                 resp.put("status", e);
@@ -560,7 +562,7 @@ public class VideoViewController {
                     continue;
                 }
             }
-            videoViews.get(i).setMaxthreads(service.getThread());
+            videoViews.get(i).setMaxthreads((int)(videoViews.get(i).getThreadset()*0.05));
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
@@ -2826,6 +2828,22 @@ public class VideoViewController {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateThreadByThreadSet", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateThreadByThreadSet() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            videoViewRepository.updateThreadByThreadSet();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        catch (Exception e) {
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
