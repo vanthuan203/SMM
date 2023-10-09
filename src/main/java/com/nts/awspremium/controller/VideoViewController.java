@@ -2849,6 +2849,8 @@ public class VideoViewController {
             videoViewRepository.updateThreadByThreadSet20m();
             Thread.sleep(ran.nextInt(1000));
             videoViewRepository.updateThreadByThreadSet30m();
+            Thread.sleep(ran.nextInt(1000));
+            updateRunningOrder();
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }

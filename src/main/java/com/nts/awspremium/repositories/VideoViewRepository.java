@@ -94,7 +94,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public List<VideoView> getAllOrderBuffh();
 
 
-    @Query(value = "SELECT * FROM videoview where maxthreads=0 and timestart=0 order by priority desc,insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where maxthreads=0 and timestart=0 order by priority desc,insertdate asc limit 25",nativeQuery = true)
     public List<VideoView> getAllOrderPending();
 
     @Query(value = "SELECT * FROM videoview where maxthreads=-1 and user=?1 and vieworder<=?2 order by priority desc,insertdate asc limit ?3",nativeQuery = true)
