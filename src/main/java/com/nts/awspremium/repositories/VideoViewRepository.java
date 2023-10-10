@@ -142,7 +142,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public Integer getServiceByVideoId(String videoid,String geo);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timestart=?3 where timestart!=0 and videoid=?4",nativeQuery = true)
+    @Query(value = "UPDATE videoview set viewstart=?1,maxthreads=?2,timestart=?3 where timestart=0 and maxthreads=0 and videoid=?4",nativeQuery = true)
     public void updatePendingOrderByVideoId(Integer viewstart,Integer maxthreads,Long timestart,String videoid);
 
     @Modifying

@@ -425,7 +425,7 @@ public class VideoViewController {
                 JSONObject snippet = (JSONObject) video.get("snippet");
                 if (snippet.get("liveBroadcastContent").toString().equals("live")) {
                     VideoView videoView = videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
-                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()), videoView.getVieworder(), System.currentTimeMillis(), video.get("id").toString());
+                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()),videoView.getMaxthreads()+ (int)(videoView.getThreadset()*0.05), System.currentTimeMillis(), video.get("id").toString());
                 }
             } catch (Exception e) {
                 resp.put("status", e);
