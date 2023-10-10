@@ -382,62 +382,6 @@ public class VideoViewController {
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/updateRunningOrderLive", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRunningOrderLive() throws IOException, ParseException {
-        JSONObject resp = new JSONObject();
-        List<VideoView> listvideo = videoViewRepository.getAllOrderLivePending();
-        if (listvideo.size() == 0) {
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
-        String s_videoid = "";
-        for (int i = 0; i < listvideo.size(); i++) {
-            if (i == 0) {
-                s_videoid = listvideo.get(i).getVideoid();
-            } else {
-                s_videoid = s_videoid + "," + listvideo.get(i).getVideoid();
-            }
-            //System.out.println(s_videoid);
-        }
-        //VIDEOOOOOOOOOOOOOOO
-        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
-        Request request1 = null;
-
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyD5KyNKQtDkpgpav-R9Tgl1aYSPMN8AwUw&fields=items(id,snippet(liveBroadcastContent),statistics(viewCount))&part=snippet,statistics&id=" + s_videoid).get().build();
-
-        Response response1 = client1.newCall(request1).execute();
-
-        String resultJson1 = response1.body().string();
-
-        Object obj1 = new JSONParser().parse(resultJson1);
-
-        JSONObject jsonObject1 = (JSONObject) obj1;
-        JSONArray items = (JSONArray) jsonObject1.get("items");
-        JSONArray jsonArray = new JSONArray();
-        Iterator k = items.iterator();
-        Setting setting = settingRepository.getReferenceById(1L);
-        while (k.hasNext()) {
-            try {
-                JSONObject video = (JSONObject) k.next();
-                JSONObject obj = new JSONObject();
-                JSONObject statistics = (JSONObject) video.get("statistics");
-                JSONObject snippet = (JSONObject) video.get("snippet");
-                if (snippet.get("liveBroadcastContent").toString().equals("live")) {
-                    VideoView videoView = videoViewRepository.getVideoViewByVideoid(video.get("id").toString());
-                    videoViewRepository.updatePendingOrderByVideoId(Integer.parseInt(statistics.get("viewCount").toString()),videoView.getMaxthreads()+ (int)(videoView.getThreadset()*0.05), System.currentTimeMillis(), video.get("id").toString());
-                }
-            } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-
-        }
-        resp.put("status", "true");
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-
-
     @GetMapping(value = "/updateRunningOrder", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateRunningOrder() throws IOException, ParseException {
         JSONObject resp = new JSONObject();

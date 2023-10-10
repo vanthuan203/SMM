@@ -20,6 +20,11 @@ public interface SettingRepository  extends JpaRepository<Setting,Long> {
     @Query(value = "update setting set redirect=?1 where id=1",nativeQuery = true)
     public void updateRedirect(Integer redirect);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update setting set maxorder=?1 where id=1",nativeQuery = true)
+    public void updateMaxRunningBuffH(Integer redirect);
+
     @Query(value = "SELECT bonus FROM setting where id=1",nativeQuery = true)
     public Integer getBonus();
 

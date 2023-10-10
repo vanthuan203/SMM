@@ -192,6 +192,10 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * from videoview  where videoid=?1 limit 1",nativeQuery = true)
     public List<VideoView> getVideoBuffhById(String videoid);
 
+    @Query(value = "SELECT cast(((SELECT sum(threads) FROM AccPremium.vps where vpsoption='vn' and round((UNIX_TIMESTAMP()-timecheck/1000)/60) <=5)-\n" +
+            "(SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0)))/2000 as UNSIGNED)",nativeQuery = true)
+    public Integer getMaxRunningBuffH();
+
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM videoview where videoid=?1",nativeQuery = true)
