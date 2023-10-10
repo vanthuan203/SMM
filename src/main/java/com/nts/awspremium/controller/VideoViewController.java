@@ -729,7 +729,7 @@ public class VideoViewController {
                     }
                 }
                 try {
-                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(),videoViewList.get(i).getMaxthreads(), videoViewList.get(i).getVideoid());
+                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(), videoViewList.get(i).getVideoid());
                 } catch (Exception e) {
 
                 }
@@ -765,7 +765,7 @@ public class VideoViewController {
                     }
                 }
                 try {
-                    videoViewRepository.updateTimeViewOrderByVideoId(timebufftotal, viewbufftotal, videoBuffhList.get(i).getVideoid());
+                    videoViewRepository.updateTimeViewOrderByVideoId(timebufftotal, viewbufftotal,System.currentTimeMillis(), videoBuffhList.get(i).getVideoid());
                 } catch (Exception e) {
 
                 }

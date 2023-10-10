@@ -87,10 +87,10 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(maxthreads)FROM AccPremium.videoview where service in(select service from service where geo='vn' and checktime=0)",nativeQuery = true)
     public Integer getCountThreadView();
 
-    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0 ) order by timeupdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0) and timestart>0 order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderView();
 
-    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=1) order by timeupdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=1) and timestart>0 order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderBuffh();
 
 
@@ -131,7 +131,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public List<OrderViewRunning> getVideoViewById(String videoid);
 
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid" +
-            " where  time>=videoview.insertdate and service in(select service from service where checktime=0) group by videoview.videoid order by insertdate desc",nativeQuery = true)
+            " where  time>=videoview.insertdate and service in(select service from service where checktime=0) and timestart>0 group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalViewBuff();
 
     @Query(value = "SELECT videoview.videoid,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where time>=videoview.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videoview.videoid order by insertdate desc",nativeQuery = true)
@@ -147,8 +147,8 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE videoview set viewtotal=?1,view24h=?2,timeupdate=?3,maxthreads=?4 where videoid=?5",nativeQuery = true)
-    public void updateViewOrderByVideoId(Integer viewtotal,Integer view24h,Long timeupdate,Integer maxthreads,String videoid);
+    @Query(value = "UPDATE videoview set viewtotal=?1,view24h=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
+    public void updateViewOrderByVideoId(Integer viewtotal,Integer view24h,Long timeupdate,String videoid);
 
     @Modifying
     @Transactional
@@ -249,7 +249,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public List<VideoView> getOrderFullTime10m();
 
 
-    @Query(value = "SELECT videoview.videoid,sum(historyviewsum.duration) as total,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate and service in(select service from service where checktime=1) group by videoview.videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "SELECT videoview.videoid,sum(historyviewsum.duration) as total,count(*) as view FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where  time>=videoview.insertdate and service in(select service from service where checktime=1) and timestart>0 group by videoview.videoid order by insertdate desc",nativeQuery = true)
     public List<String> getTimeBuffVideo();
 
     @Query(value = "SELECT sum(maxthreads) FROM AccPremium.videoview where service in(select service from service where live=1)",nativeQuery = true)
@@ -257,7 +257,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE videoview set timetotal=?1,viewtotal=?2 where videoid=?3",nativeQuery = true)
-    public void updateTimeViewOrderByVideoId(Integer timetotal,Integer viewtotal, String videoid);
+    @Query(value = "UPDATE videoview set timetotal=?1,viewtotal=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
+    public void updateTimeViewOrderByVideoId(Integer timetotal,Integer viewtotal,Long timeupdate, String videoid);
 
 }
