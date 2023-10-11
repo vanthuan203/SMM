@@ -118,17 +118,17 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         List<Admin> admins=adminRepository.GetAdminByUser(admin.getUsername().trim());
-        float totalbalance=admin.getBalance()+admins.get(0).getBalance();
+
         admins.get(0).setVip(admin.getVip());
         admins.get(0).setMaxorder(admin.getMaxorder());
         admins.get(0).setDiscount(admin.getDiscount());
-        admins.get(0).setBalance(totalbalance);
+        admins.get(0).setBalance(adminRepository.updateBalanceFine(admin.getBalance(),admin.getUsername().trim()));
         admins.get(0).setRate(admin.getRate());
         if(admin.getBalance()>0){
             Balance balance=new Balance();
             balance.setUser(admin.getUsername().trim());
             balance.setTime(System.currentTimeMillis());
-            balance.setTotalblance(totalbalance);
+            balance.setTotalblance(adminRepository.updateBalanceFine(admin.getBalance(),admin.getUsername().trim()));
             balance.setBalance(admin.getBalance());
             balance.setNote("Admin nạp tiền");
             balanceRepository.save(balance);
@@ -302,6 +302,7 @@ public class AuthController {
 
 
     }
+
     @GetMapping(path = "updateRedirectCron",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateRedirectCron(){
         Setting setting = settingRepository.getReferenceById(1L);

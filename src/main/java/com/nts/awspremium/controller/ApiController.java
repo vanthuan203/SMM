@@ -402,12 +402,14 @@ public class ApiController {
                             dataOrderRepository.save(dataOrder);
                         }
 
-                        float balance_new = admins.get(0).getBalance() - priceorder;
+                        /*float balance_new = admins.get(0).getBalance() - priceorder;
                         adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
+                         */
+
                         Balance balance = new Balance();
                         balance.setUser(admins.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(balance_new);
+                        balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
                         balance.setBalance(-priceorder);
                         balance.setService(data.getService());
                         balance.setNote("Order " + data.getQuantity() + " view cho video " + videoViewhnew.getVideoid());

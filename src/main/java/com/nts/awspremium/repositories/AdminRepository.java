@@ -34,6 +34,9 @@ public interface AdminRepository extends JpaRepository<Admin,Long> {
     @Query(value = "update admin set balance=?1 where username=?2",nativeQuery = true)
     public Integer updateBalance(Float balance,String username);
 
+    @Query(value = "call update_balance(?1,?2)",nativeQuery = true)
+    public Float updateBalanceFine(Float a,String username);
+
     @Query(value = "Select username from admin",nativeQuery = true)
     public List<String> GetAllUser();
 
