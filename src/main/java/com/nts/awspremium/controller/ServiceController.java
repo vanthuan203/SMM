@@ -298,16 +298,24 @@ public class ServiceController {
 
 
     @GetMapping(path = "getallservice",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getallservice(@RequestHeader(defaultValue = "") String Authorization){
+    ResponseEntity<String> getallservice(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String role){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        System.out.println(admins.get(0).getUsername());
         if(Authorization.length()==0|| admins.size()==0){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
-        List<String > allservice=serviceRepository.GetAllService();
+        List<String > allservice;
+        if(role.equals("ROLE_ADMIN")){
+            System.out.println("ROLE_ADMIN");
+            allservice=serviceRepository.GetAllService();
+        }else{
+            System.out.println("ROLE_USER");
+            allservice=serviceRepository.GetAllServiceEnabled();
+        }
         String listuser="";
         for(int i=0;i<allservice.size();i++){
             if(i==0){

@@ -52,8 +52,11 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "update admin set balance=?1 where username=?2",nativeQuery = true)
     public Integer updateBalance(Float balance,String username);
 
-    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where enabled=1",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service ",nativeQuery = true)
     public List<String> GetAllService();
+
+    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where enabled=1",nativeQuery = true)
+    public List<String> GetAllServiceEnabled();
 
     @Query(value = "Select * from admin",nativeQuery = true)
     public List<Admin> GetAllUsers();

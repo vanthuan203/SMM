@@ -2473,7 +2473,12 @@ public class VideoViewController {
         try {
             List<String> ordersArrInput = new ArrayList<>();
             ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
-            List<VideoViewHistory> orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput);
+            List<VideoViewHistory> orderRunnings;
+            if(admins.get(0).getRole().equals("ROLE_ADMIN")){
+                orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput);
+            }else{
+                orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput,admins.get(0).getUsername().trim());
+            }
             if (orderRunnings.size() == 0) {
                 resp.put("status", "fail");
                 resp.put("total", orderRunnings.size());
@@ -2482,7 +2487,12 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
-                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(),orderRunnings.get(i).getOrderid());
+                String infoQ;
+                if(admins.get(0).getRole().equals("ROLE_ADMIN")) {
+                    infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid());
+                }else {
+                    infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid(),admins.get(0).getUsername().trim());
+                }
                 if(infoQ!=null){
                     obj.put("info", infoQ);
                 }else{
