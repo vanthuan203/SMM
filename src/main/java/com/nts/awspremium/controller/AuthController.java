@@ -118,17 +118,17 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         List<Admin> admins=adminRepository.GetAdminByUser(admin.getUsername().trim());
-
+        Float balance_update=adminRepository.updateBalanceFine(admin.getBalance(),admin.getUsername().trim());
         admins.get(0).setVip(admin.getVip());
         admins.get(0).setMaxorder(admin.getMaxorder());
         admins.get(0).setDiscount(admin.getDiscount());
-        admins.get(0).setBalance(adminRepository.updateBalanceFine(admin.getBalance(),admin.getUsername().trim()));
+        admins.get(0).setBalance(balance_update);
         admins.get(0).setRate(admin.getRate());
         if(admin.getBalance()>0){
             Balance balance=new Balance();
             balance.setUser(admin.getUsername().trim());
             balance.setTime(System.currentTimeMillis());
-            balance.setTotalblance(adminRepository.updateBalanceFine(admin.getBalance(),admin.getUsername().trim()));
+            balance.setTotalblance(balance_update);
             balance.setBalance(admin.getBalance());
             balance.setNote("Admin nạp tiền");
             balanceRepository.save(balance);

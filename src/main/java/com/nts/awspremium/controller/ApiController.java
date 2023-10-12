@@ -266,10 +266,6 @@ public class ApiController {
                             resp.put("error", "This video in process");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (service == null) {
-                            resp.put("error", "Service not found ");
-                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                        }
                         if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0&&service.getLive()==0) {
                             resp.put("error", "This video is a livestream video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -405,11 +401,11 @@ public class ApiController {
                         /*float balance_new = admins.get(0).getBalance() - priceorder;
                         adminRepository.updateBalance(balance_new, admins.get(0).getUsername());
                          */
-
+                        Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                         Balance balance = new Balance();
                         balance.setUser(admins.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(-priceorder);
                         balance.setService(data.getService());
                         balance.setNote("Order " + data.getQuantity() + " view cho video " + videoViewhnew.getVideoid());

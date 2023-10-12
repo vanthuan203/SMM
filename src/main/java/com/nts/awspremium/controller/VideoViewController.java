@@ -204,10 +204,11 @@ public class VideoViewController {
                     videoViewhnew.setMinstart(service.getMaxtime());
                     videoViewRepository.save(videoViewhnew);
 
+                    Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                     Balance balance = new Balance();
                     balance.setUser(admins.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                    balance.setTotalblance(balance_update);
                     balance.setBalance(-priceorder);
                     balance.setService(videoView.getService());
                     balance.setNote("Order " + videoView.getVieworder() + " view cho video " + videoViewhnew.getVideoid());
@@ -1010,11 +1011,11 @@ public class VideoViewController {
                                     dataOrder.setListkey(list_key);
                                     dataOrderRepository.save(dataOrder);
                                 }
-
+                                Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                                 Balance balance = new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
                                 balance.setTime(System.currentTimeMillis());
-                                balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                                balance.setTotalblance(balance_update);
                                 balance.setBalance(-priceorder);
                                 balance.setService(service.getService());
                                 balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
@@ -1184,11 +1185,11 @@ public class VideoViewController {
                                     dataOrder.setListkey(list_key);
                                     dataOrderRepository.save(dataOrder);
                                 }
-
+                                Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                                 Balance balance = new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
                                 balance.setTime(System.currentTimeMillis());
-                                balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                                balance.setTotalblance(balance_update);
                                 balance.setBalance(-priceorder);
                                 balance.setService(service.getService());
                                 balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
@@ -1365,11 +1366,11 @@ public class VideoViewController {
                                     dataOrder.setListkey(list_key);
                                     dataOrderRepository.save(dataOrder);
                                 }
-
+                                Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                                 Balance balance = new Balance();
                                 balance.setUser(admins.get(0).getUsername().trim());
                                 balance.setTime(System.currentTimeMillis());
-                                balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                                balance.setTotalblance(balance_update);
                                 balance.setBalance(-priceorder);
                                 balance.setService(service.getService());
                                 balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
@@ -1548,10 +1549,11 @@ public class VideoViewController {
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         //hoàn tiền & add thong báo số dư
                         videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
+                        Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim());
                         Balance balance = new Balance();
                         balance.setUser(user.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoViewHistories.get(i).getService());
                         balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
@@ -1701,10 +1703,11 @@ public class VideoViewController {
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         //hoàn tiền & add thong báo số dư
                         videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
+                        Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim());
                         Balance balance = new Balance();
                         balance.setUser(user.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoViewHistories.get(i).getService());
                         balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
@@ -1790,10 +1793,11 @@ public class VideoViewController {
                 videoViewHistoryRepository.save(videoViewHistories.get(i));
                 //hoàn tiền & add thong báo số dư
                 videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
+                Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser());
                 Balance balance = new Balance();
                 balance.setUser(user.get(0).getUsername().trim());
                 balance.setTime(System.currentTimeMillis());
-                balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser()));
+                balance.setTotalblance(balance_update);
                 balance.setBalance(price_refund);
                 balance.setService(videoViewHistories.get(i).getService());
                 balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
@@ -1939,10 +1943,11 @@ public class VideoViewController {
                     }
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     //hoàn tiền & add thong báo số dư
+                    Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser());
                     Balance balance = new Balance();
                     balance.setUser(user.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser()));
+                    balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoViewHistories.get(i).getService());
                     balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
@@ -1972,10 +1977,11 @@ public class VideoViewController {
                     }
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     //hoàn tiền & add thong báo số dư
+                    Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser());
                     Balance balance = new Balance();
                     balance.setUser(user.get(0).getUsername().trim());
                     balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser()));
+                    balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoViewHistories.get(i).getService());
                     balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
@@ -2377,11 +2383,11 @@ public class VideoViewController {
                             dataOrder.setListkey(list_key);
                             dataOrderRepository.save(dataOrder);
                         }
-
+                        Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                         Balance balance = new Balance();
                         balance.setUser(admins.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(-priceorder);
                         balance.setService(service.getService());
                         balance.setNote("Bảo hành " + baohanh + " view cho video " + videoViewHistories.get(i).getVideoid());
@@ -2677,10 +2683,11 @@ public class VideoViewController {
                     }
                     //hoàn tiền & add thong báo số dư
                     if (viewthan > 0) {
+                        Float balance_update=adminRepository.updateBalanceFine(price_refund,videoBuffh.get(0).getUser().trim());
                         Balance balance = new Balance();
                         balance.setUser(user.get(0).getUsername().trim());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,videoBuffh.get(0).getUser().trim()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoBuffh.get(0).getService());
                         balance.setNote("Hoàn " + (viewthan) + " view cho " + videoBuffh.get(0).getVideoid());
@@ -3100,10 +3107,11 @@ public class VideoViewController {
 
                     //
                     if (timethan != 0) {
+                        Float balance_update=adminRepository.updateBalanceFine(-priceorder,videoBuffh.getUser());
                         Balance balance = new Balance();
                         balance.setUser(videoBuffh.getUser());
                         balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(adminRepository.updateBalanceFine(-priceorder,videoBuffh.getUser()));
+                        balance.setTotalblance(balance_update);
                         balance.setBalance(-priceorder);
                         balance.setService(videoBuffh.getService());
                         if (priceorder < 0) {
@@ -3176,10 +3184,11 @@ public class VideoViewController {
                 videoViewHistoryRepository.save(video);
                 List<Admin> user = adminRepository.getAdminByUser(video.getUser());
                 //
+                Float balance_update=adminRepository.updateBalanceFine(price_refund,video.getUser().trim());
                 Balance balance = new Balance();
                 balance.setUser(user.get(0).getUsername().trim());
                 balance.setTime(System.currentTimeMillis());
-                balance.setTotalblance(adminRepository.updateBalanceFine(price_refund,video.getUser().trim()));
+                balance.setTotalblance(balance_update);
                 balance.setBalance(price_refund);
                 balance.setService(video.getService());
                 balance.setNote("Hoàn " + (video.getVieworder()) + " view cho " + video.getVideoid());
