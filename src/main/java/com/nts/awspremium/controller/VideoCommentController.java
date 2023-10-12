@@ -69,12 +69,10 @@ public class VideoCommentController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             Service service = serviceRepository.getService(videoView.getService());
-            /*
             if (service == null) {
                 resp.put("videoview", "Service not found ");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-             */
             if (videoView.getVieworder()>service.getMax() || videoView.getVieworder()<service.getMin()) {
                 resp.put("error", "Min/Max order is: "+service.getMin()+"/"+service.getMax());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
