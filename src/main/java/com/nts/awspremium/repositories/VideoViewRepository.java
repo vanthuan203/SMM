@@ -75,6 +75,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) from videoview where service=?1 and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByService(Integer service);
 
+    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1) and maxthreads!=-1",nativeQuery = true)
+    public Integer getCountOrderRunningByCheckTime();
+
     @Query(value = "SELECT count(*) from videoview where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 

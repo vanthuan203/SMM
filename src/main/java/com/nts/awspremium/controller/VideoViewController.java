@@ -476,8 +476,8 @@ public class VideoViewController {
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/updateRunningOrder703Cron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRunningOrder703Cron() throws IOException, ParseException {
+    @GetMapping(value = "/updateRunningOrder703CronOff", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder703CronOff() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
         Setting setting = settingRepository.getReferenceById(1L);
@@ -511,6 +511,45 @@ public class VideoViewController {
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
 
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateRunningOrder703Cron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrder703Cron() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderPending701();
+        Setting setting = settingRepository.getReferenceById(1L);
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour>=11&&hour<14){
+            resp.put("status", "fail");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        for (int i = 0; i < videoViews.size(); i++) {
+            Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
+            Integer CountOrderRunningByService=videoViewRepository.getCountOrderRunningByCheckTime();
+            if((CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorder()*service.getMax())){
+                break;
+            }
+            Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+            Integer CountOrderRunningByUserAndService=videoViewRepository.getCountOrderRunningByUserAndService(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
+            Integer CountOrderDoneByServiceAndUserInOneDay=videoViewHistoryRepository.getCountOrderDoneByServiceAndUserInOneDay(videoViews.get(i).getService(),videoViews.get(i).getUser().trim());
+            if(limitService!=null){
+                if(((CountOrderRunningByUserAndService==null?
+                        (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
+                        (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
+                        ||limitService==0
+                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorder()*service.getMax())){
+                    continue;
+                }
+            }
+            videoViews.get(i).setMaxthreads((int)(videoViews.get(i).getThreadset()*0.05));
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
         }
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
