@@ -312,7 +312,7 @@ public class AuthController {
         }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
             settingRepository.updateRedirect(settingRepository.getRedirect()>=1000?1000:(settingRepository.getRedirect()+100));
         }
-        settingRepository.updateMaxRunningBuffH(videoViewRepository.getMaxRunningBuffH());
+        settingRepository.updateMaxRunningBuffH(videoViewRepository.getMaxRunningBuffH()<=0?0:videoViewRepository.getMaxRunningBuffH());
         resp.put("redirect=",settingRepository.getRedirect());
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
