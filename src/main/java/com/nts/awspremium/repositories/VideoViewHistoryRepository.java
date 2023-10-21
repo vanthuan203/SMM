@@ -57,11 +57,17 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * from videoviewhistory where  videoid=?1 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByVideoId(String videoid);
 
-    @Query(value = "SELECT * from videoviewhistory where  videoid in (?1) or orderid in (?1) or channelid in (?1) order by enddate desc",nativeQuery = true)
+    @Query(value = "SELECT * from videoviewhistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
 
-    @Query(value = "SELECT * from videoviewhistory where  (videoid in (?1) or orderid in (?1) or channelid in (?1)) and user=?2 order by enddate desc",nativeQuery = true)
+    @Query(value = "SELECT * from videoviewhistory where channelid in (?1) order by enddate desc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoViewHistoriesByListChannelId(List<String> list_orderid);
+
+    @Query(value = "SELECT * from videoviewhistory where  (videoid in (?1) or orderid in (?1)) and user=?2 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid,String user);
+
+    @Query(value = "SELECT * from videoviewhistory where channelid in (?1) and user=?2 order by enddate desc",nativeQuery = true)
+    public List<VideoViewHistory> getVideoViewHistoriesByListChannelId(List<String> list_orderid,String user);
     @Query(value = "SELECT orderid,videoid,price,vieworder,viewstart,viewtotal,service,insertdate,timestart,cancel,enddate,timecheckbh,viewend,user,note from videoviewhistory where videoid=?1 and orderid<?2 order by orderid desc limit 1",nativeQuery = true)
     public String getInfoSumOrderByVideoId(String videoid,Long orderid);
 
