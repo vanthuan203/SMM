@@ -3238,10 +3238,9 @@ public class VideoViewController {
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
-                if(checkview==1 && (service.getChecktime()==1?video.getViewend()>0:true && video.getCancel()!=1) && (video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true) ){
+                if(checkview==1 && (service.getChecktime()==1?video.getViewend()>0:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
 
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
                     Request request1 = null;
                     List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
                     request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + video.getVideoid()).get().build();
@@ -3263,7 +3262,7 @@ public class VideoViewController {
                         }
                     }
                 }
-                if(((viewcheck!=-1 && viewcheck<video.getVieworder()+video.getViewstart()) || (service.getChecktime()==1?(video.getViewend()<video.getVieworder()+video.getViewstart()):false) || checkview==0) && (service.getChecktime()==1?video.getViewend()>0:true && video.getCancel()!=1) ){
+                if(((viewcheck!=-1 && viewcheck<video.getVieworder()+video.getViewstart()) || (service.getChecktime()==1?(video.getViewend()<video.getVieworder()+video.getViewstart()):false) || checkview==0) && ((service.getChecktime()==1?video.getViewend()>0:true) && video.getCancel()!=1) ){
                     float price_refund=video.getPrice();
                     video.setViewtotal(0);
                     video.setCancel(1);
@@ -3284,6 +3283,13 @@ public class VideoViewController {
                     balance.setService(video.getService());
                     balance.setNote("Hoàn " + (video.getVieworder()) + " view cho " + video.getVideoid());
                     balanceRepository.save(balance);
+                }else if(service.getChecktime()==1 && video.getTimecheckbh()==0 && video.getViewend()>0 && video.getCancel()!=1 && viewcheck>=0){
+                    video.setViewend(viewcheck);
+                    videoViewHistoryRepository.save(video);
+                }else if(service.getChecktime()==0 && viewcheck>=0){
+                    video.setViewend(viewcheck);
+                    video.setTimecheckbh(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(video);
                 }
                 String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video.getVideoid(),video.getOrderid());
                 JSONObject obj = new JSONObject();
@@ -3337,8 +3343,14 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                htviewfindorder(video.getOrderid(),"1");
-                VideoViewHistory video_refil = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                Service service = serviceRepository.getInfoService(video.getService());
+                VideoViewHistory video_refil;
+                if(service.getChecktime()==1){
+                    video_refil=video;
+                }else{
+                    htviewfindorder(video.getOrderid(),"1");
+                    video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                }
                 JSONObject obj = new JSONObject();
                 String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video_refil.getVideoid(),video_refil.getOrderid());
                 if(infoQ!=null){
