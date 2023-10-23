@@ -428,7 +428,7 @@ public class VideoCommentController {
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
                 if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getCancel() > 0) {
@@ -606,7 +606,7 @@ public class VideoCommentController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if(orderid!=videoViewHistories.get(0).getOrderid()){
-                    resp.put("videoview", "Không đủ ĐK hoàn tiền!");
+                    resp.put("videoview", "Không đủ ĐK refund!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
@@ -614,7 +614,7 @@ public class VideoCommentController {
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
                 if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getCancel() > 0) {
@@ -631,7 +631,7 @@ public class VideoCommentController {
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 24) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    obj.put("videoview", "Chưa đủ time check  hoàn tiền!");
+                    obj.put("videoview", "Chưa đủ time check refund!");
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
 
@@ -692,10 +692,10 @@ public class VideoCommentController {
                         balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoViewHistories.get(i).getService());
-                        balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                        balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                         balanceRepository.save(balance);
 
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Hoàn  " + viewthan + " view!");
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
                         obj.put("videoview", "true");
                         obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
                         obj.put("balance", admins.get(0).getBalance());
@@ -757,7 +757,7 @@ public class VideoCommentController {
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
                 if ((videoViewHistories.get(0).getRefund()==null?0:videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getCancel() > 0) {
@@ -1086,7 +1086,7 @@ public class VideoCommentController {
                     balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoBuffh.get(0).getService());
-                    balance.setNote("Hoàn " + (viewthan) + " cmt cho " + videoBuffh.get(0).getVideoid());
+                    balance.setNote("Refund " + (viewthan) + " cmt cho " + videoBuffh.get(0).getVideoid());
                     balanceRepository.save(balance);
                 } else {
                     videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
@@ -1353,7 +1353,7 @@ public class VideoCommentController {
                         balance.setBalance(-priceorder);
                         balance.setService(videoBuffh.getService());
                         if (priceorder < 0) {
-                            balance.setNote("Hoàn " + (-timethan) + " view cho " + videoBuffh.getVideoid());
+                            balance.setNote("Refund " + (-timethan) + " view cho " + videoBuffh.getVideoid());
                         } else if (timethan != 0) {
                             balance.setNote("Order thêm " + timethan + " view cho " + videoBuffh.getVideoid());
                         }
@@ -1424,7 +1424,7 @@ public class VideoCommentController {
                 balance.setTotalblance(balance_update);
                 balance.setBalance(price_refund);
                 balance.setService(video.getService());
-                balance.setNote("Hoàn " + (video.getCommentorder()) + " comment cho " + video.getVideoid());
+                balance.setNote("Refund " + (video.getCommentorder()) + " comment cho " + video.getVideoid());
                 balanceRepository.save(balance);
 
                 JSONObject obj = new JSONObject();

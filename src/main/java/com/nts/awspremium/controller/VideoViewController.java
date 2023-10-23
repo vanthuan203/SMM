@@ -941,7 +941,7 @@ public class VideoViewController {
             for (int i = 0; i < videoViewHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
                 if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getCancel() > 0) {
@@ -1074,7 +1074,7 @@ public class VideoViewController {
                             } else {
                                 videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                                 videoViewHistoryRepository.save(videoViewHistories.get(i));
-                                obj.put("videoview", "View check < view start! (Chọn hoàn tiền)");
+                                obj.put("videoview", "View check < view start! (Chọn refund)");
                                 return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                             }
                         } else {
@@ -1496,7 +1496,7 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 /*
                 if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
@@ -1505,7 +1505,7 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getPrice() == 0) {
-                    resp.put("videoview", "Đã hoàn 100%");
+                    resp.put("videoview", "Đã refund 100%");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
@@ -1517,7 +1517,7 @@ public class VideoViewController {
 
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 12) {
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Hoàn sau: " + dateFormat.format((new Date(videoViewHistories.get(i).getEnddate() + (12 * 60 * 60 * 1000)))));
+                    obj.put("videoview", "Refund sau: " + dateFormat.format((new Date(videoViewHistories.get(i).getEnddate() + (12 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
                 /*
@@ -1527,7 +1527,7 @@ public class VideoViewController {
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Hoàn sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
+                        obj.put("videoview", "Refund sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -1599,10 +1599,10 @@ public class VideoViewController {
                         balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoViewHistories.get(i).getService());
-                        balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                        balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                         balanceRepository.save(balance);
 
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Hoàn  " + viewthan + " view!");
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
                         obj.put("videoview", "true");
                         obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
                         obj.put("balance", admins.get(0).getBalance());
@@ -1650,7 +1650,7 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 /*
                 if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
@@ -1659,7 +1659,7 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewHistories.get(0).getPrice() == 0) {
-                    resp.put("videoview", "Đã hoàn 100%");
+                    resp.put("videoview", "Đã refund 100%");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
@@ -1675,7 +1675,7 @@ public class VideoViewController {
                         videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                         videoViewHistoryRepository.save(videoViewHistories.get(i));
                         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Hoàn sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
+                        obj.put("videoview", "Refund sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -1755,10 +1755,10 @@ public class VideoViewController {
                         balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoViewHistories.get(i).getService());
-                        balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                        balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                         balanceRepository.save(balance);
 
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Hoàn  " + viewthan + " view!");
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
                         obj.put("videoview", "true");
                         obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
                         obj.put("balance", admins.get(0).getBalance());
@@ -1818,7 +1818,7 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
                 if (videoViewHistories.get(0).getPrice() == 0) {
-                    resp.put("videoview", "Đã hoàn 100%");
+                    resp.put("videoview", "Đã refund 100%");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
@@ -1845,10 +1845,10 @@ public class VideoViewController {
                 balance.setTotalblance(balance_update);
                 balance.setBalance(price_refund);
                 balance.setService(videoViewHistories.get(i).getService());
-                balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                 balanceRepository.save(balance);
 
-                obj.put(videoViewHistories.get(i).getVideoid().trim(), "Hoàn  " + viewthan + " view!");
+                obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
                 obj.put("videoview", "true");
                 obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
                 obj.put("balance", admins.get(0).getBalance());
@@ -1960,7 +1960,7 @@ public class VideoViewController {
 
                 if (System.currentTimeMillis() - videoViewHistories.get(i).getEnddate() < 1000 * 3600 * 12) {
                     DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                    obj.put("videoview", "Hoàn sau: " + dateFormat.format((new Date(videoViewHistories.get(i).getEnddate() + (12 * 60 * 60 * 1000)))));
+                    obj.put("videoview", "Refund sau: " + dateFormat.format((new Date(videoViewHistories.get(i).getEnddate() + (12 * 60 * 60 * 1000)))));
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
                 int viewFix = videoViewHistories.get(i).getVieworder() > videoViewHistories.get(i).getViewtotal() ? videoViewHistories.get(i).getViewtotal() : videoViewHistories.get(i).getVieworder();
@@ -1995,7 +1995,7 @@ public class VideoViewController {
                     balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoViewHistories.get(i).getService());
-                    balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                    balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                     balanceRepository.save(balance);
                     viewBH = viewBH - viewthan;
                 } else {
@@ -2029,12 +2029,12 @@ public class VideoViewController {
                     balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoViewHistories.get(i).getService());
-                    balance.setNote("Hoàn " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                    balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
                     balanceRepository.save(balance);
                     viewBH = viewBH - viewthan;
                 }
             }
-            obj.put(videoViewHistories.get(0).getVideoid().trim(), "Hoàn  " + viewthan_sum + " view!");
+            obj.put(videoViewHistories.get(0).getVideoid().trim(), "Refund  " + viewthan_sum + " view!");
             obj.put("videoview", "true");
             obj.put("videoid", videoViewHistories.get(0).getVideoid().trim());
             obj.put("balance", admins.get(0).getBalance());
@@ -2091,7 +2091,7 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 /*
                 if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã hoàn trước đó!");
+                    resp.put("videoview", "Đã refund trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
@@ -2749,7 +2749,7 @@ public class VideoViewController {
                         balance.setTotalblance(balance_update);
                         balance.setBalance(price_refund);
                         balance.setService(videoBuffh.get(0).getService());
-                        balance.setNote("Hoàn " + (viewthan) + " view cho " + videoBuffh.get(0).getVideoid());
+                        balance.setNote("Refund " + (viewthan) + " view cho " + videoBuffh.get(0).getVideoid());
                         balanceRepository.save(balance);
                     }
                 } else {
@@ -3174,7 +3174,7 @@ public class VideoViewController {
                         balance.setBalance(-priceorder);
                         balance.setService(videoBuffh.getService());
                         if (priceorder < 0) {
-                            balance.setNote("Hoàn " + (-timethan) + " view cho " + videoBuffh.getVideoid());
+                            balance.setNote("Refund " + (-timethan) + " view cho " + videoBuffh.getVideoid());
                         } else if (timethan != 0) {
                             balance.setNote("Order thêm " + timethan + " view cho " + videoBuffh.getVideoid());
                         }
@@ -3235,6 +3235,7 @@ public class VideoViewController {
             String[] videoidIdArr = orderid.split(",");
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
+                String status="No refunds";
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
@@ -3263,6 +3264,7 @@ public class VideoViewController {
                     }
                 }
                 if(((viewcheck!=-1 && viewcheck<video.getVieworder()+video.getViewstart()) || (service.getChecktime()==1?(video.getViewend()<video.getVieworder()+video.getViewstart()):false) || checkview==0) && ((service.getChecktime()==1?video.getViewend()>0:true) && video.getCancel()!=1) ){
+                    status="Refunded";
                     float price_refund=video.getPrice();
                     video.setViewtotal(0);
                     video.setCancel(1);
@@ -3281,7 +3283,7 @@ public class VideoViewController {
                     balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(video.getService());
-                    balance.setNote("Hoàn " + (video.getVieworder()) + " view cho " + video.getVideoid());
+                    balance.setNote("Refund " + (video.getVieworder()) + " view cho " + video.getVideoid());
                     balanceRepository.save(balance);
                 }else if(service.getChecktime()==1 && video.getTimecheckbh()==0 && video.getViewend()>0 && video.getCancel()!=1 && viewcheck>=0){
                     video.setViewend(viewcheck);
@@ -3316,6 +3318,7 @@ public class VideoViewController {
                 obj.put("vieworder", video.getVieworder());
                 obj.put("price", video.getPrice());
                 obj.put("service", video.getService());
+                obj.put("status", status);
 
                 jsonArray.add(obj);
             }
@@ -3342,6 +3345,7 @@ public class VideoViewController {
             String[] videoidIdArr = orderid.split(",");
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
+                String status="No refunds";
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
@@ -3350,6 +3354,9 @@ public class VideoViewController {
                 }else{
                     htviewfindorder(video.getOrderid(),"1");
                     video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                    if(video.getPrice()!=video_refil.getPrice()){
+                        status="Refunded";
+                    }
                 }
                 JSONObject obj = new JSONObject();
                 String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video_refil.getVideoid(),video_refil.getOrderid());
@@ -3376,6 +3383,7 @@ public class VideoViewController {
                 obj.put("vieworder", video_refil.getVieworder());
                 obj.put("price", video_refil.getPrice());
                 obj.put("service", video_refil.getService());
+                obj.put("status", status);
 
                 jsonArray.add(obj);
             }
