@@ -3239,7 +3239,8 @@ public class VideoViewController {
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
-                if(checkview==1 && (service.getChecktime()==1?video.getViewend()>0:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
+                System.out.println("Oke: "+videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid()));
+                if(checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>0:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
 
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
                     Request request1 = null;
@@ -3349,7 +3350,7 @@ public class VideoViewController {
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
-                if(service.getChecktime()==1){
+                if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
                     video_refil=video;
                 }else{
                     htviewfindorder(video.getOrderid(),"1");
