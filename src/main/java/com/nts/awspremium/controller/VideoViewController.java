@@ -3348,6 +3348,7 @@ public class VideoViewController {
             for (int i = 0; i < videoidIdArr.length; i++) {
                 String status="No refunds";
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                Float price_old=video.getPrice();
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
                 if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
@@ -3355,7 +3356,7 @@ public class VideoViewController {
                 }else{
                     htviewfindorder(video.getOrderid(),"1");
                     video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                    if(video.getPrice()!=video_refil.getPrice()){
+                    if(price_old!=video_refil.getPrice()){
                         status="Refunded";
                     }
                 }
