@@ -11,7 +11,7 @@ public class VideoViewHistory {
     private String videotitle;
     private String channelid;
     private Integer viewstart;
-    private Integer viewend=0;
+    private Integer viewend=-1;
     private Integer viewtotal;
     private Integer timetotal;
     private Integer cancel;
@@ -25,8 +25,8 @@ public class VideoViewHistory {
     private String note;
     private String user;
     private Float price;
-    private Long timecheck;
-    private Integer numbh;
+    private Long timecheck=0L;
+    private Integer numbh=0;
     private Integer refund=0;
     private Integer waitbh=0;
     private Long timecheckbh=0L;
