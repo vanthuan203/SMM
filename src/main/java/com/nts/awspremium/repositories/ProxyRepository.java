@@ -150,6 +150,12 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "DELETE FROM proxyhistory where round((UNIX_TIMESTAMP()-id/1000)/60/60) >3",nativeQuery = true)
     public Integer deleteProxyHisThan24h();
 
+
+    @Modifying
+    @Transactional
+    @Query(value = "update AccPremium.proxy set vps='',running=0 where proxy in (SELECT proxy FROM AccPremium.account where geo=?1);",nativeQuery = true)
+    public Integer resetProxyByGeo(String geo);
+
     @Modifying
     @Transactional
     @Query(value = "update proxy set running=0,vps='' where  proxy not in(select proxy from history where running=1) and running=1",nativeQuery = true)

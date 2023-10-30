@@ -297,6 +297,30 @@ public class VpsController {
         }
     }
 
+    @GetMapping(value = "DellALL",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> DellALL(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            vpsRepository.resetGetAcountAll("Fdfdfd");
+            historyViewRepository.deleteHistoryViewByGeo("fdfdf");
+            proxyRepository.resetProxyByGeo("fdfdf");
+            accountRepository.resetAccountByExpiredByGeo("fdfdf");
+            accountRepository.updateGeoAccountNew("Fdfdfd","fdfdfdf");
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "resetAll",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> resetAll(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();

@@ -51,9 +51,9 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT (enddate+24*60*60*1000) from videoviewhistory where videoid=?1 order by enddate desc limit 1",nativeQuery = true)
     public Long checkOrderDoneThan48h(String videoid);
 
-
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories();
+
     @Query(value = "SELECT * from videoviewhistory where  videoid=?1 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByVideoId(String videoid);
 
@@ -68,6 +68,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * from videoviewhistory where channelid in (?1) and user=?2 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByListChannelId(List<String> list_orderid,String user);
+
     @Query(value = "SELECT orderid,videoid,price,vieworder,viewstart,viewtotal,service,insertdate,timestart,cancel,enddate,timecheckbh,viewend,user,note from videoviewhistory where videoid=?1 and orderid<?2 order by orderid desc limit 1",nativeQuery = true)
     public String getInfoSumOrderByVideoId(String videoid,Long orderid);
 
