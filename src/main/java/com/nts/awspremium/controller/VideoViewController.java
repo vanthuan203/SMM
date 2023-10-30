@@ -3244,7 +3244,7 @@ public class VideoViewController {
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
                 if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
-
+                    System.out.println("Check");
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
                     Request request1 = null;
                     List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
@@ -3267,7 +3267,7 @@ public class VideoViewController {
                         }
                     }
                 }
-                if(((viewcheck!=-1 && viewcheck<video.getVieworder()+video.getViewstart()) || (service.getChecktime()==1?(video.getViewend()<video.getVieworder()+video.getViewstart()):false) || checkview==0) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) ){
+                if(((viewcheck!=-1 && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) ){
                     status="Refunded";
                     float price_refund=video.getPrice();
                     video.setViewtotal(0);
@@ -3293,6 +3293,10 @@ public class VideoViewController {
                     video.setViewend(viewcheck);
                     videoViewHistoryRepository.save(video);
                 }else if(service.getChecktime()==0 && viewcheck>=0){
+                    video.setViewend(viewcheck);
+                    video.setTimecheckbh(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(video);
+                }else if(service.getChecktime()==1 && video.getTimecheckbh()>0 && (video.getViewend()<video.getVieworder()+video.getViewstart()) && video.getCancel()!=1 && viewcheck>=0){
                     video.setViewend(viewcheck);
                     video.setTimecheckbh(System.currentTimeMillis());
                     videoViewHistoryRepository.save(video);

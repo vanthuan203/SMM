@@ -59,13 +59,6 @@ public class HistoryViewController {
         try {
             Thread.sleep(ran.nextInt(1000));
             Long historieId = historyViewRepository.getId(username);
-            if(ran.nextInt(1000)>500){
-                resp.put("status", "fail");
-                resp.put("username","");
-                resp.put("fail", "video");
-                resp.put("message", "Không còn video để view!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
             List<VideoView> videos = null;
             if (historieId == null) {
                 resp.put("status", "fail");
