@@ -73,7 +73,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where round((UNIX_TIMESTAMP()-timeresettool/1000)/60/60)>=48 order by rand() limit ?2",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=2,get_account=1,cmt=1,proxy=1,timeresettool=?1 where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
 
     @Modifying
@@ -85,7 +85,10 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Transactional
     @Query(value = "update vps set get_account=0 where vpsoption=?1",nativeQuery = true)
     public Integer resetGetAcountAll(String geo);
-
+    @Query(value = "call changer_account_vn(?1)",nativeQuery = true)
+    public Integer changer_account_vn(String geo);
+    @Query(value = "call changer_account_us(?1)",nativeQuery = true)
+    public Integer changer_account_us(String geo);
     @Modifying
     @Transactional
     @Query(value = "UPDATE vps set vpsreset=1,timeresettool=?1 where vps=?2",nativeQuery = true)

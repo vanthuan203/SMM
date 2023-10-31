@@ -10,19 +10,21 @@ public class AccountChange {
     private Long id;
     private String geo;
     private String name;
-    private Float running;
+    private Integer running;
     private Long time;
     private String note;
+    private Integer priority=0;
     public AccountChange() {
     }
 
-    public AccountChange(Long id, String geo, String name, Float running, Long time, String note) {
+    public AccountChange(Long id, String geo, String name, Integer running, Long time, String note, Integer priority) {
         this.id = id;
         this.geo = geo;
         this.name = name;
         this.running = running;
         this.time = time;
         this.note = note;
+        this.priority = priority;
     }
 
     public Long getId() {
@@ -49,11 +51,11 @@ public class AccountChange {
         this.name = name;
     }
 
-    public Float getRunning() {
+    public Integer getRunning() {
         return running;
     }
 
-    public void setRunning(Float running) {
+    public void setRunning(Integer running) {
         this.running = running;
     }
 
@@ -71,5 +73,13 @@ public class AccountChange {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Integer priority) {
+        this.priority = priority;
     }
 }

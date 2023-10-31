@@ -34,6 +34,8 @@ public class VpsController {
     private ProxyRepository proxyRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private AccountChangeRepository accountChangeRepository;
     @GetMapping(value = "list",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getlist(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
@@ -297,8 +299,8 @@ public class VpsController {
         }
     }
 
-    @GetMapping(value = "DellALL",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> DellALL(@RequestHeader(defaultValue = "") String Authorization){
+    @GetMapping(value = "changer_vn",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> changer_vn(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
         if(checktoken==0){
@@ -307,13 +309,51 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            vpsRepository.resetGetAcountAll("Fdfdfd");
-            historyViewRepository.deleteHistoryViewByGeo("fdfdf");
-            proxyRepository.resetProxyByGeo("fdfdf");
-            accountRepository.resetAccountByExpiredByGeo("fdfdf");
-            accountRepository.updateGeoAccountNew("Fdfdfd","fdfdfdf");
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerVN();
+            if(accountChanges.size()==0){
+                resp.put("status", -1);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                Integer check=vpsRepository.changer_account_vn(accountChanges.get(0).getName().trim());
+                if(check>0){
+                    accountChanges.get(0).setRunning(1);
+                    accountChanges.get(0).setTime(System.currentTimeMillis());
+                    accountChangeRepository.save(accountChanges.get(0));
+                }
+                resp.put("status", check);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "changer_us",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> changer_us(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerUS();
+            if(accountChanges.size()==0){
+                resp.put("status", -1);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                Integer check=vpsRepository.changer_account_us(accountChanges.get(0).getName().trim());
+                if(check>0){
+                    accountChanges.get(0).setRunning(1);
+                    accountChanges.get(0).setTime(System.currentTimeMillis());
+                    accountChangeRepository.save(accountChanges.get(0));
+                }
+                resp.put("status", check);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
