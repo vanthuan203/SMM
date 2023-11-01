@@ -52,6 +52,15 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads\n" +
             "             from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
             "             group by orderid having total<maxthreads) as t",nativeQuery = true)
+    public List<String> getListOrderTrueThreadOFF();
+
+
+    @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads,timestart,user,threadset,viewtotal,vieworder,service,valid\n" +
+            "                      from videoview left join historyview on historyview.orderid=videoview.orderid and running=1  \n" +
+            "                       group by orderid having total<maxthreads or (user!='content@gmail.com' and maxthreads>=threadset and \n" +
+            "                       (((select (0.85*(select sum(threads) from vps where  vpsoption='vn' and round((UNIX_TIMESTAMP()-timecheck/1000)/60) <=5))/(select sum(threadset) from videoview where  service in(select service from service where geo='vn')))>1 and service in(select service from service where checktime=0 and geo='vn')) or\n" +
+            "                       ((select (0.85*(select sum(threads) from vps where  vpsoption='us' and round((UNIX_TIMESTAMP()-timecheck/1000)/60) <=5))/(select sum(threadset) from videoview where  service in(select service from service where geo='us')))>1 and service in(select service from service where checktime=0 and geo='us'))\n" +
+            "\t\t\t\t\t\t) and valid=1 and vieworder-viewtotal>total )) as t",nativeQuery = true)
     public List<String> getListOrderTrueThread();
 
     @Query(value = "SELECT * from videoview where orderid in (?1)",nativeQuery = true)
