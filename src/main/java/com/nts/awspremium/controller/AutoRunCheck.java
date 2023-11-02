@@ -27,8 +27,8 @@ public class AutoRunCheck {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        orderTrue.setValue(videoViewRepository.getListOrderTrueThread());
-                        //System.out.println(String.join(", ", orderTrue.getValue()));
+                        orderTrue.setValue(videoViewRepository.getListOrderTrueThreadOFF());
+                        System.out.println(String.join(", ", orderTrue.getValue()));
                     }catch (Exception e){
                         continue;
                     }
