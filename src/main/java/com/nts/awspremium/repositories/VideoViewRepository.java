@@ -54,6 +54,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
             "             group by orderid having total<maxthreads) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadOFF();
 
+    @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads,valid,viewtotal,vieworder,speedup\n" +
+            "                      from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
+            "                       group by orderid having total<maxthreads or  (vieworder-viewtotal>2*total and speedup=1 and valid=1 ) ) as t",nativeQuery = true)
+    public List<String> getListOrderTrueThreadON();
+
 
     @Query(value = "select orderid from (select videoview.orderid,count(*) as total,maxthreads,timestart,user,threadset,viewtotal,vieworder,service,valid\n" +
             "                      from videoview left join historyview on historyview.orderid=videoview.orderid and running=1  \n" +
@@ -271,5 +276,6 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Transactional
     @Query(value = "UPDATE videoview set timetotal=?1,viewtotal=?2,timeupdate=?3 where videoid=?4",nativeQuery = true)
     public void updateTimeViewOrderByVideoId(Integer timetotal,Integer viewtotal,Long timeupdate, String videoid);
-
+    @Query(value = "call speedup_threads()",nativeQuery = true)
+    public Integer speedup_threads();
 }

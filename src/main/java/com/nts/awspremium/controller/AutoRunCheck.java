@@ -23,12 +23,12 @@ public class AutoRunCheck {
                 while(true) {
                     try{
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(300);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        orderTrue.setValue(videoViewRepository.getListOrderTrueThreadOFF());
-                        System.out.println(String.join(", ", orderTrue.getValue()));
+                        orderTrue.setValue(videoViewRepository.getListOrderTrueThreadON());
+                        //System.out.println(String.join(", ", orderTrue.getValue()));
                     }catch (Exception e){
                         continue;
                     }
