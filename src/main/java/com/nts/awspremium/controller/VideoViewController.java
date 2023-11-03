@@ -527,7 +527,7 @@ public class VideoViewController {
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour>=11&&hour<23){
+        if(hour>=11&&hour<=23){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
