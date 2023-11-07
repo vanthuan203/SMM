@@ -9,6 +9,8 @@ public class Setting {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer maxorder;
+    private Integer maxorderbuffhvn;
+    private Integer maxorderbuffhus;
     private Integer mintimebuff;
     private Integer maxthread;
     private Integer pricerate;
@@ -20,15 +22,18 @@ public class Setting {
 
     private Integer cmtcountuser;
     private Integer redirect;
-
+    private Integer redirectvn;
+    private Integer redirectus;
     private Integer threadmin;
 
     public Setting() {
     }
 
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer threadmin) {
+    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin) {
         this.id = id;
         this.maxorder = maxorder;
+        this.maxorderbuffhvn = maxorderbuffhvn;
+        this.maxorderbuffhus = maxorderbuffhus;
         this.mintimebuff = mintimebuff;
         this.maxthread = maxthread;
         this.pricerate = pricerate;
@@ -39,6 +44,8 @@ public class Setting {
         this.leveluser = leveluser;
         this.cmtcountuser = cmtcountuser;
         this.redirect = redirect;
+        this.redirectvn = redirectvn;
+        this.redirectus = redirectus;
         this.threadmin = threadmin;
     }
 
@@ -144,5 +151,37 @@ public class Setting {
 
     public void setCmtcountuser(Integer cmtcountuser) {
         this.cmtcountuser = cmtcountuser;
+    }
+
+    public Integer getMaxorderbuffhvn() {
+        return maxorderbuffhvn;
+    }
+
+    public void setMaxorderbuffhvn(Integer maxorderbuffhvn) {
+        this.maxorderbuffhvn = maxorderbuffhvn;
+    }
+
+    public Integer getMaxorderbuffhus() {
+        return maxorderbuffhus;
+    }
+
+    public void setMaxorderbuffhus(Integer maxorderbuffhus) {
+        this.maxorderbuffhus = maxorderbuffhus;
+    }
+
+    public Integer getRedirectvn() {
+        return redirectvn;
+    }
+
+    public void setRedirectvn(Integer redirectvn) {
+        this.redirectvn = redirectvn;
+    }
+
+    public Integer getRedirectus() {
+        return redirectus;
+    }
+
+    public void setRedirectus(Integer redirectus) {
+        this.redirectus = redirectus;
     }
 }

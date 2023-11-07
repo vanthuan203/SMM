@@ -174,11 +174,13 @@ public class AuthController {
         obj.put("id", setting.getId());
         obj.put("pricerate", setting.getPricerate());
         obj.put("bonus", setting.getBonus());
-        obj.put("maxordervn", setting.getMaxordervn());
+        obj.put("maxorderbuffhus", setting.getMaxorderbuffhus());
+        obj.put("maxorderbuffhvn", setting.getMaxorderbuffhvn());
         obj.put("maxorderus", setting.getMaxorderus());
-        obj.put("maxorder", setting.getMaxorder());
+        obj.put("maxordervn", setting.getMaxorder());
         obj.put("threadmin", setting.getThreadmin());
-        obj.put("redirect", setting.getRedirect());
+        obj.put("redirectvn", setting.getRedirectvn());
+        obj.put("redirectus", setting.getRedirectus());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
@@ -256,11 +258,13 @@ public class AuthController {
             obj.put("id", setting.get(i).getId());
             obj.put("pricerate", setting.get(i).getPricerate());
             obj.put("bonus", setting.get(i).getBonus());
-            obj.put("maxorder", setting.get(i).getMaxorder());
+            obj.put("maxorderbuffhus", setting.get(i).getMaxorderbuffhus());
+            obj.put("maxorderbuffhvn", setting.get(i).getMaxorderbuffhvn());
             obj.put("maxordervn", setting.get(i).getMaxordervn());
             obj.put("maxorderus", setting.get(i).getMaxorderus());
             obj.put("threadmin", setting.get(i).getThreadmin());
-            obj.put("redirect", setting.get(i).getRedirect());
+            obj.put("redirectvn", setting.get(i).getRedirectvn());
+            obj.put("redirectus", setting.get(i).getRedirectus());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
@@ -307,14 +311,20 @@ public class AuthController {
     ResponseEntity<String> updateRedirectCron(){
         Setting setting = settingRepository.getReferenceById(1L);
         JSONObject resp = new JSONObject();
-        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*(setting.getThreadmin()/100F)){
-            settingRepository.updateRedirect(settingRepository.getRedirect()==0?0:(settingRepository.getRedirect()-100));
+        if(historyViewRepository.getThreadRunningViewVN()<videoViewRepository.getCountThreadViewVN()*(setting.getThreadmin()/100F)){
+            settingRepository.updateRedirectVN(settingRepository.getRedirectVN()==0?0:(settingRepository.getRedirectVN()-100));
         }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
-            settingRepository.updateRedirect(settingRepository.getRedirect()>=1000?1000:(settingRepository.getRedirect()+100));
+            settingRepository.updateRedirectVN(settingRepository.getRedirectVN()>=1000?1000:(settingRepository.getRedirectVN()+100));
         }
-        settingRepository.updateMaxRunningBuffH(videoViewRepository.getMaxRunningBuffH()<=0?0:videoViewRepository.getMaxRunningBuffH());
+        if(historyViewRepository.getThreadRunningViewUS()<videoViewRepository.getCountThreadViewUS()*(setting.getThreadmin()/100F)){
+            settingRepository.updateRedirectUS(settingRepository.getRedirectUS()==0?0:(settingRepository.getRedirectUS()-100));
+        }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
+            settingRepository.updateRedirectUS(settingRepository.getRedirectUS()>=1000?1000:(settingRepository.getRedirectUS()+100));
+        }
+        settingRepository.updateMaxRunningBuffHVN(videoViewRepository.getMaxRunningBuffHVN()<=0?0:videoViewRepository.getMaxRunningBuffHVN());
+        settingRepository.updateMaxRunningBuffHUS(videoViewRepository.getMaxRunningBuffHUS()<=0?0:videoViewRepository.getMaxRunningBuffHUS());
         videoViewRepository.speedup_threads();
-        resp.put("redirect=",settingRepository.getRedirect());
+        resp.put("redirect=",true);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 

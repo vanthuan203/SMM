@@ -92,6 +92,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1) and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByCheckTime();
 
+    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='vn') and maxthreads!=-1",nativeQuery = true)
+    public Integer getCountOrderRunningByCheckTimeVN();
+
+    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='us') and maxthreads!=-1",nativeQuery = true)
+    public Integer getCountOrderRunningByCheckTimeUS();
+
     @Query(value = "SELECT count(*) from videoview where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 
@@ -103,6 +109,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT sum(maxthreads)FROM AccPremium.videoview where service in(select service from service where geo='vn' and checktime=0)",nativeQuery = true)
     public Integer getCountThreadView();
+
+    @Query(value = "SELECT sum(maxthreads)FROM AccPremium.videoview where service in(select service from service where geo='vn' and checktime=0)",nativeQuery = true)
+    public Integer getCountThreadViewVN();
+
+    @Query(value = "SELECT sum(maxthreads)FROM AccPremium.videoview where service in(select service from service where geo='us' and checktime=0)",nativeQuery = true)
+    public Integer getCountThreadViewUS();
 
     @Query(value = "SELECT * FROM  videoview where service in(select service from service where checktime=0) and timestart>0 order by timeupdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderView();
@@ -122,6 +134,12 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT * FROM videoview where maxthreads=-1 order by priority desc,insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderPending701();
+
+    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and service in(select service from service where geo='vn') order by priority desc,insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderPendingBuffHVN();
+
+    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and service in(select service from service where geo='us') order by priority desc,insertdate asc",nativeQuery = true)
+    public List<VideoView> getAllOrderPendingBuffHUS();
 
     @Query(value = "SELECT * FROM videoview where maxthreads=0 and service in (select service from service where live=1) and viewtotal=0 order by insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderLivePending();
@@ -211,7 +229,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Query(value = "SELECT cast(((SELECT sum(threads) FROM AccPremium.vps where vpsoption='vn' and round((UNIX_TIMESTAMP()-timecheck/1000)/60) <=5)-\n" +
             "(SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0)))/2000 as SIGNED)",nativeQuery = true)
-    public Integer getMaxRunningBuffH();
+    public Integer getMaxRunningBuffHVN();
+
+    @Query(value = "SELECT cast(((SELECT sum(threads) FROM AccPremium.vps where vpsoption='us' and round((UNIX_TIMESTAMP()-timecheck/1000)/60) <=5)-\n" +
+            "(SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0)))/2000 as SIGNED)",nativeQuery = true)
+    public Integer getMaxRunningBuffHUS();
 
     @Modifying
     @Transactional
