@@ -3675,7 +3675,7 @@ public class VideoViewController {
             for (int i = videoidIdArr.length-1;i >=0; i--) {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
                 Service service = serviceRepository.getInfoService(video.get(0).getService());
-                if(videoViewRepository.getCountOrderRunningByService(video.get(0).getService())==null?false:videoViewRepository.getCountOrderRunningByService(video.get(0).getService())>=setting.getMaxorder()*service.getMax()){
+                if(videoViewRepository.getCountOrderRunningByService(video.get(0).getService())==null?false:videoViewRepository.getCountOrderRunningByService(video.get(0).getService())>=(service.getGeo().equals("vn")?setting.getMaxorderbuffhvn():setting.getMaxorderbuffhus())*service.getMax()){
                     break;
                 }
                 video.get(0).setMaxthreads((int)(video.get(0).getThreadset()*0.05));
