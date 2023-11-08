@@ -545,7 +545,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorder()*service.getMax())){
+                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax())){
                     continue;
                 }
             }
@@ -584,7 +584,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorder()*service.getMax())){
+                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhus()*service.getMax())){
                     continue;
                 }
             }
