@@ -12,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -311,18 +314,32 @@ public class VpsController {
         try{
             List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerVN();
             if(accountChanges.size()==0){
-                resp.put("status", -1);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                Integer check=vpsRepository.changer_account_vn(accountChanges.get(0).getName().trim());
-                if(check>0){
-                    accountChanges.get(0).setRunning(1);
-                    accountChanges.get(0).setTime(System.currentTimeMillis());
-                    accountChangeRepository.save(accountChanges.get(0));
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("vietnam"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                resp.put("status", check);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("vn");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("vietnam"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerVN();
             }
+            Integer check=vpsRepository.changer_account_vn(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
@@ -342,18 +359,32 @@ public class VpsController {
         try{
             List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerUS();
             if(accountChanges.size()==0){
-                resp.put("status", -1);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                Integer check=vpsRepository.changer_account_us(accountChanges.get(0).getName().trim());
-                if(check>0){
-                    accountChanges.get(0).setRunning(1);
-                    accountChanges.get(0).setTime(System.currentTimeMillis());
-                    accountChangeRepository.save(accountChanges.get(0));
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("hoaky"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                resp.put("status", check);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("us");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("hoaky"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerUS();
             }
+            Integer check=vpsRepository.changer_account_us(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
