@@ -331,6 +331,67 @@ public class VideoViewController {
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
+    @GetMapping(value = "/updateviewendAllCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateviewendAllCron() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour<12){
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEndAll(25);
+        if (listvideo.size() == 0) {
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        String s_videoid = "";
+        List<String> videofale =  new ArrayList<String>();
+        for (int i = 0; i < listvideo.size(); i++) {
+            if (i == 0) {
+                s_videoid = listvideo.get(i);
+            } else {
+                s_videoid = s_videoid + "," + listvideo.get(i);
+            }
+            videofale.add(listvideo.get(i).toString());
+        }
+        //VIDEOOOOOOOOOOOOOOO
+        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+        Request request1 = null;
+        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
+        keys.get(0).setCount(keys.get(0).getCount() + 1L);
+        googleAPIKeyRepository.save(keys.get(0));
+        Response response1 = client1.newCall(request1).execute();
+
+        String resultJson1 = response1.body().string();
+
+        Object obj1 = new JSONParser().parse(resultJson1);
+
+        JSONObject jsonObject1 = (JSONObject) obj1;
+        JSONArray items = (JSONArray) jsonObject1.get("items");
+        JSONArray jsonArray = new JSONArray();
+        Iterator k = items.iterator();
+
+        while (k.hasNext()) {
+            try {
+                JSONObject video = (JSONObject) k.next();
+                JSONObject obj = new JSONObject();
+                JSONObject statistics = (JSONObject) video.get("statistics");
+                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
+                videofale.remove(video.get("id").toString());
+            } catch (Exception e) {
+                resp.put("status", e);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        }
+        System.out.println(videofale);
+        videoViewHistoryRepository.updatetimcheckError(videofale);
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
 
     @GetMapping(value = "/updateviewendthan5hcron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateviewendthan5hcron() throws IOException, ParseException {
