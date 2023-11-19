@@ -313,16 +313,18 @@ public class AuthController {
         JSONObject resp = new JSONObject();
         if(historyViewRepository.getThreadRunningViewVN()<videoViewRepository.getCountThreadViewVN()*(setting.getThreadmin()/100F)){
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()==0?0:(settingRepository.getRedirectVN()-100));
-        }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
+        }else if(historyViewRepository.getThreadRunningViewVN()>videoViewRepository.getCountThreadViewVN()){
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()>=1000?1000:(settingRepository.getRedirectVN()+100));
         }
         if(historyViewRepository.getThreadRunningViewUS()<videoViewRepository.getCountThreadViewUS()*(setting.getThreadmin()/100F)){
             settingRepository.updateRedirectUS(settingRepository.getRedirectUS()==0?0:(settingRepository.getRedirectUS()-100));
-        }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
+        }else if(historyViewRepository.getThreadRunningViewUS()>videoViewRepository.getCountThreadViewUS()){
             settingRepository.updateRedirectUS(settingRepository.getRedirectUS()>=1000?1000:(settingRepository.getRedirectUS()+100));
         }
-        settingRepository.updateMaxRunningBuffHVN(videoViewRepository.getMaxRunningBuffHVN()<=0?0:videoViewRepository.getMaxRunningBuffHVN());
-        settingRepository.updateMaxRunningBuffHUS(videoViewRepository.getMaxRunningBuffHUS()<=0?0:videoViewRepository.getMaxRunningBuffHUS());
+        int maxrunningVN=videoViewRepository.getMaxRunningBuffHVN();
+        int maxrunningUS=videoViewRepository.getMaxRunningBuffHUS();
+        settingRepository.updateMaxRunningBuffHVN(maxrunningVN<=0?0:maxrunningVN);
+        settingRepository.updateMaxRunningBuffHUS(maxrunningUS<=0?0:maxrunningUS);
         videoViewRepository.speedup_threads();
         resp.put("redirect=",true);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
