@@ -435,11 +435,11 @@ public class VideoViewController {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
                 List<VideoViewHistory> videoViewHistories=videoViewHistoryRepository.getVideoBHByVideoIdThan8h(video.get("id").toString());
-                if(videoViewHistories.get(0).getVieworder()+300 + videoViewHistories.get(0).getViewstart()<Integer.parseInt(statistics.get("viewCount").toString())){
+                if((videoViewHistories.get(0).getVieworder()+300 + videoViewHistories.get(0).getViewstart()<Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=6000)){
                     Setting setting = settingRepository.getReferenceById(1L);
                     List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
                     Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
-                    int baohanh =videoViewHistories.get(0).getViewstart()+videoViewHistories.get(0).getVieworder()+ 1000 - Integer.parseInt(statistics.get("viewCount").toString());
+                    int baohanh =videoViewHistories.get(0).getViewstart()+videoViewHistories.get(0).getVieworder()+ 500 - Integer.parseInt(statistics.get("viewCount").toString());
                     float priceorder = 0;
                     priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                     if (priceorder > (float) admins.get(0).getBalance()) {
