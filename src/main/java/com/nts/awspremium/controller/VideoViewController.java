@@ -459,10 +459,15 @@ public class VideoViewController {
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     videoViewhnew.setTimestart(System.currentTimeMillis());
                     videoViewhnew.setMaxthreads(50);
-                    videoViewhnew.setThreadset(1000);
+                    if(baohanh+500<100){
+                        videoViewhnew.setThreadset(500);
+                    }else {
+                        videoViewhnew.setThreadset(1000);
+                    }
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setService(videoViewHistories.get(0).getService());
                     videoViewhnew.setValid(1);
+                    videoViewhnew.setNote("Refill Oderid "+videoViewHistories.get(0).getOrderid().toString());
                     videoViewRepository.save(videoViewhnew);
                     videoViewHistories.get(0).setNumbh(videoViewHistories.get(0).getNumbh() + 1);
                     videoViewHistoryRepository.save(videoViewHistories.get(0));
