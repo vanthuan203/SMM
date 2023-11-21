@@ -43,6 +43,10 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and timecheckbh=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d')",nativeQuery = true)
     public Integer updateviewend(Integer viewend,Long timecheckbh, String videoid);
 
+
+    @Query(value = "SELECT * FROM videoviewhistory where service in(select service from service where checktime=1) and videoid=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8 and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
+    public List<VideoViewHistory> getVideoBHByVideoIdThan8h(String videoid);
+
     @Modifying
     @Transactional
     @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and timecheckbh=0 and viewend=-1 and  round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8",nativeQuery = true)
@@ -99,6 +103,9 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT * FROM videoviewhistory where videoid=?1 and service in (select service from service where refill=1) and user='baohanh01@gmail.com' and cancel=0 order by enddate desc  limit 1",nativeQuery = true)
     public List<VideoViewHistory> getTimeBHByVideoId(String videoid);
+
+    @Query(value = "SELECT count(*) FROM videoviewhistory where videoid=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<8  and cancel=0",nativeQuery = true)
+    public Integer checkBHThan8h(String videoid);
 
     @Query(value = "SELECT viewstart FROM videoviewhistory where videoid=?1 order by viewstart asc limit 1",nativeQuery = true)
     public Integer getViewStart3701(String videoid);

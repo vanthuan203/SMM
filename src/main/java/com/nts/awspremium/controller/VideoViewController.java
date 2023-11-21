@@ -434,6 +434,56 @@ public class VideoViewController {
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
+                List<VideoViewHistory> videoViewHistories=videoViewHistoryRepository.getVideoBHByVideoIdThan8h(video.get("id").toString());
+                if(videoViewHistories.get(0).getVieworder()+300 + videoViewHistories.get(0).getViewstart()<Integer.parseInt(statistics.get("viewCount").toString())){
+                    Setting setting = settingRepository.getReferenceById(1L);
+                    List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
+                    Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
+                    int baohanh =videoViewHistories.get(0).getViewstart()+videoViewHistories.get(0).getVieworder()+ 1000 - Integer.parseInt(statistics.get("viewCount").toString());
+                    float priceorder = 0;
+                    priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                    if (priceorder > (float) admins.get(0).getBalance()) {
+                        obj.put("videoview", "Số tiền không đủ!");
+                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                    }
+                    VideoView videoViewhnew = new VideoView();
+                    videoViewhnew.setDuration(videoViewHistories.get(0).getDuration());
+                    videoViewhnew.setInsertdate(System.currentTimeMillis());
+                    videoViewhnew.setView24h(0);
+                    videoViewhnew.setViewtotal(0);
+                    videoViewhnew.setVieworder(baohanh);
+                    videoViewhnew.setUser(admins.get(0).getUsername());
+                    videoViewhnew.setChannelid(videoViewHistories.get(0).getChannelid());
+                    videoViewhnew.setVideotitle(videoViewHistories.get(0).getVideotitle());
+                    videoViewhnew.setVideoid(videoViewHistories.get(0).getVideoid());
+                    videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
+                    videoViewhnew.setTimestart(System.currentTimeMillis());
+                    videoViewhnew.setMaxthreads(50);
+                    videoViewhnew.setThreadset(1000);
+                    videoViewhnew.setPrice(priceorder);
+                    videoViewhnew.setService(videoViewHistories.get(0).getService());
+                    videoViewhnew.setValid(1);
+                    videoViewRepository.save(videoViewhnew);
+                    videoViewHistories.get(0).setNumbh(videoViewHistories.get(0).getNumbh() + 1);
+                    videoViewHistoryRepository.save(videoViewHistories.get(0));
+                    if (service.getType().equals("Special")) {
+                        String list_key = dataOrderRepository.getListKeyByOrderid(videoViewHistories.get(0).getOrderid());
+                        DataOrder dataOrder = new DataOrder();
+                        dataOrder.setOrderid(videoViewhnew.getOrderid());
+                        dataOrder.setListvideo(list_key);
+                        dataOrder.setListkey(list_key);
+                        dataOrderRepository.save(dataOrder);
+                    }
+                    Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
+                    Balance balance = new Balance();
+                    balance.setUser(admins.get(0).getUsername().trim());
+                    balance.setTime(System.currentTimeMillis());
+                    balance.setTotalblance(balance_update);
+                    balance.setBalance(-priceorder);
+                    balance.setService(service.getService());
+                    balance.setNote("Refill " + baohanh + " view cho video " + videoViewHistories.get(0).getVideoid());
+                    balanceRepository.save(balance);
+                }
                 //jsonArray.add(obj);
             } catch (Exception e) {
                 resp.put("status", e);
@@ -3341,8 +3391,9 @@ public class VideoViewController {
                 String status="No refunds";
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
-                if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
+                if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkBH==0 && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
                     Request request1 = null;
                     List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
@@ -3365,7 +3416,7 @@ public class VideoViewController {
                         }
                     }
                 }
-                if((((viewcheck!=-1 || checkview==0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) ){
+                if((((viewcheck!=-1 || checkview==0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) && checkBH==0){
                     status="Refunded";
                     float price_refund=video.getPrice();
                     video.setViewtotal(0);
@@ -3387,14 +3438,14 @@ public class VideoViewController {
                     balance.setService(video.getService());
                     balance.setNote("Refund " + (video.getVieworder()) + " view cho " + video.getVideoid());
                     balanceRepository.save(balance);
-                }else if(service.getChecktime()==1 && video.getTimecheckbh()==0 && video.getViewend()>-1 && video.getCancel()!=1 && viewcheck>=0){
+                }else if(service.getChecktime()==1 && checkBH==0 && video.getTimecheckbh()==0 && video.getViewend()>-1 && video.getCancel()!=1 && viewcheck>=0){
                     video.setViewend(viewcheck);
                     videoViewHistoryRepository.save(video);
-                }else if(service.getChecktime()==0 && viewcheck>=0){
+                }else if(service.getChecktime()==0 && checkBH==0 && viewcheck>=0){
                     video.setViewend(viewcheck);
                     video.setTimecheckbh(System.currentTimeMillis());
                     videoViewHistoryRepository.save(video);
-                }else if(service.getChecktime()==1 && video.getTimecheckbh()>0 && (video.getViewend()<video.getVieworder()+video.getViewstart()) && video.getCancel()!=1 && viewcheck>=0){
+                }else if(service.getChecktime()==1 && checkBH==0 && video.getTimecheckbh()>0 && (video.getViewend()<video.getVieworder()+video.getViewstart()) && video.getCancel()!=1 && viewcheck>=0){
                     video.setViewend(viewcheck);
                     video.setTimecheckbh(System.currentTimeMillis());
                     videoViewHistoryRepository.save(video);
