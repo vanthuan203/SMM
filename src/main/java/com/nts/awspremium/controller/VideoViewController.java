@@ -435,13 +435,13 @@ public class VideoViewController {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
                 List<VideoViewHistory> videoViewHistories=videoViewHistoryRepository.getVideoBHByVideoIdThan8h(video.get("id").toString());
-                if((videoViewHistories.get(0).getVieworder()+300 + videoViewHistories.get(0).getViewstart()<Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=6000)){
+                if(videoViewRepository.getCountVideoId(video.get("id").toString().trim()) ==0&&((int)(videoViewHistories.get(0).getVieworder()*1.05)+ videoViewHistories.get(0).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=6000)){
                     Setting setting = settingRepository.getReferenceById(1L);
                     List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
                     Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
-                    int baohanh =videoViewHistories.get(0).getViewstart()+videoViewHistories.get(0).getVieworder()+ 500 - Integer.parseInt(statistics.get("viewCount").toString());
+                    int baohanh =videoViewHistories.get(0).getViewstart()+(int)(videoViewHistories.get(0).getVieworder()*1.05) - Integer.parseInt(statistics.get("viewCount").toString());
                     float priceorder = 0;
-                    priceorder = (baohanh / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
+                    priceorder = ((baohanh+500) / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                     if (priceorder > (float) admins.get(0).getBalance()) {
                         obj.put("videoview", "Số tiền không đủ!");
                         return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
@@ -451,7 +451,7 @@ public class VideoViewController {
                     videoViewhnew.setInsertdate(System.currentTimeMillis());
                     videoViewhnew.setView24h(0);
                     videoViewhnew.setViewtotal(0);
-                    videoViewhnew.setVieworder(baohanh);
+                    videoViewhnew.setVieworder(baohanh+500);
                     videoViewhnew.setUser(admins.get(0).getUsername());
                     videoViewhnew.setChannelid(videoViewHistories.get(0).getChannelid());
                     videoViewhnew.setVideotitle(videoViewHistories.get(0).getVideotitle());
@@ -474,6 +474,7 @@ public class VideoViewController {
                         dataOrder.setListkey(list_key);
                         dataOrderRepository.save(dataOrder);
                     }
+                    System.out.println("OKE 2");
                     Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                     Balance balance = new Balance();
                     balance.setUser(admins.get(0).getUsername().trim());
@@ -3392,6 +3393,9 @@ public class VideoViewController {
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
+                if(checkBH==0){
+                    checkBH=videoViewRepository.getCountVideoId(video.getVideoid());
+                }
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
                 if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkBH==0 && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -3617,7 +3621,11 @@ public class VideoViewController {
                 Float price_old=video.getPrice();
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
-                if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
+                Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
+                if(checkBH==0){
+                    checkBH=videoViewRepository.getCountVideoId(video.getVideoid());
+                }
+                if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0 && checkBH>0 )){
                     video_refil=video;
                 }else{
                     htviewfindorder(video.getOrderid(),"1");

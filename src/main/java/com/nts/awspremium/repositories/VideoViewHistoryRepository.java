@@ -44,12 +44,12 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public Integer updateviewend(Integer viewend,Long timecheckbh, String videoid);
 
 
-    @Query(value = "SELECT * FROM videoviewhistory where service in(select service from service where checktime=1) and videoid=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8 and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoviewhistory where service in(select service from service where checktime=1) and videoid=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=8 and user!='baohanh01@gmail.com' limit 1",nativeQuery = true)
     public List<VideoViewHistory> getVideoBHByVideoIdThan8h(String videoid);
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and timecheckbh=0 and viewend=-1 and  round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>8",nativeQuery = true)
+    @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and timecheckbh=0 and viewend=-1 and  round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=8",nativeQuery = true)
     public Integer updateviewendthan5h(Integer viewend,String videoid);
 
     @Query(value = "SELECT (enddate+24*60*60*1000) from videoviewhistory where videoid=?1 order by enddate desc limit 1",nativeQuery = true)
