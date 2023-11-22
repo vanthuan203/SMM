@@ -435,7 +435,7 @@ public class VideoViewController {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
                 List<VideoViewHistory> videoViewHistories=videoViewHistoryRepository.getVideoBHByVideoIdThan8h(video.get("id").toString());
-                if(videoViewRepository.getCountVideoId(video.get("id").toString().trim()) ==0&&((int)(videoViewHistories.get(0).getVieworder()*1.05)+ videoViewHistories.get(0).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=6000)){
+                if(videoViewRepository.getCountVideoId(video.get("id").toString().trim()) ==0&&((int)(videoViewHistories.get(0).getVieworder()*1.05)+ videoViewHistories.get(0).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=6000) && !videoViewHistories.get(0).getUser().equals("baohanh01@gmail.com")){
                     Setting setting = settingRepository.getReferenceById(1L);
                     List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
                     Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
@@ -459,11 +459,7 @@ public class VideoViewController {
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     videoViewhnew.setTimestart(System.currentTimeMillis());
                     videoViewhnew.setMaxthreads(50);
-                    if(baohanh+500<100){
-                        videoViewhnew.setThreadset(500);
-                    }else {
-                        videoViewhnew.setThreadset(1000);
-                    }
+                    videoViewhnew.setThreadset(1000);
                     videoViewhnew.setPrice(priceorder);
                     videoViewhnew.setService(videoViewHistories.get(0).getService());
                     videoViewhnew.setValid(1);
