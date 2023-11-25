@@ -26,6 +26,9 @@ public class AccountViewController {
     private HistoryViewRepository historyViewRepository;
 
     @Autowired
+    private HistoryTrafficRepository historyTrafficRepository;
+
+    @Autowired
     private ProxyRepository proxyRepository;
 
     @Autowired
@@ -287,6 +290,207 @@ public class AccountViewController {
                             histories.get(0).setTimeget(System.currentTimeMillis());
                             historyViewRepository.save(histories.get(0));
                         }
+                    }
+
+                    resp.put("status", "true");
+                    resp.put("username", accountbyVps.get(0).getUsername());
+                    resp.put("recover", accountbyVps.get(0).getRecover());
+                    resp.put("cookie", "");
+                    resp.put("password", accountbyVps.get(0).getPassword());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                } catch (Exception e) {
+                    resp.put("status", "fail");
+                    resp.put("message", e.getMessage());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                }
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/gettraffic", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> gettraffic(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "") String geo,@RequestHeader(defaultValue = "") String Authorization) throws InterruptedException {
+        JSONObject resp = new JSONObject();
+        Random ran = new Random();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Tên vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(vpsRepository.checkVpsGetAccountTrue(vps.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Đã đủ acc cho Vps!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        if(checkProsetListTrue.getValue()>=50){
+            resp.put("status", "fail");
+            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+            Thread.sleep(ran.nextInt(1000));
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        try {
+            Integer check_get = vpsRepository.checkGetAccount5ByThreadVps(vps.trim(),geo.trim());
+            if (check_get == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Đã đủ acc cho Vps!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            Thread.sleep(ran.nextInt(500));
+            Long idbyVps=null;
+            idbyVps = accountRepository.getaccountByVps(vps.trim(),geo.trim());
+
+            if (idbyVps == null) {
+                Thread.sleep(ran.nextInt(500));
+                Long id=null;
+                id = accountRepository.getAccountView(geo.trim());
+
+                if (id == null) {
+                    resp.put("status", "fail");
+                    resp.put("message", "Đã đủ acc cho Vps! Hết tài khoản thỏa mãn");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                } else {
+                    try {
+                        List<Account> account = accountRepository.findAccountById(id);
+                        Thread.sleep(100 + ran.nextInt(200));
+                        Integer accountcheck = accountRepository.checkAccountById(id);
+                        if (accountcheck == 0) {
+                            resp.put("status", "fail");
+                            resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                        account.get(0).setVps(vps.trim());
+                        account.get(0).setRunning(1);
+                        account.get(0).setTimecheck(System.currentTimeMillis());
+                        accountRepository.save(account.get(0));
+                        Long historieId = historyTrafficRepository.getId(account.get(0).getUsername());
+                        if (historieId == null) {
+                            try{
+                                HistoryTraffic history = new HistoryTraffic();
+                                history.setUsername(account.get(0).getUsername());
+                                history.setListorderid("");
+                                history.setRunning(0);
+                                history.setVps(vps);
+                                history.setOrderid(0L);
+                                if(ran.nextInt(100)>50){
+                                    history.setDevice("mobile");
+                                }else{
+                                    history.setDevice("pc");
+                                }
+                                history.setGeo(account.get(0).getGeo());
+                                history.setTimeget(System.currentTimeMillis());
+                                historyTrafficRepository.save(history);
+                            }catch (Exception e){
+                                Thread.sleep(10+ran.nextInt(1000));
+                                HistoryTraffic history = new HistoryTraffic();
+                                history.setUsername(account.get(0).getUsername());
+                                history.setListorderid("");
+                                history.setRunning(0);
+                                history.setVps(vps);
+                                history.setOrderid(0L);
+                                if(ran.nextInt(100)>50){
+                                    history.setDevice("mobile");
+                                }else{
+                                    history.setDevice("pc");
+                                }
+                                history.setGeo(account.get(0).getGeo());
+                                history.setTimeget(System.currentTimeMillis());
+                                historyTrafficRepository.save(history);
+                            }
+
+                        }else {
+                            List<HistoryTraffic> histories = historyTrafficRepository.getHistoriesById(historieId);
+                            histories.get(0).setUsername(account.get(0).getUsername());
+                            histories.get(0).setListorderid("");
+                            histories.get(0).setRunning(0);
+                            histories.get(0).setVps(vps);
+                            histories.get(0).setOrderid(0L);
+                            if(ran.nextInt(100)>50){
+                                histories.get(0).setDevice("mobile");
+                            }else{
+                                histories.get(0).setDevice("pc");
+                            }
+                            histories.get(0).setGeo(account.get(0).getGeo());
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            historyTrafficRepository.save(histories.get(0));
+                        }
+
+                        resp.put("status", "true");
+                        resp.put("username", account.get(0).getUsername());
+                        resp.put("password", account.get(0).getPassword());
+                        resp.put("recover", account.get(0).getRecover());
+                        resp.put("cookie", "");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    } catch (Exception e) {
+                        resp.put("status", "fail");
+                        resp.put("message", e.getMessage());
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                    }
+                }
+            } else {
+                try {
+                    List<Account> accountbyVps = accountRepository.findAccountById(idbyVps);
+                    accountbyVps.get(0).setVps(vps.trim());
+                    accountbyVps.get(0).setRunning(1);
+                    accountbyVps.get(0).setTimecheck(System.currentTimeMillis());
+                    accountRepository.save(accountbyVps.get(0));
+                    Long historieId = historyTrafficRepository.getId(accountbyVps.get(0).getUsername());
+                    if (historieId == null) {
+                        try{
+                            HistoryTraffic history = new HistoryTraffic();
+                            history.setUsername(accountbyVps.get(0).getUsername());
+                            history.setListorderid("");
+                            history.setRunning(0);
+                            history.setVps(vps);
+                            history.setOrderid(0L);
+                            if(ran.nextInt(100)>50){
+                                history.setDevice("mobile");
+                            }else{
+                                history.setDevice("pc");
+                            }
+                            history.setGeo(accountbyVps.get(0).getGeo());
+                            history.setTimeget(System.currentTimeMillis());
+                            historyTrafficRepository.save(history);
+                        }catch (Exception e){
+                            Thread.sleep(10+ran.nextInt(1000));
+                            HistoryTraffic history = new HistoryTraffic();
+                            history.setUsername(accountbyVps.get(0).getUsername());
+                            history.setListorderid("");
+                            history.setRunning(0);
+                            history.setVps(vps);
+                            history.setOrderid(0L);
+                            if(ran.nextInt(100)>50){
+                                history.setDevice("mobile");
+                            }else{
+                                history.setDevice("pc");
+                            }
+                            history.setGeo(accountbyVps.get(0).getGeo());
+                            history.setTimeget(System.currentTimeMillis());
+                            historyTrafficRepository.save(history);
+                        }
+                    }else {
+                        List<HistoryTraffic> histories = historyTrafficRepository.getHistoriesById(historieId);
+                        histories.get(0).setUsername(accountbyVps.get(0).getUsername());
+                        histories.get(0).setListorderid("");
+                        histories.get(0).setRunning(0);
+                        histories.get(0).setVps(vps);
+                        histories.get(0).setOrderid(0L);
+                        if(ran.nextInt(100)>50){
+                            histories.get(0).setDevice("mobile");
+                        }else{
+                            histories.get(0).setDevice("pc");
+                        }
+                        histories.get(0).setGeo(accountbyVps.get(0).getGeo());
+                        histories.get(0).setTimeget(System.currentTimeMillis());
+                        historyTrafficRepository.save(histories.get(0));
                     }
 
                     resp.put("status", "true");
