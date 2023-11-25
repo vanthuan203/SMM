@@ -82,6 +82,9 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxylive where ipv4 in (select ipv4 from ipv4 where state=1) and running=0 and geo=?1 order by rand() limit 1",nativeQuery = true)
     public List<ProxyLive> getProxyLive(String geo);
 
+    @Query(value = "select * from proxy where ipv4 in (select ipv4 from ipv4 where state=1) and running=0 and geo=?1 order by rand() limit 1",nativeQuery = true)
+    public List<Proxy> getProxyNotRunningAndLive(String geo);
+
     @Query(value = "select * from proxy where state=1 and running=0 and geo='sub' and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=10 order by rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxyAccSub();
 

@@ -475,10 +475,9 @@ public class ProxyController {
         }
 
     }
-
-    @GetMapping(value = "/getproxylive", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxylive(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail,
-                                       @RequestParam(defaultValue = "vn") String geo) {
+    @GetMapping(value = "/getproxyliveOFF", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getproxyliveOFF(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail,
+                                        @RequestParam(defaultValue = "vn") String geo) {
         JSONObject resp = new JSONObject();
         try{
             Random random =new Random();
@@ -511,6 +510,42 @@ public class ProxyController {
             proxyLiveRepository.updateProxyLiveGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
             resp.put("status","true");
             resp.put("proxy",proxyGet.get(0).getProxy());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    @GetMapping(value = "/getproxylive", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getproxylive(@RequestParam(defaultValue = "") String vps,
+                                       @RequestParam(defaultValue = "vn") String geo) {
+        JSONObject resp = new JSONObject();
+        try{
+            Random random =new Random();
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+            if(geo.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để Geo trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<Proxy> proxyGet=null;
+            proxyGet=proxyRepository.getProxyNotRunningAndLive(geo.trim());
+            if(proxyGet.size()==0){
+                resp.put("status","fail");
+                resp.put("message","Hết proxy khả dụng!" );
+                Thread.sleep(1000+random.nextInt(1000));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            String[] proxy=proxyGet.get(0).getProxy().split(":");
+            resp.put("status","true");
+            resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {
