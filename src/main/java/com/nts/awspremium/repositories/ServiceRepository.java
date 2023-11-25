@@ -58,8 +58,14 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service ",nativeQuery = true)
     public List<String> GetAllService();
 
+    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where category='Website' ",nativeQuery = true)
+    public List<String> GetAllServiceTraffic();
+
     @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where enabled=1",nativeQuery = true)
     public List<String> GetAllServiceEnabled();
+
+    @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where category='Website' and enabled=1",nativeQuery = true)
+    public List<String> GetAllServiceTrafficEnabled();
 
     @Query(value = "Select * from admin",nativeQuery = true)
     public List<Admin> GetAllUsers();
