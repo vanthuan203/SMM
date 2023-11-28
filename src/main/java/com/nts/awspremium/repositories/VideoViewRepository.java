@@ -101,8 +101,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT count(*) from videoview where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 
-    @Query(value = "SELECT count(*) from videoview where videoid=?1 and maxthreads!=-1",nativeQuery = true)
+    @Query(value = "SELECT count(*) from videoview where videoid=?1",nativeQuery = true)
     public Integer getCountVideoId(String videoid);
+
+    @Query(value = "SELECT count(*) from videoview where videoid=?1 and maxthreads>0",nativeQuery = true)
+    public Integer getCountVideoIdNotPending(String videoid);
 
     @Query(value = "SELECT count(*) from videoview where videoid=?1 and user!='baohanh01@gmail.com'",nativeQuery = true)
     public Integer getCountVideoIdNotIsBH(String videoid);

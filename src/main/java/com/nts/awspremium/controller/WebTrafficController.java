@@ -286,7 +286,7 @@ public class WebTrafficController {
         }
     }
     @GetMapping(path = "updatTrafficedCron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatTrafficDoneCron() {
+    ResponseEntity<String> updatTrafficedCron() {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {

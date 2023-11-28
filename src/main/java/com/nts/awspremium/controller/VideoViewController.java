@@ -3393,9 +3393,9 @@ public class VideoViewController {
                 String status="No refunds";
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
-                if(checkBH==0){
-                    checkBH=videoViewRepository.getCountVideoId(video.getVideoid());
+                Integer checkBH=checkview==1?videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim()):0;
+                if(checkBH==0&&checkview==1){
+                    checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
                 if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkBH==0 && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
@@ -3624,7 +3624,7 @@ public class VideoViewController {
                 VideoViewHistory video_refil;
                 Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
                 if(checkBH==0){
-                    checkBH=videoViewRepository.getCountVideoId(video.getVideoid());
+                    checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
                 if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0 && checkBH>0 )){
                     video_refil=video;
