@@ -51,6 +51,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "SELECT threads FROM vps WHERE vps=?1",nativeQuery = true)
     public Integer getThreadVPS(String vps);
 
+    @Query(value = "select count(*) from vps where round((UNIX_TIMESTAMP()-timecheck/1000)/60)<15 and timecheck>timeresettool  and timereset!=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') and dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d')",nativeQuery = true)
+    public Integer checkResetVPSNext();
+
     @Modifying
     @Transactional
     @Query(value = "DELETE  from vps where vps=?1",nativeQuery = true)
@@ -73,7 +76,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=2,get_account=1,cmt=1,proxy=1,timeresettool=?1 where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=2,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
 
     @Modifying

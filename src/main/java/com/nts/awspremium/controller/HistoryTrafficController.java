@@ -25,6 +25,9 @@ public class HistoryTrafficController {
     private HistoryTrafficSumRepository historyTrafficSumRepository;
     @Autowired
     private OrderTrafficTrue orderTrue;
+
+    @Autowired
+    private AccountRepository accountRepository;
     @Autowired
     private ServiceRepository serviceRepository;
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
@@ -61,7 +64,10 @@ public class HistoryTrafficController {
                         resp.put("message", "Không còn nhiêm vụ traffic!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
+                String[] proxy = accountRepository.getProxyByUsername(username.trim()).split(":");
                 resp.put("status", "true");
+                resp.put("click_ads", "true");
+                resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
                 resp.put("orderid", webTraffics.get(0).getOrderid());
                 resp.put("device", histories.get(0).getDevice());
                 resp.put("link", webTraffics.get(0).getLink());

@@ -175,7 +175,11 @@ public class VpsController {
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
                 }
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpscheck.get(0).setTimereset(day);
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
@@ -292,6 +296,10 @@ public class VpsController {
     ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit){
         JSONObject resp=new JSONObject();
         try{
+            if(vpsRepository.checkResetVPSNext()>0){
+                resp.put("status", "watting");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
