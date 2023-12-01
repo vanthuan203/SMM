@@ -326,7 +326,8 @@ public class ApiController {
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
 
-                        int thread_set = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        //int thread_set_fix = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        int thread_set = data.getQuantity() / (60/service.getMaxtime()*3);
                         if (thread_set <= setting.getMaxthread()){
                             videoViewhnew.setThreadset(thread_set);
                         }else{
