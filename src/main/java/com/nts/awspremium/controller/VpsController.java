@@ -309,6 +309,19 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "resetBasNoCheckByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasNoCheckByCron(@RequestParam(defaultValue = "0") Integer limit){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value = "changer_vn",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> changer_vn(@RequestHeader(defaultValue = "") String Authorization){
@@ -472,8 +485,8 @@ public class VpsController {
                     //vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setGet_account(vps.getGet_account());
-                    if(vps.getVpsreset()==2){
-                        vpsupdate.get(0).setState(2);
+                    if(vps.getVpsreset()>0){
+                        vpsupdate.get(0).setTimeresettool(System.currentTimeMillis());
                     }
                     vpsRepository.save(vpsupdate.get(0));
 
@@ -526,6 +539,9 @@ public class VpsController {
             for(int i=0;i<vpsArr.length;i++){
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim());
                 if(vpsupdate.size()>0) {
+                    if(vps.getVpsreset()>0){
+                        vpsupdate.get(0).setTimeresettool(System.currentTimeMillis());
+                    }
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setGet_account(vps.getGet_account());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());

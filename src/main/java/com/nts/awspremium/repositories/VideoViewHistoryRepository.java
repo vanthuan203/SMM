@@ -112,7 +112,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Query(value = "SELECT sum(vieworder)\n" +
             "FROM videoviewhistory\n" +
-            "WHERE service=?1 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP()-3*60*60)), '%Y-%m-%d') and user=?2 and cancel!=1",nativeQuery = true)
+            "WHERE service=?1 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(FROM_UNIXTIME((UNIX_TIMESTAMP()-2*60*60)), '%Y-%m-%d') and user=?2 and cancel!=1",nativeQuery = true)
     public Integer getCountOrderDoneByServiceAndUserInOneDay(Integer service,String user);
 
     @Modifying
