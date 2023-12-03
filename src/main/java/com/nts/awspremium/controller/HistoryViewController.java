@@ -23,7 +23,8 @@ public class HistoryViewController {
 
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private ProxyRepository proxyRepository;
     @Autowired
     private VideoViewRepository videoViewRepository;
 
@@ -44,6 +45,9 @@ public class HistoryViewController {
     private OrderTrue orderTrue;
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    private IpV4Repository ipV4Repository;
     @Autowired
     private SettingRepository settingRepository;
 
@@ -213,7 +217,8 @@ public class HistoryViewController {
         Random ran = new Random();
         try {
             Thread.sleep(ran.nextInt(1000));
-            Long historieId = historyViewRepository.getAccToView(vps.trim());
+            //Long historieId = historyViewRepository.getAccToView(vps.trim());
+            Long historieId = historyViewRepository.getAccToViewNoCheckProxy(vps.trim());
             if (historieId == null) {
                 resp.put("status", "fail");
                 resp.put("fail", "user");
@@ -255,12 +260,28 @@ public class HistoryViewController {
                 resp.put("message", "Không còn video để view!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-
+            String[] proxy;
+            List<Proxy> proxies;
+            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0){
+                proxies = proxyRepository.getProxyNotRunningAndLive(histories.get(0).getGeo());
+                if(proxies.size()>0){
+                    proxy=proxies.get(0).getProxy().split(":");
+                }else{
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    historyViewRepository.save(histories.get(0));
+                    resp.put("status", "fail");
+                    resp.put("fail", "video");
+                    resp.put("message", "Không còn video để view!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }else{
+                proxy = histories.get(0).getProxy().split(":");
+            }
             Service service = serviceRepository.getInfoService(videos.get(0).getService());
 
             histories.get(0).setTimeget(System.currentTimeMillis());
             histories.get(0).setRunning(1);
-            String[] proxy = histories.get(0).getProxy().split(":");
+
             historyViewRepository.save(histories.get(0));
             resp.put("live", service.getLive() == 1 ? "true" : "fail");
             resp.put("channel_id", videos.get(0).getChannelid());

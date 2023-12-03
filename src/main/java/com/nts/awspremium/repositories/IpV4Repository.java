@@ -13,6 +13,9 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Query(value = "select count(*) from ipv4 where state=1 and ipv4 LIKE ?1",nativeQuery = true)
     public Integer checkProxyLive(String ipv4);
 
+    @Query(value = "select count(*) from ipv4 where state=1 and ipv4=?1",nativeQuery = true)
+    public Integer checkIPv4Live(String ipv4);
+
     @Query(value = "select ipv4 from ipv4 where timereset=?1 and vps like ?2 order by usercount asc limit 1",nativeQuery = true)
     public String getIpv4ByVps(Integer timereset,String vps);
 
