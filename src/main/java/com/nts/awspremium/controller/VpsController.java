@@ -300,7 +300,7 @@ public class VpsController {
                 resp.put("status", "watting");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
+            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit-vpsRepository.checkResetVPSNext());
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){

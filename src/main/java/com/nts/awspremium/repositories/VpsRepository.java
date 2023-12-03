@@ -51,6 +51,9 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "SELECT threads FROM vps WHERE vps=?1",nativeQuery = true)
     public Integer getThreadVPS(String vps);
 
+    @Query(value = "SELECT sum(threads) FROM vps WHERE vpsoption=?1",nativeQuery = true)
+    public Integer getSumThreadsByGeo(String vpsoption);
+
     @Query(value = "select count(*) from vps where round((UNIX_TIMESTAMP()-timecheck/1000)/60)<15 and timecheck>timeresettool  and timereset!=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') and dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d')",nativeQuery = true)
     public Integer checkResetVPSNext();
 
