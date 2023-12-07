@@ -164,11 +164,13 @@ public class AuthController {
         }
         List<Setting> setting1=settingRepository.getSetting();
         setting1.get(0).setBonus(setting.getBonus());
-        setting1.get(0).setMaxorder(setting.getMaxorder());
+        setting1.get(0).setMaxorderbuffhvn(setting.getMaxorderbuffhvn());
+        setting1.get(0).setMaxorderbuffhus(setting.getMaxorderbuffhus());
         setting1.get(0).setMaxordervn(setting.getMaxordervn());
         setting1.get(0).setMaxorderus(setting.getMaxorderus());
         setting1.get(0).setThreadmin(setting.getThreadmin());
-        setting1.get(0).setRedirect(setting.getRedirect());
+        setting1.get(0).setRedirectvn(setting.getRedirectvn());
+        setting1.get(0).setRedirectus(setting.getRedirectus());
         settingRepository.save(setting1.get(0));
         JSONObject obj = new JSONObject();
         obj.put("id", setting.getId());
@@ -177,7 +179,7 @@ public class AuthController {
         obj.put("maxorderbuffhus", setting.getMaxorderbuffhus());
         obj.put("maxorderbuffhvn", setting.getMaxorderbuffhvn());
         obj.put("maxorderus", setting.getMaxorderus());
-        obj.put("maxordervn", setting.getMaxorder());
+        obj.put("maxordervn", setting.getMaxordervn());
         obj.put("threadmin", setting.getThreadmin());
         obj.put("redirectvn", setting.getRedirectvn());
         obj.put("redirectus", setting.getRedirectus());

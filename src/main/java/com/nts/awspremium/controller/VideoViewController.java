@@ -54,6 +54,9 @@ public class VideoViewController {
     @Autowired
     private LimitServiceRepository limitServiceRepository;
 
+    @Autowired
+    private VpsRepository vpsRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -640,14 +643,15 @@ public class VideoViewController {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour>=10&&hour<=20){
+        if(hour>=10&&hour<=13){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         for (int i = 0; i < videoViews.size(); i++) {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer CountOrderRunningByService=videoViewRepository.getCountOrderRunningByCheckTimeVN();
-            if((CountOrderRunningByService==null?false:CountOrderRunningByService>=(hour>13?(setting.getMaxorderbuffhvn()*service.getMax()/2):(setting.getMaxorderbuffhvn())*service.getMax()))){
+            Integer CountTheadSetRunningByService=videoViewRepository.getCountThreadSetByCheckTimeVN();
+            if(hour>13?(CountTheadSetRunningByService>=vpsRepository.getSumThreadsByGeo(service.getGeo())*0.25):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax())){
                 break;
             }
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
@@ -658,7 +662,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(CountOrderRunningByService==null?false:CountOrderRunningByService>=(hour>13?(setting.getMaxorderbuffhvn()*service.getMax()/2):(setting.getMaxorderbuffhvn())*service.getMax()))){
+                        ||(hour>13?(CountTheadSetRunningByService>=vpsRepository.getSumThreadsByGeo(service.getGeo())*0.25):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()))){
                     continue;
                 }
             }
