@@ -651,7 +651,9 @@ public class VideoViewController {
             Service service = serviceRepository.getInfoService(videoViews.get(i).getService());
             Integer CountOrderRunningByService=videoViewRepository.getCountOrderRunningByCheckTimeVN();
             Integer CountTheadSetRunningByService=videoViewRepository.getCountThreadSetByCheckTimeVN();
-            if(hour>13?(CountTheadSetRunningByService>=vpsRepository.getSumThreadsByGeo(service.getGeo())*0.25):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax())){
+            Integer CountTheadSetRunningByGeo=videoViewRepository.getSumThreadSetByGeo(service.getGeo());
+            Integer CountTheadVPSByGeo=vpsRepository.getSumThreadsByGeo(service.getGeo());
+            if(hour>13?(CountTheadSetRunningByGeo<CountTheadVPSByGeo?(CountOrderRunningByService==null?false:CountTheadSetRunningByService>=CountTheadVPSByGeo*0.35):true):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax())){
                 break;
             }
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
@@ -662,7 +664,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(hour>13?(CountTheadSetRunningByService>=vpsRepository.getSumThreadsByGeo(service.getGeo())*0.25):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()))){
+                        ||(hour>13?(CountTheadSetRunningByGeo<CountTheadVPSByGeo?(CountOrderRunningByService==null?false:CountTheadSetRunningByService>=CountTheadVPSByGeo*0.35):true):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()))){
                     continue;
                 }
             }

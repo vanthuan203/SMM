@@ -203,7 +203,7 @@ public class ApiController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
-                if(service.getChecktime()==0&&(videoViewRepository.getSumThreadSetByGeo(service.getGeo())>vpsRepository.getSumThreadsByGeo(service.getGeo())*1.2)){
+                if(service.getChecktime()==0&&(videoViewRepository.getSumThreadSetByGeo(service.getGeo())>vpsRepository.getSumThreadsByGeo(service.getGeo())*1.35)){
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
