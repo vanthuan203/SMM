@@ -448,7 +448,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            vpsRepository.updateRestartVpsByName(System.currentTimeMillis(),vps.trim());
+            //vpsRepository.updateRestartVpsByName(System.currentTimeMillis(),vps.trim());
             resp.put("status", "true");
             resp.put("message", "Restart "+vps.trim());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
