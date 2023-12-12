@@ -32,6 +32,9 @@ public class Service {
     private Integer maxtimerefill;
     private Integer checktime;
     private Integer live;
+
+    private Integer niche;
+    private String keyniche;
     public Service() {
     }
 

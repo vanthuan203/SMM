@@ -95,7 +95,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1) and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByCheckTime();
 
-    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='vn') and viewtotal>=vieworder*0.9 and maxthreads!=-1",nativeQuery = true)
+    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='vn') and viewtotal<vieworder*0.9 and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByCheckTimeVN();
 
     @Query(value = "SELECT sum(threadset) from videoview where service in (select service from service where checktime=1 and geo='vn') and maxthreads!=-1",nativeQuery = true)
@@ -275,7 +275,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update videoview set maxthreads=maxthreads+cast(threadset*0.03 as UNSIGNED) where service in (select service from service where maxtime>=30) and maxthreads<threadset and maxthreads>0 and timestart>0;",nativeQuery = true)
+    @Query(value = "update videoview set maxthreads=maxthreads+cast(threadset*0.09 as UNSIGNED) where service in (select service from service where maxtime>=30) and maxthreads<threadset and maxthreads>0 and timestart>0;",nativeQuery = true)
     public void updateThreadByThreadSet30m();
     @Query(value = "select * from videoview where viewtotal>(vieworder + vieworder*(select bonus/100 from setting where id=1)) and service in(select service from service where checktime=0 and live=0)",nativeQuery = true)
     public List<VideoView> getOrderFullView();
