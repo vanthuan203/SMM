@@ -190,7 +190,7 @@ public class VideoViewController {
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     if(service.getChecktime()==1){
-                        int thread_set = (int)(videoView.getVieworder()/2.6);
+                        int thread_set = (int)(videoView.getVieworder()/1.6);
                         if (thread_set <= setting.getMaxthread()){
                             videoViewhnew.setThreadset(thread_set);
                         }else{
@@ -642,7 +642,7 @@ public class VideoViewController {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour>=10&&hour<=13){
+        if(hour>=12&&hour<=14){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
