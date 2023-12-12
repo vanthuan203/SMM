@@ -313,18 +313,18 @@ public class AuthController {
     ResponseEntity<String> updateRedirectCron(){
         Setting setting = settingRepository.getReferenceById(1L);
         JSONObject resp = new JSONObject();
-        if(historyViewRepository.getThreadRunningViewVN()<videoViewRepository.getCountThreadViewVN()*(setting.getThreadmin()/100F)){
+        if(historyViewRepository.getThreadRunningViewVN()<(videoViewRepository.getCountThreadViewVN()==null?0:videoViewRepository.getCountThreadViewVN())*(setting.getThreadmin()/100F)){
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()==0?0:(settingRepository.getRedirectVN()-100));
-        }else if(historyViewRepository.getThreadRunningViewVN()>videoViewRepository.getCountThreadViewVN()){
+        }else if(historyViewRepository.getThreadRunningViewVN()>(videoViewRepository.getCountThreadViewVN()==null?0:videoViewRepository.getCountThreadViewVN())){
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()>=1000?1000:(settingRepository.getRedirectVN()+100));
         }
-        if(historyViewRepository.getThreadRunningViewUS()<videoViewRepository.getCountThreadViewUS()*(setting.getThreadmin()/100F)){
+        if(historyViewRepository.getThreadRunningViewUS()<(videoViewRepository.getCountThreadViewUS()==null?0:videoViewRepository.getCountThreadViewUS())*(setting.getThreadmin()/100F)){
             settingRepository.updateRedirectUS(settingRepository.getRedirectUS()==0?0:(settingRepository.getRedirectUS()-100));
-        }else if(historyViewRepository.getThreadRunningViewUS()>videoViewRepository.getCountThreadViewUS()){
+        }else if(historyViewRepository.getThreadRunningViewUS()>(videoViewRepository.getCountThreadViewUS()==null?0:videoViewRepository.getCountThreadViewUS())){
             settingRepository.updateRedirectUS(settingRepository.getRedirectUS()>=1000?1000:(settingRepository.getRedirectUS()+100));
         }
-        int maxrunningVN=videoViewRepository.getMaxRunningBuffHVN();
-        int maxrunningUS=videoViewRepository.getMaxRunningBuffHUS();
+        int maxrunningVN=videoViewRepository.getMaxRunningBuffHVN()==null?0:videoViewRepository.getMaxRunningBuffHVN();
+        int maxrunningUS=videoViewRepository.getMaxRunningBuffHUS()==null?0:videoViewRepository.getMaxRunningBuffHUS();
         settingRepository.updateMaxRunningBuffHVN(maxrunningVN<=0?0:maxrunningVN);
         settingRepository.updateMaxRunningBuffHUS(maxrunningUS<=0?0:maxrunningUS);
         videoViewRepository.speedup_threads();
