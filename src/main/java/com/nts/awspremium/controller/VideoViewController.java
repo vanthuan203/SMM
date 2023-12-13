@@ -190,7 +190,7 @@ public class VideoViewController {
                     videoViewhnew.setVideoid(video.get("id").toString());
                     videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
                     if(service.getChecktime()==1){
-                        int thread_set = (int)(videoView.getVieworder()/1.6);
+                        int thread_set = (int)(videoView.getVieworder()/2.6);
                         if (thread_set <= setting.getMaxthread()){
                             videoViewhnew.setThreadset(thread_set);
                         }else{

@@ -95,7 +95,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1) and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByCheckTime();
 
-    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='vn') and viewtotal<vieworder*0.9 and maxthreads!=-1",nativeQuery = true)
+    @Query(value = "SELECT sum(vieworder) from videoview where service in (select service from service where checktime=1 and geo='vn') and viewtotal<vieworder and maxthreads!=-1",nativeQuery = true)
     public Integer getCountOrderRunningByCheckTimeVN();
 
     @Query(value = "SELECT sum(threadset) from videoview where service in (select service from service where checktime=1 and geo='vn') and maxthreads!=-1",nativeQuery = true)
@@ -227,7 +227,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT sum(vieworder) as total FROM videoview where user=?1",nativeQuery = true)
     public Integer getCountViewBuffOrder(String user);
 
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where historyviewsum.duration>0 and time>=videoview.insertdate",nativeQuery = true)
+    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where historyviewsum.duration>0 and time>=         videoview.insertdate",nativeQuery = true)
     public Integer getCountViewBuffedOrder();
 
     @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videoview on historyviewsum.videoid=videoview.videoid where historyviewsum.duration>0 and videoview.user=?1  time>=videoview.insertdate",nativeQuery = true)
@@ -237,11 +237,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public List<VideoView> getVideoBuffhById(String videoid);
 
     @Query(value = "SELECT cast((((SELECT count(*) from account where running=1 and geo='vn')/(select leveluser from setting limit 1))-\n" +
-            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0)))/5300 as SIGNED)",nativeQuery = true)
+            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0)))/3300 as SIGNED)",nativeQuery = true)
     public Integer getMaxRunningBuffHVN();
 
     @Query(value = "SELECT cast((((SELECT count(*) from account where running=1 and geo='us')/(select leveluser from setting limit 1))-\n" +
-            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0)))/5300 as SIGNED)",nativeQuery = true)
+            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0)))/3300 as SIGNED)",nativeQuery = true)
     public Integer getMaxRunningBuffHUS();
 
     @Modifying

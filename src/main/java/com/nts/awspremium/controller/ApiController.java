@@ -331,7 +331,7 @@ public class ApiController {
                         VideoView videoViewhnew = new VideoView();
 
                         //int thread_set_fix = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                        int thread_set = service.getChecktime()==0?(data.getQuantity() / (60/service.getMaxtime()*2)):(int)(data.getQuantity()/1.6);
+                        int thread_set = service.getChecktime()==0?(data.getQuantity() / (60/service.getMaxtime()*2)):(int)(data.getQuantity()/2.6);
                         if (thread_set <= setting.getMaxthread()){
                             videoViewhnew.setThreadset(thread_set);
                         }else{
