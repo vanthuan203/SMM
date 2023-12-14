@@ -244,24 +244,28 @@ public class ApiController {
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
                 Random ran = new Random();
                 Request request1 = null;
-                String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ"};
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+                Iterator k = null;
+                String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw"};
+                for (int i=0;i<10;i++){
+                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
-                Response response1 = client1.newCall(request1).execute();
+                    Response response1 = client1.newCall(request1).execute();
 
-                String resultJson1 = response1.body().string();
-                Object obj1 = new JSONParser().parse(resultJson1);
-                JSONObject jsonObject1 = (JSONObject) obj1;
-                JSONArray items = (JSONArray) jsonObject1.get("items");
-                if (items == null) {
-                    resp.put("error", "Can't get video info");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    String resultJson1 = response1.body().string();
+                    Object obj1 = new JSONParser().parse(resultJson1);
+                    JSONObject jsonObject1 = (JSONObject) obj1;
+                    JSONArray items = (JSONArray) jsonObject1.get("items");
+                    if (items == null) {
+                        continue;
+                    }
+                    k = items.iterator();
+                    if (k.hasNext() == false) {
+                        resp.put("error", "Can't get video info");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    break;
                 }
-                Iterator k = items.iterator();
-                if (k.hasNext() == false) {
-                    resp.put("error", "Can't get video info");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
+
                 /////////////////////////////////////////////
                 while (k.hasNext()) {
                     try {

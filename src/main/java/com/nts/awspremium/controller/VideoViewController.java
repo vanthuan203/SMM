@@ -652,7 +652,7 @@ public class VideoViewController {
             Integer CountTheadSetRunningByService=videoViewRepository.getCountThreadSetByCheckTimeVN();
             Integer CountTheadSetRunningByGeo=videoViewRepository.getSumThreadSetByGeo(service.getGeo());
             Integer CountTheadVPSByGeo=vpsRepository.getSumThreadsByGeo(service.getGeo());
-            if(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax())){
+            if(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.6):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.9)){
                 break;
             }
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
@@ -663,7 +663,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()))){
+                        ||(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.6):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.9))){
                     continue;
                 }
             }
