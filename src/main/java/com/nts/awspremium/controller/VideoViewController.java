@@ -3637,7 +3637,7 @@ public class VideoViewController {
                 if(checkBH==0){
                     checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
-                if(service.getChecktime()==1 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0 && checkBH>0 )){
+                if(service.getChecktime()==1 ||   checkBH>0 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
                     video_refil=video;
                 }else{
                     htviewfindorder(video.getOrderid(),"1");

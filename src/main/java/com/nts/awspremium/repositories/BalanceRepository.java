@@ -22,6 +22,6 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "FROM balance\n" +
             "WHERE DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') >= NOW() - INTERVAL 1 DAY\n" +
-            "  AND DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') < NOW() and balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+            "  AND DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') < NOW() and balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow();
 }

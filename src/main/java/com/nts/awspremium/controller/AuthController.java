@@ -434,6 +434,24 @@ public class AuthController {
 
     }
 
+    @GetMapping(path = "balanceNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balanceNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float vn=balanceRepository.getAllBalanceVNNow();
+        Float us=balanceRepository.getAllBalanceUSNow();
+        resp.put("balance","VN-"+vn.toString()+"$,US-"+us.toString()+"$");
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
 
     @GetMapping(path = "getalluser",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getalluser(@RequestHeader(defaultValue = "") String Authorization){
