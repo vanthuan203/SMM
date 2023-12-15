@@ -14,14 +14,14 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
     public List<Balance> getAllBalance(String user);
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
-            "FROM balance\n" +
-            "WHERE DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') >= NOW() - INTERVAL 1 DAY\n" +
-            "  AND DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') < NOW() and balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+            "            FROM balance\n" +
+            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(), @@session.time_zone, '+7:00')) * 1000\n" +
+            "             AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
-            "FROM balance\n" +
-            "WHERE DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') >= NOW() - INTERVAL 1 DAY\n" +
-            "  AND DATE_FORMAT(FROM_UNIXTIME((time+12*60*60*1000)/ 1000), '%Y-%m-%d') < NOW() and balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+            "            FROM balance\n" +
+            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(), @@session.time_zone, '+7:00')) * 1000\n" +
+            "             AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow();
 }
