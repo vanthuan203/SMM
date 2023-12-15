@@ -131,11 +131,11 @@ public class HistoryViewController {
                 resp.put("like", "fail");
                 resp.put("sub", "fail");
                 if(service.getNiche()==1){
-                    resp.put("niche_key", service.getKeyniche());
+                    String[] nicheArr = service.getKeyniche().split(",");
+                    resp.put("niche_key", nicheArr[ran.nextInt(nicheArr.length)]);
                 }else{
                     resp.put("niche_key","");
                 }
-
                 String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                 String key = "";
                 if (list_key != null && list_key.length() != 0) {
@@ -163,6 +163,9 @@ public class HistoryViewController {
                 }
                 for (int i = 0; i < service.getExternal(); i++) {
                     arrSource.add("external");
+                }
+                for (int i = 0; i < service.getPlaylists(); i++) {
+                    arrSource.add("playlists");
                 }
                 String source_view = arrSource.get(ran.nextInt(arrSource.size())).trim();
                 if (source_view.equals("suggest") && service.getType().equals("Special")) {
@@ -299,7 +302,8 @@ public class HistoryViewController {
             resp.put("sub", "fail");
             resp.put("proxy", proxy[0] + ":" + proxy[1] + ":1:1");
             if(service.getNiche()==1){
-                resp.put("niche_key", service.getKeyniche());
+                String[] nicheArr = service.getKeyniche().split(",");
+                resp.put("niche_key", nicheArr[ran.nextInt(nicheArr.length)]);
             }else{
                 resp.put("niche_key","");
             }
@@ -330,6 +334,9 @@ public class HistoryViewController {
             }
             for (int i = 0; i < service.getExternal(); i++) {
                 arrSource.add("external");
+            }
+            for (int i = 0; i < service.getPlaylists(); i++) {
+                arrSource.add("playlists");
             }
             if (service.getService() == 753 || service.getService() == 153 || service.getService() == 754 || service.getService() == 154) {
                 resp.put("live", "true");

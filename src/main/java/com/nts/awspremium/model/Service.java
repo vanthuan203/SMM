@@ -26,6 +26,7 @@ public class Service {
     private Integer direct;
     private Integer embed;
     private Integer external;
+    private Integer playlists;
     private Integer mintime;
     private Integer maxtime;
     private Integer refill;
@@ -38,7 +39,7 @@ public class Service {
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer niche, String keyniche) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer niche, String keyniche) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -57,6 +58,7 @@ public class Service {
         this.direct = direct;
         this.embed = embed;
         this.external = external;
+        this.playlists = playlists;
         this.mintime = mintime;
         this.maxtime = maxtime;
         this.refill = refill;
@@ -272,5 +274,13 @@ public class Service {
 
     public void setKeyniche(String keyniche) {
         this.keyniche = keyniche;
+    }
+
+    public Integer getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(Integer playlists) {
+        this.playlists = playlists;
     }
 }

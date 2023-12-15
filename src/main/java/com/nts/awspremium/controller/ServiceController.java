@@ -195,6 +195,7 @@ public class ServiceController {
             obj.put("direct",admins.get(i).getDirect());
             obj.put("embed",admins.get(i).getEmbed());
             obj.put("external",admins.get(i).getExternal());
+            obj.put("playlists",admins.get(i).getPlaylists());
             obj.put("dtn",admins.get(i).getDtn());
             obj.put("mintime",admins.get(i).getMintime());
             obj.put("maxtime",admins.get(i).getMaxtime());

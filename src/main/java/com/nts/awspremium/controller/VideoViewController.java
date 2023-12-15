@@ -642,7 +642,7 @@ public class VideoViewController {
         TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
         Calendar calendar = Calendar.getInstance(timeZone);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour>=13&&hour<=14){
+        if(hour>=12&&hour<=14){
             resp.put("status", "fail");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -652,7 +652,7 @@ public class VideoViewController {
             Integer CountTheadSetRunningByService=videoViewRepository.getCountThreadSetByCheckTimeVN();
             Integer CountTheadSetRunningByGeo=videoViewRepository.getSumThreadSetByGeo(service.getGeo());
             Integer CountTheadVPSByGeo=vpsRepository.getSumThreadsByGeo(service.getGeo());
-            if(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.6):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.9)){
+            if(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.5):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.85)){
                 break;
             }
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
@@ -3427,9 +3427,14 @@ public class VideoViewController {
                         }
                     }
                 }
-                if((((viewcheck!=-1 || checkview==0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) && checkBH==0){
+                if((((viewcheck!=-1 || checkview<=0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) && checkBH==0){
                     status="Refunded";
-                    float price_refund=video.getPrice();
+                    float price_refund=0F;
+                    if(checkview==-1){
+                        price_refund=video.getPrice()*0.5F;
+                    }else{
+                        price_refund=video.getPrice();
+                    }
                     video.setViewtotal(0);
                     video.setCancel(1);
                     video.setPrice(0F);
