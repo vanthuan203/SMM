@@ -130,7 +130,11 @@ public class HistoryViewController {
                 resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
                 resp.put("like", "fail");
                 resp.put("sub", "fail");
-                resp.put("niche_key", "Tin Tức");
+                if(service.getNiche()==1){
+                    resp.put("niche_key", service.getKeyniche());
+                }else{
+                    resp.put("niche_key","");
+                }
 
                 String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
                 String key = "";
@@ -294,7 +298,11 @@ public class HistoryViewController {
             resp.put("like", "fail");
             resp.put("sub", "fail");
             resp.put("proxy", proxy[0] + ":" + proxy[1] + ":1:1");
-            resp.put("niche_key", "Tin Tức");
+            if(service.getNiche()==1){
+                resp.put("niche_key", service.getKeyniche());
+            }else{
+                resp.put("niche_key","");
+            }
             String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
             String key = "";
             if (list_key != null && list_key.length() != 0) {

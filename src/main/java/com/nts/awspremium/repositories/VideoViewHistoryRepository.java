@@ -40,7 +40,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and timecheckbh=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d')",nativeQuery = true)
+    @Query(value = "update videoviewhistory set viewend=?1,timecheckbh=?2 where videoid=?3 and timecheckbh=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d')",nativeQuery = true)
     public Integer updateviewend(Integer viewend,Long timecheckbh, String videoid);
 
 
@@ -85,13 +85,13 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories(String user);
 
-    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
+    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEnd(Integer limit);
 
-    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheck!=-1 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and service in(select service from service where checktime=0) order by timestart asc limit ?1",nativeQuery = true)
+    @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheck!=-1 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and service in(select service from service where checktime=0) order by timestart asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEndAll(Integer limit);
 
-    @Query(value = "select count(*) from videoviewhistory where timestart!=0 and cancel!=1 and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')>DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and orderid=?1",nativeQuery = true)
+    @Query(value = "select count(*) from videoviewhistory where timestart!=0 and cancel!=1 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')>DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and orderid=?1",nativeQuery = true)
     public Integer CheckOrderViewRefund(Long orderid);
 
     @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and viewend=-1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=8 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60)<24 and service in(select service from service where checktime=1) order by enddate asc limit ?1",nativeQuery = true)
@@ -127,6 +127,6 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
 
     @Modifying
     @Transactional
-    @Query(value = "update videoviewhistory set timecheck=-1 where videoid in(?1) and DATE_FORMAT(FROM_UNIXTIME((timestart-2*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d')",nativeQuery = true)
+    @Query(value = "update videoviewhistory set timecheck=-1 where videoid in(?1) and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d')",nativeQuery = true)
     public Integer updatetimcheckError(List<String> a);
 }
