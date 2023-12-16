@@ -15,13 +15,13 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "            FROM balance\n" +
-            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(), @@session.time_zone, '+7:00')) * 1000\n" +
+            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(),'+7:00',@@session.time_zone)) * 1000\n" +
             "             AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "            FROM balance\n" +
-            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(), @@session.time_zone, '+7:00')) * 1000\n" +
+            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(),'+7:00',@@session.time_zone)) * 1000\n" +
             "             AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow();
 }

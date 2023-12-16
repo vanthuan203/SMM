@@ -446,7 +446,7 @@ public class AuthController {
         }
         Float vn=balanceRepository.getAllBalanceVNNow();
         Float us=balanceRepository.getAllBalanceUSNow();
-        resp.put("balance","VN-"+vn.toString()+"$,US-"+us.toString()+"$");
+        resp.put("balance","VN-"+(vn!=null?vn.toString():"0")+"$,US-"+(us!=null?us.toString():"0")+"$");
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
