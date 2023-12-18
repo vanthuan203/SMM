@@ -14,14 +14,14 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
     public List<Balance> getAllBalance(String user);
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
-            "            FROM balance\n" +
-            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(),'+7:00',@@session.time_zone)) * 1000\n" +
-            "             AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+            "                    FROM balance\n" +
+            "                     WHERE time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
-            "            FROM balance\n" +
-            "            WHERE time>UNIX_TIMESTAMP(CONVERT_TZ(CURRENT_DATE(),'+7:00',@@session.time_zone)) * 1000\n" +
-            "             AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+            "                    FROM balance\n" +
+            "                     WHERE time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow();
 }
