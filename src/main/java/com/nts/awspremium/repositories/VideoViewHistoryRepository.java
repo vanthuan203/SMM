@@ -52,7 +52,7 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "update videoviewhistory set viewend=?1 where videoid=?2 and timecheckbh=0 and viewend=-1 and  round((UNIX_TIMESTAMP()-enddate/1000)/60/60)>=8",nativeQuery = true)
     public Integer updateviewendthan5h(Integer viewend,String videoid);
 
-    @Query(value = "SELECT (enddate+8*60*60*1000) from videoviewhistory where videoid=?1 and cancel>0 order by enddate desc limit 1",nativeQuery = true)
+    @Query(value = "SELECT (enddate+8*60*60*1000) from videoviewhistory where videoid=?1 and cancel!=1 order by enddate desc limit 1",nativeQuery = true)
     public Long checkOrderDoneThan48h(String videoid);
 
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
