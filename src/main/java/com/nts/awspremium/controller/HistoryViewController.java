@@ -270,7 +270,7 @@ public class HistoryViewController {
             }
             String[] proxy;
             List<Proxy> proxies;
-            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0){
+            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0&&buffh!=3){
                 proxies = proxyRepository.getProxyNotRunningAndLive(histories.get(0).getGeo());
                 if(proxies.size()>0){
                     proxy=proxies.get(0).getProxy().split(":");
