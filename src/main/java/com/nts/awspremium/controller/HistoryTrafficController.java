@@ -65,14 +65,28 @@ public class HistoryTrafficController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 String[] proxy = accountRepository.getProxyByUsername(username.trim()).split(":");
+                Service service = serviceRepository.getInfoService(webTraffics.get(0).getService());
                 resp.put("status", "true");
-                resp.put("click_ads", "true");
+                if(ran.nextInt(1000)<=service.getClick_ads()*10){
+                    resp.put("click_ads", "true");
+                }else{
+                    resp.put("click_ads", "fail");
+                }
+
+
                 resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
                 resp.put("orderid", webTraffics.get(0).getOrderid());
                 resp.put("device", histories.get(0).getDevice());
                 resp.put("link", webTraffics.get(0).getLink());
                 resp.put("username", histories.get(0).getUsername());
-
+                resp.put("duration",service.getMaxtime()==service.getMintime()?service.getMintime()*60:(service.getMintime()*60+(ran.nextInt((service.getMaxtime()-service.getMintime())*60))));
+                if(ran.nextInt(1000)<=service.getClick_web()*10){
+                    resp.put("click_web", "true");
+                }else{
+                    resp.put("click_web", "fail");
+                    resp.put("duration",0);
+                    resp.put("click_ads", "fail");
+                }
                 String[] keyArr = webTraffics.get(0).getKeywords().split(",");
                 String key = keyArr[ran.nextInt(keyArr.length)];
                 resp.put("keyword", key);
@@ -126,7 +140,7 @@ public class HistoryTrafficController {
     }
     @PostMapping(value = "/updateDoneTraffic", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateDoneTask(@RequestBody String keyword,@RequestParam(defaultValue = "") String username,
-                                  @RequestParam(defaultValue = "0") Long orderid,@RequestParam(defaultValue = "0") Integer duration) {
+                                  @RequestParam(defaultValue = "0") Long orderid,@RequestParam(defaultValue = "0") Integer duration,@RequestParam(defaultValue = "-1") Integer rank) {
         JSONObject resp = new JSONObject();
 
         if (username.length() == 0) {
@@ -152,6 +166,7 @@ public class HistoryTrafficController {
                     HistoryTraficSum historySum = new HistoryTraficSum();
                     historySum.setOrderid(orderid);
                     historySum.setUsername(username);
+                    historySum.setRank(rank);
                     historySum.setTime(System.currentTimeMillis());
                     historySum.setKeyword(keyword!=null?keyword:"");
                     historySum.setDuration(duration);

@@ -33,13 +33,15 @@ public class Service {
     private Integer maxtimerefill;
     private Integer checktime;
     private Integer live;
-
+    private Integer expired=0;
     private Integer niche;
     private String keyniche;
+    private Integer click_web=0;
+    private Integer click_ads=0;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer niche, String keyniche) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -65,8 +67,11 @@ public class Service {
         this.maxtimerefill = maxtimerefill;
         this.checktime = checktime;
         this.live = live;
+        this.expired = expired;
         this.niche = niche;
         this.keyniche = keyniche;
+        this.click_web = click_web;
+        this.click_ads = click_ads;
     }
 
     public Integer getMaxorder() {
@@ -282,5 +287,29 @@ public class Service {
 
     public void setPlaylists(Integer playlists) {
         this.playlists = playlists;
+    }
+
+    public Integer getExpired() {
+        return expired;
+    }
+
+    public void setExpired(Integer expired) {
+        this.expired = expired;
+    }
+
+    public Integer getClick_web() {
+        return click_web;
+    }
+
+    public void setClick_web(Integer click_web) {
+        this.click_web = click_web;
+    }
+
+    public Integer getClick_ads() {
+        return click_ads;
+    }
+
+    public void setClick_ads(Integer click_ads) {
+        this.click_ads = click_ads;
     }
 }

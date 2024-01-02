@@ -9,6 +9,7 @@ import javax.persistence.Table;
 public class WebTrafficHistory {
     @Id
     private Long orderid;
+    private String token="";
     private String link;
     private String keywords;
 
@@ -32,8 +33,9 @@ public class WebTrafficHistory {
     public WebTrafficHistory() {
     }
 
-    public WebTrafficHistory(Long orderid, String link, String keywords, Integer traffictotal, Integer cancel, Long insertdate, Long enddate, Integer trafficorder, Integer service, Integer maxthreads, String note, String user, Float price, Long timecheck, Integer numbh, Integer refund, Integer waitbh, Long timecheckbh, Long timestart) {
+    public WebTrafficHistory(Long orderid, String token, String link, String keywords, Integer traffictotal, Integer cancel, Long insertdate, Long enddate, Integer trafficorder, Integer service, Integer maxthreads, String note, String user, Float price, Long timecheck, Integer numbh, Integer refund, Integer waitbh, Long timecheckbh, Long timestart) {
         this.orderid = orderid;
+        this.token = token;
         this.link = link;
         this.keywords = keywords;
         this.traffictotal = traffictotal;
@@ -60,6 +62,14 @@ public class WebTrafficHistory {
 
     public void setOrderid(Long orderid) {
         this.orderid = orderid;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getLink() {

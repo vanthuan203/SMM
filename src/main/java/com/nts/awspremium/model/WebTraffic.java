@@ -8,6 +8,7 @@ public class WebTraffic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderid;
+    private String token="";
     private String link;
     private String keywords;
     private Long insertdate;
@@ -20,6 +21,7 @@ public class WebTraffic {
     private Integer trafficorder;
     private Integer traffictotal=0;
     private Integer traffic24h=0;
+    private Integer maxtraffic24h=0;
     private Long timeupdate=0L;
     private Float price;
     private Integer valid=1;
@@ -29,8 +31,9 @@ public class WebTraffic {
     public WebTraffic() {
     }
 
-    public WebTraffic(Long orderid, String link, String keywords, Long insertdate, Long timestart, Integer maxthreads, Integer service, String note, String user, Long enddate, Integer trafficorder, Integer traffictotal, Integer traffic24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup) {
+    public WebTraffic(Long orderid, String token, String link, String keywords, Long insertdate, Long timestart, Integer maxthreads, Integer service, String note, String user, Long enddate, Integer trafficorder, Integer traffictotal, Integer traffic24h, Integer maxtraffic24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup) {
         this.orderid = orderid;
+        this.token = token;
         this.link = link;
         this.keywords = keywords;
         this.insertdate = insertdate;
@@ -43,6 +46,7 @@ public class WebTraffic {
         this.trafficorder = trafficorder;
         this.traffictotal = traffictotal;
         this.traffic24h = traffic24h;
+        this.maxtraffic24h = maxtraffic24h;
         this.timeupdate = timeupdate;
         this.price = price;
         this.valid = valid;
@@ -56,6 +60,14 @@ public class WebTraffic {
 
     public void setOrderid(Long orderid) {
         this.orderid = orderid;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getLink() {
@@ -192,5 +204,13 @@ public class WebTraffic {
 
     public void setSpeedup(Integer speedup) {
         this.speedup = speedup;
+    }
+
+    public Integer getMaxtraffic24h() {
+        return maxtraffic24h;
+    }
+
+    public void setMaxtraffic24h(Integer maxtraffic24h) {
+        this.maxtraffic24h = maxtraffic24h;
     }
 }

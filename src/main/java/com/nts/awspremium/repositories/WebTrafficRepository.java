@@ -16,9 +16,9 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "SELECT * FROM webtraffic where service in(select service from service where geo=?1) and INSTR(?2,orderid)=0 and orderid in (?3) order by rand() limit 1",nativeQuery = true)
     public List<WebTraffic> getWebTrafficByGeo(String geo, String listorderid, List<String> orderid);
 
-    @Query(value = "select orderid from (select webtraffic.orderid,count(*) as total,maxthreads,valid,traffictotal,trafficorder,speedup\n" +
+    @Query(value = "select orderid from (select webtraffic.orderid,count(*) as total,maxthreads,valid,traffictotal,trafficorder,speedup,traffic24h,maxtraffic24h\n" +
             "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1\n" +
-            "                                 group by orderid having total<maxthreads ) as t",nativeQuery = true)
+            "                                 group by orderid having (total<maxthreads and traffic24h<maxtraffic24h) ) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
 
 
@@ -101,6 +101,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "Select webtraffic.orderid,webtraffic.link,count(*) as total,maxthreads,insertdate,timestart,note,trafficorder,user,traffictotal,timeupdate,traffic24h,price,service from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where user!='baohanh01@gmail.com' and timestart!=0 group by orderid order by insertdate desc",nativeQuery = true)
     public List<OrderTrafficRunning> getOrder();
 
+
     @Query(value = "Select WebTraffic.orderid,WebTraffic.videoid,WebTraffic.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service,priority from WebTraffic left join historyview on historyview.videoid=WebTraffic.videoid and running=1 where timestart=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrderPending();
 
@@ -116,28 +117,28 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "Select WebTraffic.orderid,WebTraffic.videoid,WebTraffic.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from WebTraffic left join historyview on historyview.videoid=WebTraffic.videoid and running=1 where user=?1 and WebTraffic.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrderCheckCancel(String user);
 
-    @Query(value = "Select WebTraffic.orderid,WebTraffic.videoid,WebTraffic.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service,priority from WebTraffic left join historyview on historyview.videoid=WebTraffic.videoid and running=1 where WebTraffic.videoid=?1",nativeQuery = true)
+    @Query(value = "Select webtraffic.orderid,webtraffic.videoid,webtraffic.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service,priority from WebTraffic left join historyview on historyview.videoid=WebTraffic.videoid and running=1 where WebTraffic.videoid=?1",nativeQuery = true)
     public List<OrderViewRunning> getWebTrafficById(String videoid);
 
     @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid" +
             " where  time>=webtraffic.insertdate and service in(select service from service where category='Website') and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalTrafficBuff();
 
-    @Query(value = "SELECT WebTraffic.videoid,count(*) as view FROM historyviewsum left join WebTraffic on historyviewsum.videoid=WebTraffic.videoid where time>=WebTraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by WebTraffic.videoid order by insertdate desc",nativeQuery = true)
-    public List<String> get24hViewBuff();
+    @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid where time>=webtraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
+    public List<String> get24hTrafficBuff();
 
 
     @Query(value = "SELECT count(*) FROM WebTraffic where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
     public Integer getServiceByVideoId(String videoid,String geo);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE WebTraffic set viewstart=?1,maxthreads=?2,timestart=?3 where timestart=0 and maxthreads=0 and videoid=?4",nativeQuery = true)
+    @Query(value = "UPDATE webtraffic set viewstart=?1,maxthreads=?2,timestart=?3 where timestart=0 and maxthreads=0 and videoid=?4",nativeQuery = true)
     public void updatePendingOrderByVideoId(Integer viewstart,Integer maxthreads,Long timestart,String videoid);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE webtraffic set traffictotal=?1,timeupdate=?2 where orderid=?3",nativeQuery = true)
-    public void updateTrafficOrderByOrderId(Integer traffictotal,Long timeupdate,Long orderid);
+    @Query(value = "UPDATE webtraffic set traffictotal=?1,timeupdate=?2,traffic24h=?3 where orderid=?4",nativeQuery = true)
+    public void updateTrafficOrderByOrderId(Integer traffictotal,Long timeupdate,Integer traffic24h,Long orderid);
 
     @Modifying
     @Transactional

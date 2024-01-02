@@ -74,8 +74,17 @@ public class WebTrafficController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             WebTraffic webTrafficNew = new WebTraffic();
+            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+            String token="";
+            Random ran=new Random();
+            for(int i=0;i<30;i++){
+                Integer ranver=ran.nextInt(stringrand.length());
+                token=token+stringrand.charAt(ranver);
+            }
+            webTrafficNew.setToken(token);
             webTrafficNew.setInsertdate(System.currentTimeMillis());
-            webTrafficNew.setTraffic24h(webTraffic.getTrafficorder());
+            webTrafficNew.setTraffic24h(0);
+            webTrafficNew.setMaxtraffic24h((int)(webTraffic.getTrafficorder()/(service.getExpired()==1?0.9:(service.getExpired()-1))));
             webTrafficNew.setTrafficorder(webTraffic.getTrafficorder());
             webTrafficNew.setTraffictotal(0);
             webTrafficNew.setLink(webTraffic.getLink());
@@ -84,7 +93,7 @@ public class WebTrafficController {
             webTrafficNew.setTimeupdate(0L);
             webTrafficNew.setEnddate(0L);
             webTrafficNew.setTimestart(System.currentTimeMillis());
-            webTrafficNew.setMaxthreads(service.getThread());
+            webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(service.getClick_web()/100F))/24/(60/service.getMaxtime()))<=1?2:((int)(webTrafficNew.getMaxtraffic24h()/(service.getClick_web()/100F))/24/(60/service.getMaxtime())));
             webTrafficNew.setNote(webTraffic.getNote());
             webTrafficNew.setPrice(priceorder);
             webTrafficNew.setService(webTraffic.getService());
@@ -142,6 +151,8 @@ public class WebTrafficController {
                 obj.put("trafficorder", orderRunnings.get(i).getTrafficOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service", orderRunnings.get(i).getService());
+                Service service = serviceRepository.getInfoService(orderRunnings.get(i).getService());
+                obj.put("package",service.getExpired());
                 obj.put("user", orderRunnings.get(i).getUser());
 
                 obj.put("traffic24h", orderRunnings.get(i).getTraffic24h());
@@ -183,6 +194,7 @@ public class WebTrafficController {
                 List<WebTraffic> videoBuffh = webTrafficRepository.getWebTrafficByOrderId(Long.parseLong(orderidArr[i].trim()));
                 WebTrafficHistory videoBuffhnew = new WebTrafficHistory();
                 videoBuffhnew.setOrderid(videoBuffh.get(0).getOrderid());
+                videoBuffhnew.setToken(videoBuffh.get(0).getToken());
                 videoBuffhnew.setInsertdate(videoBuffh.get(0).getInsertdate());
                 videoBuffhnew.setService(videoBuffh.get(0).getService());
                 videoBuffhnew.setKeywords(videoBuffh.get(0).getKeywords());
@@ -255,6 +267,7 @@ public class WebTrafficController {
 
                 WebTrafficHistory videoBuffhnew = new WebTrafficHistory();
                 videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
+                videoBuffhnew.setToken(videoBuffh.get(i).getToken());
                 videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
                 videoBuffhnew.setKeywords(videoBuffh.get(i).getKeywords());
                 videoBuffhnew.setLink(videoBuffh.get(i).getLink());
@@ -295,6 +308,7 @@ public class WebTrafficController {
             List<String> traffic24h;
             List<WebTraffic> webTraffics = webTrafficRepository.getAllOrderTraffic();
             trafficBuff = webTrafficRepository.getTotalTrafficBuff();
+            traffic24h = webTrafficRepository.get24hTrafficBuff();
 
             for (int i = 0; i < webTraffics.size(); i++) {
                 int traffictotal = 0;
@@ -304,8 +318,13 @@ public class WebTrafficController {
                         traffictotal = Integer.parseInt(trafficBuff.get(j).split(",")[1]);
                     }
                 }
+                for (int j = 0; j < traffic24h.size(); j++) {
+                    if (webTraffics.get(i).getOrderid()==Integer.parseInt(traffic24h.get(j).split(",")[0])) {
+                        traffictotal24h = Integer.parseInt(traffic24h.get(j).split(",")[1]);
+                    }
+                }
                 try {
-                    webTrafficRepository.updateTrafficOrderByOrderId(traffictotal, System.currentTimeMillis(), webTraffics.get(i).getOrderid());
+                    webTrafficRepository.updateTrafficOrderByOrderId(traffictotal, System.currentTimeMillis(),traffictotal24h, webTraffics.get(i).getOrderid());
                 } catch (Exception e) {
 
                 }
@@ -357,6 +376,8 @@ public class WebTrafficController {
                 obj.put("trafficorder", orderRunnings.get(i).getTrafficorder());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
+                Service service = serviceRepository.getInfoService(orderRunnings.get(i).getService());
+                obj.put("package",service.getExpired());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");

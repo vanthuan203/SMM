@@ -14,10 +14,11 @@ public class HistoryTraficSum {
     private String device;
     private Integer duration;
     private Long time;
+    private Integer ranking;
     public HistoryTraficSum() {
     }
 
-    public HistoryTraficSum(Long id, String username, Long orderid, String keyword, String device, Integer duration, Long time) {
+    public HistoryTraficSum(Long id, String username, Long orderid, String keyword, String device, Integer duration, Long time, Integer ranking) {
         this.id = id;
         this.username = username;
         this.orderid = orderid;
@@ -25,6 +26,7 @@ public class HistoryTraficSum {
         this.device = device;
         this.duration = duration;
         this.time = time;
+        this.ranking = ranking;
     }
 
     public Long getId() {
@@ -81,5 +83,13 @@ public class HistoryTraficSum {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Integer getRank() {
+        return ranking;
+    }
+
+    public void setRank(Integer ranking) {
+        this.ranking = ranking;
     }
 }

@@ -58,6 +58,7 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service ",nativeQuery = true)
     public List<String> GetAllService();
 
+
     @Query(value = "Select CONCAT_WS('| ',service,name,note,concat(rate,'$')) from service where category='Website' ",nativeQuery = true)
     public List<String> GetAllServiceTraffic();
 
@@ -72,6 +73,9 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
 
     @Query(value = "Select * from service where service=?1",nativeQuery = true)
     public List<Service> GetServiceById(Integer service);
+
+    @Query(value = "Select expired from service where service=?1",nativeQuery = true)
+    public Integer getExpiredByService(Integer service);
 
     @Query(value = "Select * from admin where token=?1",nativeQuery = true)
     public List<Admin>  FindByToken(String Authorization);
