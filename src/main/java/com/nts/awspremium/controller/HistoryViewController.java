@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -379,6 +380,287 @@ public class HistoryViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
+
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("fail", "sum");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "getlivebyusername", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getlivebyusername(@RequestParam(defaultValue = "") String username) {
+        JSONObject resp = new JSONObject();
+        if (username.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Username không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+        Random ran = new Random();
+        try {
+            Thread.sleep(ran.nextInt(1000));
+            Long historieId = historyViewRepository.getId(username.trim());
+            if(historieId==null){
+                resp.put("status", "fail");
+                resp.put("fail", "user");
+                resp.put("message", "Username không tồn tại!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<VideoView> videos = null;
+            List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
+            if (histories.get(0).getGeo().trim().equals("live-vn")) {
+                videos = videoViewRepository.getvideoPreVer2VNTEST(orderTrue.getValue());
+            } else if(histories.get(0).getGeo().trim().equals("live-us")) {
+                videos = videoViewRepository.getvideoPreVer2USTEST(orderTrue.getValue());
+            }else{
+                historyViewRepository.save(histories.get(0));
+                resp.put("status", "fail");
+                resp.put("username", histories.get(0).getUsername());
+                resp.put("fail", "video");
+                resp.put("message", "Không còn video để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            if (videos.size() > 0) {
+                histories.get(0).setTimeget(System.currentTimeMillis());
+                histories.get(0).setVideoid(videos.get(0).getVideoid());
+                histories.get(0).setOrderid(videos.get(0).getOrderid());
+                histories.get(0).setChannelid(videos.get(0).getChannelid());
+            } else {
+                historyViewRepository.save(histories.get(0));
+                resp.put("status", "fail");
+                resp.put("username", histories.get(0).getUsername());
+                resp.put("fail", "video");
+                resp.put("message", "Không còn video để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+            Service service = serviceRepository.getServiceNoCheckEnabled(videos.get(0).getService());
+
+            histories.get(0).setTimeget(System.currentTimeMillis());
+            histories.get(0).setRunning(1);
+            historyViewRepository.save(histories.get(0));
+            if(videos.get(0).getTimestart()>=System.currentTimeMillis()){
+                List<Long> arrTime = new ArrayList<>();
+                for (int i = 0; i < 20; i++) {
+                    arrTime.add(System.currentTimeMillis());
+                }
+                for (int i = 0; i < 15; i++) {
+                    arrTime.add(TimeUnit.MINUTES.toMillis((ran.nextInt((int)(service.getMaxtime()*0.1))) +videos.get(0).getTimestart()));
+                }
+                for (int i = 0; i < 25; i++) {
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.1))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.4))));
+                }
+                for (int i = 0; i < 40; i++) {
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.4))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.6))));
+                }
+
+                resp.put("time_start", arrTime.get(ran.nextInt(arrTime.size())));
+            }else{
+                resp.put("time_start", System.currentTimeMillis());
+            }
+            resp.put("channel_id", videos.get(0).getChannelid());
+            resp.put("status", "true");
+            resp.put("time_end", (videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*1.5))+TimeUnit.MINUTES.toMillis((ran.nextInt((5))))));
+            resp.put("video_id", videos.get(0).getVideoid());
+            resp.put("video_title", videos.get(0).getVideotitle());
+            resp.put("geo", "live");
+            resp.put("username", histories.get(0).getUsername());
+            resp.put("like", "fail");
+            resp.put("sub", "fail");
+
+            String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
+            String key = "";
+            if (list_key != null && list_key.length() != 0) {
+                String[] keyArr = list_key.split(",");
+                key = keyArr[ran.nextInt(keyArr.length)];
+            }
+            resp.put("suggest_type", "fail");
+            resp.put("suggest_key", key.length() == 0 ? videos.get(0).getVideotitle() : key);
+            resp.put("suggest_video", "");
+            List<String> arrSource = new ArrayList<>();
+            for (int i = 0; i < service.getSuggest(); i++) {
+                arrSource.add("suggest");
+            }
+            for (int i = 0; i < service.getSearch(); i++) {
+                arrSource.add("search");
+            }
+            for (int i = 0; i < service.getDtn(); i++) {
+                arrSource.add("dtn");
+            }
+            for (int i = 0; i < service.getEmbed(); i++) {
+                arrSource.add("embed");
+            }
+            for (int i = 0; i < service.getDirect(); i++) {
+                arrSource.add("direct");
+            }
+            for (int i = 0; i < service.getExternal(); i++) {
+                arrSource.add("external");
+            }
+            for (int i = 0; i < service.getPlaylists(); i++) {
+                arrSource.add("playlists");
+            }
+            String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
+            if(source_view.equals("suggest")&&service.getType().equals("Special")){
+                resp.put("suggest_type", "true");
+            }else if(source_view.equals("search")&&service.getType().equals("Special")){
+                resp.put("video_title", key.length() == 0 ? videos.get(0).getVideotitle() : key);
+            }
+            resp.put("source",source_view);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+
+
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("fail", "sum");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "getlive", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getlive(@RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+        Random ran = new Random();
+        try {
+            Thread.sleep(ran.nextInt(1000));
+            Long historieId = historyViewRepository.getAccToLive(vps.trim());
+            if(historieId==null){
+                resp.put("status", "fail");
+                resp.put("fail", "user");
+                resp.put("message", "Không còn user để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<VideoView> videos = null;
+            List<HistoryView> histories = historyViewRepository.getHistoriesById(historieId);
+            if (histories.get(0).getGeo().trim().equals("live-vn")) {
+                videos = videoViewRepository.getvideoPreVer2VNTEST(orderTrue.getValue());
+            } else if(histories.get(0).getGeo().trim().equals("live-us")) {
+                videos = videoViewRepository.getvideoPreVer2USTEST(orderTrue.getValue());
+            }else{
+                historyViewRepository.save(histories.get(0));
+                resp.put("status", "fail");
+                resp.put("username", histories.get(0).getUsername());
+                resp.put("fail", "video");
+                resp.put("message", "Không còn video để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            if (videos.size() > 0) {
+                histories.get(0).setTimeget(System.currentTimeMillis());
+                histories.get(0).setVideoid(videos.get(0).getVideoid());
+                histories.get(0).setOrderid(videos.get(0).getOrderid());
+                histories.get(0).setChannelid(videos.get(0).getChannelid());
+            } else {
+                historyViewRepository.save(histories.get(0));
+                resp.put("status", "fail");
+                resp.put("username", histories.get(0).getUsername());
+                resp.put("fail", "video");
+                resp.put("message", "Không còn video để view!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            String[] proxy;
+            List<Proxy> proxies;
+            String geo_proxy=histories.get(0).getGeo().trim().split("-")[1];
+            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0){
+                proxies = proxyRepository.getProxyNotRunningAndLive(geo_proxy);
+                if(proxies.size()>0){
+                    proxy=proxies.get(0).getProxy().split(":");
+                }else{
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    historyViewRepository.save(histories.get(0));
+                    resp.put("status", "fail");
+                    resp.put("fail", "proxy");
+                    resp.put("message", "Hết proxy khả dụng!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }else{
+                proxy = histories.get(0).getProxy().split(":");
+            }
+            resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
+
+            Service service = serviceRepository.getServiceNoCheckEnabled(videos.get(0).getService());
+
+            histories.get(0).setTimeget(System.currentTimeMillis());
+            histories.get(0).setRunning(1);
+            historyViewRepository.save(histories.get(0));
+            if(videos.get(0).getTimestart()>=System.currentTimeMillis()){
+                List<Long> arrTime = new ArrayList<>();
+                for (int i = 0; i < 20; i++) {
+                    arrTime.add(System.currentTimeMillis());
+                }
+                for (int i = 0; i < 15; i++) {
+                    arrTime.add(TimeUnit.MINUTES.toMillis((ran.nextInt((int)(service.getMaxtime()*0.1)))) +videos.get(0).getTimestart());
+                }
+                for (int i = 0; i < 25; i++) {
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.1))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.4))));
+                }
+                for (int i = 0; i < 40; i++) {
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.4))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.6))));
+                }
+
+                resp.put("time_start", arrTime.get(ran.nextInt(arrTime.size())));
+            }else{
+                resp.put("time_start", System.currentTimeMillis());
+            }
+            resp.put("channel_id", videos.get(0).getChannelid());
+            resp.put("status", "true");
+            resp.put("time_end", (videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*1.5))+TimeUnit.MINUTES.toMillis((ran.nextInt((5))))));
+            resp.put("video_id", videos.get(0).getVideoid());
+            resp.put("video_title", videos.get(0).getVideotitle());
+            resp.put("geo", "live");
+            resp.put("username", histories.get(0).getUsername());
+            resp.put("like", "fail");
+            resp.put("sub", "fail");
+
+            String list_key = dataOrderRepository.getListKeyByOrderid(videos.get(0).getOrderid());
+            String key = "";
+            if (list_key != null && list_key.length() != 0) {
+                String[] keyArr = list_key.split(",");
+                key = keyArr[ran.nextInt(keyArr.length)];
+            }
+            resp.put("suggest_type", "fail");
+            resp.put("suggest_key", key.length() == 0 ? videos.get(0).getVideotitle() : key);
+            resp.put("suggest_video", "");
+            List<String> arrSource = new ArrayList<>();
+            for (int i = 0; i < service.getSuggest(); i++) {
+                arrSource.add("suggest");
+            }
+            for (int i = 0; i < service.getSearch(); i++) {
+                arrSource.add("search");
+            }
+            for (int i = 0; i < service.getDtn(); i++) {
+                arrSource.add("dtn");
+            }
+            for (int i = 0; i < service.getEmbed(); i++) {
+                arrSource.add("embed");
+            }
+            for (int i = 0; i < service.getDirect(); i++) {
+                arrSource.add("direct");
+            }
+            for (int i = 0; i < service.getExternal(); i++) {
+                arrSource.add("external");
+            }
+            for (int i = 0; i < service.getPlaylists(); i++) {
+                arrSource.add("playlists");
+            }
+            String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
+            if(source_view.equals("suggest")&&service.getType().equals("Special")){
+                resp.put("suggest_type", "true");
+            }else if(source_view.equals("search")&&service.getType().equals("Special")){
+                resp.put("video_title", key.length() == 0 ? videos.get(0).getVideotitle() : key);
+            }
+            resp.put("source",source_view);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+
 
         } catch (Exception e) {
             resp.put("status", "fail");

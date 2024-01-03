@@ -152,8 +152,9 @@ public class AccountViewController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
+                        String geo_proxy=geo.trim().split("-")[1];
                         if(account.get(0).getProxy()== null|| account.get(0).getProxy().length()==0){
-                            List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim());
+                            List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim().indexOf("live")>=0?geo_proxy:geo.trim());
                             if(proxies.size()!=0){
                                 account.get(0).setProxy(proxies.get(0).getProxy());
                                 proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
@@ -230,8 +231,9 @@ public class AccountViewController {
             } else {
                 try {
                     List<Account> accountbyVps = accountRepository.findAccountById(idbyVps);
+                    String geo_proxy=geo.trim().split("-")[0];
                     if(accountbyVps.get(0).getProxy()==null || accountbyVps.get(0).getProxy().length()==0){
-                        List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim());
+                        List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim().indexOf("live")>=0?geo_proxy:geo.trim());
                         if(proxies.size()!=0){
                             accountbyVps.get(0).setProxy(proxies.get(0).getProxy());
                             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
