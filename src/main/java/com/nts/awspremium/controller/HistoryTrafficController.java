@@ -80,13 +80,34 @@ public class HistoryTrafficController {
                 resp.put("link", webTraffics.get(0).getLink());
                 resp.put("username", histories.get(0).getUsername());
                 resp.put("duration",service.getMaxtime()==service.getMintime()?service.getMintime()*60:(service.getMintime()*60+(ran.nextInt((service.getMaxtime()-service.getMintime())*60))));
-                if(ran.nextInt(1000)<=service.getClick_web()*10){
-                    resp.put("click_web", "true");
-                }else{
-                    resp.put("click_web", "fail");
-                    resp.put("duration",0);
-                    resp.put("click_ads", "fail");
+
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getSuggest(); i++) {
+                    arrSource.add("suggest");
                 }
+                for (int i = 0; i < service.getSearch(); i++) {
+                    arrSource.add("search");
+                }
+                for (int i = 0; i < service.getDirect(); i++) {
+                    arrSource.add("direct");
+                }
+                for (int i = 0; i < service.getExternal(); i++) {
+                    arrSource.add("external");
+                }
+                String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
+                resp.put("source",source_view);
+                if(source_view.equals("search")){
+                    if(ran.nextInt(1000)<=service.getClick_web()*10){
+                        resp.put("click_web", "true");
+                    }else{
+                        resp.put("click_web", "fail");
+                        resp.put("duration",0);
+                        resp.put("click_ads", "fail");
+                    }
+                }else{
+                    resp.put("click_web", "true");
+                }
+
                 String[] keyArr = webTraffics.get(0).getKeywords().split(",");
                 String key = keyArr[ran.nextInt(keyArr.length)];
                 resp.put("keyword", key);
