@@ -167,6 +167,8 @@ public class VpsController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 resp.put("option",vpscheck.get(0).getVpsoption());
+                resp.put("live",vpscheck.get(0).getLive());
+                resp.put("cmt",vpscheck.get(0).getCmt());
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 resp.put("get_account",vpscheck.get(0).getGet_account());
@@ -228,14 +230,12 @@ public class VpsController {
             if(vpscheck.size()>0){
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
-                List<VideoView> videoViews=viewRepository.getvideoPreTrue();
-                if(videoViews.size()!=0&&vpsRepository.CheckVPSLiveTrue(vps.trim())==1){
-                    resp.put("time_start",videoViews.get(0).getInsertdate());
-                    resp.put("option","live");
+                if(viewRepository.getvideoPreTrue()!=0&&vpsRepository.CheckVPSLiveTrue(vps.trim())==1){
+                    resp.put("live",1);
                 }else {
-                    resp.put("time_start",0L);
-                    resp.put("option",vpscheck.get(0).getVpsoption());
+                    resp.put("live",0);
                 }
+                resp.put("option",vpscheck.get(0).getVpsoption());
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
 

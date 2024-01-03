@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -43,7 +45,7 @@ public class HistoryViewTestController {
     private OrderTrue orderTrue;
 
     @Autowired
-    private ProxyLiveRepository proxyRepository;
+    private ProxyRepository proxyRepository;
 
     @Autowired
     private ServiceRepository serviceRepository;
@@ -87,8 +89,9 @@ public class HistoryViewTestController {
                 resp.put("message", "Không còn video để view!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            List<ProxyLive> proxyGet=null;
-            proxyGet=proxyRepository.getProxyLive(geo.trim());
+            List<Proxy> proxyGet=null;
+            proxyGet = proxyRepository.getProxyNotRunningAndLive(histories.get(0).getGeo());
+            String[] proxy;
             if(proxyGet.size()==0){
                 historyViewRepository.save(histories.get(0));
                 resp.put("status","fail");
@@ -96,39 +99,42 @@ public class HistoryViewTestController {
                 resp.put("fail", "proxy");
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else {
+                proxy = proxyGet.get(0).getProxy().split(":");
             }
             proxyRepository.updateProxyLiveGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
-            resp.put("proxy", proxyGet.get(0).getProxy());
+            resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
 
-            Service service = serviceRepository.getService(videos.get(0).getService());
+            Service service = serviceRepository.getServiceNoCheckEnabled(videos.get(0).getService());
 
             histories.get(0).setTimeget(System.currentTimeMillis());
             histories.get(0).setRunning(1);
             historyViewRepository.save(histories.get(0));
-            if(videos.get(0).getInsertdate()>=System.currentTimeMillis()){
+            if(videos.get(0).getTimestart()>=System.currentTimeMillis()){
                 List<Long> arrTime = new ArrayList<>();
                 for (int i = 0; i < 20; i++) {
-                    arrTime.add(0L);
+                    arrTime.add(System.currentTimeMillis());
                 }
                 for (int i = 0; i < 15; i++) {
-                    arrTime.add(ran.nextInt((int)(videos.get(0).getDuration()*0.1))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(TimeUnit.MINUTES.toMillis((ran.nextInt((int)(service.getMaxtime()*0.1))) +videos.get(0).getTimestart()));
                 }
                 for (int i = 0; i < 25; i++) {
-                    arrTime.add((int)(videos.get(0).getDuration()*0.1)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.4))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.1))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.4))));
                 }
                 for (int i = 0; i < 40; i++) {
-                    arrTime.add((int)(videos.get(0).getDuration()*0.4)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.6))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.4))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.6))));
                 }
 
                 resp.put("time_start", arrTime.get(ran.nextInt(arrTime.size())));
             }else{
-                resp.put("time_start", 0);
+                resp.put("time_start", System.currentTimeMillis());
             }
             resp.put("channel_id", videos.get(0).getChannelid());
             resp.put("status", "true");
+            resp.put("time_end", (videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*1.5))));
             resp.put("video_id", videos.get(0).getVideoid());
             resp.put("video_title", videos.get(0).getVideotitle());
-            resp.put("geo", videos.get(0).getInsertdate());
+            resp.put("geo", "live");
             resp.put("username", histories.get(0).getUsername());
             resp.put("like", "fail");
             resp.put("sub", "fail");
@@ -151,6 +157,18 @@ public class HistoryViewTestController {
             }
             for (int i = 0; i < service.getDtn(); i++) {
                 arrSource.add("dtn");
+            }
+            for (int i = 0; i < service.getEmbed(); i++) {
+                arrSource.add("embed");
+            }
+            for (int i = 0; i < service.getDirect(); i++) {
+                arrSource.add("direct");
+            }
+            for (int i = 0; i < service.getExternal(); i++) {
+                arrSource.add("external");
+            }
+            for (int i = 0; i < service.getPlaylists(); i++) {
+                arrSource.add("playlists");
             }
             String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
             if(source_view.equals("suggest")&&service.getType().equals("Special")){

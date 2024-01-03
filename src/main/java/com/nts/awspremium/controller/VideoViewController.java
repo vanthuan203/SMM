@@ -129,11 +129,12 @@ public class VideoViewController {
                 try {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                    JSONObject snippet = (JSONObject) video.get("snippet");
                     if (videoViewRepository.getCountVideoId(video.get("id").toString().trim()) > 0) {
                         resp.put("videoview", "This video in process!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() != 0&&service.getLive()==1) {
+                    if (snippet.get("liveBroadcastContent").toString().equals("none")&&service.getLive()==1) {
                         resp.put("videoview", "This video is not a livestream video");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -165,7 +166,6 @@ public class VideoViewController {
                         resp.put("videoview", "Your balance not enough");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    JSONObject snippet = (JSONObject) video.get("snippet");
                     Long scheduledStartTime=0L;
                     if (!snippet.get("liveBroadcastContent").toString().equals("none")&&service.getLive()==0) {
                         resp.put("videoview", "This video is not a pure public video");
@@ -179,7 +179,7 @@ public class VideoViewController {
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     VideoView videoViewhnew = new VideoView();
                     videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
-                    videoViewhnew.setInsertdate(scheduledStartTime==0?System.currentTimeMillis():scheduledStartTime);
+                    videoViewhnew.setInsertdate(System.currentTimeMillis());
                     videoViewhnew.setView24h(0);
                     videoViewhnew.setViewtotal(0);
                     videoViewhnew.setTimetotal(0);
@@ -198,6 +198,15 @@ public class VideoViewController {
                         }
                         videoViewhnew.setTimestart(0L);
                         videoViewhnew.setMaxthreads(-1);
+                    }else if(service.getLive()==1){
+                        videoViewhnew.setTimestart(scheduledStartTime==0?System.currentTimeMillis():scheduledStartTime);
+                        if(scheduledStartTime!=0){
+                            videoViewhnew.setMaxthreads(-2);
+                            videoViewhnew.setThreadset(service.getLive()==1?(videoView.getVieworder()+(int)(videoView.getVieworder()*0.15)):videoView.getMaxthreads());
+                        }else{
+                            videoViewhnew.setMaxthreads(service.getLive()==1?(videoView.getVieworder()+(int)(videoView.getVieworder()*0.15)):videoView.getMaxthreads());
+                            videoViewhnew.setThreadset(service.getLive()==1?(videoView.getVieworder()+(int)(videoView.getVieworder()*0.15)):videoView.getMaxthreads());
+                        }
                     }else{
                         videoViewhnew.setTimestart(System.currentTimeMillis());
                         videoViewhnew.setMaxthreads(videoView.getMaxthreads());

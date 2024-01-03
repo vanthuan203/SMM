@@ -28,10 +28,11 @@ public class Vps {
     private Integer get_account;
     private Integer cmt;
     private Integer proxy;
+    private Integer live=0;
     public Vps() {
     }
 
-    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Long timeresettool, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger, Integer ext, Integer get_account, Integer cmt, Integer proxy) {
+    public Vps(Integer id, String vps, String urlapi, String token, String vpsoption, Integer state, Integer running, Long timecheck, Integer threads, Integer vpsreset, Integer timereset, Long timeresettool, Integer dayreset, String ipv4, Integer countipv4, String namevps, Integer changefinger, Integer ext, Integer get_account, Integer cmt, Integer proxy, Integer live) {
         this.id = id;
         this.vps = vps;
         this.urlapi = urlapi;
@@ -53,6 +54,7 @@ public class Vps {
         this.get_account = get_account;
         this.cmt = cmt;
         this.proxy = proxy;
+        this.live = live;
     }
 
     public Integer getDayreset() {
@@ -220,5 +222,13 @@ public class Vps {
 
     public void setProxy(Integer proxy) {
         this.proxy = proxy;
+    }
+
+    public Integer getLive() {
+        return live;
+    }
+
+    public void setLive(Integer live) {
+        this.live = live;
     }
 }
