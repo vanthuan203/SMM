@@ -191,7 +191,7 @@ public class HistoryViewTestController {
 
     @GetMapping(value = "/updatevideoid", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestParam(defaultValue = "") String username,
-                                         @RequestParam(defaultValue = "") String videoid, @RequestParam(defaultValue = "") String channelid, @RequestParam(defaultValue = "0") Integer duration) {
+                                         @RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");
@@ -210,7 +210,7 @@ public class HistoryViewTestController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                if (historyViewRepository.getListVideoById(historieId).length() > 200) {
+                if (historyViewRepository.getListVideoById(historieId).length() > 44) {
                     historyViewRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyViewRepository.updateListVideo(videoid, historieId);
@@ -299,31 +299,16 @@ public class HistoryViewTestController {
     }
 
     @GetMapping(value = "delthreadbyusername", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delthreadbyusername(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String proxy,@RequestParam(defaultValue = "") String vps) {
+    ResponseEntity<String> delthreadbyusername(@RequestParam(defaultValue = "") String username) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (vps.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "vps không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-        if (proxy.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "proxy không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         try {
             Long historieId = historyViewRepository.getId(username.trim());
             historyViewRepository.resetThreadBuffhById(historieId);
-            Integer proxyId= proxyRepository.getIdByProxyLive(proxy.trim(),vps.trim());
-            if(proxyId!=null){
-                proxyRepository.updaterunningProxyLiveByVps(proxyId);
-            }
-            //dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
