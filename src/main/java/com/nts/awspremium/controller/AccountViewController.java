@@ -144,6 +144,7 @@ public class AccountViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 } else {
                     try {
+
                         List<Account> account = accountRepository.findAccountById(id);
                         Thread.sleep(100 + ran.nextInt(200));
                         Integer accountcheck = accountRepository.checkAccountById(id);
@@ -152,7 +153,10 @@ public class AccountViewController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        String geo_proxy=geo.trim().split("-")[1];
+                        String geo_proxy="";
+                        if(geo.trim().indexOf("live")>=0){
+                            geo_proxy=geo.trim().split("-")[1];
+                        }
                         if(account.get(0).getProxy()== null|| account.get(0).getProxy().length()==0){
                             List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim().indexOf("live")>=0?geo_proxy:geo.trim());
                             if(proxies.size()!=0){
