@@ -16,7 +16,7 @@ public class AutoRunTrafficCheck {
     @Autowired
     private OrderTrafficTrue orderTrue;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
