@@ -120,6 +120,25 @@ public class WebTrafficController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
     }
+
+    @PostMapping(value = "/analytics", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> analytics(@RequestBody AnalyticsTraffic analyticsTraffic) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        try {
+            if(webTrafficRepository.checkTrueByOrderIdAndToken(analyticsTraffic.getOrderid(),analyticsTraffic.getToken())==0){
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            resp.put("price", "priceorder");
+            resp.put("time", "time");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
+        } catch (Exception e) {
+            resp.put("webtraffic", "Error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+    }
     @GetMapping(path = "getordertraffic", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getordertraffic(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();

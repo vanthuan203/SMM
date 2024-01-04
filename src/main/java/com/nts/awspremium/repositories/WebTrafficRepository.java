@@ -21,6 +21,8 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
             "                                 group by orderid having (total<maxthreads and traffic24h<maxtraffic24h) ) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
 
+    @Query(value = "SELECT count(*) from webtraffic where orderid=?1 and token=?2 ",nativeQuery = true)
+    public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
 
     @Query(value = "SELECT * from webtraffic where orderid in (?1)",nativeQuery = true)
     public List<WebTraffic> getWebTrafficByListId(List<String> list_orderid);
@@ -163,7 +165,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "update WebTraffic set valid=1 where  valid=0",nativeQuery = true)
     public void updateCheckCancelDone();
 
-    @Query(value = "SELECT sum(vieworder) as total FROM WebTraffic",nativeQuery = true)
+    @Query(value = "SELECT sum(vieworder) as total FROM webTraffic",nativeQuery = true)
     public Integer getCountViewBuffOrder();
 
 
