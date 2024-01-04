@@ -32,8 +32,8 @@ public class AutoCheckProsetList {
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
-                        //checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
-                        checkProsetListTrue.setValue(historyViewRepository.PROCESSLISTVIEW());
+                        checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
+                        //checkProsetListTrue.setValue(historyViewRepository.PROCESSLISTVIEW());
                         //System.out.println(checkProsetListTrue.getValue());
                     }catch (Exception e){
                         continue;
