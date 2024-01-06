@@ -153,7 +153,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where maxthreads=0 and service in (select service from service where live=1) and viewtotal=0 order by insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderLivePending();
 
-    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user!='baohanh01@gmail.com' and timestart!=0 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user!='baohanh01@gmail.com' and timestart!=0 group by videoid order by timestart desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder();
 
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service,priority from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where timestart=0 group by videoid order by insertdate desc",nativeQuery = true)
@@ -162,7 +162,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderViewRunning> getOrderCheckCancel();
 
-    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user=?1 and timestart!=0 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user=?1 and timestart!=0 group by videoid order by timestart desc",nativeQuery = true)
     public List<OrderViewRunning> getOrder(String user);
 
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(*) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service,priority from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user=?1 and timestart=0 group by videoid order by insertdate desc",nativeQuery = true)

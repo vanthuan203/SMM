@@ -3771,7 +3771,7 @@ public class VideoViewController {
                 obj.put("videoid", orderRunnings.get(0).getVideoId());
                 obj.put("videotitle", orderRunnings.get(0).getVideoTitle());
                 obj.put("viewstart", orderRunnings.get(0).getViewStart());
-                obj.put("maxthreads", videoBuffh.getMaxthreads());
+                obj.put("maxthreads", orderRunnings.get(0).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(0).getInsertDate());
                 obj.put("timestart", orderRunnings.get(0).getTimeStart());
                 obj.put("total", orderRunnings.get(0).getTotal());
