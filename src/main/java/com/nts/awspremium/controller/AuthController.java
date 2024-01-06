@@ -476,7 +476,7 @@ public class AuthController {
             LocalDateTime newDateTime = dateTime.plusHours(7);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             String formattedDateTime = newDateTime.format(formatter);
-            resp.put("noti",formattedDateTime+ " ::: Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" - Serivce "+balances.get(0).getService()))+" - Biến động "+balances.get(0).getBalance()+"$");
+            resp.put("noti",formattedDateTime+ " $$$ Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" | Serivce "+balances.get(0).getService()))+" | Biến động "+balances.get(0).getBalance()+"$");
         }
 
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
