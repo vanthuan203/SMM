@@ -9,6 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -447,6 +452,33 @@ public class AuthController {
         Float vn=balanceRepository.getAllBalanceVNNow();
         Float us=balanceRepository.getAllBalanceUSNow();
         resp.put("balance","VN-"+(vn!=null?vn.toString():"0")+"$,US-"+(us!=null?us.toString():"0")+"$");
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(path = "fluctuationsNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<Balance> balances=balanceRepository.getfluctuationsNow();
+        if(balances.size()==0){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balances.get(0).getTime() );
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            String formattedDateTime = newDateTime.format(formatter);
+            resp.put("noti",formattedDateTime+ " ::: Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" - Serivce "+balances.get(0).getService()))+" - Biến động "+balances.get(0).getBalance()+"$");
+        }
+
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 

@@ -15,10 +15,11 @@ public class Balance {
     private String note;
     private String currency;
     private Integer service;
+    private Integer noti=0;
     public Balance() {
     }
 
-    public Balance(Long id, String user, Float balance, Float totalblance, Long time, String note, String currency, Integer service) {
+    public Balance(Long id, String user, Float balance, Float totalblance, Long time, String note, String currency, Integer service, Integer noti) {
         this.id = id;
         this.user = user;
         this.balance = balance;
@@ -27,6 +28,7 @@ public class Balance {
         this.note = note;
         this.currency = currency;
         this.service = service;
+        this.noti = noti;
     }
 
     public Long getId() {
@@ -91,5 +93,13 @@ public class Balance {
 
     public void setService(Integer service) {
         this.service = service;
+    }
+
+    public Integer getNoti() {
+        return noti;
+    }
+
+    public void setNoti(Integer noti) {
+        this.noti = noti;
     }
 }
