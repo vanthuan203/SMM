@@ -2,6 +2,9 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -483,6 +488,46 @@ public class AuthController {
 
 
     }
+
+    @GetMapping(value = "balanceNowIFTTT",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balanceNowIFTTT(){
+        JSONObject resp=new JSONObject();
+        try{
+            try{
+                Float view_vn=balanceRepository.getAllBalanceVNNow1DG();
+                view_vn=view_vn!=null?view_vn:0F;
+                Float view_us=balanceRepository.getAllBalanceUSNow1DG();
+                view_us=view_us!=null?view_us:0F;
+                Float cmt_vn=balanceRepository.getAllBalanceVNNow1DGCMT();
+                cmt_vn=cmt_vn!=null?cmt_vn:0F;
+                Float cmt_us=balanceRepository.getAllBalanceUSNow1DGCMT();
+                cmt_us=cmt_us!=null?cmt_us:0F;
+                Float sum_view=view_vn+view_us;
+                Float sum_cmt=cmt_vn+cmt_us;
+                Float sum1dg=sum_view+sum_cmt;
+                String view=view_vn+"$ "+view_us+"$ = "+sum_view+"$";
+                String cmt=cmt_vn+"$ "+cmt_us+"$ = "+sum_cmt+"$";
+                String sum=sum1dg+"$";
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request = null;
+
+                request = new Request.Builder().url("https://maker.ifttt.com/trigger/order/with/key/eh3Ut1_iinzl4yCeH5-BC2d21WpaAKdzXTWzVfXurdc?value1=" + view+"&value2="+cmt+"&value3="+sum).get().build();
+
+                Response response = client.newCall(request).execute();
+
+                resp.put("status", "true");
+
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }catch(Exception e){
+                resp.put("status","fail");
+                resp.put("message", e.getMessage());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+        }
 
 
     @GetMapping(path = "getalluser",produces = "application/hal+json;charset=utf8")

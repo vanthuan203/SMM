@@ -22,9 +22,35 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
             "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow();
 
+
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
             "                     WHERE time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
             "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow();
+
+    @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
+            "                    FROM balance\n" +
+            "                     WHERE user='1dg@gmail.com' and time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+    public Float getAllBalanceVNNow1DG();
+
+    @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
+            "                    FROM balance\n" +
+            "                     WHERE user='1dg@gmail.com' and time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+    public Float getAllBalanceUSNow1DG();
+
+    @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
+            "                    FROM balance\n" +
+            "                     WHERE user='1dgcmt@gmail.com' and time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+    public Float getAllBalanceVNNow1DGCMT();
+
+    @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
+            "                    FROM balance\n" +
+            "                     WHERE user='1dgcmt@gmail.com' and time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
+            "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+    public Float getAllBalanceUSNow1DGCMT();
+
 }
