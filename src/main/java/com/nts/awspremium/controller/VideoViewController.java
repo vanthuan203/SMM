@@ -147,7 +147,7 @@ public class VideoViewController {
                         resp.put("videoview", "Video under 15 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==30) {
+                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1720&&service.getLive()==0 &&service.getChecktime()==1&&service.getMintime()==30) {
                         resp.put("videoview", "Video under 30 minutes");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
