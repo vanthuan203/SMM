@@ -11,6 +11,8 @@ public class Setting {
     private Integer maxorder;
     private Integer maxorderbuffhvn;
     private Integer maxorderbuffhus;
+    private Float maxrunningam;
+    private Float maxrunningpm;
     private Integer mintimebuff;
     private Integer maxthread;
     private Integer pricerate;
@@ -26,14 +28,13 @@ public class Setting {
     private Integer redirectus;
     private Integer threadmin;
 
-    public Setting() {
-    }
-
-    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin) {
+    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin) {
         this.id = id;
         this.maxorder = maxorder;
         this.maxorderbuffhvn = maxorderbuffhvn;
         this.maxorderbuffhus = maxorderbuffhus;
+        this.maxrunningam = maxrunningam;
+        this.maxrunningpm = maxrunningpm;
         this.mintimebuff = mintimebuff;
         this.maxthread = maxthread;
         this.pricerate = pricerate;
@@ -47,6 +48,25 @@ public class Setting {
         this.redirectvn = redirectvn;
         this.redirectus = redirectus;
         this.threadmin = threadmin;
+    }
+
+    public Setting() {
+    }
+
+    public Float getMaxrunningam() {
+        return maxrunningam;
+    }
+
+    public void setMaxrunningam(Float maxrunningam) {
+        this.maxrunningam = maxrunningam;
+    }
+
+    public Float getMaxrunningpm() {
+        return maxrunningpm;
+    }
+
+    public void setMaxrunningpm(Float maxrunningpm) {
+        this.maxrunningpm = maxrunningpm;
     }
 
     public Integer getLevelthread() {
