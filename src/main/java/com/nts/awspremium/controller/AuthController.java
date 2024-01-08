@@ -325,7 +325,7 @@ public class AuthController {
         JSONObject resp = new JSONObject();
         if(historyViewRepository.getThreadRunningViewVN()<(videoViewRepository.getCountThreadViewVN()==null?0:videoViewRepository.getCountThreadViewVN())*(setting.getThreadmin()/100F)){
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()==0?0:(settingRepository.getRedirectVN()-100));
-        }else if(historyViewRepository.getThreadRunningViewVN()>(videoViewRepository.getCountThreadViewVN()==null?0:videoViewRepository.getCountThreadViewVN())){
+        }else{
             settingRepository.updateRedirectVN(settingRepository.getRedirectVN()>=1000?1000:(settingRepository.getRedirectVN()+100));
         }
         if(historyViewRepository.getThreadRunningViewUS()<(videoViewRepository.getCountThreadViewUS()==null?0:videoViewRepository.getCountThreadViewUS())*(setting.getThreadmin()/100F)){
@@ -476,12 +476,17 @@ public class AuthController {
         if(balances.size()==0){
             resp.put("noti","");
         }else{
+
+            String RESET = "\u001B[0m";
+            String RED = "\u001B[31m";
+            String GREEN = "\u001B[32m";
+            String YELLOW = "\u001B[33m";
             Instant instant = Instant.ofEpochMilli(balances.get(0).getTime() );
             LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
             LocalDateTime newDateTime = dateTime.plusHours(7);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss a");
             String formattedDateTime = newDateTime.format(formatter);
-            resp.put("noti",formattedDateTime+ " $$$ Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" | Serivce "+balances.get(0).getService()))+" | Biến động "+balances.get(0).getBalance()+"$");
+            resp.put("noti","\uD83D\uDD14 "+ formattedDateTime+ " $$$ Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" | Serivce "+balances.get(0).getService()))+" | Biến động "+balances.get(0).getBalance()+"$");
         }
 
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
