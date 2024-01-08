@@ -661,7 +661,7 @@ public class VideoViewController {
             Integer CountTheadSetRunningByService=videoViewRepository.getCountThreadSetByCheckTimeVN();
             Integer CountTheadSetRunningByGeo=videoViewRepository.getSumThreadSetByGeo(service.getGeo());
             Integer CountTheadVPSByGeo=vpsRepository.getSumThreadsByGeo(service.getGeo());
-            if(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.95)){
+            if(hour>14?(CountOrderRunningByService==null?(setting.getMaxorderbuffhvn()==0?true:false):CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?(setting.getMaxorderbuffhvn()==0?true:false):CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.95)){
                 break;
             }
             Integer limitService=limitServiceRepository.getLimitRunningByServiceAndUser(videoViews.get(i).getUser().trim(),videoViews.get(i).getService());
@@ -672,7 +672,7 @@ public class VideoViewController {
                         (CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay):
                         (CountOrderRunningByUserAndService+(CountOrderDoneByServiceAndUserInOneDay==null?0:CountOrderDoneByServiceAndUserInOneDay)))>=limitService*service.getMax())
                         ||limitService==0
-                        ||(hour>14?(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?false:CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.95))){
+                        ||(hour>14?(CountOrderRunningByService==null?(setting.getMaxorderbuffhvn()==0?true:false):CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.65):(CountOrderRunningByService==null?(setting.getMaxorderbuffhvn()==0?true:false):CountOrderRunningByService>=setting.getMaxorderbuffhvn()*service.getMax()*0.95))){
                     continue;
                 }
             }
@@ -2876,6 +2876,9 @@ public class VideoViewController {
 
                 Long enddate = System.currentTimeMillis();
                 List<VideoView> videoBuffh = videoViewRepository.getVideoBuffhById(videoidArr[i].trim());
+                if(videoBuffh.size()==0){
+                    continue;
+                }
                 VideoViewHistory videoBuffhnew = new VideoViewHistory();
                 videoBuffhnew.setOrderid(videoBuffh.get(0).getOrderid());
                 videoBuffhnew.setDuration(videoBuffh.get(0).getDuration());
