@@ -489,6 +489,34 @@ public class AuthController {
 
     }
 
+    @GetMapping(path = "fluctuationsMobile",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsMobile(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<Balance> balances=balanceRepository.getfluctuationsNow();
+        if(balances.size()==0){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balances.get(0).getTime());
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+            String formattedDateTime = newDateTime.format(formatter);
+            resp.put("noti","\uD83D\uDD14 "+ formattedDateTime+" ⏩ "+balances.get(0).getBalance()+"$");
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
     @GetMapping(path = "fluctuations5M",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> fluctuations5M(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();

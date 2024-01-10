@@ -1,5 +1,6 @@
 package com.nts.awspremium.repositories;
 
+import com.nts.awspremium.model.HistoryTraffic;
 import com.nts.awspremium.model.HistoryTraficSum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,13 +14,8 @@ public interface HistoryTrafficSumRepository extends JpaRepository<HistoryTrafic
     @Transactional
     @Query(value = "DELETE FROM historyviewsum where videoid not in (select videoid from videoview) limit 500000",nativeQuery = true)
     public void DelHistorySum();
-    @Modifying
-    @Transactional
-    @Query(value = "DELETE FROM historyviewsum where username=?1 and videoid=?2",nativeQuery = true)
-    public void DelHistoryError(String username,String videoid);
-    @Query(value = "SELECT FROM_UNIXTIME(historyviewsum.time/1000,'%Y-%m-%d') as date,count(*) as view FROM historyviewsum where duration>0 group by date order by date desc limit 7",nativeQuery = true)
-    public List<String> Gettimebuff7day();
 
-    @Query(value = "SELECT FROM_UNIXTIME(historyviewsum.time/1000,'%Y-%m-%d') as date,ROUND(sum(duration)/3600,0) as total,count(*) as view FROM historyviewsum where videoid in (select videoview.videoid from videobuffh where videoview.user=?1) group by date order by date desc limit 7",nativeQuery = true)
-    public List<String> Gettimebuff7day(String user);
+    @Query(value = "select * from historytrafficsum where orderid=?1 order by time desc",nativeQuery = true)
+    public List<HistoryTraficSum> analyticsByOrderId(Long orderid);
+
 }

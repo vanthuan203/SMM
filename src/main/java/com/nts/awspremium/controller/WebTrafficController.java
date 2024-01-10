@@ -43,16 +43,7 @@ public class WebTrafficController {
     private ServiceRepository serviceRepository;
 
     @Autowired
-    private DataOrderRepository dataOrderRepository;
-
-    @Autowired
-    private AutoRefillRepository autoRefillRepository;
-
-    @Autowired
-    private GoogleAPIKeyRepository googleAPIKeyRepository;
-
-    @Autowired
-    private LimitServiceRepository limitServiceRepository;
+    private HistoryTrafficSumRepository historyTrafficSumRepository;
 
     @PostMapping(value = "/ordertraffic", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> ordertraffic(@RequestBody WebTraffic webTraffic, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
@@ -125,13 +116,31 @@ public class WebTrafficController {
     ResponseEntity<String> analytics(@RequestBody AnalyticsTraffic analyticsTraffic) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         try {
-            if(webTrafficRepository.checkTrueByOrderIdAndToken(analyticsTraffic.getOrderid(),analyticsTraffic.getToken())==0){
+            if(webTrafficRepository.checkTrueByOrderIdAndToken(analyticsTraffic.getOrderid(),analyticsTraffic.getToken())==0&&webTrafficHistoryRepository.checkTrueByOrderIdAndToken(analyticsTraffic.getOrderid(),analyticsTraffic.getToken())==0){
                 resp.put("status", "fail");
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            resp.put("price", "priceorder");
-            resp.put("time", "time");
+            List<HistoryTraficSum> historyTraficSums=historyTrafficSumRepository.analyticsByOrderId(analyticsTraffic.getOrderid());
+            JSONArray jsonArray = new JSONArray();
+            if(historyTraficSums.size()==0){
+                resp.put("total",0);
+                resp.put("orderid",jsonArray);
+            }
+            for (int i = 0; i < historyTraficSums.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", historyTraficSums.get(i).getId());
+                obj.put("orderid", historyTraficSums.get(i).getOrderid());
+                obj.put("device", historyTraficSums.get(i).getDevice());
+                obj.put("keyword", historyTraficSums.get(i).getKeyword());
+                obj.put("orderid", historyTraficSums.get(i).getOrderid());
+                obj.put("time", historyTraficSums.get(i).getTime());
+                obj.put("duration", historyTraficSums.get(i).getDuration());
+                obj.put("rank", historyTraficSums.get(i).getRank());
+                jsonArray.add(obj);
+            }
+            resp.put("total",historyTraficSums.size());
+            resp.put("orderid", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
         } catch (Exception e) {
