@@ -481,8 +481,29 @@ public class AuthController {
             LocalDateTime newDateTime = dateTime.plusHours(7);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
             String formattedDateTime = newDateTime.format(formatter);
-            resp.put("price",balances.get(0).getBalance());
             resp.put("noti","\uD83D\uDD14 "+ formattedDateTime+ " | Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" | Serivce "+balances.get(0).getService()))+" | Biến động "+balances.get(0).getBalance()+"$");
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(path = "fluctuations5M",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuations5M(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float balances=balanceRepository.getfluctuations5M();
+        if(balances==null){
+            resp.put("price",0);
+        }else{
+            resp.put("price",balances);
         }
 
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

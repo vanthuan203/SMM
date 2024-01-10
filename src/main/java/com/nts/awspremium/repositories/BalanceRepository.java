@@ -16,6 +16,9 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
     @Query(value = "Select * from balance where balance<0  order by id desc limit 1 ",nativeQuery = true)
     public List<Balance> getfluctuationsNow();
 
+    @Query(value = "Select sum(balance) from balance where balance<0 and round((UNIX_TIMESTAMP()-time/1000)/60)<=5  order by id desc limit 1 ",nativeQuery = true)
+    public Float getfluctuations5M();
+
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
             "                     WHERE time>=UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000\n" +
