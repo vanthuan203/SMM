@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.model.OrderSpeedTrue;
 import com.nts.awspremium.model.OrderTrue;
 import com.nts.awspremium.repositories.VideoViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ public class AutoRunCheck {
     private VideoViewRepository videoViewRepository;
     @Autowired
     private OrderTrue orderTrue;
+    @Autowired
+    private OrderSpeedTrue orderSpeedTrue;
 
     @PostConstruct
     public void init() throws InterruptedException {
@@ -28,7 +31,12 @@ public class AutoRunCheck {
                             throw new RuntimeException(e);
                         }
                         orderTrue.setValue(videoViewRepository.getListOrderTrueThreadON());
-                        //System.out.println(String.join(", ", orderTrue.getValue()));
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        orderSpeedTrue.setValue(videoViewRepository.getListOrderSpeedTrueThreadON());
                     }catch (Exception e){
                         continue;
                     }
