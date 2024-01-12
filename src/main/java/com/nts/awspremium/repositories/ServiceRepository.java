@@ -27,6 +27,9 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "SELECT * FROM service where service=?1 limit 1",nativeQuery = true)
     public Service getServiceNoCheckEnabled(Integer service);
 
+    @Query(value = "SELECT service FROM service where geo=?1 and maxtime<=5 and enabled=1 and niche=0 and category!='Custom Comments' and type='Default'  order by rand()  limit 1",nativeQuery = true)
+    public Integer getServiceRand(String geo);
+
     @Query(value = "SELECT count(*) FROM service where service=?1 and live=1 limit 1",nativeQuery = true)
     public Integer IsOrderLive(Integer service);
 

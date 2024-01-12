@@ -40,6 +40,8 @@ public class VideoViewController {
     @Autowired
     private VideoViewRepository videoViewRepository;
     @Autowired
+    private VideoViewRandRepository videoViewRandRepository;
+    @Autowired
     private ServiceRepository serviceRepository;
 
     @Autowired
@@ -242,6 +244,92 @@ public class VideoViewController {
                 }
             }
             resp.put("videoview", "error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("videoview", "Fail check video!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+    }
+
+
+    @GetMapping(value = "/addViewRand", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> addViewRand(@RequestParam(defaultValue = "vn") String geo) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        //System.out.println(videoView.getService());
+        try {
+            videoViewRandRepository.deletevideoByTimeStart();
+            if(videoViewRandRepository.getCountVideoIdByGeo(geo.trim())>200){
+                resp.put("videoview", "true");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+            Request request1 = null;
+
+            List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+            if(geo.equals("vn")){
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/search?maxResults=50&fields=items(id(videoId),snippet(title,channelId))&part=snippet&type=video&regionCode=US&videoDuration=medium&relevanceLanguage=vi&order=date&key=" + keys.get(0).getKey().trim()).get().build();
+            }else {
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/search?maxResults=50&fields=items(id(videoId),snippet(title,channelId))&part=snippet&type=video&regionCode=US&videoDuration=medium&relevanceLanguage=en&order=date&key=" + keys.get(0).getKey().trim()).get().build();
+            }
+            keys.get(0).setCount(keys.get(0).getCount() + 1L);
+            googleAPIKeyRepository.save(keys.get(0));
+
+            Response response1 = client1.newCall(request1).execute();
+
+            String resultJson1 = response1.body().string();
+
+            Object obj1 = new JSONParser().parse(resultJson1);
+
+            JSONObject jsonObject1 = (JSONObject) obj1;
+            JSONArray items = (JSONArray) jsonObject1.get("items");
+            if (items == null) {
+                resp.put("videoview", "Fail check video!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            Iterator k = items.iterator();
+            if (k.hasNext() == false) {
+                resp.put("videoview", "Fail check video!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            Setting setting = settingRepository.getReferenceById(1L);
+            while (k.hasNext()) {
+                try {
+                    JSONObject video = (JSONObject) k.next();
+                    JSONObject snippet = (JSONObject) video.get("snippet");
+                    JSONObject id = (JSONObject) video.get("id");
+                    if (videoViewRandRepository.getCountVideoId(id.get("videoId").toString().trim()) > 0) {
+                       continue;
+                    }
+                    Random ran = new Random();
+                    VideoViewRand videoViewhnew = new VideoViewRand();
+                    videoViewhnew.setDuration(120+(long)ran.nextInt(240));
+                    videoViewhnew.setInsertdate(System.currentTimeMillis());
+                    videoViewhnew.setView24h(0);
+                    videoViewhnew.setViewtotal(0);
+                    videoViewhnew.setTimetotal(0);
+                    videoViewhnew.setVieworder(10000);
+                    videoViewhnew.setUser("admin@gmail.com");
+                    videoViewhnew.setChannelid(snippet.get("channelId").toString());
+                    videoViewhnew.setVideotitle(snippet.get("title").toString());
+                    videoViewhnew.setVideoid(id.get("videoId").toString().trim());
+                    videoViewhnew.setViewstart(0);
+                    videoViewhnew.setMaxthreads(25);
+                    videoViewhnew.setPrice(0F);
+                    videoViewhnew.setNote("Rand");
+                    videoViewhnew.setService(serviceRepository.getServiceRand(geo.trim()));
+                    videoViewhnew.setValid(1);
+                    videoViewhnew.setMinstart(5);
+                    videoViewhnew.setThreadset(25);
+                    videoViewhnew.setTimestart(System.currentTimeMillis());
+                    videoViewhnew.setTimeupdate(0L);
+                    videoViewRandRepository.save(videoViewhnew);
+                } catch (Exception e) {
+                    resp.put("videoview", e.getMessage());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            }
+            resp.put("videoview", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("videoview", "Fail check video!");
@@ -2757,6 +2845,27 @@ public class VideoViewController {
             resp.put("total", orderRunnings.size());
             resp.put("videoview", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "countThreadRand", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> countThreadRand(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
+        if (Authorization.length() == 0 || admins.size() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            resp.put("vn",videoViewRandRepository.getCountThreadRunningVN());
+            resp.put("us",videoViewRandRepository.getCountThreadRunningUS());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
         } catch (Exception e) {
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
