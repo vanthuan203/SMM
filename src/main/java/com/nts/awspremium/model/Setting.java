@@ -27,8 +27,9 @@ public class Setting {
     private Integer redirectvn;
     private Integer redirectus;
     private Integer threadmin;
+    private Integer randview;
 
-    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin) {
+    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin, Integer randview) {
         this.id = id;
         this.maxorder = maxorder;
         this.maxorderbuffhvn = maxorderbuffhvn;
@@ -48,6 +49,7 @@ public class Setting {
         this.redirectvn = redirectvn;
         this.redirectus = redirectus;
         this.threadmin = threadmin;
+        this.randview = randview;
     }
 
     public Setting() {
@@ -203,5 +205,13 @@ public class Setting {
 
     public void setRedirectus(Integer redirectus) {
         this.redirectus = redirectus;
+    }
+
+    public Integer getRandview() {
+        return randview;
+    }
+
+    public void setRandview(Integer randview) {
+        this.randview = randview;
     }
 }

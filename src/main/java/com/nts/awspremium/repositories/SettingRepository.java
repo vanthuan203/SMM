@@ -14,6 +14,9 @@ public interface SettingRepository  extends JpaRepository<Setting,Long> {
 
     @Query(value = "SELECT redirectvn FROM setting where id=1",nativeQuery = true)
     public Integer getRedirectVN();
+    @Query(value = "SELECT randview FROM setting where id=1",nativeQuery = true)
+    public Integer getRandView();
+
 
     @Query(value = "SELECT redirectus FROM setting where id=1",nativeQuery = true)
     public Integer getRedirectUS();
