@@ -144,15 +144,31 @@ public class HistoryViewController {
                         }
                     }
 
-                } else if(settingRepository.getRandView()>=ran.nextInt(1000)) {
-                    try{
-                        videos = videoViewRepository.getvideoViewRandByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo());
-                        if (videos.size() > 0) {
-                            histories.get(0).setTimeget(System.currentTimeMillis());
-                            histories.get(0).setVideoid(videos.get(0).getVideoid());
-                            histories.get(0).setOrderid(videos.get(0).getOrderid());
-                            histories.get(0).setChannelid(videos.get(0).getChannelid());
-                        } else {
+                } else{
+                    videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo(), orderSpeedTrue.getValue());
+                    if (videos.size() > 0) {
+                        histories.get(0).setTimeget(System.currentTimeMillis());
+                        histories.get(0).setVideoid(videos.get(0).getVideoid());
+                        histories.get(0).setOrderid(videos.get(0).getOrderid());
+                        histories.get(0).setChannelid(videos.get(0).getChannelid());
+                    } else if(settingRepository.getRandView()>=ran.nextInt(1000)) {
+                        try{
+                            videos = videoViewRepository.getvideoViewRandByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo());
+                            if (videos.size() > 0) {
+                                histories.get(0).setTimeget(System.currentTimeMillis());
+                                histories.get(0).setVideoid(videos.get(0).getVideoid());
+                                histories.get(0).setOrderid(videos.get(0).getOrderid());
+                                histories.get(0).setChannelid(videos.get(0).getChannelid());
+                            } else {
+                                histories.get(0).setTimeget(System.currentTimeMillis());
+                                historyViewRepository.save(histories.get(0));
+                                resp.put("status", "fail");
+                                resp.put("username", histories.get(0).getUsername());
+                                resp.put("fail", "video");
+                                resp.put("message", "Không còn video để view!");
+                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                            }
+                        }catch (Exception e){
                             histories.get(0).setTimeget(System.currentTimeMillis());
                             historyViewRepository.save(histories.get(0));
                             resp.put("status", "fail");
@@ -161,7 +177,8 @@ public class HistoryViewController {
                             resp.put("message", "Không còn video để view!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                    }catch (Exception e){
+
+                    }else{
                         histories.get(0).setTimeget(System.currentTimeMillis());
                         historyViewRepository.save(histories.get(0));
                         resp.put("status", "fail");
@@ -170,16 +187,7 @@ public class HistoryViewController {
                         resp.put("message", "Không còn video để view!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                }else{
-                    histories.get(0).setTimeget(System.currentTimeMillis());
-                    historyViewRepository.save(histories.get(0));
-                    resp.put("status", "fail");
-                    resp.put("username", histories.get(0).getUsername());
-                    resp.put("fail", "video");
-                    resp.put("message", "Không còn video để view!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
                 Service service = serviceRepository.getInfoService(videos.get(0).getService());
 
                 histories.get(0).setTimeget(System.currentTimeMillis());
@@ -358,14 +366,29 @@ public class HistoryViewController {
                     }
                 }
             } else if(settingRepository.getRandView()>=ran.nextInt(1000)) {
-                try {
-                    videos = videoViewRepository.getvideoViewRandByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo());
-                    if (videos.size() > 0) {
-                        histories.get(0).setTimeget(System.currentTimeMillis());
-                        histories.get(0).setVideoid(videos.get(0).getVideoid());
-                        histories.get(0).setOrderid(videos.get(0).getOrderid());
-                        histories.get(0).setChannelid(videos.get(0).getChannelid());
-                    } else {
+                videos = videoViewRepository.getvideoViewByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo(), orderSpeedTrue.getValue());
+                if (videos.size() > 0) {
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    histories.get(0).setVideoid(videos.get(0).getVideoid());
+                    histories.get(0).setOrderid(videos.get(0).getOrderid());
+                    histories.get(0).setChannelid(videos.get(0).getChannelid());
+                } else if (settingRepository.getRandView() >= ran.nextInt(1000)) {
+                    try {
+                        videos = videoViewRepository.getvideoViewRandByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo());
+                        if (videos.size() > 0) {
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            histories.get(0).setVideoid(videos.get(0).getVideoid());
+                            histories.get(0).setOrderid(videos.get(0).getOrderid());
+                            histories.get(0).setChannelid(videos.get(0).getChannelid());
+                        } else {
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            historyViewRepository.save(histories.get(0));
+                            resp.put("status", "fail");
+                            resp.put("fail", "video");
+                            resp.put("message", "Không còn video để view!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                    } catch (Exception e) {
                         histories.get(0).setTimeget(System.currentTimeMillis());
                         historyViewRepository.save(histories.get(0));
                         resp.put("status", "fail");
@@ -373,7 +396,8 @@ public class HistoryViewController {
                         resp.put("message", "Không còn video để view!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                }catch (Exception e){
+
+                } else {
                     histories.get(0).setTimeget(System.currentTimeMillis());
                     historyViewRepository.save(histories.get(0));
                     resp.put("status", "fail");
@@ -381,13 +405,6 @@ public class HistoryViewController {
                     resp.put("message", "Không còn video để view!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-            }else{
-                histories.get(0).setTimeget(System.currentTimeMillis());
-                historyViewRepository.save(histories.get(0));
-                resp.put("status", "fail");
-                resp.put("fail", "video");
-                resp.put("message", "Không còn video để view!");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             String[] proxy;
             List<Proxy> proxies;
