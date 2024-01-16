@@ -828,7 +828,7 @@ public class HistoryViewController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                if (historyViewRepository.getListVideoById(historieId).length() > 44) {
+                if (historyViewRepository.getListVideoById(historieId).length() > 244) {
                     historyViewRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyViewRepository.updateListVideo(videoid, historieId);
