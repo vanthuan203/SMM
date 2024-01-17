@@ -246,6 +246,11 @@ public class HistoryViewController {
                     resp.put("video_title", key.length() == 0 ? videos.get(0).getVideotitle() : key);
                 }
                 resp.put("source", source_view);
+                if(source_view.equals("embed")){
+                    resp.put("suggest_video", videos.get(0).getLink());
+                }else if(source_view.equals("direct")){
+                    resp.put("suggest_video","https://www.youtube.com/channel/"+ videos.get(0).getChannelid());
+                }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -476,9 +481,6 @@ public class HistoryViewController {
             for (int i = 0; i < service.getPlaylists(); i++) {
                 arrSource.add("playlists");
             }
-            if (service.getService() == 753 || service.getService() == 153 || service.getService() == 754 || service.getService() == 154) {
-                resp.put("live", "true");
-            }
             String source_view = arrSource.get(ran.nextInt(arrSource.size())).trim();
             if (source_view.equals("suggest") && service.getType().equals("Special")) {
                 resp.put("suggest_type", "true");
@@ -486,6 +488,11 @@ public class HistoryViewController {
                 resp.put("video_title", key.length() == 0 ? videos.get(0).getVideotitle() : key);
             }
             resp.put("source", source_view);
+            if(source_view.equals("embed")){
+                resp.put("suggest_video", videos.get(0).getLink());
+            }else if(source_view.equals("direct")){
+                resp.put("suggest_video","https://www.youtube.com/channel/"+ videos.get(0).getChannelid());
+            }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
