@@ -160,16 +160,15 @@ public class HistoryTrafficController {
         }
     }
     @PostMapping(value = "/updateDoneTraffic", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateDoneTask(@RequestBody String keyword,@RequestParam(defaultValue = "") String username,
-                                  @RequestParam(defaultValue = "0") Long orderid,@RequestParam(defaultValue = "0") Integer duration,@RequestParam(defaultValue = "-1") Integer rank) {
+    ResponseEntity<String> updateDoneTask(@RequestBody TrafficDone trafficDone) {
         JSONObject resp = new JSONObject();
 
-        if (username.length() == 0) {
+        if (trafficDone.getUsername().length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (orderid == 0) {
+        if (trafficDone.getOrderid() == 0) {
             resp.put("status", "fail");
             resp.put("message", "Orderid không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
@@ -177,7 +176,7 @@ public class HistoryTrafficController {
 
         try {
 
-            Long historieId = historyTrafficRepository.getId(username);
+            Long historieId = historyTrafficRepository.getId(trafficDone.getUsername());
             if (historieId == null) {
                 resp.put("status", "fail");
                 resp.put("message", "Không tìm thấy username!");
@@ -185,12 +184,13 @@ public class HistoryTrafficController {
             } else {
                     List<HistoryTraffic> histories = historyTrafficRepository.getHistoriesById(historieId);
                     HistoryTraficSum historySum = new HistoryTraficSum();
-                    historySum.setOrderid(orderid);
-                    historySum.setUsername(username);
-                    historySum.setRank(rank);
+                    System.out.println(trafficDone.getOrderid());
+                    historySum.setOrderid(trafficDone.getOrderid());
+                    historySum.setUsername(trafficDone.getUsername());
+                    historySum.setRank(trafficDone.getRank());
                     historySum.setTime(System.currentTimeMillis());
-                    historySum.setKeyword(keyword!=null?keyword:"");
-                    historySum.setDuration(duration);
+                    historySum.setKeyword(trafficDone.getKeyword()!=null?trafficDone.getKeyword():"");
+                    historySum.setDuration(trafficDone.getDuration());
                     historySum.setDevice(histories.get(0).getDevice());
                     try {
                         historyTrafficSumRepository.save(historySum);
