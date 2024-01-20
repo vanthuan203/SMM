@@ -84,7 +84,7 @@ public class WebTrafficController {
             webTrafficNew.setTimeupdate(0L);
             webTrafficNew.setEnddate(0L);
             webTrafficNew.setTimestart(System.currentTimeMillis());
-            webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(service.getClick_web()/100F))/24/(60/service.getMaxtime()))<=1?2:((int)(webTrafficNew.getMaxtraffic24h()/(service.getClick_web()/100F))/24/(60/service.getMaxtime())));
+            webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/((service.getClick_web()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/service.getMaxtime()))<=1?2:((int)(webTrafficNew.getMaxtraffic24h()/((service.getClick_web()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/service.getMaxtime())));
             webTrafficNew.setNote(webTraffic.getNote());
             webTrafficNew.setPrice(priceorder);
             webTrafficNew.setService(webTraffic.getService());
@@ -148,6 +148,7 @@ public class WebTrafficController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
     }
+
     @GetMapping(path = "getordertraffic", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getordertraffic(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();

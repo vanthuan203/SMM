@@ -27,11 +27,12 @@ public class WebTraffic {
     private Integer valid=1;
     private Integer priority=0;
     private Integer speedup=0;
+    private Long lastcompleted=0L;
 
     public WebTraffic() {
     }
 
-    public WebTraffic(Long orderid, String token, String link, String keywords, Long insertdate, Long timestart, Integer maxthreads, Integer service, String note, String user, Long enddate, Integer trafficorder, Integer traffictotal, Integer traffic24h, Integer maxtraffic24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup) {
+    public WebTraffic(Long orderid, String token, String link, String keywords, Long insertdate, Long timestart, Integer maxthreads, Integer service, String note, String user, Long enddate, Integer trafficorder, Integer traffictotal, Integer traffic24h, Integer maxtraffic24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup, long lastcompleted) {
         this.orderid = orderid;
         this.token = token;
         this.link = link;
@@ -52,6 +53,7 @@ public class WebTraffic {
         this.valid = valid;
         this.priority = priority;
         this.speedup = speedup;
+        this.lastcompleted = lastcompleted;
     }
 
     public Long getOrderid() {
@@ -212,5 +214,13 @@ public class WebTraffic {
 
     public void setMaxtraffic24h(Integer maxtraffic24h) {
         this.maxtraffic24h = maxtraffic24h;
+    }
+
+    public long getLastcompleted() {
+        return lastcompleted;
+    }
+
+    public void setLastcompleted(long lastcompleted) {
+        this.lastcompleted = lastcompleted;
     }
 }

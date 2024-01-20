@@ -200,6 +200,9 @@ public class HistoryTrafficController {
                         } catch (Exception f) {
                         }
                     }
+                    if(trafficDone.getDuration()>0){
+                        webTrafficRepository.updateLastCompletedByOrderId(System.currentTimeMillis(),trafficDone.getOrderid());
+                    }
                     resp.put("status", "true");
                     resp.put("message", "Update traffic thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

@@ -17,9 +17,14 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     public List<WebTraffic> getWebTrafficByGeo(String geo, String listorderid, List<String> orderid);
 
     @Query(value = "select orderid from (select webtraffic.orderid,count(*) as total,maxthreads,valid,traffictotal,trafficorder,speedup,traffic24h,maxtraffic24h\n" +
-            "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1\n" +
+            "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where 1140/maxtraffic24h<round((UNIX_TIMESTAMP()-lastcompleted/1000)/60)\n" +
             "                                 group by orderid having (total<maxthreads and traffic24h<maxtraffic24h) ) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE webtraffic set lastcompleted=?1 where orderid=?2",nativeQuery = true)
+    public void updateLastCompletedByOrderId(Long lastcompleted,Long orderid);
 
     @Query(value = "SELECT count(*) from webtraffic where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
@@ -123,10 +128,10 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     public List<OrderViewRunning> getWebTrafficById(String videoid);
 
     @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid" +
-            " where  time>=webtraffic.insertdate and service in(select service from service where category='Website') and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
+            " where  time>=webtraffic.insertdate and service in(select service from service where category='Website') and duration>0 and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalTrafficBuff();
 
-    @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid where time>=webtraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
+    @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid where time>=webtraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and duration>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
     public List<String> get24hTrafficBuff();
 
 
