@@ -64,7 +64,7 @@ public class HistoryTrafficController {
                         resp.put("message", "Không còn nhiêm vụ traffic!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                String[] proxy = accountRepository.getProxyByUsername(username.trim()).split(":");
+                String[] proxy = (accountRepository.getProxyByUsername(username.trim()).length()==0?"0:0":accountRepository.getProxyByUsername(username.trim())).split(":");
                 Service service = serviceRepository.getInfoService(webTraffics.get(0).getService());
                 resp.put("status", "true");
                 if(ran.nextInt(1000)<=service.getClick_ads()*10){
@@ -72,8 +72,6 @@ public class HistoryTrafficController {
                 }else{
                     resp.put("click_ads", "fail");
                 }
-
-
                 resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
                 resp.put("orderid", webTraffics.get(0).getOrderid());
                 resp.put("device", histories.get(0).getDevice());
