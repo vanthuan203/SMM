@@ -54,13 +54,13 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT * FROM videocomment where valid=0 order by insertdate asc",nativeQuery = true)
     public List<VideoComment> getAllOrderCheckCancel();
 
-    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(running) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrder();
 
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrderCheckCancel();
 
-    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(running) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrder(String user);
 
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 and videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
