@@ -149,6 +149,50 @@ public class WebTrafficController {
         }
     }
 
+    @PostMapping(value = "/analyticsByLink", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> analyticsByLink(@RequestBody JSONObject jsonObject) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        try {
+            Long orderId=0L;
+            orderId =webTrafficRepository.getOrderIdWebTrafficByLink(jsonObject.get("link").toString());
+            if(orderId==null){
+                orderId =webTrafficHistoryRepository.getOrderIdWebTrafficHistoryByLink(jsonObject.get("link").toString());
+                if(orderId==null){
+                    resp.put("status", "fail");
+                    resp.put("message", "Order link not found");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+                }
+            }
+
+
+            List<HistoryTraficSum> historyTraficSums=historyTrafficSumRepository.analyticsByOrderId(orderId);
+            JSONArray jsonArray = new JSONArray();
+            if(historyTraficSums.size()==0){
+                resp.put("total",0);
+                resp.put("orderid",jsonArray);
+            }
+            for (int i = 0; i < historyTraficSums.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", historyTraficSums.get(i).getId());
+                obj.put("orderid", historyTraficSums.get(i).getOrderid());
+                obj.put("device", historyTraficSums.get(i).getDevice());
+                obj.put("keyword", historyTraficSums.get(i).getKeyword());
+                obj.put("orderid", historyTraficSums.get(i).getOrderid());
+                obj.put("time", historyTraficSums.get(i).getTime());
+                obj.put("duration", historyTraficSums.get(i).getDuration());
+                obj.put("rank", historyTraficSums.get(i).getRank());
+                jsonArray.add(obj);
+            }
+            resp.put("total",historyTraficSums.size());
+            resp.put("orderid", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            //new Video(video.get("videoId").toString(), "channel_id", Duration.parse(video.get("duration").toString()).getSeconds(), video.get("title").toString());
+        } catch (Exception e) {
+            resp.put("webtraffic", "Error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+    }
+
     @GetMapping(path = "getordertraffic", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getordertraffic(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();

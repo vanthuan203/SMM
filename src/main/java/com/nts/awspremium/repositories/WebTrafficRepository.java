@@ -34,8 +34,8 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "SELECT * from webtraffic where orderid=?1",nativeQuery = true)
     public WebTraffic getWebTrafficById(Long orderid);
 
-    @Query(value = "SELECT * from webtraffic where videoid=?1",nativeQuery = true)
-    public WebTraffic getWebTrafficByVideoid(String videoid);
+    @Query(value = "SELECT orderid from webtraffic where link=?1 limit 1",nativeQuery = true)
+    public Long getOrderIdWebTrafficByLink(String link);
 
 
     @Query(value = "SELECT count(*) from webtraffic where user=?1",nativeQuery = true)
