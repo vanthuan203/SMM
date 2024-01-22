@@ -15,5 +15,6 @@ public interface OrderTrafficRunning {
     Float getPrice();
     Integer getService();
     Integer getPriority();
+    String getKeywords();
     Long getTimeUpdate();
 }

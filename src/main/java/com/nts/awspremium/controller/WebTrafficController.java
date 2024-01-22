@@ -224,6 +224,7 @@ public class WebTrafficController {
                 obj.put("trafficorder", orderRunnings.get(i).getTrafficOrder());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service", orderRunnings.get(i).getService());
+                obj.put("keywords", orderRunnings.get(i).getKeywords());
                 Service service = serviceRepository.getInfoService(orderRunnings.get(i).getService());
                 obj.put("package",service.getExpired());
                 obj.put("user", orderRunnings.get(i).getUser());

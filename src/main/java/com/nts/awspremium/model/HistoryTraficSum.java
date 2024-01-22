@@ -11,6 +11,7 @@ public class HistoryTraficSum {
     private String username;
     private Long orderid;
     private String keyword;
+    private String source="";
     private String device;
     private Integer duration;
     private Long time;
@@ -18,11 +19,12 @@ public class HistoryTraficSum {
     public HistoryTraficSum() {
     }
 
-    public HistoryTraficSum(Long id, String username, Long orderid, String keyword, String device, Integer duration, Long time, Integer ranking) {
+    public HistoryTraficSum(Long id, String username, Long orderid, String keyword, String source, String device, Integer duration, Long time, Integer ranking) {
         this.id = id;
         this.username = username;
         this.orderid = orderid;
         this.keyword = keyword;
+        this.source = source;
         this.device = device;
         this.duration = duration;
         this.time = time;
@@ -92,4 +94,13 @@ public class HistoryTraficSum {
     public void setRank(Integer ranking) {
         this.ranking = ranking;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
 }

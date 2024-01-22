@@ -182,11 +182,11 @@ public class HistoryTrafficController {
             } else {
                     List<HistoryTraffic> histories = historyTrafficRepository.getHistoriesById(historieId);
                     HistoryTraficSum historySum = new HistoryTraficSum();
-                    System.out.println(trafficDone.getOrderid());
                     historySum.setOrderid(trafficDone.getOrderid());
                     historySum.setUsername(trafficDone.getUsername());
                     historySum.setRank(trafficDone.getRank());
                     historySum.setTime(System.currentTimeMillis());
+                    historySum.setSource(trafficDone.getSource()==null?"":trafficDone.getSource());
                     historySum.setKeyword(trafficDone.getKeyword()!=null?trafficDone.getKeyword():"");
                     historySum.setDuration(trafficDone.getDuration());
                     historySum.setDevice(histories.get(0).getDevice());
