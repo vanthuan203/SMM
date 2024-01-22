@@ -1,10 +1,8 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.ProxyAPI;
-import com.nts.awspremium.model.CheckProsetListTrue;
-import com.nts.awspremium.model.IpV4;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.model.Proxy;
-import com.nts.awspremium.model.ProxyLive;
 import com.nts.awspremium.repositories.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -40,6 +38,114 @@ public class ProxyController {
     private IpV4Repository ipV4Repository;
     @Autowired
     private CheckProsetListTrue checkProsetListTrue;
+    @Autowired
+    private AuthenIPv4Repository authenIPv4Repository;
+
+    @GetMapping(value="/list_authen",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> list_authen(){
+        JSONObject resp = new JSONObject();
+        try{
+            List<String> list_ipv4=authenIPv4Repository.getListAuthen();
+
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<list_ipv4.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("ipv4",list_ipv4.get(i).split(",")[0]);
+                obj.put("timecheck",list_ipv4.get(i).split(",")[1]);
+                obj.put("lockmode",list_ipv4.get(i).split(",")[2]);
+                jsonArray.add(obj);
+            }
+            resp.put("authens",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value="/checkAuthenIPv4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkAuthenIPv4(@RequestParam String ipv4,@RequestParam(defaultValue = "0") Integer lock){
+        JSONObject resp = new JSONObject();
+        try{
+            if(authenIPv4Repository.CheckIPv4Exist(ipv4.trim())>0){
+                resp.put("status","fail");
+                resp.put("message","already exist!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }else{
+                AuthenIPv4 authenIPv4=new AuthenIPv4();
+                authenIPv4.setIpv4(ipv4.trim());
+                authenIPv4.setTimecheck(System.currentTimeMillis());
+                authenIPv4.setTimeadd(System.currentTimeMillis());
+                if(lock==1){
+                    authenIPv4.setLockmode(1);
+                }else{
+                    authenIPv4.setLockmode(0);
+                }
+                authenIPv4Repository.save(authenIPv4);
+                resp.put("status","true");
+                resp.put("message","add authentication successfully!");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/auth_ips")
+    String auth_ips(){
+        try{
+           List<String> list_ipv4=authenIPv4Repository.getAuthen();
+           String authen="";
+           for(int i=0;i<list_ipv4.size();i++){
+               if(i==0){
+                   authen=list_ipv4.get(i);
+               }else{
+                   authen=authen+","+list_ipv4.get(i);
+               }
+           }
+           return authen;
+        }catch (Exception e){
+            return "";
+        }
+    }
+
+    @GetMapping(value="/delauthen",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> delauthen(@RequestParam String ipv4){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] ipv4list = ipv4.split(",");
+            for(int i=0;i<ipv4list.length;i++){
+                authenIPv4Repository.deleteAuthenByIPV4(ipv4list[i].trim());
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping(value="/addauthen",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> addauthen(@RequestParam String ipv4){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] ipv4list = ipv4.split(",");
+            for(int i=0;i<ipv4list.length;i++){
+                checkAuthenIPv4(ipv4list[i].trim(),1);
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value="/create",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> create(@RequestBody Proxy proxy, @RequestHeader(defaultValue = "") String Authorization ){
         JSONObject resp = new JSONObject();
@@ -109,6 +215,7 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping(value="/addipv4",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> addipv4(@RequestParam String ipv4){

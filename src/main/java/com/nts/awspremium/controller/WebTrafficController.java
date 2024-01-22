@@ -133,6 +133,7 @@ public class WebTrafficController {
                 obj.put("orderid", historyTraficSums.get(i).getOrderid());
                 obj.put("device", historyTraficSums.get(i).getDevice());
                 obj.put("keyword", historyTraficSums.get(i).getKeyword());
+                obj.put("source", historyTraficSums.get(i).getSource());
                 obj.put("orderid", historyTraficSums.get(i).getOrderid());
                 obj.put("time", historyTraficSums.get(i).getTime());
                 obj.put("duration", historyTraficSums.get(i).getDuration());
@@ -179,6 +180,7 @@ public class WebTrafficController {
                 obj.put("keyword", historyTraficSums.get(i).getKeyword());
                 obj.put("orderid", historyTraficSums.get(i).getOrderid());
                 obj.put("time", historyTraficSums.get(i).getTime());
+                obj.put("source", historyTraficSums.get(i).getSource());
                 obj.put("duration", historyTraficSums.get(i).getDuration());
                 obj.put("rank", historyTraficSums.get(i).getRank());
                 jsonArray.add(obj);
