@@ -113,6 +113,21 @@ public class WebTrafficController {
         }
     }
 
+    @GetMapping(path = "updatecheckcancel", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updatecheckcancel(@RequestParam(defaultValue = "") Long orderid) {
+        JSONObject resp = new JSONObject();
+        try {
+            webTrafficRepository.updateCheckCancel(orderid);
+            resp.put("status", "true "+orderid);
+            resp.put("message", "update trạng thái đơn thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @PostMapping(value = "/analytics", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> analytics(@RequestBody AnalyticsTraffic analyticsTraffic) throws IOException, ParseException {
         JSONObject resp = new JSONObject();

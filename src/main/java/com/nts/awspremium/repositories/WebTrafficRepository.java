@@ -62,8 +62,8 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "SELECT count(*) from webtraffic where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 
-    @Query(value = "SELECT count(*) from webtraffic where videoid=?1",nativeQuery = true)
-    public Integer getCountVideoId(String videoid);
+    @Query(value = "SELECT count(*) from webtraffic where link=?1",nativeQuery = true)
+    public Integer getCountLink(String link);
 
     @Query(value = "SELECT count(*) from webtraffic where videoid=?1 and user!='baohanh01@gmail.com'",nativeQuery = true)
     public Integer getCountVideoIdNotIsBH(String videoid);
@@ -162,8 +162,8 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update WebTraffic set valid=0 where videoid=?1 and valid=1",nativeQuery = true)
-    public void updateCheckCancel(String videoid);
+    @Query(value = "update webtraffic set valid=0 where orderid=?1 and valid=1",nativeQuery = true)
+    public void updateCheckCancel(Long orderid);
 
     @Modifying
     @Transactional

@@ -1077,7 +1077,7 @@ public class VideoCommentController {
                         videoBuffhnew.setCancel(2);
                     }
                     //hoàn tiền & add thong báo số dư
-                    int viewthan = (int) (videoBuffh.get(0).getCommenttotal() - viewbuff);
+                    int viewthan = (int) (videoBuffh.get(0).getCommentorder() - viewbuff);
                     //
                     Float balance_update=adminRepository.updateBalanceFine(price_refund,user.get(0).getUsername().trim());
                     Balance balance = new Balance();
@@ -1086,7 +1086,7 @@ public class VideoCommentController {
                     balance.setTotalblance(balance_update);
                     balance.setBalance(price_refund);
                     balance.setService(videoBuffh.get(0).getService());
-                    balance.setNote("Refund " + (viewthan) + " cmt cho " + videoBuffh.get(0).getVideoid());
+                    balance.setNote("Refund " + (viewthan) + " cmt cho video " + videoBuffh.get(0).getVideoid());
                     balanceRepository.save(balance);
                 } else {
                     videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
@@ -1267,9 +1267,9 @@ public class VideoCommentController {
                             JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                             JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
                             if (regionRestriction != null) {
-                                if (regionRestriction.get("blocked").toString().indexOf("VN") > 0 && videoViewRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "vn") > 0) {
+                                if (regionRestriction.get("blocked").toString().indexOf("VN") > 0 && videoCommentRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "vn") > 0) {
                                     delete("1", videoComments.get(i).getVideoid().trim(), 1);
-                                } else if (regionRestriction.get("blocked").toString().indexOf("US") > 0 && videoViewRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "us") > 0) {
+                                } else if (regionRestriction.get("blocked").toString().indexOf("US") > 0 && videoCommentRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "us") > 0) {
                                     delete("1", videoComments.get(i).getVideoid().trim(), 1);
                                 } else {
                                     videoCommentRepository.updateOrderCheck(videoComments.get(i).getVideoid().trim());

@@ -188,6 +188,10 @@ public class ApiTrafficController {
                     resp.put("error", "Link is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if (webTrafficRepository.getCountLink(data.getLink()) > 0) {
+                    resp.put("error", "This link in process");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 if(!ProxyAPI.checkResponseCode(data.getLink())){
                     resp.put("error", "The link is not accessible!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

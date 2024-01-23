@@ -83,6 +83,9 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "UPDATE videocomment set commenttotal=?1,timeupdate=?2 where videoid=?3",nativeQuery = true)
     public void updateViewOrderByVideoId(Integer viewtotal,Long timeupdate,String videoid);
 
+    @Query(value = "SELECT count(*) FROM videocomment where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
+    public Integer getServiceByVideoId(String videoid,String geo);
+
     @Modifying
     @Transactional
     @Query(value = "update videocomment set valid=0 where videoid not in (select videoid from historyviewsum where round((UNIX_TIMESTAMP()-time/1000)/60)<=5  group by videoid ) and round((UNIX_TIMESTAMP()-insertdate/1000)/60)>20",nativeQuery = true)
