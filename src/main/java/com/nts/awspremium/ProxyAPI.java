@@ -44,4 +44,29 @@ public class ProxyAPI {
             return false;
         }
     }
+    public static boolean checkResponseCode (String link) {
+        System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
+        //System.setProperty("jdk.http.auth.proxying.disabledSchemes", "");
+
+        try {
+            URL url = new URL(link.trim());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.addRequestProperty("User-Agent", "Mozilla");
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(1000);
+
+            conn.connect();
+            //System.out.println(proxycut[0]+":"+proxycut[1]+":"+proxycut[2]+":"+ proxycut[3]);
+            int code = conn.getResponseCode();
+            //String contents = conn.getResponseMessage();
+            conn.disconnect();
+            if (code == 200 || code == 429) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
