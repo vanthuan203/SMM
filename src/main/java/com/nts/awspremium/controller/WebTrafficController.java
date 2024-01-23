@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.ProxyAPI;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import okhttp3.OkHttpClient;
@@ -56,7 +57,13 @@ public class WebTrafficController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
+            if(!ProxyAPI.checkResponseCode(webTraffic.getLink())){
+                resp.put("webtraffic", "The link is not accessible!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             Service service = serviceRepository.getServiceNoCheckEnabled(webTraffic.getService());
+
+
             float priceorder = 0;
             int time = 0;
             priceorder = (webTraffic.getTrafficorder() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
@@ -347,6 +354,8 @@ public class WebTrafficController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+
     @GetMapping(path = "updateTrafficDoneCron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateTrafficDoneCron() {
         JSONObject resp = new JSONObject();

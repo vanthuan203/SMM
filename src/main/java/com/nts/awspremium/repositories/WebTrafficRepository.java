@@ -157,7 +157,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "update WebTraffic set valid=1 where videoid=?1",nativeQuery = true)
     public void updateOrderCheck(String videoid);
 
-    @Query(value = "SELECT * FROM WebTraffic where valid=0 order by insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM webtraffic where valid=0 order by insertdate asc",nativeQuery = true)
     public List<WebTraffic> getAllOrderCheckCancel();
 
     @Modifying
