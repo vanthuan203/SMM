@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -262,7 +263,7 @@ public class HistoryViewController {
                     if (videos.get(0).getDuration() > service.getMaxtime() * 60) {
                         resp.put("video_duration", service.getMintime() * 60 + (service.getMintime() < service.getMaxtime() ? (ran.nextInt((service.getMaxtime() - service.getMintime()) * 30) + (service.getMaxtime() >= 10 ? 30 : 0)) : 0));
                     } else {
-                        resp.put("video_duration", service.getMintime() * 60 < videos.get(0).getDuration() ? (service.getMintime() * 60 + ran.nextInt((int) (videos.get(0).getDuration() - service.getMintime() * 60))) : videos.get(0).getDuration());
+                        resp.put("video_duration", service.getMintime() * 60 < videos.get(0).getDuration() ? (service.getMintime() * 60 + ran.nextInt((int)(videos.get(0).getDuration() - service.getMintime() * 60))) : videos.get(0).getDuration());
                     }
                 } else if (service.getLive() == 1) {
                     int min_check = (int) ((service.getMintime() * 0.15) > 30 ? 30 : (service.getMintime() * 0.15));
@@ -279,13 +280,24 @@ public class HistoryViewController {
                         resp.put("video_duration", videos.get(0).getDuration());
                     }
                 }
-                if(((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45)&&service.getMaxtime()==1){
+                if(((Integer.parseInt(resp.get("video_duration").toString())<10||Integer.parseInt(resp.get("video_duration").toString())>45))&&service.getMaxtime()==1){
                     resp.put("video_duration",ran.nextInt(30)+10);
                 }
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
 
         } catch (Exception e) {
+            //show line error
+            /*
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+
+            System.out.println("Error : " + e.getMessage());
+             */
             resp.put("status", "fail");
             resp.put("fail", "sum");
             resp.put("message", e.getMessage());
@@ -524,7 +536,7 @@ public class HistoryViewController {
                     resp.put("video_duration", videos.get(0).getDuration());
                 }
             }
-            if(((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45)&&service.getMaxtime()==1){
+            if(((Integer.parseInt(resp.get("video_duration").toString())<10||Integer.parseInt(resp.get("video_duration").toString())>45))&&service.getMaxtime()==1){
                 resp.put("video_duration",ran.nextInt(30)+10);
             }
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
