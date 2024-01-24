@@ -279,7 +279,7 @@ public class HistoryViewController {
                         resp.put("video_duration", videos.get(0).getDuration());
                     }
                 }
-                if((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45){
+                if(((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45)&&service.getMaxtime()==1){
                     resp.put("video_duration",ran.nextInt(30)+10);
                 }
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -524,7 +524,7 @@ public class HistoryViewController {
                     resp.put("video_duration", videos.get(0).getDuration());
                 }
             }
-            if((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45){
+            if(((int)resp.get("video_duration")<10||(int)resp.get("video_duration")>45)&&service.getMaxtime()==1){
                 resp.put("video_duration",ran.nextInt(30)+10);
             }
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
