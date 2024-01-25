@@ -205,6 +205,10 @@ public class ApiTrafficController {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if(data.getList().indexOf(",")>=0){
+                    resp.put("error", "Enter only 1 keyword");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 if (data.getQuantity() > service.getMax() || data.getQuantity() < service.getMin()) {
                     resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
