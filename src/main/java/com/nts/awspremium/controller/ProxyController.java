@@ -40,6 +40,10 @@ public class ProxyController {
     private CheckProsetListTrue checkProsetListTrue;
     @Autowired
     private AuthenIPv4Repository authenIPv4Repository;
+    @Autowired
+    private Socks_IPV4Repository socksIpv4Repository;
+    @Autowired
+    private ProxySettingRepository proxySettingRepository;
 
     @GetMapping(value="/list_authen",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> list_authen(){
@@ -197,6 +201,34 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value="/up_state",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> up_state(@RequestBody JSONObject jsonObject){
+        JSONObject resp = new JSONObject();
+        try{
+            //auth_ips
+            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(jsonObject.get("ip").toString());
+            if(socksIpv4s.size()==0){
+                Socks_IPV4 socksIpv4 =new Socks_IPV4();
+                socksIpv4.setIp(jsonObject.get("ip").toString());
+                socksIpv4.setIpv4("");
+                socksIpv4.setIpv4_old("");
+                socksIpv4.setTimeupdate(System.currentTimeMillis());
+                socksIpv4.setAuth(jsonObject.get("auth_ips").toString());
+                socksIpv4Repository.save(socksIpv4);
+            }else{
+                socksIpv4s.get(0).setTimeupdate(System.currentTimeMillis());
+                socksIpv4s.get(0).setAuth(jsonObject.get("auth_ips").toString());
+                socksIpv4Repository.save(socksIpv4s.get(0));
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value="/delipv4",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> delipv4(@RequestParam String ipv4){
         JSONObject resp = new JSONObject();
@@ -212,6 +244,64 @@ public class ProxyController {
         }catch (Exception e){
             resp.put("status","true");
             resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/proxySetting",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> proxySetting(@RequestParam(defaultValue = "") String ip){
+        JSONObject resp = new JSONObject();
+        if(ip.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Không để IP trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            ProxySetting proxySetting=proxySettingRepository.getProxySettingById();
+            resp.put("username",proxySetting.getUsername());
+            resp.put("password",proxySetting.getPassword());
+            resp.put("total_port",proxySetting.getTotal_port());
+            resp.put("cron",proxySetting.getCron());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/checkIPV4",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> checkIPV4(@RequestParam(defaultValue = "") String ip,@RequestParam(defaultValue = "") String ipv4){
+        JSONObject resp = new JSONObject();
+        if(ip.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Không để IP trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(ipv4.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Không để IPV4 trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(ip.trim());
+            if(socksIpv4s.size()==0){
+                resp.put("status","true");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+            }else{
+                if(socksIpv4s.get(0).getIpv4().equals(ipv4.trim())){
+                    resp.put("status","true");
+                    return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+                }else{
+                    socksIpv4s.get(0).setIpv4_old(socksIpv4s.get(0).getIpv4()+(socksIpv4s.get(0).getIpv4_old().length()==0?"":(","+socksIpv4s.get(0).getIpv4_old())));
+                    socksIpv4s.get(0).setIpv4(ipv4.trim());
+                    socksIpv4s.get(0).setTimeupdate(System.currentTimeMillis());
+                    socksIpv4Repository.save(socksIpv4s.get(0));
+                }
+            }
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
