@@ -98,6 +98,8 @@ public class HistoryTrafficController {
                     if(ran.nextInt(1000)<=service.getClick_web()*10){
                         resp.put("click_web", "true");
                     }else{
+                        histories.get(0).setRunning(0);
+                        historyTrafficRepository.save(histories.get(0));
                         resp.put("click_web", "fail");
                         resp.put("duration",0);
                         resp.put("click_ads", "fail");
