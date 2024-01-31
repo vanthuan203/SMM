@@ -18,7 +18,7 @@ public class AutoRunCheck {
     @Autowired
     private OrderSpeedTrue orderSpeedTrue;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
