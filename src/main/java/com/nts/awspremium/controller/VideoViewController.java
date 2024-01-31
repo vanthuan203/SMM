@@ -3755,6 +3755,7 @@ public class VideoViewController {
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
                 Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
+                System.out.println(checkBH);
                 if(checkBH==0){
                     checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }

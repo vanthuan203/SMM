@@ -239,7 +239,7 @@ public class ApiTrafficController {
                 webTrafficNew.setTimeupdate(0L);
                 webTrafficNew.setEnddate(0L);
                 webTrafficNew.setTimestart(System.currentTimeMillis());
-                webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/((service.getClick_web()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/service.getMaxtime()))<1?1:((int)(webTrafficNew.getMaxtraffic24h()/((service.getClick_web()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/service.getMaxtime())));
+                webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(30/service.getMaxtime()))<1?1:((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(30/service.getMaxtime())));
                 webTrafficNew.setNote("");
                 webTrafficNew.setPrice(priceorder);
                 webTrafficNew.setService(data.getService());

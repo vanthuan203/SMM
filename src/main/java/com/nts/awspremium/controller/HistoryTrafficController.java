@@ -83,7 +83,7 @@ public class HistoryTrafficController {
                 for (int i = 0; i < service.getSuggest(); i++) {
                     arrSource.add("suggest");
                 }
-                for (int i = 0; i < service.getSearch(); i++) {
+                for (int i = 0; i < (int)(service.getSearch()/(service.getClick_web()/100F)); i++) {
                     arrSource.add("search");
                 }
                 for (int i = 0; i < service.getDirect(); i++) {

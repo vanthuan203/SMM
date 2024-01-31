@@ -433,7 +433,7 @@ public class AccountViewController {
                             histories.get(0).setRunning(0);
                             histories.get(0).setVps(vps);
                             histories.get(0).setOrderid(0L);
-                            if(ran.nextInt(100)>50){
+                            if(ran.nextInt(1000)<750){
                                 histories.get(0).setDevice("mobile");
                             }else{
                                 histories.get(0).setDevice("pc");
