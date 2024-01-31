@@ -11,6 +11,7 @@ public class ProxySetting {
     private Long id ;
     private Integer option_proxy;
     private Integer total_port;
+    private Integer total_sock_port;
     private String username;
     private String password;
     private String cron;
@@ -18,10 +19,11 @@ public class ProxySetting {
     public ProxySetting() {
     }
 
-    public ProxySetting(Long id, Integer option_proxy, Integer total_port, String username, String password, String cron, Long timeupdate) {
+    public ProxySetting(Long id, Integer option_proxy, Integer total_port, Integer total_sock_port, String username, String password, String cron, Long timeupdate) {
         this.id = id;
         this.option_proxy = option_proxy;
         this.total_port = total_port;
+        this.total_sock_port = total_sock_port;
         this.username = username;
         this.password = password;
         this.cron = cron;
@@ -82,5 +84,13 @@ public class ProxySetting {
 
     public void setTimeupdate(Long timeupdate) {
         this.timeupdate = timeupdate;
+    }
+
+    public Integer getTotal_sock_port() {
+        return total_sock_port;
+    }
+
+    public void setTotal_sock_port(Integer total_sock_port) {
+        this.total_sock_port = total_sock_port;
     }
 }

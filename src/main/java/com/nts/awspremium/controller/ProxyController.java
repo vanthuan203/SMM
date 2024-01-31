@@ -271,6 +271,7 @@ public class ProxyController {
             resp.put("username",proxySetting.getUsername());
             resp.put("password",proxySetting.getPassword());
             resp.put("total_port",proxySetting.getTotal_port());
+            resp.put("total_sock_port",proxySetting.getTotal_sock_port());
             resp.put("cron",proxySetting.getCron());
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
