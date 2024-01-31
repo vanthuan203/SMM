@@ -202,7 +202,7 @@ public class ProxyController {
         }
     }
 
-    @PostMapping(value="/up_state",produces = "application/hal_json;charset=utf8")
+    @PostMapping(value="/up_state")
     ResponseEntity<String> up_state(@RequestBody JSONObject jsonObject){
         JSONObject resp = new JSONObject();
         try{
@@ -248,7 +248,7 @@ public class ProxyController {
         }
     }
 
-    @GetMapping(value="/proxySetting",produces = "application/hal_json;charset=utf8")
+    @GetMapping(value="/proxySetting")
     ResponseEntity<String> proxySetting(@RequestParam(defaultValue = "") String host){
         JSONObject resp = new JSONObject();
         if(host.length()==0){
@@ -279,7 +279,7 @@ public class ProxyController {
         }
     }
 
-    @GetMapping(value="/checkIPV4",produces = "application/hal_json;charset=utf8")
+    @GetMapping(value="/checkIPV4")
     ResponseEntity<String> checkIPV4(@RequestParam(defaultValue = "") String host,@RequestParam(defaultValue = "") String ipv4){
         JSONObject resp = new JSONObject();
         if(host.length()==0){
