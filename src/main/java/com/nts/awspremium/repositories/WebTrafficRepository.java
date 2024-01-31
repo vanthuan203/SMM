@@ -17,7 +17,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     public List<WebTraffic> getWebTrafficByGeo(String geo, String listorderid, List<String> orderid);
 
     @Query(value = "select orderid from (select webtraffic.orderid,count(running) as total,maxthreads,valid,traffictotal,trafficorder,speedup,traffic24h,maxtraffic24h\n" +
-            "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where 720/maxtraffic24h<round((UNIX_TIMESTAMP()-lastcompleted/1000)/60)\n" +
+            "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where 1440*0.4/maxtraffic24h<round((UNIX_TIMESTAMP()-lastcompleted/1000)/60)\n" +
             "                                 group by orderid having (total<maxthreads and traffic24h<maxtraffic24h) ) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
 
