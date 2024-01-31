@@ -207,10 +207,10 @@ public class ProxyController {
         JSONObject resp = new JSONObject();
         try{
             //auth_ips
-            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(jsonObject.get("ip").toString());
+            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(jsonObject.get("host").toString());
             if(socksIpv4s.size()==0){
                 Socks_IPV4 socksIpv4 =new Socks_IPV4();
-                socksIpv4.setIp(jsonObject.get("ip").toString());
+                socksIpv4.setIp(jsonObject.get("host").toString());
                 socksIpv4.setIpv4("");
                 socksIpv4.setIpv4_old("");
                 socksIpv4.setTimeupdate(System.currentTimeMillis());
@@ -249,15 +249,25 @@ public class ProxyController {
     }
 
     @GetMapping(value="/proxySetting",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> proxySetting(@RequestParam(defaultValue = "") String ip){
+    ResponseEntity<String> proxySetting(@RequestParam(defaultValue = "") String host){
         JSONObject resp = new JSONObject();
-        if(ip.length()==0){
+        if(host.length()==0){
             resp.put("status","fail");
             resp.put("message", "Không để IP trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            List<String> list_ipv4=authenIPv4Repository.getAuthen();
+            String authen="";
+            for(int i=0;i<list_ipv4.size();i++){
+                if(i==0){
+                    authen=list_ipv4.get(i);
+                }else{
+                    authen=authen+","+list_ipv4.get(i);
+                }
+            }
             ProxySetting proxySetting=proxySettingRepository.getProxySettingById();
+            resp.put("auth_ips",authen);
             resp.put("username",proxySetting.getUsername());
             resp.put("password",proxySetting.getPassword());
             resp.put("total_port",proxySetting.getTotal_port());
@@ -270,9 +280,9 @@ public class ProxyController {
     }
 
     @GetMapping(value="/checkIPV4",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> checkIPV4(@RequestParam(defaultValue = "") String ip,@RequestParam(defaultValue = "") String ipv4){
+    ResponseEntity<String> checkIPV4(@RequestParam(defaultValue = "") String host,@RequestParam(defaultValue = "") String ipv4){
         JSONObject resp = new JSONObject();
-        if(ip.length()==0){
+        if(host.length()==0){
             resp.put("status","fail");
             resp.put("message", "Không để IP trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
@@ -283,7 +293,7 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
-            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(ip.trim());
+            List<Socks_IPV4> socksIpv4s=socksIpv4Repository.getIPSocksByIp(host.trim());
             if(socksIpv4s.size()==0){
                 resp.put("status","true");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
