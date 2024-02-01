@@ -20,7 +20,7 @@ public class AutoCheckProsetList {
     @Autowired
     private CheckProsetListTrue checkProsetListTrue;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
             new Thread(() -> {
