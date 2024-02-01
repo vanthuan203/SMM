@@ -92,7 +92,7 @@ public class WebTrafficController {
             webTrafficNew.setEnddate(0L);
             webTrafficNew.setLastcompleted(0L);
             webTrafficNew.setTimestart(System.currentTimeMillis());
-            webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/(service.getMaxtime()*2))<1?1:((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/(service.getMaxtime()*2)))));
+            webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/((int)(service.getMaxtime()*1.4)))<1?1:((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/((int)(service.getMaxtime()*1.4))))));
             webTrafficNew.setNote(webTraffic.getNote());
             webTrafficNew.setPrice(priceorder);
             webTrafficNew.setService(webTraffic.getService());

@@ -10,4 +10,11 @@ import java.util.List;
 public interface ProxySettingRepository extends JpaRepository<ProxySetting,Long> {
     @Query(value = "SELECT * FROM proxysetting where id=1",nativeQuery = true)
     public ProxySetting getProxySettingById();
+
+    @Query(value = "SELECT * FROM proxysetting where id=?1",nativeQuery = true)
+    public ProxySetting getProxySettingById(Long id);
+
+    @Query(value = "SELECT * FROM proxysetting order by id",nativeQuery = true)
+    public List<ProxySetting> getProxySetting();
+
 }

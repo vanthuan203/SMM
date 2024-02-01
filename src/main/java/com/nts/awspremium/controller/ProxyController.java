@@ -67,6 +67,91 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value="/list_sock",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> list_sock(){
+        JSONObject resp = new JSONObject();
+        try{
+            List<Socks_IPV4> list_ipv4=socksIpv4Repository.getListSock();
+
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<list_ipv4.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("ip",list_ipv4.get(i).getIp());
+                obj.put("ipv4",list_ipv4.get(i).getIpv4());
+                obj.put("ipv4_old",list_ipv4.get(i).getIpv4_old());
+                obj.put("auth",list_ipv4.get(i).getAuth());
+                obj.put("timeupdate",list_ipv4.get(i).getTimeupdate());
+                jsonArray.add(obj);
+            }
+            resp.put("socks",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value="/proxysetting",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> proxysetting(){
+        JSONObject resp = new JSONObject();
+        try{
+            List<ProxySetting> list_ipv4=proxySettingRepository.getProxySetting();
+
+            JSONArray jsonArray=new JSONArray();
+            for(int i=0;i<list_ipv4.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("id",list_ipv4.get(i).getId());
+                obj.put("option_proxy",list_ipv4.get(i).getOption_proxy());
+                obj.put("total_port",list_ipv4.get(i).getTotal_port());
+                obj.put("total_sock_port",list_ipv4.get(i).getTotal_sock_port());
+                obj.put("username",list_ipv4.get(i).getUsername());
+                obj.put("password",list_ipv4.get(i).getPassword());
+                obj.put("cron",list_ipv4.get(i).getCron());
+                obj.put("timeupdate",list_ipv4.get(i).getTimeupdate());
+                jsonArray.add(obj);
+            }
+            resp.put("proxysetting",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "updateProxySetting",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateProxySetting(@RequestHeader(defaultValue = "") String Authorization,@RequestBody ProxySetting proxySetting){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> check=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| check.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        ProxySetting proxySetting1=proxySettingRepository.getProxySettingById(proxySetting.getId());
+        proxySetting1.setCron(proxySetting.getCron());
+        proxySetting1.setPassword(proxySetting.getPassword());
+        proxySetting1.setUsername(proxySetting.getUsername());
+        proxySetting1.setTotal_port(proxySetting.getTotal_port());
+        proxySetting1.setTotal_sock_port(proxySetting.getTotal_sock_port());
+        proxySetting1.setTimeupdate(System.currentTimeMillis());
+        proxySettingRepository.save(proxySetting1);
+        JSONObject obj = new JSONObject();
+        obj.put("id",proxySetting1.getId());
+        obj.put("option_proxy",proxySetting1.getOption_proxy());
+        obj.put("total_port",proxySetting1.getTotal_port());
+        obj.put("total_sock_port",proxySetting1.getTotal_sock_port());
+        obj.put("username",proxySetting1.getUsername());
+        obj.put("password",proxySetting1.getPassword());
+        obj.put("cron",proxySetting1.getCron());
+        obj.put("timeupdate",proxySetting1.getTimeupdate());
+        resp.put("proxysetting",obj);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
     @GetMapping(value="/checkAuthenIPv4",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> checkAuthenIPv4(@RequestParam String ipv4,@RequestParam(defaultValue = "0") Integer lock){
         JSONObject resp = new JSONObject();
