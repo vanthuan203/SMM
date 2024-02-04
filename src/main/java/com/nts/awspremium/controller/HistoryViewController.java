@@ -249,8 +249,6 @@ public class HistoryViewController {
                 resp.put("source", source_view);
                 if(source_view.equals("embed")){
                     resp.put("suggest_video", videos.get(0).getLink());
-                }else if(source_view.equals("direct")){
-                    resp.put("suggest_video","https://www.youtube.com/channel/"+ videos.get(0).getChannelid());
                 }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -280,8 +278,8 @@ public class HistoryViewController {
                         resp.put("video_duration", videos.get(0).getDuration());
                     }
                 }
-                if(((Integer.parseInt(resp.get("video_duration").toString())<10||Integer.parseInt(resp.get("video_duration").toString())>45))&&service.getMaxtime()==1){
-                    resp.put("video_duration",ran.nextInt(30)+10);
+                if(((Integer.parseInt(resp.get("video_duration").toString())<6||Integer.parseInt(resp.get("video_duration").toString())>20))&&service.getMaxtime()==1){
+                    resp.put("video_duration",ran.nextInt(14)+6);
                 }
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
@@ -633,8 +631,6 @@ public class HistoryViewController {
             resp.put("source", source_view);
             if(source_view.equals("embed")){
                 resp.put("suggest_video", videos.get(0).getLink());
-            }else if(source_view.equals("direct")){
-                resp.put("suggest_video","https://www.youtube.com/channel/"+ videos.get(0).getChannelid());
             }
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -664,8 +660,8 @@ public class HistoryViewController {
                     resp.put("video_duration", videos.get(0).getDuration());
                 }
             }
-            if(((Integer.parseInt(resp.get("video_duration").toString())<10||Integer.parseInt(resp.get("video_duration").toString())>45))&&service.getMaxtime()==1){
-                resp.put("video_duration",ran.nextInt(30)+10);
+            if(((Integer.parseInt(resp.get("video_duration").toString())<6||Integer.parseInt(resp.get("video_duration").toString())>20))&&service.getMaxtime()==1){
+                resp.put("video_duration",ran.nextInt(14)+6);
             }
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (InterruptedException ex) {
@@ -981,7 +977,7 @@ public class HistoryViewController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                if (historyViewRepository.getListVideoById(historieId).length() > 244) {
+                if (historyViewRepository.getListVideoById(historieId).length() > 34) {
                     historyViewRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyViewRepository.updateListVideo(videoid, historieId);
