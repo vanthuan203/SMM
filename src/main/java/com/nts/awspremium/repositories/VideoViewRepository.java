@@ -248,11 +248,11 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     public List<VideoView> getVideoBuffhById(String videoid);
 
     @Query(value = "SELECT cast((((SELECT count(*) from account where running=1 and geo='vn')/(select leveluser from setting limit 1))-\n" +
-            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0)))/3300 as SIGNED)",nativeQuery = true)
+            "                      IF((SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0)) is null,0,(SELECT sum(threadset) FROM videoview where service in(select service from service where geo='vn' and checktime=0 and timestart!=0))))/4000 as SIGNED)",nativeQuery = true)
     public Integer getMaxRunningBuffHVN();
 
     @Query(value = "SELECT cast((((SELECT count(*) from account where running=1 and geo='us')/(select leveluser from setting limit 1))-\n" +
-            "            (SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0)))/3300 as SIGNED)",nativeQuery = true)
+            "                      IF((SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0)) is null,0,(SELECT sum(threadset) FROM videoview where service in(select service from service where geo='us' and checktime=0 and timestart!=0))))/4000 as SIGNED)",nativeQuery = true)
     public Integer getMaxRunningBuffHUS();
 
     @Modifying
