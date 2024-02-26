@@ -134,13 +134,13 @@ public class AuthController {
         admins.get(0).setDiscount(admin.getDiscount());
         admins.get(0).setBalance(balance_update);
         admins.get(0).setRate(admin.getRate());
-        if(admin.getBalance()>0){
+        if(admin.getBalance()!=0){
             Balance balance=new Balance();
             balance.setUser(admin.getUsername().trim());
             balance.setTime(System.currentTimeMillis());
             balance.setTotalblance(balance_update);
             balance.setBalance(admin.getBalance());
-            balance.setNote("Admin nạp tiền");
+            balance.setNote(admin.getBalance()>0?"Admin nạp tiền":"Admin trừ tiền");
             balanceRepository.save(balance);
         }
         admins.get(0).setNote(admin.getNote());

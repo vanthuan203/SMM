@@ -2788,7 +2788,7 @@ public class VideoViewController {
             List<String> ordersArrInput = new ArrayList<>();
             ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
             List<VideoViewHistory> orderRunnings;
-            if(admins.get(0).getRole().equals("ROLE_ADMIN")){
+            if(admins.get(0).getRole().equals("ROLE_ADMIN") || admins.get(0).getRole().equals("ROLE_SUPPORT")){
                 if(find_channelid==0){
                     orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListChannelId(ordersArrInput);
                 }else{
@@ -2810,7 +2810,7 @@ public class VideoViewController {
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
                 String infoQ;
-                if(admins.get(0).getRole().equals("ROLE_ADMIN")) {
+                if(admins.get(0).getRole().equals("ROLE_ADMIN") || admins.get(0).getRole().equals("ROLE_SUPPORT")) {
                     infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid());
                 }else {
                     infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid(),admins.get(0).getUsername().trim());
