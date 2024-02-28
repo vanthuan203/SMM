@@ -9,9 +9,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface VpsRepository extends JpaRepository<Vps,Integer> {
-    @Query(value = "select * from vps order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
+    @Query(value = "select * from vps where !(vpsoption='Sub_Pending' or vpsoption='sub') order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
     public List<Vps> getListVPS();
-    @Query(value = "select * from vps order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
+    @Query(value = "select * from vps where (vpsoption='Sub_Pending' or vpsoption='sub') order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
     public List<Vps> getListVPSSub();
 
     @Query(value = "Select count(*) from vps where vps like ?1 and ((select count(*) from account where running=1 and vps like ?1))<threads*2",nativeQuery = true)

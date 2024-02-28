@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping(path = "/sub")
 public class AccountSubController {
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountSubRepository accountRepository;
 
     @Autowired
     private AccountSubRepository accountSubRepository;
@@ -119,7 +119,7 @@ public class AccountSubController {
                     }
                 }
                 Long id = accountRepository.getAccountSub();
-                List<Account> account = accountRepository.findAccountById(id);
+                List<AccountSub> account = accountRepository.findAccountById(id);
                 if (account.size() == 0) {
                     resp.put("status", "fail");
                     resp.put("message", "Get account không thành công, thử lại sau ít phút!");
@@ -170,7 +170,7 @@ public class AccountSubController {
                 }
             } else {
                 try {
-                    List<Account> accountbyVps = accountRepository.findAccountById(idbyVps);
+                    List<AccountSub> accountbyVps = accountRepository.findAccountById(idbyVps);
                     Thread.sleep(300);
                     Integer accountcheck = accountRepository.checkAccountById(idbyVps);
                     if (accountcheck == 0) {
@@ -204,7 +204,26 @@ public class AccountSubController {
         }
 
     }
+    @GetMapping(value = "/sumgmails", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> subgmails(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
 
+            Integer allgmail = accountRepository.getCountGmailBuffh();
+            resp.put("counts", allgmail);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping(value = "/checkrecover", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> checkrecover(@RequestParam(defaultValue = "") String recover,@RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
@@ -299,7 +318,7 @@ public class AccountSubController {
         }
         try {
             Long id = accountRepository.getAccountSubNeedLogin(live);
-            List<Account> account = accountRepository.findAccountById(id);
+            List<AccountSub> account = accountRepository.findAccountById(id);
             if (account.size() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "Hết tài khoản thỏa mãn!");
@@ -351,7 +370,7 @@ public class AccountSubController {
         }
         try {
             Long id = accountRepository.getAccountSubByWhere();
-            List<Account> account = accountRepository.findAccountById(id);
+            List<AccountSub> account = accountRepository.findAccountById(id);
             if (account.size() == 0) {
                 resp.put("status", "fail");
                 resp.put("message", "Hết tài khoản thỏa mãn!");
@@ -597,7 +616,7 @@ public class AccountSubController {
                 resp.put("message", "Insert " + username + " thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                List<Account> accounts = accountRepository.findAccountById(idUsername);
+                List<AccountSub> accounts = accountRepository.findAccountById(idUsername);
                 if (account.getPassword().length() > 0) {
                     accounts.get(0).setPassword(account.getPassword().trim());
                 }
@@ -652,7 +671,7 @@ public class AccountSubController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                List<Account> accounts = accountRepository.findAccountById(idUsername);
+                List<AccountSub> accounts = accountRepository.findAccountById(idUsername);
                 if (password.length() > 0) {
                     accounts.get(0).setPassword(password.trim());
                 }
@@ -695,7 +714,7 @@ public class AccountSubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
 
-            List<Account> acccheckvpsnull = accountRepository.findAccountById(idUsername);
+            List<AccountSub> acccheckvpsnull = accountRepository.findAccountById(idUsername);
             Integer accountcheck = accountRepository.checkAcountByVps(idUsername, vps.trim());
             if (accountcheck == 0 && acccheckvpsnull.get(0).getVps().length() != 0) {
                 resp.put("status", "fail");
@@ -794,7 +813,7 @@ public class AccountSubController {
                 resp.put("message", "Username không tồn tại!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                List<Account> accounts = accountRepository.findAccountById(idUsername);
+                List<AccountSub> accounts = accountRepository.findAccountById(idUsername);
                 if (live == 1) {
                     accounts.get(0).setLive(live);
                     accounts.get(0).setRunning(1);

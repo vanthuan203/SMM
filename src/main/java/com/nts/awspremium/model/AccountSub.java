@@ -13,28 +13,74 @@ public class AccountSub {
     private String oldpassword;
     private String recover;
     private Integer live;
+    private String encodefinger;
+    private String cookie;
     private Long timeupdateinfo;
-    private Long insertdate;
+    private Long endtrial;
+    private String endtrialstring;
     private String vps;
+    private String proxy;
+    private String proxy2;
     private Integer running;
     private Long timecheck;
-    private  String note;
+    private  String date;
+    private String geo;
+    private Integer timebuff;
     public AccountSub() {
     }
 
-    public AccountSub(Long id, String username, String password, String oldpassword, String recover, Integer live, Long timeupdateinfo, Long insertdate, String vps, Integer running, Long timecheck, String note) {
+    public AccountSub(Long id, String username, String password, String oldpassword, String recover, Integer live, String encodefinger, String cookie, Long timeupdateinfo, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.oldpassword = oldpassword;
         this.recover = recover;
         this.live = live;
+        this.encodefinger = encodefinger;
+        this.cookie = cookie;
         this.timeupdateinfo = timeupdateinfo;
-        this.insertdate = insertdate;
+        this.endtrial = endtrial;
+        this.endtrialstring = endtrialstring;
         this.vps = vps;
+        this.proxy = proxy;
+        this.proxy2 = proxy2;
         this.running = running;
         this.timecheck = timecheck;
-        this.note = note;
+        this.date = date;
+        this.geo = geo;
+        this.timebuff = timebuff;
+    }
+
+    public Long getTimeupdateinfo() {
+        return timeupdateinfo;
+    }
+
+    public void setTimeupdateinfo(Long timeupdateinfo) {
+        this.timeupdateinfo = timeupdateinfo;
+    }
+
+    public String getOldpassword() {
+        return oldpassword;
+    }
+
+    public void setOldpassword(String oldpassword) {
+        this.oldpassword = oldpassword;
+    }
+
+    public Integer getTimebuff() {
+        return timebuff;
+    }
+
+    public void setTimebuff(Integer timebuff) {
+        this.timebuff = timebuff;
+    }
+
+    public String getProxy2() {
+        return proxy2;
+    }
+
+    public void setProxy2(String proxy2) {
+        this.proxy2 = proxy2;
     }
 
     public Long getId() {
@@ -61,14 +107,6 @@ public class AccountSub {
         this.password = password;
     }
 
-    public String getOldpassword() {
-        return oldpassword;
-    }
-
-    public void setOldpassword(String oldpassword) {
-        this.oldpassword = oldpassword;
-    }
-
     public String getRecover() {
         return recover;
     }
@@ -85,20 +123,36 @@ public class AccountSub {
         this.live = live;
     }
 
-    public Long getTimeupdateinfo() {
-        return timeupdateinfo;
+    public String getEncodefinger() {
+        return encodefinger;
     }
 
-    public void setTimeupdateinfo(Long timeupdateinfo) {
-        this.timeupdateinfo = timeupdateinfo;
+    public void setEncodefinger(String encodefinger) {
+        this.encodefinger = encodefinger;
     }
 
-    public Long getInsertdate() {
-        return insertdate;
+    public String getCookie() {
+        return cookie;
     }
 
-    public void setInsertdate(Long insertdate) {
-        this.insertdate = insertdate;
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
+
+    public Long getEndtrial() {
+        return endtrial;
+    }
+
+    public void setEndtrial(Long endtrial) {
+        this.endtrial = endtrial;
+    }
+
+    public String getEndtrialstring() {
+        return endtrialstring;
+    }
+
+    public void setEndtrialstring(String endtrialstring) {
+        this.endtrialstring = endtrialstring;
     }
 
     public String getVps() {
@@ -107,6 +161,14 @@ public class AccountSub {
 
     public void setVps(String vps) {
         this.vps = vps;
+    }
+
+    public String getProxy() {
+        return proxy;
+    }
+
+    public void setProxy(String proxy) {
+        this.proxy = proxy;
     }
 
     public Integer getRunning() {
@@ -125,12 +187,20 @@ public class AccountSub {
         this.timecheck = timecheck;
     }
 
-    public String getNote() {
-        return note;
+    public String getDate() {
+        return date;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getGeo() {
+        return geo;
+    }
+
+    public void setGeo(String geo) {
+        this.geo = geo;
     }
 }
 
