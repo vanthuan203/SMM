@@ -941,7 +941,7 @@ public class ProxySubController {
     ResponseEntity<String> resetproxyByCron() {
         JSONObject resp = new JSONObject();
         try{
-            proxyLiveRepository.ResetProxyThan4h();
+            proxyRepository.ResetProxyThan1h();
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

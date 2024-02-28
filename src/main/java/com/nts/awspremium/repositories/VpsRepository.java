@@ -14,11 +14,6 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "select * from vps where (vpsoption='Sub_Pending' or vpsoption='sub') order by CAST(SUBSTRING_INDEX(vps, '-', -1) AS UNSIGNED) ASC",nativeQuery = true)
     public List<Vps> getListVPSSub();
 
-    @Query(value = "Select count(*) from vps where vps like ?1 and ((select count(*) from account where running=1 and vps like ?1))<threads*2",nativeQuery = true)
-    public Integer checkGetAccountByThreadVps(String vps);
-    @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where running=1 and vps=?1))<threads*17",nativeQuery = true)
-    public Integer checkGetAccount17ByThreadVps(String vps);
-
     @Query(value = "Select cmt from vps where vps=?1 limit 1",nativeQuery = true)
     public Integer checkVpsCmtTrue(String vps);
 
@@ -37,8 +32,6 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "select * from vps where vps=?1",nativeQuery = true)
     public List<Vps> findVPS(String vps);
 
-    @Query(value = "select count(*) from vps where live=1 and vps=?1",nativeQuery = true)
-    public Integer CheckVPSLiveTrue(String vps);
 
     @Query(value = "select state from vps where vps like ?1",nativeQuery = true)
     public Integer getState(String vps);
@@ -48,11 +41,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Query(value = "SELECT timereset FROM vps WHERE id=(select max(id) from vps)",nativeQuery = true)
     public Integer findTimeIdMax();
-    @Query(value = "SELECT sum(threads) FROM AccPremium.vps where vpsoption='live'",nativeQuery = true)
-    public Integer getSumThreadLive();
 
-    @Query(value = "SELECT threads FROM vps WHERE vps=?1",nativeQuery = true)
-    public Integer getThreadVPS(String vps);
 
     @Query(value = "SELECT sum(threads) FROM vps WHERE vpsoption=?1",nativeQuery = true)
     public Integer getSumThreadsByGeo(String vpsoption);
@@ -90,10 +79,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "UPDATE vps set timeresettool=0",nativeQuery = true)
     public void resetTimeResetTool();
 
-    @Modifying
-    @Transactional
-    @Query(value = "update vps set get_account=0 where vpsoption=?1",nativeQuery = true)
-    public Integer resetGetAcountAll(String geo);
+
     @Query(value = "call changer_account_vn(?1)",nativeQuery = true)
     public Integer changer_account_vn(String geo);
     @Query(value = "call changer_account_us(?1)",nativeQuery = true)

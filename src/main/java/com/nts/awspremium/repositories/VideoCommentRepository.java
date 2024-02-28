@@ -26,6 +26,12 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUS(String listvideo);
 
+    @Query(value = "SELECT * FROM videocomment where service=1111 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (select orderid from (select videocomment.orderid,count(*) as total,maxthreads\n" +
+            "            from videocomment left join historycomment on historycomment.orderid=videocomment.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentKR(String listvideo);
+
     @Query(value = "SELECT * from videocomment where orderid in (?1)",nativeQuery = true)
     public List<VideoComment> getVideoViewByListId(List<String> list_orderid);
     @Query(value = "SELECT * from videocomment where orderid=?1",nativeQuery = true)
@@ -69,14 +75,10 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videocomment.videoid=?1",nativeQuery = true)
     public List<OrderCommentRunning> getVideoViewById(String videoid);
 
-    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.orderid=videocomment.orderid where  time>=videocomment.insertdate group by videocomment.orderid order by insertdate desc",nativeQuery = true)
-    public List<String> getTotalCommentBuff();
-
     @Query(value = "SELECT videocomment.videoid,count(*) as view FROM datacomment left join videocomment on videocomment.orderid=datacomment.orderid and running=2  group by videocomment.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalCommentBuffByDataComment();
 
-    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.videoid=videocomment.videoid where time>=videocomment.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videocomment.videoid order by insertdate desc",nativeQuery = true)
-    public List<String> get24hViewBuff();
+
 
     @Modifying
     @Transactional
@@ -86,30 +88,13 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT count(*) FROM videocomment where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
     public Integer getServiceByVideoId(String videoid,String geo);
 
-    @Modifying
-    @Transactional
-    @Query(value = "update videocomment set valid=0 where videoid not in (select videoid from historyviewsum where round((UNIX_TIMESTAMP()-time/1000)/60)<=5  group by videoid ) and round((UNIX_TIMESTAMP()-insertdate/1000)/60)>20",nativeQuery = true)
-    public void updateOrderCheckCancel();
+
 
     @Modifying
     @Transactional
     @Query(value = "update videocomment set valid=1 where videoid=?1",nativeQuery = true)
     public void updateOrderCheck(String videoid);
 
-    @Query(value = "SELECT sum(vieworder) as total FROM videocomment",nativeQuery = true)
-    public Integer getCountViewBuffOrder();
-
-    @Query(value = "SELECT *  FROM videocomment where orderid=?1 limit 1",nativeQuery = true)
-    public VideoComment getInfoByOrderId(Long orderid);
-
-    @Query(value = "SELECT sum(vieworder) as total FROM videocomment where user=?1",nativeQuery = true)
-    public Integer getCountViewBuffOrder(String user);
-
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videocomment on historyviewsum.videoid=videocomment.videoid where historyviewsum.duration>0 and time>=videocomment.insertdate",nativeQuery = true)
-    public Integer getCountViewBuffedOrder();
-
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videocomment on historyviewsum.videoid=videocomment.videoid where historyviewsum.duration>0 and videocomment.user=?1  time>=videocomment.insertdate",nativeQuery = true)
-    public Integer getCountViewBuffedOrder(String user);
 
     @Query(value = "SELECT * from videocomment  where videoid=?1 limit 1",nativeQuery = true)
     public List<VideoComment> getVideoBuffhById(String videoid);

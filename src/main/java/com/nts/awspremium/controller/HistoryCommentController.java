@@ -68,6 +68,8 @@ public class HistoryCommentController {
                 proxies=proxyRepository.getProxyRandByGeo("vn");
             } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us") || accountRepository.getGeoByUsername(username.trim()).equals("us")) {
                 proxies=proxyRepository.getProxyRandByGeo("us");
+            } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-kr") || accountRepository.getGeoByUsername(username.trim()).equals("kr")) {
+                proxies=proxyRepository.getProxyRandByGeo("kr");
             }
             if(proxies.length()==0){
                 resp.put("status", "fail");
@@ -103,6 +105,8 @@ public class HistoryCommentController {
                     videos = videoCommentRepository.getvideoCommentVN("");
                 } else if (history.getGeo().equals("cmt-us") || history.getGeo().equals("us")) {
                     videos = videoCommentRepository.getvideoCommentUS("");
+                }else if (history.getGeo().equals("cmt-kr") || history.getGeo().equals("kr")) {
+                    videos = videoCommentRepository.getvideoCommentKR("");
                 }else{
                     resp.put("status", "fail");
                     resp.put("message", "Username không cmt!");
@@ -204,6 +208,9 @@ public class HistoryCommentController {
                 } else if (histories.get(0).getGeo().equals("us") || histories.get(0).getGeo().equals("cmt-us")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
                     videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo());
+                }else if (histories.get(0).getGeo().equals("kr") || histories.get(0).getGeo().equals("cmt-kr")) {
+                    //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentKR(histories.get(0).getListvideo());
                 }else{
                     resp.put("status", "fail");
                     resp.put("message", "Username không cmt!");

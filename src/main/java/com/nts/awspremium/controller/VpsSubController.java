@@ -819,7 +819,7 @@ public class VpsSubController {
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
 
-                accountRepository.resetAccountByVps("%"+vpsArr[i].trim()+"%");
+                accountRepository.resetAccountByVps(vpsArr[i].trim());
                 vpsRepository.deleteByVps(vpsArr[i].trim());
 
 

@@ -867,7 +867,7 @@ public class AccountSubController {
                 resp.put("message", "Vps không được để trống!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            accountRepository.resetAccountByVps(vps.trim() + "%");
+            accountRepository.resetAccountByVps(vps.trim());
             resp.put("status", "true");
             resp.put("message", "Update thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

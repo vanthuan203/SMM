@@ -21,10 +21,7 @@ public interface SettingRepository  extends JpaRepository<Setting,Long> {
     @Query(value = "SELECT redirectus FROM setting where id=1",nativeQuery = true)
     public Integer getRedirectUS();
 
-    @Modifying
-    @Transactional
-    @Query(value = "update setting set redirect=?1 where id=1",nativeQuery = true)
-    public void updateRedirect(Integer redirect);
+
 
     @Modifying
     @Transactional
