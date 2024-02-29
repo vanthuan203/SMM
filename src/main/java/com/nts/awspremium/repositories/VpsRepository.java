@@ -71,7 +71,7 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=2,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
+    @Query(value = "UPDATE vps set vpsreset=3,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
 
     @Modifying

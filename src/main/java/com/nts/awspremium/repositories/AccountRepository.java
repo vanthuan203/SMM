@@ -84,6 +84,16 @@ public interface AccountRepository extends JpaRepository<Account,Long> {
     @Transactional
     @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where vps=?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where geo not like 'cmt%' and vps=?1",nativeQuery = true)
+    public Integer resetAccountViewByVps(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where geo like 'cmt%' and vps=?1",nativeQuery = true)
+    public Integer resetAccountCmtByVps(String vps);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account SET running=0,vps='',live=?1,proxy='',proxy2='' where id=?2",nativeQuery = true)

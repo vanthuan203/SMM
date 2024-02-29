@@ -233,7 +233,7 @@ public class ProxySubController {
     }
 
     @PostMapping(value="/create",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> create(@RequestBody Proxy proxy, @RequestHeader(defaultValue = "") String Authorization ){
+    ResponseEntity<String> create(@RequestBody ProxySub proxy, @RequestHeader(defaultValue = "") String Authorization ){
         JSONObject resp = new JSONObject();
         Integer checktoken= adminRepository.FindAdminByToken(Authorization);
         if(checktoken==0){

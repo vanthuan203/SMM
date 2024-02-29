@@ -29,6 +29,9 @@ public class AccountViewController {
     private HistoryTrafficRepository historyTrafficRepository;
 
     @Autowired
+    private HistoryCommentRepository historyCommentRepository;
+
+    @Autowired
     private ProxyRepository proxyRepository;
 
     @Autowired
@@ -893,6 +896,62 @@ public class AccountViewController {
             accountRepository.updateListAccount(vps.trim(), listacc);
             resp.put("status", "true");
             resp.put("message", listacc);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/dellAccViewByVPS", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> dellAccViewByVPS(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (vps.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "vps không đươc để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            proxyRepository.resetProxyViewByVPS(vps.trim());
+            accountRepository.resetAccountViewByVps(vps.trim());
+            historyViewRepository.resetHistoryViewByVps(vps.trim());
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/dellAccCmtByVPS", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> dellAccCmtByVPS(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        try {
+            Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+            if (checktoken == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if (vps.length() == 0) {
+                resp.put("status", "fail");
+                resp.put("message", "vps không đươc để trống!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            proxyRepository.resetProxyCmtByVPS(vps.trim());
+            accountRepository.resetAccountCmtByVps(vps.trim());
+            historyCommentRepository.resetThreadViewByVps(vps.trim());
+            resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {

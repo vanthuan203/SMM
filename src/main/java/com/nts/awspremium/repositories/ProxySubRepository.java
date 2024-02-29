@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ProxySubRepository extends JpaRepository<ProxySub, Integer> {
-    @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxysub.geo,ipv4.numcheck,proxysub.typeproxy FROM ipv4 left join proxysub on ipv4.ipv4=proxysub.ipv4 group by ipv4.ipv4  order by numcheck desc;",nativeQuery = true)
+    @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxysub.geo,ipv4.numcheck,proxysub.typeproxy FROM ipv4 left join proxysub on ipv4.ipv4=proxysub.ipv4 where geo='sub' group by ipv4.ipv4  order by geo desc, numcheck desc;",nativeQuery = true)
     public List<String> getListProxyV4();
 
     @Query(value = "SELECT ipv4 FROM AccPremium.proxysub where typeproxy not like '%vn%' group by ipv4 ",nativeQuery = true)

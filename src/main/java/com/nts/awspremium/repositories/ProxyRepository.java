@@ -13,7 +13,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "select * from proxy where proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<5 group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy();
 
-    @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxy.geo,ipv4.numcheck,proxy.typeproxy FROM ipv4 left join proxy on ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4  order by numcheck desc;",nativeQuery = true)
+    @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxy.geo,ipv4.numcheck,proxy.typeproxy FROM ipv4 left join proxy on ipv4.ipv4=proxy.ipv4 group by ipv4.ipv4  order by geo desc, numcheck desc;",nativeQuery = true)
     public List<String> getListProxyV4();
 
     @Query(value = "SELECT ipv4 FROM AccPremium.proxy where typeproxy not like '%vn%' group by ipv4 ",nativeQuery = true)
@@ -88,6 +88,16 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Transactional
     @Query(value = "update proxy set running=0,vps='' where  vps=?1 ",nativeQuery = true)
     public Integer updaterunningByVps(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update AccPremium.proxy set vps='',running=0 where proxy in (SELECT proxy FROM AccPremium.account where geo not like 'cmt%' and vps=?1);",nativeQuery = true)
+    public Integer resetProxyViewByVPS(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update AccPremium.proxy set vps='',running=0 where proxy in (SELECT proxy FROM AccPremium.account where geo like 'cmt%' and vps=?1);",nativeQuery = true)
+    public Integer resetProxyCmtByVPS(String vps);
 
     @Modifying
     @Transactional
