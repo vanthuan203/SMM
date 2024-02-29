@@ -5,6 +5,7 @@ import com.nts.awspremium.model.OrderTrue;
 import com.nts.awspremium.repositories.VideoViewRepository;
 import com.nts.awspremium.repositories.WebTrafficRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,26 +16,30 @@ public class AutoRunTrafficCheck {
     private WebTrafficRepository webTrafficRepository;
     @Autowired
     private OrderTrafficTrue orderTrue;
-
+    @Autowired
+    private Environment env;
     @PostConstruct
     public void init() throws InterruptedException {
         try{
-            new Thread(() -> {
-                //Random rand =new Random();
-                while(true) {
-                    try{
+            int num_Cron= Integer.parseInt(env.getProperty("server.port"))-8000;
+            for(int i=num_Cron;i<1;i++) {
+                new Thread(() -> {
+                    //Random rand =new Random();
+                    while (true) {
                         try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            orderTrue.setValue(webTrafficRepository.getListOrderTrueThreadON());
+                            //System.out.println(String.join(", ", orderTrue.getValue()));
+                        } catch (Exception e) {
+                            continue;
                         }
-                        orderTrue.setValue(webTrafficRepository.getListOrderTrueThreadON());
-                        //System.out.println(String.join(", ", orderTrue.getValue()));
-                    }catch (Exception e){
-                        continue;
                     }
-                }
-            }).start();
+                }).start();
+            }
         }catch (Exception e){
 
         }
