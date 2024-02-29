@@ -517,6 +517,7 @@ public class HistoryCommentController {
     ResponseEntity<String> delthreadcron() {
         JSONObject resp = new JSONObject();
         try {
+            dataCommentRepository.resetRunningCommentByRunningHisCron();
             historyCommentRepository.resetThreadThan15mcron();
             dataCommentRepository.resetRunningCommentByCron();
             resp.put("status", "true");
