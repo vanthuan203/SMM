@@ -13,7 +13,8 @@ public class ProxyAPI {
         String[] proxycut = proxycheck.split(":");
 
         try {
-            URL url = new URL("https://www.google.com/");
+            //System.out.println(proxycut[0]+":"+proxycut[1]+":"+proxycut[2]+":"+ proxycut[3]);
+            URL url = new URL("https://api.myip.com/");
             java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, new InetSocketAddress(proxycut[0], Integer.parseInt(proxycut[1])));
             if (proxycut.length > 2) {
 
@@ -28,12 +29,13 @@ public class ProxyAPI {
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(1000);
+            conn.setReadTimeout(1000);
 
             conn.connect();
-            //System.out.println(proxycut[0]+":"+proxycut[1]+":"+proxycut[2]+":"+ proxycut[3]);
             int code = conn.getResponseCode();
-            //System.out.println("Status:"+code);
+            System.out.println("Status:"+proxycut[0]+" - "+code);
             //String contents = conn.getResponseMessage();
+            //System.out.println("Status:"+contents);
             conn.disconnect();
             if (code == 200 || code == 429 || code ==404) {
                 return true;
@@ -41,6 +43,10 @@ public class ProxyAPI {
                 return false;
             }
         } catch (Exception e) {
+            //System.out.println(e);
+            if(e.toString().indexOf("Authentication")>=0){
+                return true;
+            }
             return false;
         }
     }

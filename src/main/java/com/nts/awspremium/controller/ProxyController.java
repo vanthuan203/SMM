@@ -29,7 +29,8 @@ public class ProxyController {
     private AdminRepository adminRepository;
     @Autowired
     private ProxyRepository proxyRepository;
-
+    @Autowired
+    private ProxySubRepository proxySubRepository;
     @Autowired
     private ProxyLiveRepository proxyLiveRepository;
     @Autowired
@@ -1165,13 +1166,28 @@ public class ProxyController {
             for(int i=0;i<proxys.size();i++){
                 JSONObject obj = new JSONObject();
                 Random ran=new Random();
-                Integer ranproxy=ran.nextInt(150)+13000;
-                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":doanchinh:Chinhchu123@")) {
+                Integer ranproxy=ran.nextInt(100)+13000;
+                String[] proxy={""};
+                try{
+                    proxy=proxyRepository.getProxyByIpv4(proxys.get(i)).split(":");
+                }catch (Exception e){
+                    try{
+                        proxy=proxySubRepository.getProxyByIpv4(proxys.get(i)).split(":");
+                    }catch (Exception f){
+                        proxy= new String[]{"1", "1", "1", "1"};
+                    }
+                }
+                String userpass=":doanchinh:Chinhchu123@";
+                if(!proxy[2].equals("1")){
+                    userpass=":"+proxy[2]+":"+proxy[3];
+                }
+                System.out.println(userpass);
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+userpass)) {
                     ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i));
 
                 }else{
                     List<IpV4> stateAndCheck = ipV4Repository.getStateByIpv4(proxys.get(i));
-                    if (stateAndCheck.get(0).getNumcheck()>=4){
+                    if (stateAndCheck.get(0).getNumcheck()>=0){
                         list_check=list_check+","+proxys.get(i);
                         sum_error++;
                     }
@@ -1186,6 +1202,51 @@ public class ProxyController {
         } catch (Exception e) {
             resp.put("status",e);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+
+    }
+
+    void checkproxyMain(@RequestParam(defaultValue = "1") Integer cron) {
+        List<String> proxys= ipV4Repository.getListIpv4(cron);
+
+        //System.out.println(proxys);
+        //String[] proxys=proxylist.split("\r\n");
+        try{
+            String list_check="";
+            Integer sum_error=0;
+            for(int i=0;i<proxys.size();i++){
+                Random ran=new Random();
+                Integer ranproxy=ran.nextInt(100)+13000;
+                String[] proxy={""};
+                try{
+                    proxy=proxyRepository.getProxyByIpv4(proxys.get(i)).split(":");
+                }catch (Exception e){
+                    try{
+                        proxy=proxySubRepository.getProxyByIpv4(proxys.get(i)).split(":");
+                    }catch (Exception f){
+                        proxy= new String[]{"1", "1", "1", "1"};
+                    }
+                }
+                String userpass=":doanchinh:Chinhchu123@";
+                if(!proxy[2].equals("1")){
+                    userpass=":"+proxy[2]+":"+proxy[3];
+                }
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+userpass)) {
+                    ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i));
+
+                }else{
+                    ipV4Repository.updateIpv4Error(System.currentTimeMillis(),proxys.get(i));
+                }
+            }
+            if(proxys.size()==0){
+                System.out.println("Thread "+cron+" Watting 60s...");
+                Thread.sleep(60000);
+            }
+
+
+
+        } catch (Exception e) {
+
         }
 
     }
@@ -1226,7 +1287,7 @@ public class ProxyController {
         try{
             Integer cron_num=0;
             for(int i=0;i<id_ipv4.size();i++){
-                if(i%15==0){
+                if(i%45==0){
                     cron_num=cron_num+1;
                 }
                 ipV4Repository.updatecronIpv4(cron_num, Long.parseLong(id_ipv4.get(i)) );

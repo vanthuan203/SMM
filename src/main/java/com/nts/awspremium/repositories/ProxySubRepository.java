@@ -48,7 +48,8 @@ public interface ProxySubRepository extends JpaRepository<ProxySub, Integer> {
 
     @Query(value = "SELECT running FROM proxysub where id=?1 limit 1 ",nativeQuery = true)
     public Integer getRunningProxyById(Integer id);
-
+    @Query(value = "SELECT proxy FROM proxysub where ipv4=?1 limit 1;",nativeQuery = true)
+    public String getProxyByIpv4(String ipv4);
 
     @Query(value = "SELECT id FROM proxysub where proxy=?1 and vps=?2 limit 1 ",nativeQuery = true)
     public Integer getIdByProxyFalse(String proxy,String vps);

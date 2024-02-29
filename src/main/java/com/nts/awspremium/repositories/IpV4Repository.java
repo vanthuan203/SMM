@@ -31,6 +31,9 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Query(value = "select id from ipv4",nativeQuery = true)
     public List<String> getIdByIpv4();
 
+    @Query(value = "select cron from ipv4 order by id desc limit 1",nativeQuery = true)
+    public Integer getmaxCron();
+
     @Query(value = "select * from ipv4",nativeQuery = true)
     public List<IpV4> getListIpv4();
 
