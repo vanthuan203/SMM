@@ -33,7 +33,7 @@ public class ProxyAPI {
 
             conn.connect();
             int code = conn.getResponseCode();
-            System.out.println("Status:"+proxycut[0]+" - "+code);
+            //System.out.println("Status:"+proxycut[0]+" - "+code);
             //String contents = conn.getResponseMessage();
             //System.out.println("Status:"+contents);
             conn.disconnect();

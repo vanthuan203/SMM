@@ -1239,7 +1239,7 @@ public class ProxyController {
                 }
             }
             if(proxys.size()==0){
-                System.out.println("Thread "+cron+" Watting 60s...");
+                //System.out.println("Thread "+cron+" Watting 60s...");
                 Thread.sleep(60000);
             }
 
