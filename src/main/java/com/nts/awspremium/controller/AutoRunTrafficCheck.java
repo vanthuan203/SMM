@@ -21,8 +21,6 @@ public class AutoRunTrafficCheck {
     @PostConstruct
     public void init() throws InterruptedException {
         try{
-            int num_Cron= Integer.parseInt(env.getProperty("server.port"))-8000;
-            for(int i=num_Cron;i<1;i++) {
                 new Thread(() -> {
                     //Random rand =new Random();
                     while (true) {
@@ -39,7 +37,6 @@ public class AutoRunTrafficCheck {
                         }
                     }
                 }).start();
-            }
         }catch (Exception e){
 
         }
