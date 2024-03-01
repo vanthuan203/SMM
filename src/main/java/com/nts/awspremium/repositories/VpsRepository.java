@@ -63,6 +63,11 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE vps set timeresettool=1",nativeQuery = true)
+    public void resetVPSDaily();
+
+    @Modifying
+    @Transactional
     @Query(value = "update vps set vpsreset=1,timeresettool=?1 where vps not in (select vps from historyview where round((UNIX_TIMESTAMP()-timeget/1000)/60)<20 group by vps ) and vpsoption!='Pending' and vpsreset=0 limit 15",nativeQuery = true)
     public void resetVPSByHisTimecheck(Long timeresettool);
 
@@ -73,6 +78,11 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Transactional
     @Query(value = "UPDATE vps set vpsreset=3,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
     public void resetBasByCron(Long timeresettool,Integer limit);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE vps set vpsreset=2,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=1 order by rand() limit ?2",nativeQuery = true)
+    public void resetBasDailyByCron(Long timeresettool,Integer limit);
 
     @Modifying
     @Transactional

@@ -285,8 +285,33 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
+    @GetMapping(value = "setResetBasDaily",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> setResetBasDaily(){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetVPSDaily();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "resetBasDailyByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasDailyByCron(@RequestParam(defaultValue = "0") Integer limit){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetBasDailyByCron(System.currentTimeMillis(),limit);
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+        @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit){
         JSONObject resp=new JSONObject();
         try{
@@ -303,6 +328,7 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @GetMapping(value = "resetBasNoCheckByCron",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> resetBasNoCheckByCron(@RequestParam(defaultValue = "0") Integer limit){
         JSONObject resp=new JSONObject();

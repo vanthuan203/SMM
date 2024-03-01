@@ -43,23 +43,6 @@ public class AutoRunCheckProxy {
                     }
                 }).start();
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         }catch (Exception e){
 
         }
