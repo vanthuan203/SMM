@@ -1233,6 +1233,10 @@ public class VideoCommentController {
     ResponseEntity<String> DeleteOrderNotValidCron() {
         JSONObject resp = new JSONObject();
         try {
+            List<OrderCommentRunning> orderRunnings = videoCommentRepository.getOrderCancelThan2h();
+            for (int i=0;i<orderRunnings.size();i++){
+                delete("1",orderRunnings.get(i).getVideoId(),1);
+            }
             List<VideoComment> videoComments=videoCommentRepository.getAllOrderCheckCancel();
             for(int i=0;i<videoComments.size();i++){
 
