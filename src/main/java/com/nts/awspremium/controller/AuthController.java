@@ -457,7 +457,8 @@ public class AuthController {
         Float vn=balanceRepository.getAllBalanceVNNow();
         Float us=balanceRepository.getAllBalanceUSNow();
         Float kr=balanceRepository.getAllBalanceKRNow();
-        resp.put("balance",(vn!=null?vn.toString():"0")+"$,"+(us!=null?us.toString():"0")+"$"+","+(kr!=null?kr.toString():"0")+"$");
+        Float sum=(vn!=null?vn:0)+(us!=null?us:0)+(kr!=null?kr:0);
+        resp.put("balance",(sum!=null?sum.toString():"0")+"$,"+(vn!=null?vn.toString():"0")+"$,"+(us!=null?us.toString():"0")+"$"+","+(kr!=null?kr.toString():"0")+"$");
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 
