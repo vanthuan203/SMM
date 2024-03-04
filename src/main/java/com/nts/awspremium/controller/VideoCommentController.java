@@ -1271,6 +1271,8 @@ public class VideoCommentController {
                                     delete("1", videoComments.get(i).getVideoid().trim(), 1);
                                 } else if (regionRestriction.get("blocked").toString().indexOf("US") > 0 && videoCommentRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "us") > 0) {
                                     delete("1", videoComments.get(i).getVideoid().trim(), 1);
+                                }else if (regionRestriction.get("blocked").toString().indexOf("KR") > 0 && videoCommentRepository.getServiceByVideoId(videoComments.get(i).getVideoid().trim(), "kr") > 0) {
+                                    delete("1", videoComments.get(i).getVideoid().trim(), 1);
                                 } else {
                                     videoCommentRepository.updateOrderCheck(videoComments.get(i).getVideoid().trim());
                                 }
