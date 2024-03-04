@@ -772,6 +772,43 @@ public class VideoViewController {
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/updateRunningOrderBuffHVN_2h30", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrderBuffHVN_2h30() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderPendingBuffHVN2h30();
+        for (int i = 0; i < 2; i++) {
+            videoViews.get(i).setMaxthreads(10000);
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateDoneOrder_2h30", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateDoneOrder_2h30() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderDoneBuffH2h30();
+        for (int i = 0; i < videoViews.size(); i++) {
+            delete("1",videoViews.get(i).getVideoid().trim(),0);
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateRunningOrderBuffHUS_2h30", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRunningOrderBuffHUS_2h30() throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<VideoView> videoViews = videoViewRepository.getAllOrderPendingBuffHUS2h30();
+        for (int i = 0; i < 1; i++) {
+            videoViews.get(i).setMaxthreads(10000);
+            videoViews.get(i).setTimestart(System.currentTimeMillis());
+            videoViewRepository.save(videoViews.get(i));
+        }
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
     @GetMapping(value = "/updateRunningOrderBuffHUS", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateRunningOrderBuffHUS() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
