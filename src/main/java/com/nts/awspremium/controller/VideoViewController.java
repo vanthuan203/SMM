@@ -776,7 +776,7 @@ public class VideoViewController {
     ResponseEntity<String> updateRunningOrderBuffHVN_2h30() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         List<VideoView> videoViews = videoViewRepository.getAllOrderPendingBuffHVN2h30();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < videoViews.size(); i++) {
             videoViews.get(i).setMaxthreads(10000);
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));
@@ -800,7 +800,7 @@ public class VideoViewController {
     ResponseEntity<String> updateRunningOrderBuffHUS_2h30() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         List<VideoView> videoViews = videoViewRepository.getAllOrderPendingBuffHUS2h30();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < videoViews.size(); i++) {
             videoViews.get(i).setMaxthreads(10000);
             videoViews.get(i).setTimestart(System.currentTimeMillis());
             videoViewRepository.save(videoViews.get(i));

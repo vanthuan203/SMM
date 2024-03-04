@@ -112,7 +112,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where maxthreads=-1 and service in(select service from service where geo='vn') order by priority desc,insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderPendingBuffHVN();
 
-    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and user='content@gmail.com' and service in(select service from service where geo='vn') order by priority desc,insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and user='content@gmail.com' and service in(select service from service where geo='vn') order by priority desc,insertdate asc limit 2",nativeQuery = true)
     public List<VideoView> getAllOrderPendingBuffHVN2h30();
 
     @Query(value = "SELECT * FROM videoview where maxthreads>0 and timestart>0 and user='content@gmail.com' and service in(select service from service where checktime=1) order by timestart asc",nativeQuery = true)
@@ -121,7 +121,7 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where maxthreads=-1 and service in(select service from service where geo='us') order by priority desc,insertdate asc",nativeQuery = true)
     public List<VideoView> getAllOrderPendingBuffHUS();
 
-    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and user='content@gmail.com' and service in(select service from service where geo='us') order by priority desc,insertdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM videoview where maxthreads=-1 and user='content@gmail.com' and service in(select service from service where geo='us') order by priority desc,insertdate asc limit 1",nativeQuery = true)
     public List<VideoView> getAllOrderPendingBuffHUS2h30();
 
     @Query(value = "Select videoview.orderid,videoview.videoid,videoview.videotitle,count(running) as total,maxthreads,insertdate,timestart,note,duration,viewstart,vieworder,user,viewtotal,timeupdate,view24h,price,service from videoview left join historyview on historyview.videoid=videoview.videoid and running=1 where user!='baohanh01@gmail.com' and timestart!=0 group by videoid order by timestart desc",nativeQuery = true)
