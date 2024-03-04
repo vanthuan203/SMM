@@ -491,6 +491,60 @@ public class AuthController {
 
     }
 
+    @GetMapping(value = "getbalance7day", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getbalance7day(@RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> time7day;
+            List<String> timesub7day;
+            time7day = balanceRepository.Getbalance7day();
+            timesub7day = balanceRepository.GetbalanceSub7day();
+            float count_view=0;
+            float count_viewsub=0;
+            int count_order=0;
+            JSONArray jsonArray = new JSONArray();
+            Float maxview = 0F;
+            Float maxsubview = 0F;
+
+            for (int i = 0; i < time7day.size(); i++) {
+                if(time7day.get(i).split(",")[0].equals(timesub7day.get(i).split(",")[0])){
+                    count_order=count_order+Integer.parseInt(time7day.get(i).split(",")[2]);
+                    count_view=count_view+Float.parseFloat(time7day.get(i).split(",")[1]);
+                    if (maxview < Float.parseFloat(time7day.get(i).split(",")[1])) {
+                        maxview = Float.parseFloat(time7day.get(i).split(",")[1]);
+                    }
+                }
+            }
+            for (int i = 0; i < timesub7day.size(); i++) {
+                //System.out.println(time7day.get(i).split(",")[1]);
+                count_viewsub=-Float.parseFloat(timesub7day.get(i).split(",")[1])+count_viewsub;
+                if (maxsubview < -Float.parseFloat(timesub7day.get(i).split(",")[1])) {
+                    maxsubview = -Float.parseFloat(timesub7day.get(i).split(",")[1]);
+                }
+            }
+            for (int i = 0; i < time7day.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("date", time7day.get(i).split(",")[0]);
+                obj.put("view", Float.parseFloat(time7day.get(i).split(",")[1]));
+                obj.put("viewsub", -Float.parseFloat(timesub7day.get(i).split(",")[1]));
+                obj.put("maxview", maxview);
+                obj.put("maxsubview", maxsubview);
+                obj.put("count_view", count_view);
+                obj.put("count_viewsub", count_viewsub);
+                obj.put("count_order", count_order);
+
+                jsonArray.add(obj);
+            }
+            resp.put("view7day", jsonArray);
+
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(path = "fluctuationsMobile",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> fluctuationsMobile(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
