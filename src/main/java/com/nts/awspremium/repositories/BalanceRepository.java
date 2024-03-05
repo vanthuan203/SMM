@@ -69,7 +69,7 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
             "WHERE balance < 0 and user in(select username from admin where role='ROLE_USER') and time<UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000 \n" +
             "GROUP BY date \n" +
             "ORDER BY date DESC \n" +
-            "LIMIT 7;",nativeQuery = true)
+            "LIMIT 30;",nativeQuery = true)
     public List<String> Getbalance7day();
 
     @Query(value = "SELECT DATE(FROM_UNIXTIME((balance.time / 1000), '%Y-%m-%d %H:%i:%s') + INTERVAL (7-(SELECT TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)) hour) AS date, \n" +
@@ -78,7 +78,7 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
             "WHERE balance > 0 and user in(select username from admin where role='ROLE_USER') and time<UNIX_TIMESTAMP(CONVERT_TZ(DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 12 hour),'%Y-%m-%d'),@@session.time_zone,'+7:00')) * 1000 \n" +
             "GROUP BY date \n" +
             "ORDER BY date DESC \n" +
-            "LIMIT 7;",nativeQuery = true)
+            "LIMIT 30;",nativeQuery = true)
     public List<String> GetbalanceSub7day();
 
 }
