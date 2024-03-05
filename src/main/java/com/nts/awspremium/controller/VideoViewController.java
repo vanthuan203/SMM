@@ -917,8 +917,8 @@ public class VideoViewController {
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("service", orderRunnings.get(i).getService());
+                obj.put("geo", serviceRepository.getGeoByService(orderRunnings.get(i).getService()));
                 obj.put("user", orderRunnings.get(i).getUser());
-
                 obj.put("view24h", orderRunnings.get(i).getView24h());
                 obj.put("viewtotal", orderRunnings.get(i).getViewTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
