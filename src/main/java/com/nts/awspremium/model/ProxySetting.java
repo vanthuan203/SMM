@@ -9,7 +9,7 @@ import javax.persistence.Table;
 public class ProxySetting {
     @Id
     private Long id ;
-    private Integer option_proxy;
+    private String option_proxy;
     private Integer total_port;
     private Integer total_sock_port;
     private String username;
@@ -19,7 +19,7 @@ public class ProxySetting {
     public ProxySetting() {
     }
 
-    public ProxySetting(Long id, Integer option_proxy, Integer total_port, Integer total_sock_port, String username, String password, String cron, Long timeupdate) {
+    public ProxySetting(Long id, String option_proxy, Integer total_port, Integer total_sock_port, String username, String password, String cron, Long timeupdate) {
         this.id = id;
         this.option_proxy = option_proxy;
         this.total_port = total_port;
@@ -38,11 +38,11 @@ public class ProxySetting {
         this.id = id;
     }
 
-    public Integer getOption_proxy() {
+    public String getOption_proxy() {
         return option_proxy;
     }
 
-    public void setOption_proxy(Integer option_proxy) {
+    public void setOption_proxy(String option_proxy) {
         this.option_proxy = option_proxy;
     }
 

@@ -2076,6 +2076,146 @@ public class VideoViewController {
     }
 
 
+    String htviewfindorder(@RequestParam() Long orderid) {
+
+        try {
+            JSONArray jsonArray = new JSONArray();
+            Setting setting = settingRepository.getReferenceById(1L);
+            List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
+            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByOrderId(orderid);
+            if (videoViewHistories.size() == 0) {
+                return "Đơn trống";
+            }
+            for (int i = 0; i < videoViewHistories.size(); i++) {
+                Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
+                JSONObject obj = new JSONObject();
+                /*
+                if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
+                    resp.put("videoview", "Đã refund trước đó!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                 */
+                if (videoViewHistories.get(0).getCancel() ==1) {
+                    return "Đã hủy trước đó";
+                }
+                if (videoViewHistories.get(0).getPrice() == 0) {
+                    return "Đã refund 100%";
+                }
+                if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    return "Đơn đang chạy!";
+                }
+                if(service.getChecktime()==0&&(System.currentTimeMillis()- videoViewHistories.get(i).getEnddate())/1000/60/60<8){
+                    return "Hoàn thành chưa đủ 8h!";
+                }
+                /*
+                List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
+                if (viewHistories.size()>0) {
+                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
+                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+                        obj.put("videoview", "Refund sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
+                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
+                    }
+                }
+
+                 */
+                OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+                List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+                Request request1 = null;
+                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
+                keys.get(0).setCount(keys.get(0).getCount() + 1L);
+                googleAPIKeyRepository.save(keys.get(0));
+                Response response1 = client1.newCall(request1).execute();
+
+                String resultJson1 = response1.body().string();
+
+                Object obj1 = new JSONParser().parse(resultJson1);
+
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    return "Không check được view!";
+                }
+                Iterator k = items.iterator();
+                if (k.hasNext() == false) {
+                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
+                    videoViewHistoryRepository.save(videoViewHistories.get(i));
+                    return "Không check được view!";
+                }
+                while (k.hasNext()) {
+                    try {
+                        JSONObject video = (JSONObject) k.next();
+                        JSONObject statistics = (JSONObject) video.get("statistics");
+                        List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
+                        //Hoàn tiền những view chưa buff
+                        int viewcount = Integer.parseInt(statistics.get("viewCount").toString());
+                        int viewFix = videoViewHistories.get(i).getVieworder() > videoViewHistories.get(i).getViewtotal() ? videoViewHistories.get(i).getViewtotal() : videoViewHistories.get(i).getVieworder();
+                        int viewthan = viewFix + videoViewHistories.get(i).getViewstart() - viewcount;
+                        if(viewthan<=0){
+                            if(service.getChecktime()==0){
+                                videoViewHistories.get(i).setViewend(viewcount);
+                                videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
+                            }
+                            videoViewHistoryRepository.save(videoViewHistories.get(i));
+                            break;
+                        }
+                        if (viewthan > viewFix) {
+                            viewthan = viewFix;
+                        }
+                        float price_refund = ((viewthan) / (float) viewFix) * videoViewHistories.get(i).getPrice();
+                        //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
+                        if (videoViewHistories.get(i).getPrice() < price_refund) {
+                            price_refund = videoViewHistories.get(i).getPrice();
+                        }
+                        float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
+                        videoViewHistories.get(i).setPrice(pricebuffed);
+                        videoViewHistories.get(i).setViewend(viewcount);
+                        videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
+                        videoViewHistories.get(i).setViewtotal(viewFix - viewthan);
+                        videoViewHistories.get(i).setRefund(1);
+                        if (videoViewHistories.get(i).getViewtotal()==0) {
+                            videoViewHistories.get(i).setCancel(1);
+                        } else {
+                            videoViewHistories.get(i).setCancel(2);
+                        }
+                        videoViewHistoryRepository.save(videoViewHistories.get(i));
+                        //hoàn tiền & add thong báo số dư
+                        videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
+                        Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim());
+                        Balance balance = new Balance();
+                        balance.setUser(user.get(0).getUsername().trim());
+                        balance.setTime(System.currentTimeMillis());
+                        balance.setTotalblance(balance_update);
+                        balance.setBalance(price_refund);
+                        balance.setService(videoViewHistories.get(i).getService());
+                        balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
+                        balanceRepository.save(balance);
+
+                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
+                        obj.put("videoview", "true");
+                        obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
+                        obj.put("balance", admins.get(0).getBalance());
+                        obj.put("price", price_refund);
+                        obj.put("time", viewthan);
+                        return "Refunded";
+                    } catch (Exception e) {
+                        System.out.println(e.getStackTrace()[0].getLineNumber());
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+            return "0";
+        } catch (Exception e) {
+            return "Fail";
+        }
+    }
+
+
     @PostMapping(path = "ht100view", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> ht100view(@RequestBody() VideoViewHistory videoid, @RequestHeader(defaultValue = "") String Authorization) {
 
