@@ -20,10 +20,12 @@ public class IpV4 {
     private Integer cron;
     private Integer numcheck;
 
+    private String option_setting;
+
     public IpV4() {
     }
 
-    public IpV4(long id, String ipv4, Integer state, Long timecheck, Integer timereset, String vps, Integer vspcount, Integer usercount, Integer cron, Integer numcheck) {
+    public IpV4(long id, String ipv4, Integer state, Long timecheck, Integer timereset, String vps, Integer vspcount, Integer usercount, Integer cron, Integer numcheck, String option_setting) {
         this.id = id;
         this.ipv4 = ipv4;
         this.state = state;
@@ -34,6 +36,7 @@ public class IpV4 {
         this.usercount = usercount;
         this.cron = cron;
         this.numcheck = numcheck;
+        this.option_setting = option_setting;
     }
 
     public Integer getNumcheck() {
@@ -114,5 +117,13 @@ public class IpV4 {
 
     public void setCron(Integer cron) {
         this.cron = cron;
+    }
+
+    public String getOption_setting() {
+        return option_setting;
+    }
+
+    public void setOption_setting(String option_setting) {
+        this.option_setting = option_setting;
     }
 }

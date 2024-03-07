@@ -343,6 +343,15 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            ProxySetting proxySetting=proxySettingRepository.getProxySettingByOption(host.trim());
+            if(proxySetting==null){
+                proxySetting=proxySettingRepository.getProxySettingById();
+            }
+            resp.put("username",proxySetting.getUsername());
+            resp.put("password",proxySetting.getPassword());
+            resp.put("total_port",proxySetting.getTotal_port());
+            resp.put("total_sock_port",proxySetting.getTotal_sock_port());
+            resp.put("cron",proxySetting.getCron());
             List<String> list_ipv4=authenIPv4Repository.getAuthen();
             String authen="";
             for(int i=0;i<list_ipv4.size();i++){
@@ -352,13 +361,7 @@ public class ProxyController {
                     authen=authen+","+list_ipv4.get(i);
                 }
             }
-            ProxySetting proxySetting=proxySettingRepository.getProxySettingById();
             resp.put("auth_ips",authen);
-            resp.put("username",proxySetting.getUsername());
-            resp.put("password",proxySetting.getPassword());
-            resp.put("total_port",proxySetting.getTotal_port());
-            resp.put("total_sock_port",proxySetting.getTotal_sock_port());
-            resp.put("cron",proxySetting.getCron());
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
@@ -405,8 +408,13 @@ public class ProxyController {
 
 
     @GetMapping(value="/addipv4",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> addipv4(@RequestParam String ipv4){
+    ResponseEntity<String> addipv4(@RequestParam String ipv4,@RequestParam(defaultValue = "") String option_setting){
         JSONObject resp = new JSONObject();
+        if(option_setting.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Không để option_setting trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         try{
             String[] ipv4list = ipv4.split(",");
             for(int i=0;i<ipv4list.length;i++){
@@ -416,6 +424,7 @@ public class ProxyController {
                     ipV4.setIpv4(ipv4list[i].trim());
                     ipV4.setNumcheck(0);
                     ipV4.setTimecheck(0L);
+                    ipV4.setOption_setting(option_setting.trim());
                     ipV4Repository.save(ipV4);
                 }
             }

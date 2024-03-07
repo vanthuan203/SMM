@@ -55,6 +55,9 @@ public class HistoryViewController {
     @Autowired
     private SettingRepository settingRepository;
 
+    @Autowired
+    private VpsRepository vpsRepository;
+
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "0") Integer buffh) {
         JSONObject resp = new JSONObject();
@@ -62,6 +65,11 @@ public class HistoryViewController {
             resp.put("status", "fail");
             resp.put("message", "Username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(vpsRepository.checkVpsCmtTrue(vps.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Vps không chạy view!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         Random ran = new Random();
         try {
@@ -439,6 +447,11 @@ public class HistoryViewController {
             resp.put("status", "fail");
             resp.put("message", "Vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(vpsRepository.checkVpsCmtTrue(vps.trim())==0){
+            resp.put("status", "fail");
+            resp.put("message", "Vps không chạy view!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         Random ran = new Random();
         try {
