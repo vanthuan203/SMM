@@ -1959,10 +1959,12 @@ public class VideoViewController {
                     obj.put("videoview", "Đơn đang chạy!");
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
+                /*
                 if(service.getChecktime()==0&&(System.currentTimeMillis()- videoViewHistories.get(i).getEnddate())/1000/60/60<8){
                     obj.put("videoview", "Hoàn thành chưa đủ 8h!");
                     return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
                 }
+                 */
                 /*
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
@@ -3935,7 +3937,8 @@ public class VideoViewController {
                 if(checkBH==0){
                     checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
-                if(service.getChecktime()==1 ||   checkBH>0 || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
+                // ||   checkBH>0
+                if(service.getChecktime()==1  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
                     video_refil=video;
                 }else{
                     htviewfindorder(video.getOrderid(),"1");
