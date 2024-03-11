@@ -2097,20 +2097,21 @@ public class VideoViewController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                  */
-                if (videoViewHistories.get(0).getCancel() ==1) {
+                if (videoViewHistories.get(0).getCancel() ==1&&videoViewHistories.get(0).getRefund()==0) {
                     return "Đã hủy trước đó";
-                }
-                if (videoViewHistories.get(0).getPrice() == 0) {
-                    return "Đã refund 100%";
+                }else if(videoViewHistories.get(0).getPrice() == 0&&videoViewHistories.get(0).getRefund()==1) {
+                    return "Đã hoàn 100% trước đó";
                 }
                 if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Đơn đang chạy!";
+                    return "Đơn đang chạy";
                 }
+                /*
                 if(service.getChecktime()==0&&(System.currentTimeMillis()- videoViewHistories.get(i).getEnddate())/1000/60/60<8){
-                    return "Hoàn thành chưa đủ 8h!";
+                    return "Hoàn thành < 8h";
                 }
+                 */
                 /*
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
@@ -2141,13 +2142,13 @@ public class VideoViewController {
                 if (items == null) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Không check được view!";
+                    return "Không check được view";
                 }
                 Iterator k = items.iterator();
                 if (k.hasNext() == false) {
                     videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Không check được view!";
+                    return "Không check được view";
                 }
                 while (k.hasNext()) {
                     try {
@@ -2164,9 +2165,9 @@ public class VideoViewController {
                                 videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
                             }
                             videoViewHistoryRepository.save(videoViewHistories.get(i));
-                            break;
+                            return "Đủ view | " +viewcount+"/"+(viewFix+videoViewHistories.get(i).getViewstart());
                         }
-                        if (viewthan > viewFix) {
+                        if (viewthan > viewFix||viewFix-viewthan<50) {
                             viewthan = viewFix;
                         }
                         float price_refund = ((viewthan) / (float) viewFix) * videoViewHistories.get(i).getPrice();
@@ -2204,7 +2205,11 @@ public class VideoViewController {
                         obj.put("balance", admins.get(0).getBalance());
                         obj.put("price", price_refund);
                         obj.put("time", viewthan);
-                        return "Refunded";
+                        if(videoViewHistories.get(i).getPrice()==0){
+                            return "Đã hoàn 100%";
+                        }else{
+                            return "Đã hoàn phần thiếu";
+                        }
                     } catch (Exception e) {
                         System.out.println(e.getStackTrace()[0].getLineNumber());
                         throw new RuntimeException(e);
@@ -3727,11 +3732,12 @@ public class VideoViewController {
                     }
                 }
                 if((((viewcheck!=-1 || checkview<=0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) && checkBH==0){
-                    status="Refunded";
                     float price_refund=0F;
                     if(checkview==-1){
+                        status="Đã hoàn 50%";
                         price_refund=video.getPrice()*0.5F;
                     }else{
+                        status="Đã hoàn 100%";
                         price_refund=video.getPrice();
                     }
                     video.setViewtotal(0);
@@ -3939,13 +3945,13 @@ public class VideoViewController {
                 }
                 // ||   checkBH>0
                 if(service.getChecktime()==1  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
+                    if(service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0){
+                        status="Quá hạn hoàn tiền";
+                    }
                     video_refil=video;
                 }else{
-                    htviewfindorder(video.getOrderid(),"1");
+                    status=htviewfindorder(video.getOrderid());
                     video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                    if(price_old!=video_refil.getPrice()){
-                        status="Refunded";
-                    }
                 }
                 JSONObject obj = new JSONObject();
                 String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video_refil.getVideoid(),video_refil.getOrderid());
