@@ -3945,6 +3945,11 @@ public class VideoViewController {
                 }
                 // ||   checkBH>0
                 if(service.getChecktime()==1  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
+                    if(video.getCancel()==1&&video.getRefund()==0){
+                        status="Đã hủy trước đó";
+                    }else if(video.getPrice()==0&&video.getRefund()==1){
+                        status="Đã hoàn 100% trước đó";
+                    }
                     if(service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0){
                         status="Quá hạn hoàn tiền";
                     }
