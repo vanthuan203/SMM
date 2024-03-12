@@ -28,8 +28,8 @@ public class ProxyAPI {
             }
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(1000);
-            conn.setReadTimeout(1000);
+            conn.setConnectTimeout(2000);
+            conn.setReadTimeout(2000);
 
             conn.connect();
             int code = conn.getResponseCode();
