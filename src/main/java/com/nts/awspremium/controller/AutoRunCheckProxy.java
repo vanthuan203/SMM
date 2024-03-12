@@ -27,7 +27,7 @@ public class AutoRunCheckProxy {
             int num_Cron= Integer.parseInt(env.getProperty("server.port"))-8000;
             for(int i=1;i<=10;i++){
                 int finalI = i+(num_Cron==0?0:(num_Cron*10));
-                System.out.println(finalI);
+                //System.out.println(finalI);
                 new Thread(() -> {
                     Random rand =new Random();
                     while(true) {
