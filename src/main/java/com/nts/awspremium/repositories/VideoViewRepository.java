@@ -30,9 +30,9 @@ public interface VideoViewRepository extends JpaRepository<VideoView,Long> {
     @Query(value = "SELECT * FROM videoview where service<600 and service in (select service from service where live=1) and  orderid in (?1) and round((UNIX_TIMESTAMP()-timestart/1000)/60) <=1.5*minstart order by rand() limit 1",nativeQuery = true)
     public List<VideoView> getvideoPreVer2USTEST(List<String> orderid);
 
-    @Query(value = "select orderid from (select videoview.orderid,count(running) as total,maxthreads,valid,viewtotal,vieworder,speedup\n" +
+    @Query(value = "select orderid from (select videoview.orderid,count(running) as total,maxthreads,valid,viewtotal,vieworder,speedup,threadset\n" +
             "                      from videoview left join historyview on historyview.orderid=videoview.orderid and running=1\n" +
-            "                       group by orderid having total<maxthreads or  (vieworder-viewtotal>total*2 and speedup=1 and valid=1 ) ) as t",nativeQuery = true)
+            "                       group by orderid having total<maxthreads or  (vieworder-viewtotal>total*2 and threadset*2>total and speedup=1 and valid=1 ) ) as t",nativeQuery = true)
     public List<String>  getListOrderSpeedTrueThreadON();
 
     @Query(value = "select orderid from (select videoview.orderid,count(running) as total,maxthreads\n" +
