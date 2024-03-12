@@ -24,21 +24,22 @@ public class AutoRunCheckProxy {
     @PostConstruct
     public void init() throws InterruptedException {
         try{
-            int num_Cron= Integer.parseInt(env.getProperty("server.port"))-7999;
-            for(int i=num_Cron;i<=num_Cron+10;i++){
-                int finalI = i;
+            int num_Cron= Integer.parseInt(env.getProperty("server.port"))-8000;
+            for(int i=1;i<=10;i++){
+                int finalI = i+(num_Cron==0?0:(num_Cron*10));
+                System.out.println(finalI);
                 new Thread(() -> {
                     Random rand =new Random();
                     while(true) {
-                        try {
-                            Thread.sleep(5000+rand.nextInt(5000));
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
                         try{
                             proxyController.checkproxyMain(finalI);
                         }catch (Exception e){
                             continue;
+                        }
+                        try {
+                            Thread.sleep(300000+rand.nextInt(50000));
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
                         }
                     }
                 }).start();
