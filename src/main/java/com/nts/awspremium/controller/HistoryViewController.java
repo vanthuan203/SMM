@@ -357,7 +357,7 @@ public class HistoryViewController {
                         histories.get(0).setOrderid(videos.get(0).getOrderid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
                     } else {
-                        videos = videoViewRepository.getvideoBuffHByGeo(geo_rand, histories.get(0).getListvideo(), orderSpeedTrue.getValue());
+                        videos = videoViewRepository.getvideoViewByGeo(geo_rand, histories.get(0).getListvideo(), orderSpeedTrue.getValue());
                         if (videos.size() > 0) {
                             histories.get(0).setTimeget(System.currentTimeMillis());
                             histories.get(0).setVideoid(videos.get(0).getVideoid());
