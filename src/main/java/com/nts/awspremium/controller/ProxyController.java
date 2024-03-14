@@ -343,6 +343,11 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try{
+            List<IpV4> ipV4=ipV4Repository.getStateByIpv4(host.trim());
+            if(ipV4.size()>0){
+                ipV4.get(0).setTimecheck(System.currentTimeMillis());
+                ipV4Repository.save(ipV4.get(0));
+            }
             ProxySetting proxySetting=proxySettingRepository.getProxySettingByOption(host.trim());
             if(proxySetting==null){
                 proxySetting=proxySettingRepository.getProxySettingById();
