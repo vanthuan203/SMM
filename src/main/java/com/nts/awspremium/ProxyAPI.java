@@ -14,7 +14,7 @@ public class ProxyAPI {
 
         try {
             //System.out.println(proxycut[0]+":"+proxycut[1]+":"+proxycut[2]+":"+ proxycut[3]);
-            URL url = new URL("https://api.myip.com/");
+            URL url = new URL("https://www.google.com/");
             java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.HTTP, new InetSocketAddress(proxycut[0], Integer.parseInt(proxycut[1])));
             if (proxycut.length > 2) {
 
@@ -28,8 +28,8 @@ public class ProxyAPI {
             }
             HttpURLConnection conn = (HttpURLConnection) url.openConnection(proxy);
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(2000);
-            conn.setReadTimeout(2000);
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
 
             conn.connect();
             int code = conn.getResponseCode();

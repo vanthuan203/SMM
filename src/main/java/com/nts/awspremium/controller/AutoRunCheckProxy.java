@@ -36,11 +36,13 @@ public class AutoRunCheckProxy {
                         }catch (Exception e){
                             continue;
                         }
+                        /*
                         try {
                             Thread.sleep(300000+rand.nextInt(50000));
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
+                         */
                     }
                 }).start();
             }
