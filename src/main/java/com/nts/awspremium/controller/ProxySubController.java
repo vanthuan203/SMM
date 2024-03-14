@@ -677,8 +677,10 @@ public class ProxySubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
+            String[] proxy=proxyGet.get(0).getProxy().split(":");
+            String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
             resp.put("status","true");
-            resp.put("proxy",proxyGet.get(0).getProxy());
+            resp.put("proxy",proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {

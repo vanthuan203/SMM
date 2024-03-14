@@ -1224,29 +1224,12 @@ public class ProxyController {
     void checkproxyMain(@RequestParam(defaultValue = "1") Integer cron) {
         List<String> proxys= ipV4Repository.getListIpv4(cron);
 
-        //System.out.println(proxys);
-        //String[] proxys=proxylist.split("\r\n");
         try{
-            String list_check="";
-            Integer sum_error=0;
             for(int i=0;i<proxys.size();i++){
                 Random ran=new Random();
                 Integer ranproxy=ran.nextInt(100)+13000;
-                String[] proxy={""};
-                try{
-                    proxy=proxyRepository.getProxyByIpv4(proxys.get(i)).split(":");
-                }catch (Exception e){
-                    try{
-                        proxy=proxySubRepository.getProxyByIpv4(proxys.get(i)).split(":");
-                    }catch (Exception f){
-                        proxy= new String[]{"1", "1", "1", "1"};
-                    }
-                }
-                String userpass=":doanchinh:Chinhchu123@";
-                if(!proxy[2].equals("1")){
-                    userpass=":"+proxy[2]+":"+proxy[3];
-                }
-                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+userpass)) {
+                String[] proxysetting=proxySettingRepository.getUserPassByHost(proxys.get(i).trim()).split(",");
+                if (ProxyAPI.checkProxy(proxys.get(i)+":"+ranproxy.toString()+":"+proxysetting[0]+":"+proxysetting[1])) {
                     ipV4Repository.updateIpv4Ok(System.currentTimeMillis(),proxys.get(i));
 
                 }else{
