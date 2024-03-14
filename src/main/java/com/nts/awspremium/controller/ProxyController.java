@@ -346,6 +346,7 @@ public class ProxyController {
             List<IpV4> ipV4=ipV4Repository.getStateByIpv4(host.trim());
             if(ipV4.size()>0){
                 ipV4.get(0).setTimecheck(System.currentTimeMillis());
+                ipV4.get(0).setState(1);
                 ipV4Repository.save(ipV4.get(0));
             }
             ProxySetting proxySetting=proxySettingRepository.getProxySettingByOption(host.trim());
