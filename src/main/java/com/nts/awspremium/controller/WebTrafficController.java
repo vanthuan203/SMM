@@ -57,12 +57,29 @@ public class WebTrafficController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            if(!ProxyAPI.checkResponseCode(webTraffic.getLink())){
-                resp.put("webtraffic", "The link is not accessible!");
+            if (webTraffic.getLink().trim().length() == 0) {
+                resp.put("error", "Link is null");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            if (webTrafficRepository.getCountLink(webTraffic.getLink().trim()) > 0) {
+                resp.put("error", "This link in process");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            if(!ProxyAPI.checkResponseCode(webTraffic.getLink().trim())){
+                resp.put("error", "The link is not accessible!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            Setting setting = settingRepository.getReferenceById(1L);
             Service service = serviceRepository.getServiceNoCheckEnabled(webTraffic.getService());
 
+            if (service.getType().equals("Special") && webTraffic.getKeywords().trim().length() == 0) {
+                resp.put("error", "Keyword is null");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            if(webTraffic.getKeywords().trim().indexOf(",")>4){
+                resp.put("error", "Enter a maximum of 5 keywords");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
 
             float priceorder = 0;
             int time = 0;
@@ -85,9 +102,9 @@ public class WebTrafficController {
             webTrafficNew.setMaxtraffic24h((int)(webTraffic.getTrafficorder()/(service.getExpired()==1?0.9:(service.getExpired()-1))));
             webTrafficNew.setTrafficorder(webTraffic.getTrafficorder());
             webTrafficNew.setTraffictotal(0);
-            webTrafficNew.setLink(webTraffic.getLink());
+            webTrafficNew.setLink(webTraffic.getLink().trim());
             webTrafficNew.setUser(admins.get(0).getUsername());
-            webTrafficNew.setKeywords(webTraffic.getKeywords());
+            webTrafficNew.setKeywords(webTraffic.getKeywords().trim());
             webTrafficNew.setTimeupdate(0L);
             webTrafficNew.setEnddate(0L);
             webTrafficNew.setLastcompleted(0L);

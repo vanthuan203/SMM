@@ -184,15 +184,15 @@ public class ApiTrafficController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
                 }
-                if (data.getLink().length() == 0) {
+                if (data.getLink().trim().length() == 0) {
                     resp.put("error", "Link is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (webTrafficRepository.getCountLink(data.getLink()) > 0) {
+                if (webTrafficRepository.getCountLink(data.getLink().trim()) > 0) {
                     resp.put("error", "This link in process");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(!ProxyAPI.checkResponseCode(data.getLink())){
+                if(!ProxyAPI.checkResponseCode(data.getLink().trim())){
                     resp.put("error", "The link is not accessible!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -205,8 +205,8 @@ public class ApiTrafficController {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(data.getList().indexOf(",")>=0){
-                    resp.put("error", "Enter only 1 keyword");
+                if(data.getList().indexOf(",")>4){
+                    resp.put("error", "Enter a maximum of 5 keywords");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (data.getQuantity() > service.getMax() || data.getQuantity() < service.getMin()) {
@@ -233,7 +233,7 @@ public class ApiTrafficController {
                 webTrafficNew.setMaxtraffic24h((int)(data.getQuantity()/(service.getExpired()==1?0.9:(service.getExpired()-1))));
                 webTrafficNew.setTrafficorder(data.getQuantity());
                 webTrafficNew.setTraffictotal(0);
-                webTrafficNew.setLink(data.getLink());
+                webTrafficNew.setLink(data.getLink().trim());
                 webTrafficNew.setUser(admins.get(0).getUsername());
                 webTrafficNew.setKeywords(data.getList());
                 webTrafficNew.setTimeupdate(0L);

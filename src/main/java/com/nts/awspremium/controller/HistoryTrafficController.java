@@ -77,9 +77,10 @@ public class HistoryTrafficController {
 
                 Account account=accountRepository.findAccountByUsername(username.trim());
                 String[] proxy= account.getProxy().length()==0?"0:0".split(":"):account.getProxy().split(":");
-                if(account.getProxy().length()==0 || account.getProxy().equals("0:0") ){
+                if(account.getProxy().trim().length()<5){
                     List<Proxy> proxies=proxyRepository.getProxyFixAccountTraffic();
                     if(proxies.size()!=0) {
+                        proxy=proxies.get(0).getProxy().split(":");
                         account.setProxy(proxies.get(0).getProxy());
                         accountRepository.save(account);
                         proxyRepository.updateProxyGetTraffic(vps, System.currentTimeMillis(), proxies.get(0).getId());
@@ -100,7 +101,6 @@ public class HistoryTrafficController {
                         }
                     }
                 }
-
                 String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
                 Service service = serviceRepository.getInfoService(webTraffics.get(0).getService());
                 resp.put("status", "true");
