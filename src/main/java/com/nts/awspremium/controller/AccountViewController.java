@@ -380,13 +380,12 @@ public class AccountViewController {
                             resp.put("message", "Get account không thành công, thử lại sau ítp phút!");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }else{
-                            if(account.get(0).getProxy()==null || account.get(0).getProxy().length()==0){
-                                List<Proxy> proxies=proxyRepository.getProxyFixAccountByGeo(geo.trim());
-                                if(proxies.size()!=0){
+                            if(account.get(0).getProxy().length()==0 || account.get(0).getProxy().equals("0:0") ){
+                                List<Proxy> proxies=proxyRepository.getProxyFixAccountTraffic();
+                                if(proxies.size()!=0) {
                                     account.get(0).setProxy(proxies.get(0).getProxy());
-                                    proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
-                                }else{
-                                    account.get(0).setProxy("0:0");
+                                    accountRepository.save(account.get(0));
+                                    proxyRepository.updateProxyGetTraffic(vps, System.currentTimeMillis(), proxies.get(0).getId());
                                 }
                             }
                         }

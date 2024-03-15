@@ -27,6 +27,13 @@ public class HistoryTrafficController {
     private OrderTrafficTrue orderTrue;
 
     @Autowired
+    private IpV4Repository ipV4Repository;
+    @Autowired
+    private ProxyRepository proxyRepository;
+    @Autowired
+    private ProxySettingRepository proxySettingRepository;
+
+    @Autowired
     private AccountRepository accountRepository;
     @Autowired
     private ServiceRepository serviceRepository;
@@ -49,6 +56,9 @@ public class HistoryTrafficController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             } else {
                 List<HistoryTraffic> histories = historyTrafficRepository.getHistoriesById(historieId);
+
+
+
                 webTraffics = webTrafficRepository.getWebTrafficByGeo(histories.get(0).getGeo().trim(), histories.get(0).getListorderid(), orderTrue.getValue());
                 if (webTraffics.size() > 0) {
                     histories.get(0).setTimeget(System.currentTimeMillis());
@@ -64,7 +74,34 @@ public class HistoryTrafficController {
                         resp.put("message", "Không còn nhiêm vụ traffic!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                String[] proxy = (accountRepository.getProxyByUsername(username.trim()).length()==0?"0:0":accountRepository.getProxyByUsername(username.trim())).split(":");
+
+                Account account=accountRepository.findAccountByUsername(username.trim());
+                String[] proxy= account.getProxy().length()==0?"0:0".split(":"):account.getProxy().split(":");
+                if(account.getProxy().length()==0 || account.getProxy().equals("0:0") ){
+                    List<Proxy> proxies=proxyRepository.getProxyFixAccountTraffic();
+                    if(proxies.size()!=0) {
+                        account.setProxy(proxies.get(0).getProxy());
+                        accountRepository.save(account);
+                        proxyRepository.updateProxyGetTraffic(vps, System.currentTimeMillis(), proxies.get(0).getId());
+                    }
+                }else{
+                    if(ipV4Repository.checkIPv4Live(proxy[0])==0){
+                        String proxies=proxyRepository.getProxyRandTraffic();
+                        if(proxies !=null){
+                            proxy=proxies.split(":");
+                        }else{
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            historyTrafficRepository.save(histories.get(0));
+                            resp.put("status", "fail");
+                            resp.put("username", histories.get(0).getUsername());
+                            resp.put("fail", "traffic");
+                            resp.put("message", "Không còn nhiêm vụ traffic!");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                    }
+                }
+
+                String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
                 Service service = serviceRepository.getInfoService(webTraffics.get(0).getService());
                 resp.put("status", "true");
                 if(ran.nextInt(1000)<=service.getClick_ads()*10){
@@ -72,7 +109,7 @@ public class HistoryTrafficController {
                 }else{
                     resp.put("click_ads", "fail");
                 }
-                resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
+                resp.put("proxy",proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
                 resp.put("orderid", webTraffics.get(0).getOrderid());
                 resp.put("device", histories.get(0).getDevice());
                 resp.put("link", webTraffics.get(0).getLink());

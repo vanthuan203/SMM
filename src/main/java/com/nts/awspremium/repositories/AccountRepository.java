@@ -15,6 +15,8 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account,Long> {
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdUsername(String username);
+    @Query(value = "Select * from account where username=?1 limit 1",nativeQuery = true)
+    public Account findAccountByUsername(String username);
 
     @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
     public Long findIdByUsername(String username);
