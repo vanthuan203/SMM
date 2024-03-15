@@ -58,27 +58,30 @@ public class WebTrafficController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             if (webTraffic.getLink().trim().length() == 0) {
-                resp.put("error", "Link is null");
+                resp.put("webtraffic", "Link is null");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if (webTrafficRepository.getCountLink(webTraffic.getLink().trim()) > 0) {
-                resp.put("error", "This link in process");
+                resp.put("webtraffic", "This link in process");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             if(!ProxyAPI.checkResponseCode(webTraffic.getLink().trim())){
-                resp.put("error", "The link is not accessible!");
+                resp.put("webtraffic", "The link is not accessible!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
             Setting setting = settingRepository.getReferenceById(1L);
             Service service = serviceRepository.getServiceNoCheckEnabled(webTraffic.getService());
 
             if (service.getType().equals("Special") && webTraffic.getKeywords().trim().length() == 0) {
-                resp.put("error", "Keyword is null");
+                resp.put("webtraffic", "Keyword is null");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            if(webTraffic.getKeywords().trim().indexOf(",")>4){
-                resp.put("error", "Enter a maximum of 5 keywords");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            if(webTraffic.getKeywords().trim().indexOf(",")>=0){
+                if(webTraffic.getKeywords().trim().split(",").length>5)
+                {
+                    resp.put("webtraffic", "Enter a maximum of 5 keywords");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
             }
 
             float priceorder = 0;

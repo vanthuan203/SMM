@@ -205,9 +205,12 @@ public class ApiTrafficController {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(data.getList().indexOf(",")>4){
-                    resp.put("error", "Enter a maximum of 5 keywords");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                if(data.getList().trim().indexOf(",")>=0){
+                    if(data.getList().trim().split(",").length>5)
+                    {
+                        resp.put("error", "Enter a maximum of 5 keywords");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                 }
                 if (data.getQuantity() > service.getMax() || data.getQuantity() < service.getMin()) {
                     resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
