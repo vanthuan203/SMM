@@ -144,7 +144,7 @@ public class HistoryTrafficController {
                 }
 
                 String[] keyArr = webTraffics.get(0).getKeywords().split(",");
-                String key = keyArr[ran.nextInt(keyArr.length)];
+                String key = keyArr[ran.nextInt(keyArr.length)].trim();
                 resp.put("keyword", key);
 
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

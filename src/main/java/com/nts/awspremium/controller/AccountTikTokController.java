@@ -22,7 +22,7 @@ public class AccountTikTokController {
     private AdminRepository adminRepository;
 
     @Autowired
-    private HistoryViewRepository historyViewRepository;
+    private HistoryTiktokRepository historyTiktokRepository;
 
     @Autowired
     private HistoryTrafficRepository historyTrafficRepository;
@@ -56,9 +56,9 @@ public class AccountTikTokController {
             if (accountTiktok != null) {
                 if (update == 1) {
                     accountTiktok.setLive(account.getLive());
-                    accountTiktok.setPassword(account.getPassword());
-                    accountTiktok.setRecover(account.getRecover());
-                    accountTiktok.setNick_name(account.getNick_name());
+                    accountTiktok.setPassword(account.getPassword().trim());
+                    accountTiktok.setRecover(account.getRecover().trim());
+                    accountTiktok.setNick_name(account.getNick_name().trim());
                     accountTiktok.setRunning(account.getRunning());
                     accountTiktok.setTime_check(System.currentTimeMillis());
                     accountRepository.save(accountTiktok);
@@ -72,18 +72,29 @@ public class AccountTikTokController {
                 }
             } else {
                 AccountTiktok accountTiktokNew =new AccountTiktok();
-                accountTiktokNew.setUsername(account.getUsername());
-                accountTiktokNew.setNick_name(account.getNick_name());
+                accountTiktokNew.setUsername(account.getUsername().trim());
+                accountTiktokNew.setNick_name(account.getNick_name().trim());
                 accountTiktokNew.setLive(account.getLive());
-                accountTiktokNew.setPassword(account.getPassword());
-                accountTiktokNew.setRecover(account.getRecover());
+                accountTiktokNew.setPassword(account.getPassword().trim());
+                accountTiktokNew.setRecover(account.getRecover().trim());
                 accountTiktokNew.setTime_add(System.currentTimeMillis());
                 accountTiktokNew.setTime_check(System.currentTimeMillis());
                 accountTiktokNew.setProxy("");
-                accountTiktokNew.setRunning(0);
+                accountTiktokNew.setRunning(account.getRunning());
                 accountTiktokNew.setGeo("vn");
-                accountTiktokNew.setVps(account.getVps());
+                accountTiktokNew.setVps(account.getVps().trim());
                 accountRepository.save(accountTiktokNew);
+                //add history tiktok
+                if(historyTiktokRepository.checkUsername(account.getUsername().trim())==0){
+                    HistoryTikTok historyTikTok =new HistoryTikTok();
+                    historyTikTok.setUsername(account.getUsername().trim());
+                    historyTikTok.setOption_running(account.getRunning());
+                    historyTikTok.setRunning(0);
+                    historyTikTok.setVps(account.getVps().trim());
+                    historyTikTok.setOrderid(0L);
+                    historyTikTok.setTimeget(0L);
+                    historyTiktokRepository.save(historyTikTok);
+                }
                 resp.put("status", "true");
                 resp.put("message", "Insert " + account.getUsername() + " thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
