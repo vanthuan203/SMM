@@ -16,10 +16,19 @@ public class AccountRegTiktok {
     private String vps;
     private String device_id;
     private String proxy;
+    private String authy;
     private Integer running;
     private Long time_check;
     private String code="";
     public AccountRegTiktok() {
+    }
+
+    public String getAuthy() {
+        return authy;
+    }
+
+    public void setAuthy(String authy) {
+        this.authy = authy;
     }
 
     public String getDevice_id() {

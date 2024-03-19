@@ -248,9 +248,7 @@ public class AccountTikTokController {
                 AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktok(vps.trim(),device_id.trim(),System.currentTimeMillis(),code);
                 if(accountRegTiktok!=null){
                     resp.put("status", "true");
-                    resp.put("username", accountRegTiktok.getUsername());
-                    resp.put("password", accountRegTiktok.getPassword());
-                    resp.put("recover", accountRegTiktok.getRecover());
+                    resp.put("acc", accountRegTiktok.getUsername()+"|"+accountRegTiktok.getPassword()+"|"+accountRegTiktok.getRecover()+"|"+(accountRegTiktok.getAuthy()==null?"":accountRegTiktok.getAuthy().trim()));
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
                     resp.put("status", "fail");
