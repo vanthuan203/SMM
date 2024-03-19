@@ -10,14 +10,19 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Long> {
+public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,String> {
     @Query(value = "Select * from account_tiktok where username=?1 limit 1",nativeQuery = true)
     public AccountTiktok checkUsername(String username);
-    @Query(value = "Select * from account where username=?1 limit 1",nativeQuery = true)
-    public Account findAccountByUsername(String username);
+    @Query(value = "Select * from account_tiktok where username=?1 limit 1",nativeQuery = true)
+    public AccountTiktok findAccountByUsername(String username);
 
-    @Query(value = "Select id from account where username=?1 limit 1",nativeQuery = true)
-    public Long findIdByUsername(String username);
+    @Query(value = "Select count(*) from account_tiktok where username=?1 limit 1",nativeQuery = true)
+    public Integer findIdByUsername(String username);
+
+    @Query(value = "Select count(*) from account_tiktok where device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account_tiktok where device_id=?1)",nativeQuery = true)
+    public Integer CheckRegByDeviceId(String device_id);
+    @Query(value = "Select count(*) from account_tiktok where device_id=?1",nativeQuery = true)
+    public Integer getCountByDeviceId(String device_id);
 
     @Query(value = "Select proxy,proxy2 from account where id=?1 limit 1",nativeQuery = true)
     public String findProxyByIdSub(Long id);

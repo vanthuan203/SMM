@@ -19,6 +19,8 @@ public class AccountTikTokController {
     @Autowired
     private AccountTikTokRepository accountRepository;
     @Autowired
+    private AccountRegTikTokRepository accountRegTikTokRepository;
+    @Autowired
     private AdminRepository adminRepository;
 
     @Autowired
@@ -41,6 +43,58 @@ public class AccountTikTokController {
     @Autowired
     private CheckProsetListTrue checkProsetListTrue;
 
+    @PostMapping(value = "/create", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> create(@RequestBody AccountTiktok account, @RequestHeader(defaultValue = "") String Authorization,
+                                       @RequestParam(defaultValue = "1") Integer update) {
+        JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            AccountRegTiktok accountRegTiktok = accountRegTikTokRepository.checkUsername(account.getUsername().trim());
+            if (accountRegTiktok != null) {
+                if (update == 1) {
+                    accountRegTiktok.setLive(1);
+                    accountRegTiktok.setPassword(account.getPassword().trim());
+                    accountRegTiktok.setRecover(account.getRecover().trim());
+                    accountRegTikTokRepository.save(accountRegTiktok);
+                    resp.put("status", "true");
+                    resp.put("message", "Update " + account.getUsername() + " thành công!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                } else {
+                    resp.put("status", "fail");
+                    resp.put("message", "Account " + account.getUsername() + " đã tồn tại");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+            } else {
+                AccountRegTiktok accountTiktokNew =new AccountRegTiktok();
+                accountTiktokNew.setUsername(account.getUsername().trim());
+                accountTiktokNew.setLive(1);
+                accountTiktokNew.setPassword(account.getPassword().trim());
+                accountTiktokNew.setRecover(account.getRecover().trim());
+                accountTiktokNew.setTime_add(System.currentTimeMillis());
+                accountTiktokNew.setTime_check(0L);
+                accountTiktokNew.setDevice_id("");
+                accountTiktokNew.setProxy("");
+                accountTiktokNew.setRunning(account.getRunning());
+                accountTiktokNew.setVps("");
+                accountRegTikTokRepository.save(accountTiktokNew);
+                //add history tiktok
+                resp.put("status", "true");
+                resp.put("message", "Insert " + account.getUsername() + " thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PostMapping(value = "/add_account", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> add_account(@RequestBody AccountTiktok account, @RequestHeader(defaultValue = "") String Authorization,
                                          @RequestParam(defaultValue = "1") Integer update) {
@@ -58,9 +112,6 @@ public class AccountTikTokController {
                     accountTiktok.setLive(account.getLive());
                     accountTiktok.setPassword(account.getPassword().trim());
                     accountTiktok.setRecover(account.getRecover().trim());
-                    accountTiktok.setNick_name(account.getNick_name().trim());
-                    accountTiktok.setRunning(account.getRunning());
-                    accountTiktok.setTime_check(System.currentTimeMillis());
                     accountRepository.save(accountTiktok);
                     resp.put("status", "true");
                     resp.put("message", "Update " + account.getUsername() + " thành công!");
@@ -78,10 +129,10 @@ public class AccountTikTokController {
                 accountTiktokNew.setPassword(account.getPassword().trim());
                 accountTiktokNew.setRecover(account.getRecover().trim());
                 accountTiktokNew.setTime_add(System.currentTimeMillis());
-                accountTiktokNew.setTime_check(System.currentTimeMillis());
+                accountTiktokNew.setTime_check(0L);
+                accountTiktokNew.setDevice_id(account.getDevice_id().trim());
                 accountTiktokNew.setProxy("");
                 accountTiktokNew.setRunning(account.getRunning());
-                accountTiktokNew.setGeo("vn");
                 accountTiktokNew.setVps(account.getVps().trim());
                 accountRepository.save(accountTiktokNew);
                 //add history tiktok
@@ -97,6 +148,113 @@ public class AccountTikTokController {
                 }
                 resp.put("status", "true");
                 resp.put("message", "Insert " + account.getUsername() + " thành công!");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/check_account", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> check_account(@RequestParam(defaultValue = "") String username) {
+        JSONObject resp = new JSONObject();
+        if (username.trim().length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message","username không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if(accountRepository.findIdByUsername(username.trim())>0){
+                resp.put("status", "true");
+                resp.put("message",username.trim() + " đã tồn tại");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                resp.put("status", "fail");
+                resp.put("message",username.trim() + " không tồn tại");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+
+    @GetMapping(value = "/update_live", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_live(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "-1") Integer live) {
+        JSONObject resp = new JSONObject();
+        if (username.trim().length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message","username không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (live == -1) {
+            resp.put("status", "fail");
+            resp.put("message","live không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            AccountTiktok accountTiktok=accountRepository.findAccountByUsername(username.trim());
+            if(accountTiktok!=null){
+                accountTiktok.setLive(live);
+                accountRepository.save(accountTiktok);
+                resp.put("status", "true");
+                resp.put("message","update live thành công");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                resp.put("status", "fail");
+                resp.put("message",username.trim() + " không tồn tại");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/reg_acc", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        if (device_id.trim().length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "device_id không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (vps.trim().length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            if(accountRepository.CheckRegByDeviceId(device_id.trim())>0||accountRepository.getCountByDeviceId(device_id.trim())==0){
+                String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                String code="";
+                Random ran=new Random();
+                for(int i=0;i<50;i++){
+                    Integer ranver=ran.nextInt(stringrand.length());
+                    code=code+stringrand.charAt(ranver);
+                }
+                AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktok(vps.trim(),device_id.trim(),System.currentTimeMillis(),code);
+                if(accountRegTiktok!=null){
+                    resp.put("status", "true");
+                    resp.put("username", accountRegTiktok.getUsername());
+                    resp.put("password", accountRegTiktok.getPassword());
+                    resp.put("recover", accountRegTiktok.getRecover());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }else{
+                    resp.put("status", "fail");
+                    resp.put("message","Hết acc để reg reg_tiktok");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+
+            }else{
+                resp.put("status", "fail");
+                resp.put("message","Đã reg đủ acc");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         } catch (Exception e) {

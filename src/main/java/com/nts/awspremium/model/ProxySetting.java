@@ -15,19 +15,26 @@ public class ProxySetting {
     private String username;
     private String password;
     private String cron;
+    private String create_version;
+    private String create_url;
     private Long timeupdate;
     public ProxySetting() {
     }
 
-    public ProxySetting(Long id, String option_proxy, Integer total_port, Integer total_sock_port, String username, String password, String cron, Long timeupdate) {
-        this.id = id;
-        this.option_proxy = option_proxy;
-        this.total_port = total_port;
-        this.total_sock_port = total_sock_port;
-        this.username = username;
-        this.password = password;
-        this.cron = cron;
-        this.timeupdate = timeupdate;
+    public String getCreate_version() {
+        return create_version;
+    }
+
+    public void setCreate_version(String create_version) {
+        this.create_version = create_version;
+    }
+
+    public String getCreate_url() {
+        return create_url;
+    }
+
+    public void setCreate_url(String create_url) {
+        this.create_url = create_url;
     }
 
     public Long getId() {

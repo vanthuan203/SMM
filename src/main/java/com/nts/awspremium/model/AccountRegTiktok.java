@@ -1,13 +1,14 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "account_tiktok")
-public class AccountTiktok {
+@Table(name = "account_reg_tiktok")
+public class AccountRegTiktok {
     @Id
     private String username;
-    private String nick_name;
     private String password;
     private String recover;
     private Integer live;
@@ -17,7 +18,8 @@ public class AccountTiktok {
     private String proxy;
     private Integer running;
     private Long time_check;
-    public AccountTiktok() {
+    private String code="";
+    public AccountRegTiktok() {
     }
 
     public String getDevice_id() {
@@ -100,13 +102,12 @@ public class AccountTiktok {
         this.time_check = time_check;
     }
 
-
-    public String getNick_name() {
-        return nick_name;
+    public String getCode() {
+        return code;
     }
 
-    public void setNick_name(String nick_name) {
-        this.nick_name = nick_name;
+    public void setCode(String code) {
+        this.code = code;
     }
 }
 

@@ -9,9 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 import java.util.List;
 
-public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Long> {
+public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,String> {
     @Query(value = "SELECT count(*) FROM history_tiktok where username=?1",nativeQuery = true)
     public Integer checkUsername(String username);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where username=?1",nativeQuery = true)
+    public Integer resetThreadByUsername(String username);
 
     @Query(value = "SELECT * FROM history_tiktok where id=?1 limit 1",nativeQuery = true)
     public List<HistoryTraffic> getHistoriesById(Long id);
@@ -43,10 +48,7 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Lon
 
 
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE historytraffic SET running=0,orderid=0 where id=?1",nativeQuery = true)
-    public Integer resetThreadById(Long id);
+
 
     @Modifying
     @Transactional

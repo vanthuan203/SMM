@@ -359,6 +359,8 @@ public class ProxyController {
             resp.put("password",proxySetting.getPassword());
             resp.put("total_port",proxySetting.getTotal_port());
             resp.put("total_sock_port",proxySetting.getTotal_sock_port());
+            resp.put("create_version",proxySetting.getCreate_version());
+            resp.put("create_url",proxySetting.getCreate_url());
             resp.put("cron",proxySetting.getCron());
             List<String> list_ipv4=authenIPv4Repository.getAuthen();
             String authen="";

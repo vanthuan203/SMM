@@ -9,11 +9,11 @@ public class ActivityTikTok {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
-    private Float time_update;
+    private Long time_update;
     public ActivityTikTok() {
     }
 
-    public ActivityTikTok(Long id, String username, Float time_update) {
+    public ActivityTikTok(Long id, String username, Long time_update) {
         this.id = id;
         this.username = username;
         this.time_update = time_update;
@@ -35,11 +35,11 @@ public class ActivityTikTok {
         this.username = username;
     }
 
-    public Float getTime_update() {
+    public Long getTime_update() {
         return time_update;
     }
 
-    public void setTime_update(Float time_update) {
+    public void setTime_update(Long time_update) {
         this.time_update = time_update;
     }
 }
