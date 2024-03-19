@@ -184,8 +184,8 @@ public class AccountTikTokController {
 
 
 
-    @GetMapping(value = "/update_live", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> update_live(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "-1") Integer live) {
+    @GetMapping(value = "/update_live_tiktok", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_live_tiktok(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "-1") Integer live) {
         JSONObject resp = new JSONObject();
         if (username.trim().length() == 0) {
             resp.put("status", "fail");
@@ -202,6 +202,42 @@ public class AccountTikTokController {
             if(accountTiktok!=null){
                 accountTiktok.setLive(live);
                 accountRepository.save(accountTiktok);
+                resp.put("status", "true");
+                resp.put("message","update live thành công");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else{
+                resp.put("status", "fail");
+                resp.put("message",username.trim() + " không tồn tại");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/update_live_reg", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_live_reg(@RequestParam(defaultValue = "") String username,@RequestParam(defaultValue = "-1") Integer live) {
+        JSONObject resp = new JSONObject();
+        if (username.trim().length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message","username không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if (live == -1) {
+            resp.put("status", "fail");
+            resp.put("message","live không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.checkUsername(username.trim());
+            if(accountRegTiktok!=null){
+                accountRegTiktok.setLive(live);
+                accountRegTiktok.setVps("");
+                accountRegTiktok.setDevice_id("");
+                accountRegTiktok.setRunning(0);
+                accountRegTikTokRepository.save(accountRegTiktok);
                 resp.put("status", "true");
                 resp.put("message","update live thành công");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
