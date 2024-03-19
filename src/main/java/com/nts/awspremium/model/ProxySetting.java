@@ -15,17 +15,17 @@ public class ProxySetting {
     private String username;
     private String password;
     private String cron;
-    private String create_version;
+    private Integer create_version;
     private String create_url;
     private Long timeupdate;
     public ProxySetting() {
     }
 
-    public String getCreate_version() {
+    public Integer getCreate_version() {
         return create_version;
     }
 
-    public void setCreate_version(String create_version) {
+    public void setCreate_version(Integer create_version) {
         this.create_version = create_version;
     }
 

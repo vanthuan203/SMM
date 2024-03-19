@@ -10,8 +10,8 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ActivityTikTokRepository extends JpaRepository<ActivityTikTok,Long> {
-    @Query(value = "Select count(*) from authenipv4 where ipv4=?1",nativeQuery = true)
-    public Integer CheckIPv4Exist(String ipv4);
+    @Query(value = "SELECT count(*) FROM activity_tiktok where round((UNIX_TIMESTAMP()-time_update/1000)/60/60)<24 and username=?1;",nativeQuery = true)
+    public Integer checkActivityByUsername(String username);
 
     @Query(value = "Select ipv4 from authenipv4",nativeQuery = true)
     public List<String> getAuthen();

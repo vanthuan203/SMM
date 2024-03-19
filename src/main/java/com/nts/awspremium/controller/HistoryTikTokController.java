@@ -61,11 +61,19 @@ public class HistoryTikTokController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             } else {
                 if(historyTikTok.getOption_running()==0){
-                    resp.put("status", "true");
-                    resp.put("task","activity");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-                }else{
-
+                    if(activityTikTokRepository.checkActivityByUsername(username.trim())==0){
+                        resp.put("status", "true");
+                        resp.put("task","activity");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }else{
+                        historyTikTok.setTimeget(System.currentTimeMillis());
+                        historyTiktokRepository.save(historyTikTok);
+                        resp.put("status", "fail");
+                        resp.put("username", historyTikTok.getUsername());
+                        resp.put("fail", "activity");
+                        resp.put("message", "Không có nhiêm vụ nuôi tk!");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                 }
                 String list_tiktok_id=historyFollowerTiktokRepository.getListTiktokID(username.trim());
                 channelTiktoks = channelTikTokRepository.getChannelTiktokBy(list_tiktok_id==null?"":list_tiktok_id);
@@ -80,10 +88,10 @@ public class HistoryTikTokController {
                         resp.put("status", "fail");
                         resp.put("username", historyTikTok.getUsername());
                         resp.put("fail", "follower");
-                        resp.put("message", "Không còn nhiêm vụ follower!");
+                        resp.put("message", "Không có nhiêm vụ follower!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-
+                resp.put("status", "true");
                 resp.put("task", "follower");
                 resp.put("tiktok_id",channelTiktoks.get(0).getTiktok_id());
 
