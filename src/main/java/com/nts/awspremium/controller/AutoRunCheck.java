@@ -20,7 +20,7 @@ public class AutoRunCheck {
     private OrderSpeedTrue orderSpeedTrue;
     @Autowired
     private Environment env;
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
                 new Thread(() -> {
