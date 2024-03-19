@@ -218,8 +218,14 @@ public class AccountTikTokController {
     }
 
     @GetMapping(value = "/reg_acc", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps) {
+    ResponseEntity<String> reg_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps, @RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
+        Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        if (checktoken == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
         if (device_id.trim().length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "device_id không để trống");
