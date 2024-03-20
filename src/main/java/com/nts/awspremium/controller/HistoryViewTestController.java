@@ -1,6 +1,8 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
+import com.nts.awspremium.model.Proxy;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,11 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.security.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -49,6 +52,7 @@ public class HistoryViewTestController {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo) {
@@ -235,6 +239,14 @@ public class HistoryViewTestController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/test", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> test() throws IOException {
+        JSONObject resp = new JSONObject();
+        String proxycheck=proxyRepository.getProxyRandTrafficForCheckAPI();
+        resp.put("ff",TikTokApi.getFollowerCount("https://www.tiktok.com/@thuannguyen202203",proxycheck));
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/update", produces = "application/hal+json;charset=utf8")

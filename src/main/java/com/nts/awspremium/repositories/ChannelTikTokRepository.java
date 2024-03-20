@@ -23,16 +23,16 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE webtraffic set lastcompleted=?1 where orderid=?2",nativeQuery = true)
+    @Query(value = "UPDATE channel_tiktok set lastcompleted=?1 where orderid=?2",nativeQuery = true)
     public void updateLastCompletedByOrderId(Long lastcompleted,Long orderid);
 
-    @Query(value = "SELECT count(*) from webtraffic where orderid=?1 and token=?2 ",nativeQuery = true)
+    @Query(value = "SELECT count(*) from channel_tiktok where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
 
-    @Query(value = "SELECT * from webtraffic where orderid in (?1)",nativeQuery = true)
-    public List<WebTraffic> getWebTrafficByListId(List<String> list_orderid);
-    @Query(value = "SELECT * from webtraffic where orderid=?1",nativeQuery = true)
-    public WebTraffic getWebTrafficById(Long orderid);
+    @Query(value = "SELECT * from channel_tiktok where orderid in (?1)",nativeQuery = true)
+    public List<ChannelTiktok> getChannelTiktokByListId(List<String> list_orderid);
+    @Query(value = "SELECT * from channel_tiktok where orderid=?1",nativeQuery = true)
+    public ChannelTiktok getChannelTiktokById(Long orderid);
 
     @Query(value = "SELECT orderid from webtraffic where link=?1 limit 1",nativeQuery = true)
     public Long getOrderIdWebTrafficByLink(String link);
@@ -41,11 +41,11 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
 
 
-    @Query(value = "SELECT count(*) from webtraffic where link=?1",nativeQuery = true)
+    @Query(value = "SELECT count(*) from channel_tiktok where link=?1",nativeQuery = true)
     public Integer getCountLink(String link);
 
-    @Query(value = "SELECT * FROM  webtraffic where service in(select service from service where category='Website') and timestart>0 order by timeupdate asc",nativeQuery = true)
-    public List<WebTraffic> getAllOrderTraffic();
+    @Query(value = "SELECT * FROM  channel_tiktok where service in(select service from service where category='Website') and timestart>0 order by timeupdate asc",nativeQuery = true)
+    public List<ChannelTiktok> getAllOrderTraffic();
 
 
 

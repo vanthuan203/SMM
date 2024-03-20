@@ -645,7 +645,9 @@ public class AccountViewController {
             }
             Long idUsername = accountRepository.findIdUsername(username.trim());
             Long idHistory=historyViewRepository.getId(username.trim());
-            proxyRepository.updaterunningProxy(accountRepository.getProxyByUsername(username.trim()));
+            if(accountRepository.getProxyByUsername(username.trim().trim()).length()>4){
+                proxyRepository.updaterunningProxy(accountRepository.getProxyByUsername(username.trim()));
+            }
             historyViewRepository.resetHistoryById(idHistory);
             accountRepository.resetAccountByUsername(live, idUsername);
             resp.put("status", "true");

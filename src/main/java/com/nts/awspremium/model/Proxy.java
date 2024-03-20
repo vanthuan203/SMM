@@ -16,12 +16,11 @@ public class Proxy {
     private String typeproxy;
     private String geo;
     private String vps;
-    private String code;
 
     public Proxy() {
     }
 
-    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy, String geo, String vps, String code) {
+    public Proxy(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy, String geo, String vps) {
         this.id = id;
         this.proxy = proxy;
         this.state = state;
@@ -31,7 +30,6 @@ public class Proxy {
         this.typeproxy = typeproxy;
         this.geo = geo;
         this.vps = vps;
-        this.code = code;
     }
 
     public String getGeo() {
@@ -106,11 +104,4 @@ public class Proxy {
         this.ipv4 = ipv4;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 }
