@@ -868,6 +868,50 @@ public class ProxyController {
 
     }
 
+    @GetMapping(value = "/getproxyliveTest", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> getproxyliveTest(@RequestParam(defaultValue = "") String vps,
+                                        @RequestParam(defaultValue = "vn") String geo) {
+        JSONObject resp = new JSONObject();
+        try{
+            Random random =new Random();
+            if(vps.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để vps trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+            if(geo.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để Geo trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<Proxy> proxyGet=null;
+            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+            String code="";
+            Random ran=new Random();
+            for(int i=0;i<30;i++){
+                Integer ranver=ran.nextInt(stringrand.length());
+                code=code+stringrand.charAt(ranver);
+            }
+            proxyGet=proxyRepository.getProxyNotRunningAndLiveByProcedures(geo.trim(),System.currentTimeMillis(),code);
+            if(proxyGet.size()==0){
+                resp.put("status","fail");
+                resp.put("message","Hết proxy khả dụng!" );
+                Thread.sleep(1000+random.nextInt(1000));
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            String[] proxy=proxyGet.get(0).getProxy().split(":");
+            resp.put("status","true");
+            resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping(value = "/resetrunningproxy", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetrunningproxy(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxy) {
         JSONObject resp = new JSONObject();
