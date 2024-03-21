@@ -20,7 +20,8 @@ public class HistoryCommentController {
 
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private ProxySettingRepository proxySettingRepository;
     @Autowired
     private VideoCommentRepository videoCommentRepository;
     @Autowired
@@ -37,7 +38,12 @@ public class HistoryCommentController {
 
     @Autowired
     private HistoryCommentSumRepository historyCommentSumRepository;
-
+    @Autowired
+    private ProxyVNTrue proxyVNTrue;
+    @Autowired
+    private ProxyUSTrue proxyUSTrue;
+    @Autowired
+    private ProxyKRTrue proxyKRTrue;
     @Autowired
     private VpsRepository vpsRepository;
     @Autowired
@@ -130,8 +136,8 @@ public class HistoryCommentController {
                         fail_resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                     }
-                    String proxy=accountRepository.getProxyByUsername(username.trim());
-                    if(proxy.trim().length()<8){
+                    String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
+                    if(proxy[0].trim().length()<4){
                         List<Proxy> proxies=null;
                         if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn")) {
                             proxies=proxyRepository.getProxyFixAccountByGeo("vn");
@@ -141,22 +147,23 @@ public class HistoryCommentController {
                             proxies=proxyRepository.getProxyFixAccountByGeo("kr");
                         }
                         if(proxies.size()!=0) {
-                            proxy=proxies.get(0).getProxy();
+                            proxy=proxies.get(0).getProxy().split(":");
                             Account account=accountRepository.findAccountByUsername(username.trim());
                             account.setProxy(proxies.get(0).getProxy());
                             accountRepository.save(account);
                             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
                         }
                     }else{
+                        Random rand=new Random();
                         if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
-                            if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn")) {
-                                proxy=proxyRepository.getProxyRandByGeo("vn");
-                            } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us")) {
-                                proxy=proxyRepository.getProxyRandByGeo("us");
-                            } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-kr")) {
-                                proxy=proxyRepository.getProxyRandByGeo("kr");
+                            if(history.getGeo().equals("vn")){
+                                proxy=proxyVNTrue.getValue().get(rand.nextInt(proxyVNTrue.getValue().size())).split(":");
+                            }else if(history.getGeo().equals("us")){
+                                proxy=proxyUSTrue.getValue().get(rand.nextInt(proxyUSTrue.getValue().size())).split(":");
+                            }else if(history.getGeo().equals("kr")){
+                                proxy=proxyKRTrue.getValue().get(rand.nextInt(proxyKRTrue.getValue().size())).split(":");
                             }
-                            if(proxy.length()<8){
+                            if(proxy.length==0){
                                 history.setRunning(0);
                                 history.setTimeget(System.currentTimeMillis());
                                 historyCommentRepository.save(history);
@@ -166,13 +173,14 @@ public class HistoryCommentController {
                             }
                         }
                     }
+                    String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
                     resp.put("channel_id", videos.get(0).getChannelid());
                     resp.put("status", "true");
                     resp.put("video_id", videos.get(0).getVideoid());
                     resp.put("video_title", videos.get(0).getVideotitle());
                     resp.put("username", history.getUsername());
                     resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                    resp.put("proxy",proxy.trim());
+                    resp.put("proxy",proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
                     if (ran.nextInt(10000) > 5000) {
                         resp.put("source", "dtn");
                     } else {
@@ -259,8 +267,8 @@ public class HistoryCommentController {
                     fail_resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
-                String proxy=accountRepository.getProxyByUsername(username.trim());
-                if(proxy.trim().length()<8){
+                String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
+                if(proxy[0].trim().length()<4){
                     List<Proxy> proxies=null;
                     if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn")) {
                         proxies=proxyRepository.getProxyFixAccountByGeo("vn");
@@ -270,22 +278,23 @@ public class HistoryCommentController {
                         proxies=proxyRepository.getProxyFixAccountByGeo("kr");
                     }
                     if(proxies.size()!=0) {
-                        proxy=proxies.get(0).getProxy();
+                        proxy=proxies.get(0).getProxy().split(":");
                         Account account=accountRepository.findAccountByUsername(username.trim());
                         account.setProxy(proxies.get(0).getProxy());
                         accountRepository.save(account);
                         proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
                     }
-                }else {
-                    if (proxyRepository.checkProxyLiveByUsername(username.trim()) == 0) {
-                        if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn") || accountRepository.getGeoByUsername(username.trim()).equals("vn")) {
-                            proxy = proxyRepository.getProxyRandByGeo("vn");
-                        } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us") || accountRepository.getGeoByUsername(username.trim()).equals("us")) {
-                            proxy = proxyRepository.getProxyRandByGeo("us");
-                        } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-kr") || accountRepository.getGeoByUsername(username.trim()).equals("kr")) {
-                            proxy = proxyRepository.getProxyRandByGeo("kr");
+                }else{
+                    Random rand=new Random();
+                    if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
+                        if(histories.get(0).getGeo().equals("vn")){
+                            proxy=proxyVNTrue.getValue().get(rand.nextInt(proxyVNTrue.getValue().size())).split(":");
+                        }else if(histories.get(0).getGeo().equals("us")){
+                            proxy=proxyUSTrue.getValue().get(rand.nextInt(proxyUSTrue.getValue().size())).split(":");
+                        }else if(histories.get(0).getGeo().equals("kr")){
+                            proxy=proxyKRTrue.getValue().get(rand.nextInt(proxyKRTrue.getValue().size())).split(":");
                         }
-                        if (proxy.length() <8) {
+                        if(proxy.length==0){
                             histories.get(0).setRunning(0);
                             histories.get(0).setTimeget(System.currentTimeMillis());
                             historyCommentRepository.save(histories.get(0));
@@ -295,6 +304,7 @@ public class HistoryCommentController {
                         }
                     }
                 }
+                String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
                 histories.get(0).setTimeget(System.currentTimeMillis());
                 histories.get(0).setVps(vps);
                 histories.get(0).setRunning(1);
@@ -305,7 +315,7 @@ public class HistoryCommentController {
                 resp.put("video_title", videos.get(0).getVideotitle());
                 resp.put("username", histories.get(0).getUsername());
                 resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
-                resp.put("proxy", proxy.trim());
+                resp.put("proxy", proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
                 if (ran.nextInt(10000) > 5000) {
                     resp.put("source", "dtn");
                 } else {

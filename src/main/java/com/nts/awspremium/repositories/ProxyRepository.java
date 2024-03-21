@@ -1,7 +1,7 @@
 package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.Proxy;
-import com.nts.awspremium.model.ProxyLive;
+import com.nts.awspremium.model.ProxyVNTrue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -63,6 +63,10 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
 
     @Query(value = "select * from proxy where proxy NOT LIKE ?1 and proxy not in (SELECT proxy FROM AccPremium.proxyhistory where state=1 and round((UNIX_TIMESTAMP()-id/1000)/60)<5  group by proxy  order by count(proxy)  desc) order by running asc,rand() limit 1",nativeQuery = true)
     public List<Proxy> getProxy(String proxy);
+
+    @Query(value = "SELECT proxy FROM AccPremium.proxy where geo=?1 and running=0  and ipv4 in(select ipv4 where state=1);",nativeQuery = true)
+    public List<String> getProxyTrue(String geo);
+
 
 
     @Query(value = "SELECT count(*) FROM proxy where proxy=?1",nativeQuery = true)

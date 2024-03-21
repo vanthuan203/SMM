@@ -41,7 +41,7 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
 
 
-    @Query(value = "SELECT count(*) from channel_tiktok where link=?1",nativeQuery = true)
+    @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1",nativeQuery = true)
     public Integer getCountLink(String link);
 
     @Query(value = "SELECT * FROM  channel_tiktok where service in(select service from service where category='Website') and timestart>0 order by timeupdate asc",nativeQuery = true)

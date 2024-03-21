@@ -31,7 +31,6 @@ public class HistoryViewController {
     private ProxySettingRepository proxySettingRepository;
     @Autowired
     private VideoViewRepository videoViewRepository;
-
     @Autowired
     private DataCommentRepository dataCommentRepository;
     @Autowired
@@ -49,6 +48,12 @@ public class HistoryViewController {
     private OrderTrue orderTrue;
     @Autowired
     private OrderSpeedTrue orderSpeedTrue;
+    @Autowired
+    private ProxyVNTrue proxyVNTrue;
+    @Autowired
+    private ProxyUSTrue proxyUSTrue;
+    @Autowired
+    private ProxyKRTrue proxyKRTrue;
     @Autowired
     private ServiceRepository serviceRepository;
 
@@ -699,13 +704,17 @@ public class HistoryViewController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
             }
-            String[] proxy;
-            List<Proxy> proxies;
-            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0 || !geo_rand.equals(histories.get(0).getGeo())){
-                proxies = proxyRepository.getProxyNotRunningAndLive(geo_rand);
-                if(proxies.size()>0){
-                    proxy=proxies.get(0).getProxy().split(":");
-                }else{
+            String[] proxy = new String[0];
+            Random rand=new Random();
+            if(ipV4Repository.checkIPv4Live(histories.get(0).getTypeproxy())==0){
+                if(histories.get(0).getGeo().equals("vn")){
+                    proxy=proxyVNTrue.getValue().get(rand.nextInt(proxyVNTrue.getValue().size())).split(":");
+                }else if(histories.get(0).getGeo().equals("us")){
+                    proxy=proxyUSTrue.getValue().get(rand.nextInt(proxyUSTrue.getValue().size())).split(":");
+                }else if(histories.get(0).getGeo().equals("kr")){
+                    proxy=proxyKRTrue.getValue().get(rand.nextInt(proxyKRTrue.getValue().size())).split(":");
+                }
+                if(proxy.length==0){
                     histories.get(0).setTimeget(System.currentTimeMillis());
                     historyViewRepository.save(histories.get(0));
                     resp.put("status", "fail");

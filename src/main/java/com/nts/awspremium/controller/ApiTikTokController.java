@@ -24,11 +24,10 @@ import java.util.Random;
 @RestController
 @RequestMapping(path = "/api")
 public class ApiTikTokController {
-    /*
     @Autowired
     private ChannelTikTokRepository channelTikTokRepository;
     @Autowired
-    private WebTrafficHistoryRepository webTrafficHistoryRepository;
+    private ChannelTikTokHistoryRepository channelTikTokHistoryRepository;
     @Autowired
     private BalanceRepository balanceRepository;
     @Autowired
@@ -89,34 +88,34 @@ public class ApiTikTokController {
             if (data.getAction().equals("status")) {
                 if (data.getOrders().length() == 0) {
                     ChannelTiktok tiktok = channelTikTokRepository.getChannelTiktokById(data.getOrder());
-                    Chan trafficHistory = webTrafficHistoryRepository.getWebTrafficHisById(data.getOrder());
-                    if (traffic != null) {
+                    ChannelTikTokHistory tikTokHistory = channelTikTokHistoryRepository.getWebTrafficHisById(data.getOrder());
+                    if (tiktok != null) {
                         resp.put("start_count",0);
-                        resp.put("current_count", traffic.getTraffictotal());
-                        resp.put("charge", traffic.getPrice());
-                        if (traffic.getMaxthreads() <= 0) {
+                        resp.put("current_count", tiktok.getFollower_total());
+                        resp.put("charge", tiktok.getPrice());
+                        if (tiktok.getMax_threads() <= 0) {
                             resp.put("status", "Pending");
                         } else {
                             resp.put("status", "In progress");
                         }
-                        resp.put("remains", traffic.getTrafficorder() - traffic.getTraffictotal());
+                        resp.put("remains", tiktok.getFollower_order() - tiktok.getFollower_total());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     } else {
-                        if (trafficHistory == null) {
+                        if (tikTokHistory == null) {
                             resp.put("error", "Incorrect order ID");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         } else {
                             resp.put("start_count", 0);
-                            resp.put("current_count",trafficHistory.getTraffictotal());
-                            resp.put("charge", trafficHistory.getPrice());
-                            if (trafficHistory.getCancel() == 1) {
+                            resp.put("current_count",tikTokHistory.getFollower_total());
+                            resp.put("charge", tikTokHistory.getPrice());
+                            if (tikTokHistory.getCancel() == 1) {
                                 resp.put("status", "Canceled");
-                            } else if (trafficHistory.getCancel() == 2) {
+                            } else if (tikTokHistory.getCancel() == 2) {
                                 resp.put("status", "Partial");
                             } else {
                                 resp.put("status", "Completed");
                             }
-                            resp.put("remains", trafficHistory.getTrafficorder() - trafficHistory.getTraffictotal());
+                            resp.put("remains", tikTokHistory.getFollower_order() - tikTokHistory.getFollower_total());
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
                     }
@@ -125,49 +124,49 @@ public class ApiTikTokController {
                     List<String> ordersArrInput = new ArrayList<>();
                     ordersArrInput.addAll(Arrays.asList(data.getOrders().split(",")));
                     String listId = String.join(",", ordersArrInput);
-                    List<WebTraffic> webTraffics= webTrafficRepository.getWebTrafficByListId(ordersArrInput);
-                    JSONObject trafficObject = new JSONObject();
-                    for (WebTraffic v : webTraffics) {
-                        JSONObject traffic = new JSONObject();
-                        traffic.put("start_count", 0);
-                        traffic.put("current_count", v.getTraffictotal());
-                        traffic.put("charge", v.getPrice());
-                        if (v.getMaxthreads() <=0) {
-                            traffic.put("status", "Pending");
+                    List<ChannelTiktok> channelTiktokList= channelTikTokRepository.getChannelTiktokByListId(ordersArrInput);
+                    JSONObject tiktokObject = new JSONObject();
+                    for (ChannelTiktok v : channelTiktokList) {
+                        JSONObject tiktok = new JSONObject();
+                        tiktok.put("start_count", 0);
+                        tiktok.put("current_count", v.getFollower_total());
+                        tiktok.put("charge", v.getPrice());
+                        if (v.getMax_threads() <=0) {
+                            tiktok.put("status", "Pending");
                         } else {
-                            traffic.put("status", "In progress");
+                            tiktok.put("status", "In progress");
                         }
                         //videoview.put("status", "In progress");
-                        traffic.put("remains", v.getTrafficorder() - v.getTraffictotal());
-                        trafficObject.put("" + v.getOrderid(), traffic);
+                        tiktok.put("remains", v.getFollower_order() - v.getFollower_total());
+                        tiktokObject.put("" + v.getOrderid(), tiktok);
                         ordersArrInput.remove("" + v.getOrderid());
                     }
                     String listIdHis = String.join(",", ordersArrInput);
-                    List<WebTrafficHistory> webTrafficHistories = webTrafficHistoryRepository.getWebTrafficHisByListId(ordersArrInput);
-                    for (WebTrafficHistory vh : webTrafficHistories) {
-                        JSONObject traffhis = new JSONObject();
-                        if (webTrafficHistories != null) {
-                            traffhis.put("start_count", 0);
-                            traffhis.put("current_count", vh.getTraffictotal() );
-                            traffhis.put("charge", vh.getPrice());
+                    List<ChannelTikTokHistory> channelTikTokHistoryList = channelTikTokHistoryRepository.getWebTrafficHisByListId(ordersArrInput);
+                    for (ChannelTikTokHistory vh : channelTikTokHistoryList) {
+                        JSONObject tiktok_list = new JSONObject();
+                        if (channelTikTokHistoryList != null) {
+                            tiktok_list.put("start_count", 0);
+                            tiktok_list.put("current_count", vh.getFollower_total() );
+                            tiktok_list.put("charge", vh.getPrice());
                             if (vh.getCancel() == 1) {
-                                traffhis.put("status", "Canceled");
+                                tiktok_list.put("status", "Canceled");
                             } else if (vh.getCancel() == 2) {
-                                traffhis.put("status", "Partial");
+                                tiktok_list.put("status", "Partial");
                             } else {
-                                traffhis.put("status", "Completed");
+                                tiktok_list.put("status", "Completed");
                             }
-                            traffhis.put("remains", vh.getTrafficorder() - vh.getTraffictotal());
-                            trafficObject.put("" + vh.getOrderid(), traffhis);
+                            tiktok_list.put("remains", vh.getFollower_order() - vh.getFollower_total());
+                            tiktokObject.put("" + vh.getOrderid(), tiktok_list);
                             ordersArrInput.remove("" + vh.getOrderid());
                         }
                     }
                     for (String orderId : ordersArrInput) {
                         JSONObject orderIdError = new JSONObject();
                         orderIdError.put("error", "Incorrect order ID");
-                        trafficObject.put(orderId, orderIdError);
+                        tiktokObject.put(orderId, orderIdError);
                     }
-                    return new ResponseEntity<String>(trafficObject.toJSONString(), HttpStatus.OK);
+                    return new ResponseEntity<String>(tiktokObject.toJSONString(), HttpStatus.OK);
                 }
             }
             if (data.getAction().equals("add")) {
@@ -182,7 +181,7 @@ public class ApiTikTokController {
                     resp.put("error", "Link is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if (webTrafficRepository.getCountLink(data.getLink().trim()) > 0) {
+                if (channelTikTokRepository.getCountLink(data.getLink().trim()) > 0) {
                     resp.put("error", "This link in process");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
@@ -191,20 +190,9 @@ public class ApiTikTokController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 Setting setting = settingRepository.getReferenceById(1L);
-                if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder()) {
-                    resp.put("error", "System busy try again");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
                 if (service.getType().equals("Special") && data.getList().length() == 0) {
                     resp.put("error", "Keyword is null");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if(data.getList().trim().indexOf(",")>=0){
-                    if(data.getList().trim().split(",").length>5)
-                    {
-                        resp.put("error", "Enter a maximum of 5 keywords");
-                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                    }
                 }
                 if (data.getQuantity() > service.getMax() || data.getQuantity() < service.getMin()) {
                     resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
@@ -216,33 +204,27 @@ public class ApiTikTokController {
                     resp.put("error", "Your balance not enough");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                WebTraffic webTrafficNew = new WebTraffic();
+                ChannelTiktok channelTiktok = new ChannelTiktok();
                 String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
                 String token="";
                 Random ran=new Random();
-                for(int i=0;i<30;i++){
+                for(int i=0;i<50;i++){
                     Integer ranver=ran.nextInt(stringrand.length());
                     token=token+stringrand.charAt(ranver);
                 }
-                webTrafficNew.setToken(token);
-                webTrafficNew.setInsertdate(System.currentTimeMillis());
-                webTrafficNew.setTraffic24h(0);
-                webTrafficNew.setMaxtraffic24h((int)(data.getQuantity()/(service.getExpired()==1?0.9:(service.getExpired()-1))));
-                webTrafficNew.setTrafficorder(data.getQuantity());
-                webTrafficNew.setTraffictotal(0);
-                webTrafficNew.setLink(data.getLink().trim());
-                webTrafficNew.setUser(admins.get(0).getUsername());
-                webTrafficNew.setKeywords(data.getList());
-                webTrafficNew.setTimeupdate(0L);
-                webTrafficNew.setEnddate(0L);
-                webTrafficNew.setTimestart(System.currentTimeMillis());
-                webTrafficNew.setMaxthreads(((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/((int)(service.getMaxtime()*1.4))))<1?1:((int)(webTrafficNew.getMaxtraffic24h()/(((service.getClick_web()/100F)*service.getSearch()+service.getSuggest()+service.getDirect()+service.getExternal())/100F))/24/(60/((int)(service.getMaxtime()*1.4)))));
-                webTrafficNew.setNote("");
-                webTrafficNew.setPrice(priceorder);
-                webTrafficNew.setService(data.getService());
-                webTrafficNew.setValid(1);
-                webTrafficNew.setLastcompleted(0L);
-                webTrafficRepository.save(webTrafficNew);
+                channelTiktok.setInsert_date(System.currentTimeMillis());
+                channelTiktok.setFollower_order(data.getQuantity());
+                channelTiktok.setFollower_total(0);
+                channelTiktok.setTiktok_id(data.getLink().trim());
+                channelTiktok.setUser(admins.get(0).getUsername());
+                channelTiktok.setTime_update(0L);
+                channelTiktok.setTime_start(System.currentTimeMillis());
+                channelTiktok.setMax_threads(5);
+                channelTiktok.setNote("");
+                channelTiktok.setPrice(priceorder);
+                channelTiktok.setService(data.getService());
+                channelTiktok.setValid(1);
+                channelTikTokRepository.save(channelTiktok);
 
                 Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
                 Balance balance = new Balance();
@@ -251,9 +233,9 @@ public class ApiTikTokController {
                 balance.setTotalblance(balance_update);
                 balance.setBalance(-priceorder);
                 balance.setService(data.getService());
-                balance.setNote("Order " + data.getQuantity() + " traffic cho orderid " + webTrafficNew.getOrderid());
+                balance.setNote("Order " + data.getQuantity() + " follower cho orderid " + channelTiktok.getOrderid());
                 balanceRepository.save(balance);
-                resp.put("order", webTrafficNew.getOrderid());
+                resp.put("order", channelTiktok.getOrderid());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         } catch (Exception e) {
@@ -263,6 +245,4 @@ public class ApiTikTokController {
         resp.put("error", "api system error");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
-
-     */
 }

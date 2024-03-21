@@ -19,8 +19,8 @@ public class Account {
     private Long endtrial;
     private String endtrialstring;
     private String vps;
-    private String proxy;
-    private String proxy2;
+    private String proxy="";
+    private String proxy2="";
     private Integer running;
     private Long timecheck;
     private  String date;

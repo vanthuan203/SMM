@@ -166,7 +166,7 @@ public class AccountViewController {
                                 account.get(0).setProxy(proxies.get(0).getProxy());
                                 proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
                             }else{
-                                account.get(0).setProxy("0:0");
+                                account.get(0).setProxy("");
                             }
                         }
                         account.get(0).setVps(vps.trim());
@@ -245,7 +245,7 @@ public class AccountViewController {
                             accountbyVps.get(0).setProxy(proxies.get(0).getProxy());
                             proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
                         }else{
-                            accountbyVps.get(0).setProxy("0:0");
+                            accountbyVps.get(0).setProxy("");
                         }
                     }
                     accountbyVps.get(0).setVps(vps.trim());

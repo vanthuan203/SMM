@@ -14,7 +14,7 @@ public class AccountTiktok {
     private Long time_add;
     private String vps;
     private String device_id;
-    private String proxy;
+    private String proxy="";
     private Integer running;
     private Long time_check;
     public AccountTiktok() {
