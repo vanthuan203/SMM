@@ -3,6 +3,7 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.ChannelTiktok;
 import com.nts.awspremium.model.OrderTrafficRunning;
+import com.nts.awspremium.model.VideoView;
 import com.nts.awspremium.model.WebTraffic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,9 +17,12 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     @Query(value = "SELECT * FROM channel_tiktok where INSTR(?1,tiktok_id)=0 order by rand() limit 1",nativeQuery = true)
     public List<ChannelTiktok> getChannelTiktokBy(String list_tiktok_id);
 
-    @Query(value = "select orderid from (select webtraffic.orderid,count(running) as total,maxthreads,valid,traffictotal,trafficorder,speedup,traffic24h,maxtraffic24h\n" +
-            "                                from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where !(maxthreads=1 and 1440*0.3/maxtraffic24h>=round((UNIX_TIMESTAMP()-lastcompleted/1000)/60))\n" +
-            "                                 group by orderid having (total<maxthreads and traffic24h<maxtraffic24h) ) as t",nativeQuery = true)
+    @Query(value = "SELECT * FROM channel_tiktok where service in(select service from service where category='Tiktok') and INSTR(?1,CONCAT(tiktok_id,'|'))=0 and orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<ChannelTiktok> getChannelTiktokByTask(String list_tiktok_id, List<String> orderid);
+
+    @Query(value = "select orderid from (select channel_tiktok.orderid,count(running) as total,max_threads\n" +
+            "                      from channel_tiktok left join history_tiktok on history_tiktok.orderid=channel_tiktok.orderid and running=1\n" +
+            "                       group by orderid having total<max_threads) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
 
     @Modifying

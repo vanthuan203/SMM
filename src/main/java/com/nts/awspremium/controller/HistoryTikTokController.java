@@ -25,21 +25,16 @@ public class HistoryTikTokController {
     private HistoryFollowerTiktokRepository historyFollowerTiktokRepository;
 
     @Autowired
+    private HistoryFollowerTiktok24hRepository historyFollowerTiktok24hRepository;
+
+    @Autowired
     private ActivityTikTokRepository activityTikTokRepository;
     @Autowired
     private HistoryFollowerTikTokSumRepository historyFollowerTikTokSumRepository;
     @Autowired
-    private OrderTrafficTrue orderTrue;
-
+    private OrderFollowerTrue orderFollowerTrue;
     @Autowired
-    private IpV4Repository ipV4Repository;
-    @Autowired
-    private ProxyRepository proxyRepository;
-    @Autowired
-    private ProxySettingRepository proxySettingRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
+    private SettingTikTokRepository settingTikTokRepository;
     @Autowired
     private ServiceRepository serviceRepository;
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
@@ -56,12 +51,15 @@ public class HistoryTikTokController {
             HistoryTikTok historyTikTok = historyTiktokRepository.getHistoryTikTokByUsername(username.trim());
             List<ChannelTiktok> channelTiktoks = null;
             if (historyTikTok == null) {
-                resp.put("status", "fail");
                 resp.put("message", "Username không tồn tại!");
+                resp.put("status", "fail");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             } else {
                 if(historyTikTok.getOption_running()==0){
                     if(activityTikTokRepository.checkActivityByUsername(username.trim())==0){
+                        historyTikTok.setTimeget(System.currentTimeMillis());
+                        historyTikTok.setRunning(2);
+                        historyTiktokRepository.save(historyTikTok);
                         resp.put("status", "true");
                         resp.put("task","activity");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -75,8 +73,18 @@ public class HistoryTikTokController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
+                SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
+                if(historyFollowerTiktok24hRepository.countFollower24hByUsername(username.trim()+"%")>=settingTiktok.getMax_follower()){
+                    historyTikTok.setTimeget(System.currentTimeMillis());
+                    historyTiktokRepository.save(historyTikTok);
+                    resp.put("status", "fail");
+                    resp.put("username", historyTikTok.getUsername());
+                    resp.put("fail", "follower");
+                    resp.put("message", "Đủ "+settingTiktok.getMax_follower().toString()+" follower trong 24H!");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 String list_tiktok_id=historyFollowerTiktokRepository.getListTiktokID(username.trim());
-                channelTiktoks = channelTikTokRepository.getChannelTiktokBy(list_tiktok_id==null?"":list_tiktok_id);
+                channelTiktoks = channelTikTokRepository.getChannelTiktokByTask(list_tiktok_id==null?"":list_tiktok_id,orderFollowerTrue.getValue());
                 if (channelTiktoks.size() > 0) {
                     historyTikTok.setTimeget(System.currentTimeMillis());
                     historyTikTok.setOrderid(channelTiktoks.get(0).getOrderid());
@@ -107,7 +115,7 @@ public class HistoryTikTokController {
     }
     @GetMapping(value = "/updateTask", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateTask(@RequestParam(defaultValue = "") String username,@RequestParam  Boolean status,@RequestParam(defaultValue = "") String task,
-                                         @RequestParam(defaultValue = "") String tiktok_id,@RequestParam(defaultValue = "0") Long orderid) {
+                                         @RequestParam(defaultValue = "") String tiktok_id) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");
@@ -121,6 +129,7 @@ public class HistoryTikTokController {
         } else {
             if (task.equals("activity")) {
                 if (status == true) {
+                    historyTiktokRepository.resetThreadByUsername(username.trim());
                     ActivityTikTok activityTikTok = new ActivityTikTok();
                     activityTikTok.setUsername(username.trim());
                     activityTikTok.setTime_update(System.currentTimeMillis());
@@ -140,11 +149,6 @@ public class HistoryTikTokController {
             resp.put("message", "tiktok_id không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (orderid == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "orderid không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         if (status == null) {
             resp.put("status", "fail");
             resp.put("message", "status không để trống");
@@ -157,16 +161,23 @@ public class HistoryTikTokController {
                 if(historyFollowerTikTok==null){
                     HistoryFollowerTikTok historyFollowerTikTokNew=new HistoryFollowerTikTok();
                     historyFollowerTikTokNew.setUsername(username.trim());
-                    historyFollowerTikTokNew.setList_tiktok_id(tiktok_id);
+                    historyFollowerTikTokNew.setList_tiktok_id(tiktok_id.trim()+"|");
                     historyFollowerTikTokNew.setTime_update(System.currentTimeMillis());
                     historyFollowerTiktokRepository.save(historyFollowerTikTokNew);
                 }else{
-                    historyFollowerTikTok.setList_tiktok_id(historyFollowerTikTok.getList_tiktok_id()+tiktok_id);
+                    historyFollowerTikTok.setList_tiktok_id(historyFollowerTikTok.getList_tiktok_id()+tiktok_id+"|");
                     historyFollowerTikTok.setTime_update(System.currentTimeMillis());
                     historyFollowerTiktokRepository.save(historyFollowerTikTok);
                 }
+
+                HistoryFollower24hTikTok historyFollower24hTikTok =new HistoryFollower24hTikTok();
+                historyFollower24hTikTok.setCode(username+tiktok_id.trim());
+                historyFollower24hTikTok.setTime(System.currentTimeMillis());
+                historyFollowerTiktok24hRepository.save(historyFollower24hTikTok);
+
+
                 HistoryFollowerTikTokSum historyFollowerTikTokSum = new HistoryFollowerTikTokSum();
-                historyFollowerTikTokSum.setOrderid(orderid);
+                historyFollowerTikTokSum.setTiktok_id(tiktok_id.trim());
                 historyFollowerTikTokSum.setUsername(username.trim());
                 historyFollowerTikTokSum.setTime(System.currentTimeMillis());
                 historyFollowerTikTokSumRepository.save(historyFollowerTikTokSum);

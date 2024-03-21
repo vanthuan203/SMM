@@ -9,15 +9,15 @@ public class HistoryFollowerTikTokSum {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String username;
-    private Long orderid;
+    private String tiktok_id;
     private Long time;
     public HistoryFollowerTikTokSum() {
     }
 
-    public HistoryFollowerTikTokSum(Long id, String username, Long orderid, Long time) {
+    public HistoryFollowerTikTokSum(Long id, String username, String tiktok_id, Long time) {
         this.id = id;
         this.username = username;
-        this.orderid = orderid;
+        this.tiktok_id = tiktok_id;
         this.time = time;
     }
 
@@ -37,12 +37,12 @@ public class HistoryFollowerTikTokSum {
         this.username = username;
     }
 
-    public Long getOrderid() {
-        return orderid;
+    public String getTiktok_id() {
+        return tiktok_id;
     }
 
-    public void setOrderid(Long orderid) {
-        this.orderid = orderid;
+    public void setTiktok_id(String tiktok_id) {
+        this.tiktok_id = tiktok_id;
     }
 
     public Long getTime() {
