@@ -39,6 +39,8 @@ public class HistoryCommentController {
     @Autowired
     private HistoryCommentSumRepository historyCommentSumRepository;
     @Autowired
+    private OrderCommentTrue orderCommentTrue;
+    @Autowired
     private ProxyVNTrue proxyVNTrue;
     @Autowired
     private ProxyUSTrue proxyUSTrue;
@@ -94,11 +96,11 @@ public class HistoryCommentController {
                 history.setGeo(accountRepository.getGeoByUsername(username.trim()));
                 history.setTimeget(System.currentTimeMillis());
                 if (history.getGeo().equals("cmt-vn")) {
-                    videos = videoCommentRepository.getvideoCommentVN("");
+                    videos = videoCommentRepository.getvideoCommentVN("",orderCommentTrue.getValue());
                 } else if (history.getGeo().equals("cmt-us")) {
-                    videos = videoCommentRepository.getvideoCommentUS("");
+                    videos = videoCommentRepository.getvideoCommentUS("",orderCommentTrue.getValue());
                 }else if (history.getGeo().equals("cmt-kr")) {
-                    videos = videoCommentRepository.getvideoCommentKR("");
+                    videos = videoCommentRepository.getvideoCommentKR("",orderCommentTrue.getValue());
                 }else{
                     fail_resp.put("status", "fail");
                     fail_resp.put("message", "Username không cmt!");
@@ -215,13 +217,13 @@ public class HistoryCommentController {
                 }
                 if (histories.get(0).getGeo().equals("cmt-vn")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentVN(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentVN(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 } else if (histories.get(0).getGeo().equals("cmt-us")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 }else if (histories.get(0).getGeo().equals("cmt-kr")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentKR(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentKR(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 }else{
                     fail_resp.put("status", "fail");
                     fail_resp.put("message", "Username không cmt!");

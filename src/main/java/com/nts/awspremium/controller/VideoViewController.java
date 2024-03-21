@@ -2107,11 +2107,9 @@ public class VideoViewController {
                     videoViewHistoryRepository.save(videoViewHistories.get(i));
                     return "Đơn đang chạy";
                 }
-                /*
                 if(service.getChecktime()==0&&(System.currentTimeMillis()- videoViewHistories.get(i).getEnddate())/1000/60/60<8){
                     return "Hoàn thành < 8h";
                 }
-                 */
                 /*
                 List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
                 if (viewHistories.size()>0) {
@@ -3939,13 +3937,14 @@ public class VideoViewController {
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
                 Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
-                System.out.println(checkBH);
                 if(checkBH==0){
                     checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
                 // ||   checkBH>0
-                if(service.getChecktime()==1  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
-                    if(video.getCancel()==1&&video.getRefund()==0){
+                if(service.getChecktime()==1 ||   checkBH>0  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
+                    if(checkBH>0){
+                        status="Hoàn thành < 8h";
+                    }else if(video.getCancel()==1&&video.getRefund()==0){
                         status="Đã hủy trước đó";
                     }else if(video.getPrice()==0&&video.getRefund()==1){
                         status="Đã hoàn 100% trước đó";
