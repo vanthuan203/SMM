@@ -206,7 +206,7 @@ public class HistoryCommentController {
             } else {
                 List<HistoryComment> histories = historyCommentRepository.getHistoriesById(historieId);
                 //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
-                if (System.currentTimeMillis() - histories.get(0).getTimeget() < (60000L + (long) ran.nextInt(60000))) {
+                if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
                     //histories.get(0).setTimeget(System.currentTimeMillis());
                     //historyViewRepository.save(histories.get(0));
                     fail_resp.put("status", "fail");
@@ -236,6 +236,7 @@ public class HistoryCommentController {
                     histories.get(0).setRunning(1);
                     historyCommentRepository.save(histories.get(0));
                 } else {
+                    histories.get(0).setTimeget(System.currentTimeMillis());
                     histories.get(0).setRunning(0);
                     historyCommentRepository.save(histories.get(0));
                     fail_resp.put("status", "fail");
@@ -261,6 +262,7 @@ public class HistoryCommentController {
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
                 }else{
+                    histories.get(0).setTimeget(System.currentTimeMillis());
                     histories.get(0).setRunning(0);
                     historyCommentRepository.save(histories.get(0));
                     fail_resp.put("status", "fail");

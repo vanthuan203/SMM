@@ -30,7 +30,7 @@ public class AutoCheckProsetList {
                     while (true) {
                         try {
                             try {
-                                Thread.sleep(100 + rand.nextInt(200));
+                                Thread.sleep(1000 + rand.nextInt(200));
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }

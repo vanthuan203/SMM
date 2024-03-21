@@ -36,12 +36,17 @@ public class AutoRunCommentCheck {
                         try {
                             orderCommentTrue.setValue(videoCommentRepository.getListOrderTrueThreadON());
                             try {
-                                Thread.sleep(rand.nextInt(50));
+                                Thread.sleep(rand.nextInt(150));
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
                             orderFollowerTrue.setValue(channelTikTokRepository.getListOrderTrueThreadON());
-                            System.out.println(orderFollowerTrue.getValue());
+                            //System.out.println(orderFollowerTrue.getValue());
+                            try {
+                                Thread.sleep(rand.nextInt(150));
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
                         } catch (Exception e) {
                             continue;
                         }
