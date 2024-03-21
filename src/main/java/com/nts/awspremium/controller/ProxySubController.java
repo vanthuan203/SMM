@@ -656,6 +656,8 @@ public class ProxySubController {
 
  */
             if(proxyfail.length()!=0){
+                String[] proxy_check=proxyfail.split(":");
+                proxyfail=proxy_check[0]+":"+proxy_check[1];
                 Integer proxyId= proxyRepository.getIdByProxyFalse(proxyfail.trim(),vps);
                 //System.out.println(proxyId);
                 if(proxyId!=null){
@@ -861,6 +863,9 @@ public class ProxySubController {
                 resp.put("message", "Không để proxy trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+            String[] proxy_check=proxy.split(":");
+            proxy=proxy_check[0]+":"+proxy_check[1];
+            //System.out.println(proxy);
             Integer proxyId= proxyRepository.getIdByProxyLive(proxy.trim(),vps.trim());
             if(proxyId!=null){
                 proxyRepository.updaterunningProxyLiveByVps(proxyId);
