@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.ProxyAPI;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
@@ -31,7 +32,7 @@ public class ApiTikTokController {
     @Autowired
     private BalanceRepository balanceRepository;
     @Autowired
-    private VideoViewHistoryRepository videoViewHistoryRepository;
+    private ProxyRepository proxyRepository;
     @Autowired
     private AdminRepository adminRepository;
     @Autowired
@@ -50,7 +51,7 @@ public class ApiTikTokController {
 
 
     @PostMapping(value = "/tiktok", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> view(DataRequest data) throws IOException, ParseException {
+    ResponseEntity<String> tiktok(DataRequest data) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         try {
             List<Admin> admins = adminRepository.FindByToken(data.getKey().trim());
@@ -88,7 +89,7 @@ public class ApiTikTokController {
             if (data.getAction().equals("status")) {
                 if (data.getOrders().length() == 0) {
                     ChannelTiktok tiktok = channelTikTokRepository.getChannelTiktokById(data.getOrder());
-                    ChannelTikTokHistory tikTokHistory = channelTikTokHistoryRepository.getWebTrafficHisById(data.getOrder());
+                    ChannelTikTokHistory tikTokHistory = channelTikTokHistoryRepository.getChannelTikTokHistoriesById(data.getOrder());
                     if (tiktok != null) {
                         resp.put("start_count",0);
                         resp.put("current_count", tiktok.getFollower_total());
@@ -123,7 +124,6 @@ public class ApiTikTokController {
                 } else {
                     List<String> ordersArrInput = new ArrayList<>();
                     ordersArrInput.addAll(Arrays.asList(data.getOrders().split(",")));
-                    String listId = String.join(",", ordersArrInput);
                     List<ChannelTiktok> channelTiktokList= channelTikTokRepository.getChannelTiktokByListId(ordersArrInput);
                     JSONObject tiktokObject = new JSONObject();
                     for (ChannelTiktok v : channelTiktokList) {
@@ -142,7 +142,7 @@ public class ApiTikTokController {
                         ordersArrInput.remove("" + v.getOrderid());
                     }
                     String listIdHis = String.join(",", ordersArrInput);
-                    List<ChannelTikTokHistory> channelTikTokHistoryList = channelTikTokHistoryRepository.getWebTrafficHisByListId(ordersArrInput);
+                    List<ChannelTikTokHistory> channelTikTokHistoryList = channelTikTokHistoryRepository.getChannelTikTokHistoriesListById(ordersArrInput);
                     for (ChannelTikTokHistory vh : channelTikTokHistoryList) {
                         JSONObject tiktok_list = new JSONObject();
                         if (channelTikTokHistoryList != null) {
@@ -175,18 +175,13 @@ public class ApiTikTokController {
                 if (service == null) {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-
+                }
+                if(service.getMaxorder() <= channelTikTokRepository.getCountOrderByService(data.getService())){
+                    resp.put("error", "System busy try again");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if (data.getLink().trim().length() == 0) {
                     resp.put("error", "Link is null");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if (channelTikTokRepository.getCountLink(data.getLink().trim()) > 0) {
-                    resp.put("error", "This link in process");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if(!ProxyAPI.checkResponseCode(data.getLink().trim())){
-                    resp.put("error", "The link is not accessible!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 Setting setting = settingRepository.getReferenceById(1L);
@@ -198,24 +193,30 @@ public class ApiTikTokController {
                     resp.put("error", "Min/Max order is: " + service.getMin() + "/" + service.getMax());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                String tiktok_id= TikTokApi.getTiktokId(data.getLink().trim());
+                if (tiktok_id == null) {
+                    resp.put("error", "Cant filter tiktok_id from link");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                if (channelTikTokRepository.getCountTiktokId(tiktok_id.trim()) > 0) {
+                    resp.put("error", "This tiktok_id in process");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                String proxycheck=proxyRepository.getProxyRandTrafficForCheckAPI();
+                Integer follower_count=TikTokApi.getFollowerCount("https://www.tiktok.com/"+tiktok_id.trim(),proxycheck);
                 float priceorder = 0;
                 priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                 if (priceorder > (float) admins.get(0).getBalance()) {
                     resp.put("error", "Your balance not enough");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+
                 ChannelTiktok channelTiktok = new ChannelTiktok();
-                String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                String token="";
-                Random ran=new Random();
-                for(int i=0;i<50;i++){
-                    Integer ranver=ran.nextInt(stringrand.length());
-                    token=token+stringrand.charAt(ranver);
-                }
                 channelTiktok.setInsert_date(System.currentTimeMillis());
                 channelTiktok.setFollower_order(data.getQuantity());
+                channelTiktok.setFollower_start(follower_count!=null?follower_count:0);
                 channelTiktok.setFollower_total(0);
-                channelTiktok.setTiktok_id(data.getLink().trim());
+                channelTiktok.setTiktok_id(tiktok_id.trim());
                 channelTiktok.setUser(admins.get(0).getUsername());
                 channelTiktok.setTime_update(0L);
                 channelTiktok.setTime_start(System.currentTimeMillis());
@@ -233,13 +234,14 @@ public class ApiTikTokController {
                 balance.setTotalblance(balance_update);
                 balance.setBalance(-priceorder);
                 balance.setService(data.getService());
-                balance.setNote("Order " + data.getQuantity() + " follower cho orderid " + channelTiktok.getOrderid());
+                balance.setNote("Order " + data.getQuantity() + " follower cho tiktok_id " + tiktok_id.trim());
                 balanceRepository.save(balance);
                 resp.put("order", channelTiktok.getOrderid());
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         } catch (Exception e) {
             resp.put("error", "api system error");
+            resp.put("error",e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         resp.put("error", "api system error");

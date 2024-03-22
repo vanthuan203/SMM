@@ -20,9 +20,9 @@ public interface ChannelTikTokHistoryRepository extends JpaRepository<ChannelTik
 
     @Query(value = "SELECT orderid from webtraffichistory where link=?1 limit 1",nativeQuery = true)
     public Long getOrderIdWebTrafficHistoryByLink(String link);
-    @Query(value = "SELECT * from webtraffichistory where orderid=?1",nativeQuery = true)
-    public ChannelTikTokHistory getWebTrafficHisById(Long orderid);
+    @Query(value = "SELECT * from channel_tiktok_history where orderid=?1",nativeQuery = true)
+    public ChannelTikTokHistory getChannelTikTokHistoriesById(Long orderid);
 
-    @Query(value = "SELECT * from webtraffichistory where orderid in (?1)",nativeQuery = true)
-    public List<ChannelTikTokHistory> getWebTrafficHisByListId(List<String> list_orderid);
+    @Query(value = "SELECT * from channel_tiktok_history where orderid in (?1)",nativeQuery = true)
+    public List<ChannelTikTokHistory> getChannelTikTokHistoriesListById(List<String> list_orderid);
 }

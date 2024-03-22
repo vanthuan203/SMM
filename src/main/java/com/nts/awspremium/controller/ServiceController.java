@@ -348,7 +348,38 @@ public class ServiceController {
             allservice=serviceRepository.GetAllServiceTraffic();
         }else{
             System.out.println("ROLE_USER");
-            allservice=serviceRepository.GetAllServiceEnabled();
+            allservice=serviceRepository.GetAllServiceTrafficEnabled();
+        }
+        String listuser="";
+        for(int i=0;i<allservice.size();i++){
+            if(i==0){
+                listuser=allservice.get(0);
+            }else{
+                listuser=listuser+","+allservice.get(i);
+            }
+
+        }
+        resp.put("user",listuser);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+    }
+    @GetMapping(path = "getAllServiceTiktok",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getAllServiceTiktok(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String role){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        System.out.println(admins.get(0).getUsername());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > allservice;
+        if(role.equals("ROLE_ADMIN")){
+            allservice=serviceRepository.GetAllServiceFollowerTiktok();
+        }else{
+            System.out.println("ROLE_USER");
+            allservice=serviceRepository.GetAllServiceTiktokEnabled();
         }
         String listuser="";
         for(int i=0;i<allservice.size();i++){

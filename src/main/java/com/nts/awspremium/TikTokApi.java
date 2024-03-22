@@ -72,5 +72,15 @@ public class TikTokApi {
             return -3;
         }
     }
+    public static String getTiktokId(String url) {
+        String pattern = "tiktok\\.com\\/@([a-zA-Z0-9_.]+)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(url);
+        if (m.find()) {
+            return "@" + m.group(1);
+        } else {
+            return null;
+        }
+    }
 
 }

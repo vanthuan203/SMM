@@ -1,10 +1,7 @@
 package com.nts.awspremium.repositories;
 
 
-import com.nts.awspremium.model.ChannelTiktok;
-import com.nts.awspremium.model.OrderTrafficRunning;
-import com.nts.awspremium.model.VideoView;
-import com.nts.awspremium.model.WebTraffic;
+import com.nts.awspremium.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,8 +11,8 @@ import java.util.List;
 
 public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Long> {
 
-    @Query(value = "SELECT * FROM channel_tiktok where INSTR(?1,tiktok_id)=0 order by rand() limit 1",nativeQuery = true)
-    public List<ChannelTiktok> getChannelTiktokBy(String list_tiktok_id);
+    @Query(value = "SELECT count(*) from channel_tiktok where service=?1",nativeQuery = true)
+    public Integer getCountOrderByService(Integer service);
 
     @Query(value = "SELECT * FROM channel_tiktok where service in(select service from service where category='Tiktok') and INSTR(?1,CONCAT(tiktok_id,'|'))=0 and orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<ChannelTiktok> getChannelTiktokByTask(String list_tiktok_id, List<String> orderid);
@@ -25,10 +22,8 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
             "                       group by orderid having total<max_threads) as t",nativeQuery = true)
     public List<String> getListOrderTrueThreadON();
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE channel_tiktok set lastcompleted=?1 where orderid=?2",nativeQuery = true)
-    public void updateLastCompletedByOrderId(Long lastcompleted,Long orderid);
+    @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1",nativeQuery = true)
+    public Integer getCountTiktokId(String tiktok_id);
 
     @Query(value = "SELECT count(*) from channel_tiktok where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
@@ -53,11 +48,14 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
 
 
-    @Query(value = "Select webtraffic.orderid,webtraffic.link,count(running) as total,maxthreads,insertdate,timestart,note,trafficorder,user,traffictotal,timeupdate,traffic24h,price,service,keywords from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where user!='baohanh01@gmail.com' and timestart!=0 group by orderid order by insertdate desc",nativeQuery = true)
-    public List<OrderTrafficRunning> getOrder();
+    @Query(value = "Select channel_tiktok.orderid,channel_tiktok.tiktok_id,count(running) as total,max_threads,insert_date,time_start,note,follower_order,user,follower_total,price,service,follower_start from channel_tiktok left join history_tiktok on history_tiktok.orderid=channel_tiktok.orderid and running=1 where user!='baohanh01@gmail.com' and time_start!=0 group by orderid order by insert_date desc",nativeQuery = true)
+    public List<OrderFollowerTikTokRunning> getOrder();
 
-    @Query(value = "Select webtraffic.orderid,webtraffic.link,count(running) as total,maxthreads,insertdate,timestart,note,trafficorder,user,traffictotal,timeupdate,traffic24h,price,service,keywords from webtraffic left join historytraffic on historytraffic.orderid=webtraffic.orderid and running=1 where user=?1 and timestart!=0 group by orderid order by insertdate desc",nativeQuery = true)
-    public List<OrderTrafficRunning> getOrder(String user);
+    @Query(value = "Select channel_tiktok.orderid,channel_tiktok.tiktok_id,count(running) as total,max_threads,insert_date,time_start,note,follower_order,user,follower_total,price,service,follower_start from channel_tiktok left join history_tiktok on history_tiktok.orderid=channel_tiktok.orderid and running=1 where tiktok_id=?1",nativeQuery = true)
+    public List<OrderFollowerTikTokRunning> getOrderByTiktokId(String tiktok_id);
+
+    @Query(value = "Select channel_tiktok.orderid,channel_tiktok.tiktok_id,count(running) as total,max_threads,insert_date,time_start,note,follower_order,user,follower_total,price,service,follower_start from channel_tiktok left join history_tiktok on history_tiktok.orderid=channel_tiktok.orderid and running=1 where user=?1 and time_start!=0 group by orderid order by insert_date desc",nativeQuery = true)
+    public List<OrderFollowerTikTokRunning> getOrder(String user);
 
 
     @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid" +
@@ -77,19 +75,25 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
     @Modifying
     @Transactional
-    @Query(value = "update webtraffic set valid=0 where orderid=?1 and valid=1",nativeQuery = true)
+    @Query(value = "update channel_tiktok set valid=0 where orderid=?1 and valid=1",nativeQuery = true)
     public void updateCheckCancel(Long orderid);
 
 
 
-    @Query(value = "SELECT * from webtraffic  where orderid=?1 limit 1",nativeQuery = true)
-    public List<WebTraffic> getWebTrafficByOrderId(Long orderid);
+    @Query(value = "SELECT * from channel_tiktok  where tiktok_id=?1 limit 1",nativeQuery = true)
+    public List<ChannelTiktok> getChannelTiktokByTiktokId(String tiktok_id);
+
 
 
     @Modifying
     @Transactional
-    @Query(value = "DELETE FROM webtraffic where orderid=?1",nativeQuery = true)
+    @Query(value = "DELETE FROM channel_tiktok where orderid=?1",nativeQuery = true)
     public void deletevideoByOrderId(Long orderid);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM channel_tiktok where tiktok_id=?1",nativeQuery = true)
+    public void deleteByTiktokId(String tiktok_id);
 
 
     @Query(value = "select * from webtraffic where traffictotal>(trafficorder + trafficorder*(select bonus/100 from setting where id=1)) and service in(select service from service where category='Website')",nativeQuery = true)
