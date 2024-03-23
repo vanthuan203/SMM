@@ -2164,8 +2164,8 @@ public class ChannelTikTokController {
         }
     }
 
-    @GetMapping(path = "getorderviewhhistory", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getorderviewhhistory(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
+    @GetMapping(path = "getOrderFollowerHistory", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getOrderFollowerHistory(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
@@ -2175,31 +2175,29 @@ public class ChannelTikTokController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<VideoViewHistory> orderRunnings;
+            List<ChannelTikTokHistory> orderRunnings;
             if (user.length() == 0) {
-                orderRunnings = videoViewHistoryRepository.getVideoViewHistories();
+                orderRunnings = channelTikTokHistoryRepository.getOrderFollowerTiktokHistories();
             } else {
-                orderRunnings = videoViewHistoryRepository.getVideoViewHistories(user.trim());
+                orderRunnings = channelTikTokHistoryRepository.getOrderFollowerTiktokHistories(user.trim());
             }
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
-                obj.put("videoid", orderRunnings.get(i).getVideoid());
-                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewstart());
-                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
-                obj.put("insertdate", orderRunnings.get(i).getInsertdate());
+                obj.put("tiktok_id", orderRunnings.get(i).getTiktok_id());
+                obj.put("follower_start", orderRunnings.get(i).getFollower_start());
+                obj.put("max_threads", orderRunnings.get(i).getMax_threads());
+                obj.put("insert_date", orderRunnings.get(i).getInsert_date());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
-                obj.put("duration", orderRunnings.get(i).getDuration());
-                obj.put("enddate", orderRunnings.get(i).getEnddate());
+                obj.put("end_date", orderRunnings.get(i).getEnd_date());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
-                obj.put("timestart", orderRunnings.get(i).getTimestart());
-                obj.put("timecheckbh", orderRunnings.get(i).getTimecheckbh());
-                obj.put("viewend", orderRunnings.get(i).getViewend());
-                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
-                obj.put("vieworder", orderRunnings.get(i).getVieworder());
+                obj.put("time_start", orderRunnings.get(i).getTime_start());
+                obj.put("time_check_refill", orderRunnings.get(i).getTime_check_refill());
+                obj.put("follower_end", orderRunnings.get(i).getFollower_end());
+                obj.put("follower_total", orderRunnings.get(i).getFollower_total());
+                obj.put("follower_order", orderRunnings.get(i).getFollower_order());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
                 jsonArray.add(obj);
@@ -2207,7 +2205,7 @@ public class ChannelTikTokController {
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
 
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("channel_tiktok", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -2425,7 +2423,9 @@ public class ChannelTikTokController {
                 channelTikTokHistory.setMax_threads(channelTiktoks.get(0).getMax_threads());
                 channelTikTokHistory.setNote(channelTiktoks.get(0).getNote());
                 channelTikTokHistory.setTime_check_refill(0L);
-                channelTikTokHistory.setTime_update(channelTiktoks.get(0).getTime_start());
+                channelTikTokHistory.setTime_update(0L);
+                channelTikTokHistory.setTime_start(channelTiktoks.get(0).getTime_start());
+                channelTikTokHistory.setFollower_end(-1);
                 //videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
                 if (cancel == 1) {
                     Service service = serviceRepository.getInfoService(channelTiktoks.get(0).getService());

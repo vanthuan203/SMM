@@ -179,7 +179,7 @@ public class HistoryTrafficController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                if (historyTrafficRepository.getListOrderIdById(historieId).length() > 44) {
+                if (historyTrafficRepository.getListOrderIdById(historieId).length() > 24) {
                     historyTrafficRepository.updateListOrderidNew(orderid.toString(), historieId);
                 } else {
                     historyTrafficRepository.updateListOrderid(orderid.toString(), historieId);

@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface ChannelTikTokHistoryRepository extends JpaRepository<ChannelTikTokHistory,Long> {
 
-    @Query(value = "SELECT * from webtraffichistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
-    public List<WebTrafficHistory> getWebTrafficHistories();
+    @Query(value = "SELECT * from channel_tiktok_history where round((UNIX_TIMESTAMP()-end_date/1000)/60/60/24)<=10 order by end_date desc",nativeQuery = true)
+    public List<ChannelTikTokHistory> getOrderFollowerTiktokHistories();
 
-    @Query(value = "SELECT * from webtraffichistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
-    public List<WebTrafficHistory> getWebTrafficHistories(String user);
+    @Query(value = "SELECT * from channel_tiktok_history where user=?1 and round((UNIX_TIMESTAMP()-end_date/1000)/60/60/24)<=10 order by end_ate desc",nativeQuery = true)
+    public List<ChannelTikTokHistory> getOrderFollowerTiktokHistories(String user);
 
     @Query(value = "SELECT count(*) from webtraffichistory where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);

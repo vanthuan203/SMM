@@ -14,6 +14,7 @@ public class ChannelTikTokHistory {
     private Integer follower_order;
     private Integer follower_start;
     private Integer follower_total;
+    private Integer follower_end;
     private Long insert_date;
     private Long end_date;
     private Long time_check=0L;
@@ -30,13 +31,14 @@ public class ChannelTikTokHistory {
     public ChannelTikTokHistory() {
     }
 
-    public ChannelTikTokHistory(Long orderid, String tiktok_id, Float price, Integer follower_order, Integer follower_start, Integer follower_total, Long insert_date, Long end_date, Long time_check, Long time_update, Integer cancel, Integer service, Integer max_threads, String note, String user, Integer refund, Long time_check_refill, Long time_start) {
+    public ChannelTikTokHistory(Long orderid, String tiktok_id, Float price, Integer follower_order, Integer follower_start, Integer follower_total, Integer follower_end, Long insert_date, Long end_date, Long time_check, Long time_update, Integer cancel, Integer service, Integer max_threads, String note, String user, Integer refund, Long time_check_refill, Long time_start) {
         this.orderid = orderid;
         this.tiktok_id = tiktok_id;
         this.price = price;
         this.follower_order = follower_order;
         this.follower_start = follower_start;
         this.follower_total = follower_total;
+        this.follower_end = follower_end;
         this.insert_date = insert_date;
         this.end_date = end_date;
         this.time_check = time_check;
@@ -189,6 +191,14 @@ public class ChannelTikTokHistory {
 
     public Long getTime_start() {
         return time_start;
+    }
+
+    public Integer getFollower_end() {
+        return follower_end;
+    }
+
+    public void setFollower_end(Integer follower_end) {
+        this.follower_end = follower_end;
     }
 
     public void setTime_start(Long time_start) {
