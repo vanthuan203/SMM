@@ -2215,7 +2215,7 @@ public class ChannelTikTokController {
     }
 
     @GetMapping(path = "findorder", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> findorder(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String videoid) {
+    ResponseEntity<String> findorder(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String tiktok_id) {
         JSONObject resp = new JSONObject();
         List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
         if (Authorization.length() == 0 || admins.size() == 0) {
@@ -2224,27 +2224,13 @@ public class ChannelTikTokController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            Integer find_channelid=videoid.trim().indexOf("@");
-            System.out.println(find_channelid);
-            if(find_channelid==0){
-                videoid=videoid.replace("@","");
-                System.out.println(videoid);
-            }
             List<String> ordersArrInput = new ArrayList<>();
-            ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
-            List<VideoViewHistory> orderRunnings;
+            ordersArrInput.addAll(Arrays.asList(tiktok_id.split(",")));
+            List<ChannelTikTokHistory> orderRunnings;
             if(admins.get(0).getRole().equals("ROLE_ADMIN") || admins.get(0).getRole().equals("ROLE_SUPPORT")){
-                if(find_channelid==0){
-                    orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListChannelId(ordersArrInput);
-                }else{
-                    orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput);
-                }
+                    orderRunnings = channelTikTokHistoryRepository.getChannelTikTokHistoriesListById(ordersArrInput);
             }else{
-                if(find_channelid==0){
-                    orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListChannelId(ordersArrInput,admins.get(0).getUsername().trim());
-                }else{
-                    orderRunnings = videoViewHistoryRepository.getVideoViewHistoriesByListVideoId(ordersArrInput,admins.get(0).getUsername().trim());
-                }
+                    orderRunnings = channelTikTokHistoryRepository.getChannelTikTokHistoriesListById(ordersArrInput,admins.get(0).getUsername().trim());
             }
             if (orderRunnings.size() == 0) {
                 resp.put("status", "fail");
@@ -2256,9 +2242,9 @@ public class ChannelTikTokController {
                 JSONObject obj = new JSONObject();
                 String infoQ;
                 if(admins.get(0).getRole().equals("ROLE_ADMIN") || admins.get(0).getRole().equals("ROLE_SUPPORT")) {
-                    infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid());
+                    infoQ = channelTikTokHistoryRepository.getInfoSumOrderByTiktokId(orderRunnings.get(i).getTiktok_id(), orderRunnings.get(i).getOrderid());
                 }else {
-                    infoQ = videoViewHistoryRepository.getInfoSumOrderByVideoId(orderRunnings.get(i).getVideoid(), orderRunnings.get(i).getOrderid(),admins.get(0).getUsername().trim());
+                    infoQ = channelTikTokHistoryRepository.getInfoSumOrderByTiktokId(orderRunnings.get(i).getTiktok_id(), orderRunnings.get(i).getOrderid(),admins.get(0).getUsername().trim());
                 }
                 if(infoQ!=null){
                     obj.put("info", infoQ);
@@ -2266,28 +2252,26 @@ public class ChannelTikTokController {
                     obj.put("info", "");
                 }
                 obj.put("orderid", orderRunnings.get(i).getOrderid());
-                obj.put("videoid", orderRunnings.get(i).getVideoid());
-                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
-                obj.put("viewstart", orderRunnings.get(i).getViewstart());
-                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
-                obj.put("insertdate", orderRunnings.get(i).getInsertdate());
+                obj.put("tiktok_id", orderRunnings.get(i).getTiktok_id());
+                obj.put("follower_start", orderRunnings.get(i).getFollower_start());
+                obj.put("max_threads", orderRunnings.get(i).getMax_threads());
+                obj.put("insert_date", orderRunnings.get(i).getInsert_date());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
-                obj.put("duration", orderRunnings.get(i).getDuration());
-                obj.put("enddate", orderRunnings.get(i).getEnddate());
+                obj.put("end_date", orderRunnings.get(i).getEnd_date());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
-                obj.put("timestart", orderRunnings.get(i).getTimestart());
-                obj.put("timecheckbh", orderRunnings.get(i).getTimecheckbh());
-                obj.put("viewend", orderRunnings.get(i).getViewend());
-                obj.put("viewtotal", orderRunnings.get(i).getViewtotal());
-                obj.put("vieworder", orderRunnings.get(i).getVieworder());
+                obj.put("time_start", orderRunnings.get(i).getTime_start());
+                obj.put("time_check_refill", orderRunnings.get(i).getTime_check_refill());
+                obj.put("follower_end", orderRunnings.get(i).getFollower_end());
+                obj.put("follower_total", orderRunnings.get(i).getFollower_total());
+                obj.put("follower_order", orderRunnings.get(i).getFollower_order());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
             resp.put("total", orderRunnings.size());
-            resp.put("videoview", jsonArray);
+            resp.put("channel_tiktok", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
