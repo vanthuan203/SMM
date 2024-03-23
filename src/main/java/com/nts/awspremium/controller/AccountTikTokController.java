@@ -182,6 +182,22 @@ public class AccountTikTokController {
         }
     }
 
+    @GetMapping(value = "/getCountByVps", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getCountByVps() {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> vps=accountRepository.countbyVPS();
+            for(int i=0;i<vps.size();i++){
+                resp.put(vps.get(i).split(",")[0], vps.get(i).split(",")[1]);
+            }
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
 
     @GetMapping(value = "/update_live_tiktok", produces = "application/hal+json;charset=utf8")
