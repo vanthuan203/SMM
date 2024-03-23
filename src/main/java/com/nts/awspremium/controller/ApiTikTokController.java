@@ -142,7 +142,7 @@ public class ApiTikTokController {
                         ordersArrInput.remove("" + v.getOrderid());
                     }
                     String listIdHis = String.join(",", ordersArrInput);
-                    List<ChannelTikTokHistory> channelTikTokHistoryList = channelTikTokHistoryRepository.getChannelTikTokHistoriesListById(ordersArrInput);
+                    List<ChannelTikTokHistory> channelTikTokHistoryList = channelTikTokHistoryRepository.getChannelTikTokHisByListId(ordersArrInput);
                     for (ChannelTikTokHistory vh : channelTikTokHistoryList) {
                         JSONObject tiktok_list = new JSONObject();
                         if (channelTikTokHistoryList != null) {
