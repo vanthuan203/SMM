@@ -2,6 +2,7 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.Account;
 import com.nts.awspremium.model.AccountTiktok;
+import com.nts.awspremium.model.DeviceRunning;
 import com.nts.awspremium.model.VpsRunning;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -90,7 +91,7 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0,vps='',proxy='',proxy2='' where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_tiktok SET running=0,vps='',proxy='',proxy2='' where vps=?1",nativeQuery = true)
     public Integer resetAccountByVps(String vps);
 
     @Modifying
@@ -115,7 +116,7 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account SET running=0 where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_tikok SET running=0 where vps=?1",nativeQuery = true)
     public void updateRunningByVPs(String vps);
 
     @Modifying
@@ -136,8 +137,14 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
     @Query(value = "UPDATE account SET vps='',running=0 where round((UNIX_TIMESTAMP()-timecheck/1000)/60/60)>=24 and live=1 and round((endtrial/1000-UNIX_TIMESTAMP())/60/60/24) >=1 and running=1",nativeQuery = true)
     public Integer resetAccountByTimecheck();
 
-    @Query(value = "SELECT vps,round(0) as time,count(*) as total FROM account group by vps order by total desc",nativeQuery = true)
+    @Query(value = "SELECT vps,round(0) as time,count(*) as total FROM account_tiktok group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getCountAccByVps();
+
+    @Query(value = "SELECT device_id,vps,count(*) as total FROM account_tiktok where vps=?1 group by device_id order by total desc",nativeQuery = true)
+    public List<DeviceRunning> getCountAccByDeviceByVps(String vps);
+
+    @Query(value = "SELECT vps,round(0) as time,count(*) as total FROM account_tiktok where live=1 group by vps order by total desc",nativeQuery = true)
+    public List<VpsRunning> getCountAccLiveByVps();
 
     @Query(value = "SELECT geo FROM account where username=?1 limit 1",nativeQuery = true)
     public String getGeoByUsername(String username);

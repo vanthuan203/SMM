@@ -2,6 +2,7 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -273,6 +274,18 @@ public class AccountTikTokController {
     ResponseEntity<String> reg_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps, @RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         Integer checktoken = adminRepository.FindAdminByToken(Authorization);
+        List<Vps> vps_check =vpsRepository.findVPS(vps.trim());
+        if(vps_check.size()==0){
+            Vps vpsnew=new Vps();
+            vpsnew.setVps(vps.trim());
+            vpsnew.setState(1);
+            vpsnew.setRunning(0);
+            vpsnew.setVpsoption("tiktok");
+            vpsnew.setUrlapi("");
+            vpsnew.setToken("");
+            vpsnew.setTimecheck(System.currentTimeMillis());
+            vpsRepository.save(vpsnew);
+        }
         if (checktoken == 0) {
             resp.put("status", "fail");
             resp.put("message", "Token expired");
@@ -319,6 +332,7 @@ public class AccountTikTokController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 }
