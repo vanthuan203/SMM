@@ -21,7 +21,7 @@ public class AutoRunCheckProxy {
     private OrderSpeedTrue orderSpeedTrue;
     @Autowired
     private Environment env;
-    @PostConstruct
+   // @PostConstruct
     public void init() throws InterruptedException {
         try{
             int num_Cron= Integer.parseInt(env.getProperty("server.port"))-8000;

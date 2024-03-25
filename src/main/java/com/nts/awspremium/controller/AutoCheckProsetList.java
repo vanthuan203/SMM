@@ -22,7 +22,7 @@ public class AutoCheckProsetList {
     private CheckProsetListTrue checkProsetListTrue;
     @Autowired
     private Environment env;
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
                 new Thread(() -> {

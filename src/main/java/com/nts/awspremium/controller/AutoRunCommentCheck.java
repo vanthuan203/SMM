@@ -27,7 +27,7 @@ public class AutoRunCommentCheck {
     private OrderFollowerTrue orderFollowerTrue;
     @Autowired
     private Environment env;
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
                 new Thread(() -> {
