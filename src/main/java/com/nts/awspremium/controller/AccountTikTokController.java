@@ -141,6 +141,7 @@ public class AccountTikTokController {
                     HistoryTikTok historyTikTok =new HistoryTikTok();
                     historyTikTok.setUsername(account.getUsername().trim());
                     historyTikTok.setOption_running(account.getRunning());
+                    historyTikTok.setDevice_id(account.getDevice_id());
                     historyTikTok.setRunning(0);
                     historyTikTok.setVps(account.getVps().trim());
                     historyTikTok.setOrderid(0L);

@@ -2,6 +2,7 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.HistoryTikTok;
 import com.nts.awspremium.model.HistoryTraffic;
+import com.nts.awspremium.model.VpsRunning;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,7 +18,8 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where username=?1",nativeQuery = true)
     public Integer resetThreadByUsername(String username);
-
+    @Query(value = "SELECT device_id as vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM history_tiktok where running=1 group by vps order by total desc",nativeQuery = true)
+    public List<VpsRunning> getvpsrunning();
     @Query(value = "SELECT * FROM history_tiktok where id=?1 limit 1",nativeQuery = true)
     public List<HistoryTraffic> getHistoriesById(Long id);
 

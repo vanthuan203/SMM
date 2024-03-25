@@ -1,10 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
-import com.nts.awspremium.repositories.AccountSubRepository;
-import com.nts.awspremium.repositories.AccountTikTokRepository;
-import com.nts.awspremium.repositories.AdminRepository;
-import com.nts.awspremium.repositories.VpsRepository;
+import com.nts.awspremium.repositories.*;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -30,6 +27,8 @@ public class VpsTikTokController {
     private VpsRepository vpsRepository;
     @Autowired
     private AccountTikTokRepository accountTikTokRepository;
+    @Autowired
+    private HistoryTiktokRepository historyTiktokRepository;
     @GetMapping(value = "listVPS",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> listVPS(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
@@ -41,15 +40,22 @@ public class VpsTikTokController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }else{
                 JSONArray jsonArray= new JSONArray();
+                List<VpsRunning> vpsRunnings=historyTiktokRepository.getvpsrunning();
                 List<VpsRunning> accByVps=accountTikTokRepository.getCountAccByVps();
                 List<VpsRunning> accLiveByVps=accountTikTokRepository.getCountAccLiveByVps();
                 for(int i=0;i<vps.size();i++){
-
+                    String time="";
                     Integer total=0;
                     Integer totalacc=0;
                     Integer totalacclive=0;
                     Integer totalacctasksub=0;
-
+                    for(int j=0;j<vpsRunnings.size();j++){
+                        if(vps.get(i).getVps().equals(vpsRunnings.get(j).getVps())){
+                            total=vpsRunnings.get(j).getTotal();
+                            time=vpsRunnings.get(j).getTime();
+                            vpsRunnings.remove(j);
+                        }
+                    }
                     for(int k=0;k<accByVps.size();k++){
                         if(vps.get(i).getVps().equals(accByVps.get(k).getVps())){
                             totalacc=accByVps.get(k).getTotal();
@@ -67,17 +73,12 @@ public class VpsTikTokController {
                     obj.put("vps", vps.get(i).getVps());
                     obj.put("acccount", totalacc);
                     obj.put("acccountlive", totalacclive);
-                    obj.put("acccounttasksub", totalacctasksub);
                     obj.put("vpsoption",  vps.get(i).getVpsoption());
                     obj.put("vpsreset",  vps.get(i).getVpsreset());
                     obj.put("state",  vps.get(i).getState());
-                    obj.put("changefinger",  vps.get(i).getChangefinger());
+                    obj.put("timegettask",  time);
                     obj.put("timecheck",  vps.get(i).getTimecheck());
-                    obj.put("threads",  vps.get(i).getThreads());
                     obj.put("running",  vps.get(i).getRunning());
-                    obj.put("timereset",vps.get(i).getTimereset());
-                    obj.put("dayreset",vps.get(i).getDayreset());
-                    obj.put("live",vps.get(i).getLive());
                     obj.put("total",total);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);
@@ -102,17 +103,26 @@ public class VpsTikTokController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }else{
                 JSONArray jsonArray= new JSONArray();
+                List<VpsRunning> vpsRunnings=historyTiktokRepository.getvpsrunning();
                 List<DeviceRunning> accByDeviceByVps=accountTikTokRepository.getCountAccByDeviceByVps(vps.trim());
                 for(int i=0;i<accByDeviceByVps.size();i++){
+                    Integer total=0;
+                    String time="";
+                    for(int j=0;j<vpsRunnings.size();j++){
+                        if(accByDeviceByVps.get(i).getDevice_id().equals(vpsRunnings.get(j).getVps())){
+                            total=vpsRunnings.get(j).getTotal();
+                            time=vpsRunnings.get(j).getTime();
+                            vpsRunnings.remove(j);
+                        }
+                    }
                     JSONObject obj = new JSONObject();
                     obj.put("vps", accByDeviceByVps.get(i).getVps());
                     obj.put("device_id", accByDeviceByVps.get(i).getDevice_id());
                     obj.put("acccount", accByDeviceByVps.get(i).getTotal());
                     obj.put("acccountlive", accByDeviceByVps.get(i).getTotal());
                     obj.put("state", 1);
-                    obj.put("timecheck", null);
-                    obj.put("running", 1);
-                    obj.put("total",0);
+                    obj.put("timegettask",time);
+                    obj.put("running", total);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);
                 }
@@ -437,28 +447,23 @@ public class VpsTikTokController {
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim());
                 if(vpsupdate.size()>0) {
 
-                    vpsupdate.get(0).setThreads(vps.getThreads());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
-                    vpsupdate.get(0).setState(vps.getState());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
-                    vpsupdate.get(0).setRunning(vps.getRunning());
-                    vpsupdate.get(0).setLive(vps.getLive());
                     vpsRepository.save(vpsupdate.get(0));
 
                     JSONObject obj = new JSONObject();
                     obj.put("id", vpsupdate.get(0).getId());
-                    obj.put("vps", vpsupdate.get(0).getVps());
-                    obj.put("vpsoption",  vps.getVpsoption());
-                    obj.put("vpsreset",  vps.getVpsreset());
-                    obj.put("state",   vpsupdate.get(0).getState());
-                    obj.put("timecheck",  System.currentTimeMillis());
-                    obj.put("running",vps.getRunning());
-                    obj.put("threads",vps.getThreads());
-                    obj.put("timereset",  vpsupdate.get(0).getTimereset());
-                    obj.put("dayreset",  vpsupdate.get(0).getDayreset());
-                    obj.put("live",  vps.getLive());
+                    obj.put("vps",vpsupdate.get(0).getVps());
+                    obj.put("acccount", 0);
+                    obj.put("acccountlive", 0);
+                    obj.put("vpsoption",  vpsupdate.get(0).getVpsoption());
+                    obj.put("vpsreset", vpsupdate.get(0).getVpsreset());
+                    obj.put("state",  vpsupdate.get(0).getState());
+                    obj.put("timegettask",  0);
+                    obj.put("timecheck", vpsupdate.get(0).getTimecheck());
+                    obj.put("running",  vpsupdate.get(0).getRunning());
                     obj.put("total",0);
-                    obj.put("view24h",0);
+
                     if(vpsArr.length==1){
                         resp.put("account",obj);
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
