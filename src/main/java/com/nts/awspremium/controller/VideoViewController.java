@@ -59,6 +59,9 @@ public class VideoViewController {
     @Autowired
     private VpsRepository vpsRepository;
 
+    @Autowired
+    private ChannelYoutubeBlackListRepository channelYoutubeBlackListRepository;
+
     @PostMapping(value = "/orderview", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> orderview(@RequestBody VideoView videoView, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
@@ -2951,6 +2954,7 @@ public class VideoViewController {
         }
     }
 
+
     @GetMapping(path = "findorder", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> findorder(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
@@ -3045,6 +3049,27 @@ public class VideoViewController {
         try {
             resp.put("vn",videoViewRandRepository.getCountThreadRunningVN());
             resp.put("us",videoViewRandRepository.getCountThreadRunningUS());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateChannelBlackListByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateChannelBlackListByCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            channelYoutubeBlackListRepository.deleteAll();
+            List<String> channel_id_list=videoViewHistoryRepository.getListChannelIdBlackList();
+            for(int i=0;i<channel_id_list.size();i++){
+                ChannelBlackList channelBlackList =new ChannelBlackList();
+                channelBlackList.setChannel_id(channel_id_list.get(i).trim());
+                channelYoutubeBlackListRepository.save(channelBlackList);
+            }
+            resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
         } catch (Exception e) {
@@ -3933,16 +3958,25 @@ public class VideoViewController {
             for (int i = 0; i < videoidIdArr.length; i++) {
                 String status="No refunds";
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+
                 Float price_old=video.getPrice();
+                int check_blacklist=0;
                 Service service = serviceRepository.getInfoService(video.getService());
                 VideoViewHistory video_refil;
-                Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
+                Integer checkBH=channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim());
+                if(checkBH==0){
+                    checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
+                }else{
+                    check_blacklist=1;
+                }
                 if(checkBH==0){
                     checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
                 }
                 // ||   checkBH>0
                 if(service.getChecktime()==1 ||   checkBH>0  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
-                    if(checkBH>0){
+                    if(check_blacklist>0){
+                        status="Lợi dụng chính sách";
+                    }else if(checkBH>0){
                         status="Hoàn thành < 8h";
                     }else if(video.getCancel()==1&&video.getRefund()==0){
                         status="Đã hủy trước đó";

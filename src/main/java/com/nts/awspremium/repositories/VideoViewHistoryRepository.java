@@ -50,6 +50,9 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistories();
 
+    @Query(value = "Select channelid from (SELECT channelid,count(*) as total FROM AccPremium.videoviewhistory where cancel>0 and refund=1 and round((UNIX_TIMESTAMP()-timestart/1000)/60/60/24)<=7 group by channelid having total>=4)  as t;",nativeQuery = true)
+    public List<String> getListChannelIdBlackList();
+
 
     @Query(value = "SELECT * from videoviewhistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
     public List<VideoViewHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
