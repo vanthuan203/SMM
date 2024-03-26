@@ -21,7 +21,7 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Query(value = "SELECT device_id as vps,timeget,running as total FROM history_tiktok where timeget!=0 and vps=?1 group by device_id order by total desc",nativeQuery = true)
     public List<VpsRunning> getDeviceRunningByVPS(String vps);
 
-    @Query(value = "SELECT vps,timeget,count(*) as total FROM history_tiktok where running>1 group by vps order by total desc",nativeQuery = true)
+    @Query(value = "SELECT vps,timeget,count(*) as total FROM history_tiktok where running>0 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
     @Query(value = "SELECT * FROM history_tiktok where id=?1 limit 1",nativeQuery = true)
     public List<HistoryTraffic> getHistoriesById(Long id);
@@ -30,7 +30,10 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     public Long getTimeGetByVPS(String vps);
     @Query(value = "SELECT * FROM history_tiktok where username=?1 limit 1",nativeQuery = true)
     public HistoryTikTok getHistoryTikTokByUsername(String username);
-
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where vps=?1",nativeQuery = true)
+    public Integer resetThreadByVps(String vps);
     @Modifying
     @Transactional
     @Query(value = "update historytraffic set running=0,orderid=0 where running=1 and POSITION(orderid in listorderid)=0 and  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15",nativeQuery = true)
@@ -46,10 +49,7 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     public Integer resetThreadThan30mcron();
 
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE historytraffic SET running=0,orderid=0 where vps=?1",nativeQuery = true)
-    public Integer resetThreadByVps(String vps);
+
 
 
 

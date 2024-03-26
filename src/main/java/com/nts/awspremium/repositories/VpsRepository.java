@@ -104,6 +104,11 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE vps set timecheck=?1 where vps=?2",nativeQuery = true)
+    public void updateTimeCheckByVPS(Long timecheck,String vps);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE vps set vpsreset=2 where round((UNIX_TIMESTAMP()-timecheck/1000)/60)>=30",nativeQuery = true)
     public void resetVPSAndUnrarToolByTimecheck();
 }

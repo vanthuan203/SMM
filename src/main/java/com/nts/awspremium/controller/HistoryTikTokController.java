@@ -194,6 +194,25 @@ public class HistoryTikTokController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value = "delThreadByVPS", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> delThreadByVPS(@RequestParam(defaultValue = "") String vps) throws InterruptedException {
+        JSONObject resp = new JSONObject();
+        if (vps.length() == 0) {
+            resp.put("status", "fail");
+            resp.put("message", "vps không để trống");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try {
+            historyTiktokRepository.resetThreadByVps(vps.trim());
+            resp.put("status", "true");
+            resp.put("message", "Update running thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping(value = "/dellHisFollower24HByCron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> dellHisFollower24HByCron() {

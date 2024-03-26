@@ -24,7 +24,7 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
     @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1",nativeQuery = true)
     public Integer getCountTiktokId(String tiktok_id);
-    @Query(value = "select * from channel_tiktok where follower_total>(follower_order + follower_order*(select max_bonus/100 from setting_tiktok where id=1)))",nativeQuery = true)
+    @Query(value = "select * from channel_tiktok where follower_total>(follower_order + follower_order*(select max_bonus/100 from setting_tiktok where id=1))",nativeQuery = true)
     public List<ChannelTiktok> getOrderFullFollowerOrder();
     @Query(value = "SELECT count(*) from channel_tiktok where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
@@ -60,7 +60,7 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
 
     @Query(value = "SELECT channel_tiktok.tiktok_id,count(*) as follower FROM history_follower_tiktok_sum left join channel_tiktok on history_follower_tiktok_sum.tiktok_id=channel_tiktok.tiktok_id" +
-            " where  time>=channel_tiktok.insert_date and time_start>0 group by channel_tiktok.titiktok_idktok_id.orderid order by insert_date desc",nativeQuery = true)
+            " where  time>=channel_tiktok.insert_date and time_start>0 group by tiktok_id order by insert_date desc",nativeQuery = true)
     public List<String> getTotalFollowerBuff();
 
 

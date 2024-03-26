@@ -113,6 +113,7 @@ public class AccountTikTokController {
                     accountTiktok.setLive(account.getLive());
                     accountTiktok.setPassword(account.getPassword().trim());
                     accountTiktok.setRecover(account.getRecover().trim());
+                    accountTiktok.setVps(account.getVps().trim());
                     accountRepository.save(accountTiktok);
                     resp.put("status", "true");
                     resp.put("message", "Update " + account.getUsername() + " thành công!");
@@ -136,6 +137,8 @@ public class AccountTikTokController {
                 accountTiktokNew.setRunning(account.getRunning());
                 accountTiktokNew.setVps(account.getVps().trim());
                 accountRepository.save(accountTiktokNew);
+                //vps
+                vpsRepository.updateTimeCheckByVPS(System.currentTimeMillis(),account.getVps().trim());
                 //add history tiktok
                 if(historyTiktokRepository.checkUsername(account.getUsername().trim())==0){
                     HistoryTikTok historyTikTok =new HistoryTikTok();
@@ -287,6 +290,7 @@ public class AccountTikTokController {
             vpsnew.setTimecheck(System.currentTimeMillis());
             vpsRepository.save(vpsnew);
         }
+        vpsRepository.updateTimeCheckByVPS(System.currentTimeMillis(),vps.trim());
         if (checktoken == 0) {
             resp.put("status", "fail");
             resp.put("message", "Token expired");
