@@ -18,16 +18,16 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where username=?1",nativeQuery = true)
     public Integer resetThreadByUsername(String username);
-    @Query(value = "SELECT device_id as vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM history_tiktok where running=1 and vps=?1 group by device_id order by total desc",nativeQuery = true)
+    @Query(value = "SELECT device_id as vps,timeget,running as total FROM history_tiktok where timeget!=0 and vps=?1 group by device_id order by total desc",nativeQuery = true)
     public List<VpsRunning> getDeviceRunningByVPS(String vps);
 
-    @Query(value = "SELECT vps,round((UNIX_TIMESTAMP()-max(timeget)/1000)/60) as time,count(*) as total FROM history_tiktok where running=1 group by vps order by total desc",nativeQuery = true)
+    @Query(value = "SELECT vps,timeget,count(*) as total FROM history_tiktok where running>1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getvpsrunning();
     @Query(value = "SELECT * FROM history_tiktok where id=?1 limit 1",nativeQuery = true)
     public List<HistoryTraffic> getHistoriesById(Long id);
 
-    @Query(value = "SELECT listorderid FROM history_tiktok where id=?1 limit 1",nativeQuery = true)
-    public String getListOrderIdById(Long id);
+    @Query(value = "SELECT timeget FROM AccPremium.history_tiktok where vps=?1 order by timeget desc limit 1;",nativeQuery = true)
+    public Long getTimeGetByVPS(String vps);
     @Query(value = "SELECT * FROM history_tiktok where username=?1 limit 1",nativeQuery = true)
     public HistoryTikTok getHistoryTikTokByUsername(String username);
 
