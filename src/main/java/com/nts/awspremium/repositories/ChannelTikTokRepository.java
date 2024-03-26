@@ -24,7 +24,8 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
 
     @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1",nativeQuery = true)
     public Integer getCountTiktokId(String tiktok_id);
-
+    @Query(value = "select * from channel_tiktok where follower_total>(follower_order + follower_order*(select max_bonus/100 from setting_tiktok where id=1)))",nativeQuery = true)
+    public List<ChannelTiktok> getOrderFullFollowerOrder();
     @Query(value = "SELECT count(*) from channel_tiktok where orderid=?1 and token=?2 ",nativeQuery = true)
     public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
 
@@ -43,8 +44,8 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1",nativeQuery = true)
     public Integer getCountLink(String link);
 
-    @Query(value = "SELECT * FROM  channel_tiktok where service in(select service from service where category='Website') and timestart>0 order by timeupdate asc",nativeQuery = true)
-    public List<ChannelTiktok> getAllOrderTraffic();
+    @Query(value = "SELECT * FROM  channel_tiktok where time_start>0 order by time_update asc",nativeQuery = true)
+    public List<ChannelTiktok> getAllOrderFollower();
 
 
 
@@ -58,17 +59,16 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     public List<OrderFollowerTikTokRunning> getOrder(String user);
 
 
-    @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid" +
-            " where  time>=webtraffic.insertdate and service in(select service from service where category='Website') and duration>0 and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
-    public List<String> getTotalTrafficBuff();
+    @Query(value = "SELECT channel_tiktok.tiktok_id,count(*) as follower FROM history_follower_tiktok_sum left join channel_tiktok on history_follower_tiktok_sum.tiktok_id=channel_tiktok.tiktok_id" +
+            " where  time>=channel_tiktok.insert_date and time_start>0 group by channel_tiktok.titiktok_idktok_id.orderid order by insert_date desc",nativeQuery = true)
+    public List<String> getTotalFollowerBuff();
 
-    @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid where time>=webtraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and duration>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
-    public List<String> get24hTrafficBuff();
+
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE webtraffic set traffictotal=?1,timeupdate=?2,traffic24h=?3 where orderid=?4",nativeQuery = true)
-    public void updateTrafficOrderByOrderId(Integer traffictotal,Long timeupdate,Integer traffic24h,Long orderid);
+    @Query(value = "UPDATE channel_tiktok set follower_total=?1,time_update=?2 where tiktok_id=?3",nativeQuery = true)
+    public void updateFollowerByTiktokId(Integer follower_total,Long time_update,String tiktok_id);
 
 
 
@@ -88,7 +88,7 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM channel_tiktok where orderid=?1",nativeQuery = true)
-    public void deletevideoByOrderId(Long orderid);
+    public void deleteOrderByOrderId(Long orderid);
 
     @Modifying
     @Transactional
@@ -96,7 +96,5 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     public void deleteByTiktokId(String tiktok_id);
 
 
-    @Query(value = "select * from webtraffic where traffictotal>(trafficorder + trafficorder*(select bonus/100 from setting where id=1)) and service in(select service from service where category='Website')",nativeQuery = true)
-    public List<WebTraffic> getOrderFullTraffic();
 
 }

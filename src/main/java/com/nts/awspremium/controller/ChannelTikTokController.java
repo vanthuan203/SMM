@@ -309,32 +309,28 @@ public class ChannelTikTokController {
     @GetMapping(path = "updateorderviewcron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateorderviewcron() {
         JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            Setting setting = settingRepository.getReferenceById(1L);
-            List<String> viewBuff;
-            List<String> viewBuff24h;
-            List<VideoView> videoViewList = videoViewRepository.getAllOrderView();
-            viewBuff = videoViewRepository.getTotalViewBuff();
+            List<String> followerBuff;
+            List<ChannelTiktok> channelTiktokList = channelTikTokRepository.getAllOrderFollower();
+            followerBuff = channelTikTokRepository.getTotalFollowerBuff();
 
-            for (int i = 0; i < videoViewList.size(); i++) {
-                int viewtotal = 0;
-                int view24h = 0;
-                for (int j = 0; j < viewBuff.size(); j++) {
-                    if (videoViewList.get(i).getVideoid().equals(viewBuff.get(j).split(",")[0])) {
-                        viewtotal = Integer.parseInt(viewBuff.get(j).split(",")[1]);
+            for (int i = 0; i < channelTiktokList.size(); i++) {
+                int followerTotal = 0;
+                for (int j = 0; j < followerBuff.size(); j++) {
+                    if (channelTiktokList.get(i).getTiktok_id().equals(followerBuff.get(j).split(",")[0])) {
+                        followerTotal = Integer.parseInt(followerBuff.get(j).split(",")[1]);
                     }
                 }
                 try {
-                    videoViewRepository.updateViewOrderByVideoId(viewtotal, view24h, System.currentTimeMillis(), videoViewList.get(i).getVideoid());
+                    channelTikTokRepository.updateFollowerByTiktokId(followerTotal, System.currentTimeMillis(), channelTiktokList.get(i).getTiktok_id());
                 } catch (Exception e) {
 
                 }
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
 
-            resp.put("total", videoViewList.size());
-            resp.put("videoview", true);
+            resp.put("total", channelTiktokList.size());
+            resp.put("channel_tiktok", true);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
@@ -343,41 +339,7 @@ public class ChannelTikTokController {
         }
     }
 
-    @GetMapping(path = "updateorderbuffhcron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffhcron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            List<String> timeTotal;
-            List<VideoView> videoBuffhList = videoViewRepository.getAllOrderBuffh();
-            timeTotal = videoViewRepository.getTimeBuffVideo();
 
-            for (int i = 0; i < videoBuffhList.size(); i++) {
-                int timebufftotal = 0;
-                int viewbufftotal = 0;
-                for (int j = 0; j < timeTotal.size(); j++) {
-                    if (videoBuffhList.get(i).getVideoid().equals(timeTotal.get(j).split(",")[0])) {
-                        timebufftotal = Integer.parseInt(timeTotal.get(j).split(",")[1]);
-                        viewbufftotal = Integer.parseInt(timeTotal.get(j).split(",")[2]);
-                    }
-                }
-                try {
-                    videoViewRepository.updateTimeViewOrderByVideoId(timebufftotal, viewbufftotal,System.currentTimeMillis(), videoBuffhList.get(i).getVideoid());
-                } catch (Exception e) {
-
-                }
-            }
-            //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
-
-            resp.put("total", videoBuffhList.size());
-            resp.put("videobuff", true);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @GetMapping(path = "updateordercheckcancelcron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateordercheckcancelcron() {
@@ -2283,95 +2245,6 @@ public class ChannelTikTokController {
 
 
 
-    @GetMapping(path = "getcountviewbufforder", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcountviewbufforder(@RequestParam(defaultValue = "") String user) {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            Integer countvieworder = 0;
-            if (user.length() == 0) {
-                countvieworder = videoViewRepository.getCountViewBuffOrder();
-            } else {
-                countvieworder = videoViewRepository.getCountViewBuffOrder(user.trim());
-            }
-            resp.put("totalvieworder", countvieworder);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "getkey", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getkey() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
-        keys.get(0).setCount(keys.get(0).getCount() + 1L);
-        googleAPIKeyRepository.save(keys.get(0));
-        resp.put("key", keys.get(0).getKey());
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-    @GetMapping(path = "getinfo", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getinfo(@RequestParam(defaultValue = "") Long orderid) {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            VideoView videoView = videoViewRepository.getInfoByOrderId(orderid);
-            JSONArray jsonArray = new JSONArray();
-
-
-            JSONObject obj = new JSONObject();
-            obj.put("orderid", videoView.getOrderid());
-            obj.put("videoid", videoView.getVideoid());
-            obj.put("videotitle", videoView.getVideotitle());
-            obj.put("viewstart", videoView.getViewstart());
-            obj.put("maxthreads", videoView.getMaxthreads());
-            obj.put("insertdate", videoView.getInsertdate());
-            obj.put("vieworder", videoView.getVieworder());
-            obj.put("note", videoView.getNote());
-            obj.put("duration", videoView.getDuration());
-            obj.put("service", videoView.getService());
-
-            obj.put("view24h", videoView.getView24h());
-            obj.put("viewtotal", videoView.getViewtotal());
-            obj.put("price", videoView.getPrice());
-            if (serviceRepository.getService(videoView.getService()).getType().equals("Special")) {
-                obj.put("keyword", dataOrderRepository.getListKeyByOrderid(orderid));
-            } else {
-                obj.put("keyword", "");
-            }
-            jsonArray.add(obj);
-
-            resp.put("info", jsonArray);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "getcountviewbuffedorder", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getcountviewbuffedorder(@RequestParam(defaultValue = "") String user) {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            Integer countvieworder = 0;
-            if (user.length() == 0) {
-                countvieworder = videoViewRepository.getCountViewBuffedOrder();
-            } else {
-                countvieworder = videoViewRepository.getCountViewBuffedOrder(user.trim());
-            }
-            resp.put("totalviewbuffedorder", countvieworder);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @DeleteMapping(path = "delete", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> delete(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String tiktok_id, @RequestParam(defaultValue = "1") Integer cancel) {
@@ -2449,61 +2322,59 @@ public class ChannelTikTokController {
                 channelTikTokHistory.setEnd_date(enddate);
                 channelTikTokHistory.setFollower_total(channelTiktoks.get(0).getFollower_total());
                 channelTikTokHistoryRepository.save(channelTikTokHistory);
-                channelTikTokRepository.deleteByTiktokId(tiktokArr[i].trim());
+                channelTikTokRepository.deleteOrderByOrderId(channelTiktoks.get(0).getOrderid());
             }
             resp.put("channel_tiktok", "");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
+            //dong loi
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-
             System.out.println(stackTraceElement.getMethodName());
             System.out.println(stackTraceElement.getLineNumber());
             System.out.println(stackTraceElement.getClassName());
             System.out.println(stackTraceElement.getFileName());
-
             System.out.println("Error : " + e.getMessage());
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
-            resp.put("dfd",e.getStackTrace()[0].getLineNumber());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
 
 
-    @GetMapping(path = "updatechanneldonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updatechanneldonecron() {
+    @GetMapping(path = "updateOrderDoneByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateOrderDoneByCron() {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullView();
-            for (int i = 0; i < videoBuffh.size(); i++) {
+            List<ChannelTiktok> channelTiktoks = channelTikTokRepository.getOrderFullFollowerOrder();
+            for (int i = 0; i < channelTiktoks.size(); i++) {
                 Long enddate = System.currentTimeMillis();
 
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
+                ChannelTikTokHistory channelTikTokHistory = new ChannelTikTokHistory();
+                channelTikTokHistory.setOrderid(channelTiktoks.get(i).getOrderid());
+                channelTikTokHistory.setTiktok_id(channelTiktoks.get(i).getTiktok_id());
+                channelTikTokHistory.setPrice(channelTiktoks.get(i).getPrice());
+                channelTikTokHistory.setFollower_order(channelTiktoks.get(i).getFollower_order());
+                channelTikTokHistory.setFollower_start(channelTiktoks.get(i).getFollower_start());
+                channelTikTokHistory.setFollower_total(channelTiktoks.get(i).getFollower_total());
+                channelTikTokHistory.setFollower_end(-1);
+                channelTikTokHistory.setInsert_date(channelTiktoks.get(i).getInsert_date());
+                channelTikTokHistory.setInsert_date(enddate);
+                channelTikTokHistory.setTime_check(0L);
+                channelTikTokHistory.setTime_update(0L);
+                channelTikTokHistory.setCancel(0);
+                channelTikTokHistory.setCancel(channelTiktoks.get(i).getService());
+                channelTikTokHistory.setMax_threads(channelTiktoks.get(i).getMax_threads());
+                channelTikTokHistory.setNote(channelTiktoks.get(i).getNote());
+                channelTikTokHistory.setUser(channelTiktoks.get(i).getUser());
+                channelTikTokHistory.setTime_start(channelTiktoks.get(i).getTime_start());
+                channelTikTokHistory.setRefund(0);
+                channelTikTokHistory.setTime_check_refill(0L);
+                channelTikTokHistoryRepository.save(channelTikTokHistory);
                 try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
+                    channelTikTokHistoryRepository.save(channelTikTokHistory);
+                    channelTikTokRepository.deleteOrderByOrderId(channelTiktoks.get(i).getOrderid());
                 } catch (Exception e) {
 
                 }
@@ -2517,240 +2388,6 @@ public class ChannelTikTokController {
         }
     }
 
-
-    @GetMapping(path = "updateorderlivedonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderlivedonecron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullLive();
-            for (int i = 0; i < videoBuffh.size(); i++) {
-                Long enddate = System.currentTimeMillis();
-
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
-                try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
-                } catch (Exception e) {
-
-                }
-            }
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "updateorderbuffh60mdonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffh60mdonecron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullTime60m();
-            for (int i = 0; i < videoBuffh.size(); i++) {
-                Long enddate = System.currentTimeMillis();
-
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
-                try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
-                } catch (Exception e) {
-
-                }
-            }
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-    @GetMapping(path = "updateorderbuffh30mdonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffh30mdonecron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullTime30m();
-            for (int i = 0; i < videoBuffh.size(); i++) {
-                Long enddate = System.currentTimeMillis();
-
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
-                try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
-                } catch (Exception e) {
-
-                }
-            }
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "updateorderbuffh15mdonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffh15mdonecron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullTime15m();
-            for (int i = 0; i < videoBuffh.size(); i++) {
-                Long enddate = System.currentTimeMillis();
-
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
-                try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
-                } catch (Exception e) {
-
-                }
-            }
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping(path = "updateorderbuffh10mdonecron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateorderbuffh10mdonecron() {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        try {
-            //historyRepository.updateHistoryByAccount();
-            List<VideoView> videoBuffh = videoViewRepository.getOrderFullTime10m();
-            for (int i = 0; i < videoBuffh.size(); i++) {
-                Long enddate = System.currentTimeMillis();
-
-                VideoViewHistory videoBuffhnew = new VideoViewHistory();
-                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
-                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
-                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
-                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
-                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
-                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
-                videoBuffhnew.setViewstart(videoBuffh.get(i).getViewstart());
-                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
-                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
-                videoBuffhnew.setCancel(0);
-                videoBuffhnew.setNumbh(0);
-                videoBuffhnew.setTimecheck(0L);
-                videoBuffhnew.setTimestart(videoBuffh.get(i).getTimestart());
-                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
-                videoBuffhnew.setEnddate(enddate);
-                videoBuffhnew.setService(videoBuffh.get(i).getService());
-                videoBuffhnew.setViewtotal(videoBuffh.get(i).getViewtotal());
-                videoBuffhnew.setVieworder(videoBuffh.get(i).getVieworder());
-                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
-                videoBuffhnew.setTimetotal(videoBuffh.get(0).getTimetotal() == null ? 0 : videoBuffh.get(0).getTimetotal());
-                try {
-                    videoViewHistoryRepository.save(videoBuffhnew);
-                    videoViewRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
-                } catch (Exception e) {
-
-                }
-            }
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> refund(@RequestParam(defaultValue = "") String orderid) {

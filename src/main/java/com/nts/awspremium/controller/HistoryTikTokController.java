@@ -195,4 +195,19 @@ public class HistoryTikTokController {
         }
     }
 
+    @GetMapping(value = "/dellHisFollower24HByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> dellHisFollower24HByCron() {
+        JSONObject resp = new JSONObject();
+        try{
+            historyFollowerTiktok24hRepository.deleteAllByThan24h();
+            resp.put("status", "true");
+            resp.put("message", "Delete follower >24h thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

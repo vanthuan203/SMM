@@ -18,7 +18,7 @@ public class AutoRunTrafficCheck {
     private OrderTrafficTrue orderTrue;
     @Autowired
     private Environment env;
-    //@PostConstruct
+    @PostConstruct
     public void init() throws InterruptedException {
         try{
                 new Thread(() -> {

@@ -27,7 +27,7 @@ public interface ChannelTikTokHistoryRepository extends JpaRepository<ChannelTik
     @Query(value = "SELECT * from channel_tiktok_history where (tiktok_id in (?1) or orderid in (?1))",nativeQuery = true)
     public List<ChannelTikTokHistory> getChannelTikTokHistoriesListById(List<String> list_orderid);
 
-    @Query(value = "SELECT * from videoviewhistory where orderid in (?1)",nativeQuery = true)
+    @Query(value = "SELECT * from channel_tiktok_history where orderid in (?1)",nativeQuery = true)
     public List<ChannelTikTokHistory> getChannelTikTokHisByListId(List<String> list_orderid);
 
     @Query(value = "SELECT * from channel_tiktok_history where (tiktok_id in (?1) or orderid in (?1)) and user=?2",nativeQuery = true)

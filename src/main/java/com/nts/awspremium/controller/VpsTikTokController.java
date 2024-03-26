@@ -103,7 +103,7 @@ public class VpsTikTokController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }else{
                 JSONArray jsonArray= new JSONArray();
-                List<VpsRunning> vpsRunnings=historyTiktokRepository.getvpsrunning();
+                List<VpsRunning> vpsRunnings=historyTiktokRepository.getDeviceRunningByVPS(vps.trim());
                 List<DeviceRunning> accByDeviceByVps=accountTikTokRepository.getCountAccByDeviceByVps(vps.trim());
                 for(int i=0;i<accByDeviceByVps.size();i++){
                     Integer total=0;
