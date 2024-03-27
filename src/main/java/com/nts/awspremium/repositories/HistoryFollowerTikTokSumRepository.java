@@ -2,13 +2,17 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.HistoryFollowerTikTokSum;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface HistoryFollowerTikTokSumRepository extends JpaRepository<HistoryFollowerTikTokSum,Long> {
 
-    @Query(value = "select * from historytrafficsum where orderid=?1 order by time desc",nativeQuery = true)
-    public List<HistoryFollowerTikTokSum> analyticsByOrderId(Long orderid);
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM history_follower_tiktok_sum where tiktok_id not in (select tiktok_id from channel_tiktok) limit 500000",nativeQuery = true)
+    public void DelHistorySum();
 
 }

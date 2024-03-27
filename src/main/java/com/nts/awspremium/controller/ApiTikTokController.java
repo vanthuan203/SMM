@@ -202,8 +202,11 @@ public class ApiTikTokController {
                     resp.put("error", "This tiktok_id in process");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                String proxycheck=proxyRepository.getProxyRandTrafficForCheckAPI();
-                Integer follower_count=TikTokApi.getFollowerCount("https://www.tiktok.com/"+tiktok_id.trim(),proxycheck);
+                Integer follower_count=TikTokApi.getFollowerCountLive(tiktok_id.trim().split("@")[1]);
+                if(follower_count==-100){
+                    resp.put("error", "This account cannot be found");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 float priceorder = 0;
                 priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                 if (priceorder > (float) admins.get(0).getBalance()) {
@@ -214,13 +217,13 @@ public class ApiTikTokController {
                 ChannelTiktok channelTiktok = new ChannelTiktok();
                 channelTiktok.setInsert_date(System.currentTimeMillis());
                 channelTiktok.setFollower_order(data.getQuantity());
-                channelTiktok.setFollower_start(follower_count!=null?follower_count:0);
+                channelTiktok.setFollower_start(follower_count);
                 channelTiktok.setFollower_total(0);
                 channelTiktok.setTiktok_id(tiktok_id.trim());
                 channelTiktok.setUser(admins.get(0).getUsername());
                 channelTiktok.setTime_update(0L);
-                channelTiktok.setTime_start(System.currentTimeMillis());
-                channelTiktok.setMax_threads(5);
+                channelTiktok.setTime_start(follower_count<0?0:System.currentTimeMillis());
+                channelTiktok.setMax_threads(follower_count<0?0:service.getThread());
                 channelTiktok.setNote("");
                 channelTiktok.setPrice(priceorder);
                 channelTiktok.setService(data.getService());

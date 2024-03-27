@@ -37,6 +37,9 @@ public class ChannelTikTokController {
     private BalanceRepository balanceRepository;
     @Autowired
     private SettingRepository settingRepository;
+
+    @Autowired
+    private SettingTikTokRepository settingTikTokRepository;
     @Autowired
     private VideoViewHistoryRepository videoViewHistoryRepository;
     @Autowired
@@ -104,8 +107,11 @@ public class ChannelTikTokController {
                 resp.put("channel_tiktok", "This tiktok_id in process");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            String proxycheck=proxyRepository.getProxyRandTrafficForCheckAPI();
-            Integer follower_count=TikTokApi.getFollowerCount("https://www.tiktok.com/"+tiktok_id.trim(),proxycheck);
+            Integer follower_count=TikTokApi.getFollowerCountLive(tiktok_id.trim().split("@")[1]);
+            if(follower_count==-100){
+                resp.put("channel_tiktok", "This account cannot be found");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
             float priceorder = 0;
             int time = 0;
             priceorder = (channelTiktok.getFollower_order() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
@@ -117,13 +123,13 @@ public class ChannelTikTokController {
             ChannelTiktok channelTiktok_Add = new ChannelTiktok();
             channelTiktok_Add.setInsert_date(System.currentTimeMillis());
             channelTiktok_Add.setFollower_order(channelTiktok.getFollower_order());
-            channelTiktok_Add.setFollower_start(follower_count!=null?follower_count:0);
+            channelTiktok_Add.setFollower_start(follower_count);
             channelTiktok_Add.setFollower_total(0);
             channelTiktok_Add.setTiktok_id(tiktok_id.trim());
             channelTiktok_Add.setUser(admins.get(0).getUsername());
             channelTiktok_Add.setTime_update(0L);
-            channelTiktok_Add.setTime_start(System.currentTimeMillis());
-            channelTiktok_Add.setMax_threads(channelTiktok.getMax_threads());
+            channelTiktok_Add.setTime_start(follower_count<0?0:System.currentTimeMillis());
+            channelTiktok_Add.setMax_threads(follower_count<0?0:service.getThread());
             channelTiktok_Add.setNote("");
             channelTiktok_Add.setPrice(priceorder);
             channelTiktok_Add.setService(channelTiktok.getService());
@@ -1305,143 +1311,63 @@ public class ChannelTikTokController {
     }
 
 
-    String htviewfindorder(@RequestParam() Long orderid) {
-
+    String refundFollowerByOrderId(@RequestBody() ChannelTikTokHistory channelTikTokHistory) {
         try {
-            JSONArray jsonArray = new JSONArray();
-            Setting setting = settingRepository.getReferenceById(1L);
-            List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
-            List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByOrderId(orderid);
-            if (videoViewHistories.size() == 0) {
-                return "Đơn trống";
+            SettingTiktok settingTiktok = settingTikTokRepository.getReferenceById(1L);
+            Service service = serviceRepository.getInfoService(channelTikTokHistory.getService());
+
+            Integer follower_count=TikTokApi.getFollowerCountLive(channelTikTokHistory.getTiktok_id().trim().split("@")[1]);
+            if(follower_count<0){
+                return "Không check được follower";
             }
-            for (int i = 0; i < videoViewHistories.size(); i++) {
-                Service service = serviceRepository.getInfoService(videoViewHistories.get(i).getService());
-                JSONObject obj = new JSONObject();
-                /*
-                if ((videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 1) {
-                    resp.put("videoview", "Đã refund trước đó!");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            List<Admin> user = adminRepository.getAdminByUser(channelTikTokHistory.getUser());
+            //Hoàn tiền những follower chưa buff
+            int followerFix = channelTikTokHistory.getFollower_order() > channelTikTokHistory.getFollower_total() ? channelTikTokHistory.getFollower_total() : channelTikTokHistory.getFollower_order();
+            int followerThan = followerFix + channelTikTokHistory.getFollower_start() - follower_count;
+            if(followerThan<=0){
+                if(service.getChecktime()==0){
+                    channelTikTokHistory.setFollower_end(follower_count);
+                    channelTikTokHistory.setTime_check_refill(System.currentTimeMillis());
                 }
-                 */
-                if (videoViewHistories.get(0).getCancel() ==1&&videoViewHistories.get(0).getRefund()==0) {
-                    return "Đã hủy trước đó";
-                }else if(videoViewHistories.get(0).getPrice() == 0&&videoViewHistories.get(0).getRefund()==1) {
-                    return "Đã hoàn 100% trước đó";
-                }
-                if (videoViewRepository.getCountVideoIdNotIsBH(videoViewHistories.get(i).getVideoid().trim()) > 0) {
-                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Đơn đang chạy";
-                }
-                if(service.getChecktime()==0&&(System.currentTimeMillis()- videoViewHistories.get(i).getEnddate())/1000/60/60<8){
-                    return "Hoàn thành < 8h";
-                }
-                /*
-                List<VideoViewHistory> viewHistories =videoViewHistoryRepository.getTimeBHByVideoId(videoViewHistories.get(i).getVideoid().trim());
-                if (viewHistories.size()>0) {
-                    if(System.currentTimeMillis()-viewHistories.get(0).getEnddate()< 1000 * 3600 * 24){
-                        videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
-                        videoViewHistoryRepository.save(videoViewHistories.get(i));
-                        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
-                        obj.put("videoview", "Refund sau: " +dateFormat.format(new Date(viewHistories.get(0).getEnddate()+(12 * 60 * 60 * 1000))));
-                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
-                    }
-                }
-
-                 */
-                OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-                List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
-                Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(statistics(viewCount))&part=statistics&id=" + videoViewHistories.get(i).getVideoid().trim()).get().build();
-                keys.get(0).setCount(keys.get(0).getCount() + 1L);
-                googleAPIKeyRepository.save(keys.get(0));
-                Response response1 = client1.newCall(request1).execute();
-
-                String resultJson1 = response1.body().string();
-
-                Object obj1 = new JSONParser().parse(resultJson1);
-
-                JSONObject jsonObject1 = (JSONObject) obj1;
-                JSONArray items = (JSONArray) jsonObject1.get("items");
-                if (items == null) {
-                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Không check được view";
-                }
-                Iterator k = items.iterator();
-                if (k.hasNext() == false) {
-                    videoViewHistories.get(i).setTimecheck(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(videoViewHistories.get(i));
-                    return "Không check được view";
-                }
-                while (k.hasNext()) {
-                    try {
-                        JSONObject video = (JSONObject) k.next();
-                        JSONObject statistics = (JSONObject) video.get("statistics");
-                        List<Admin> user = adminRepository.getAdminByUser(videoViewHistories.get(i).getUser());
-                        //Hoàn tiền những view chưa buff
-                        int viewcount = Integer.parseInt(statistics.get("viewCount").toString());
-                        int viewFix = videoViewHistories.get(i).getVieworder() > videoViewHistories.get(i).getViewtotal() ? videoViewHistories.get(i).getViewtotal() : videoViewHistories.get(i).getVieworder();
-                        int viewthan = viewFix + videoViewHistories.get(i).getViewstart() - viewcount;
-                        if(viewthan<=0){
-                            if(service.getChecktime()==0){
-                                videoViewHistories.get(i).setViewend(viewcount);
-                                videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
-                            }
-                            videoViewHistoryRepository.save(videoViewHistories.get(i));
-                            return "Đủ view | " +viewcount+"/"+(viewFix+videoViewHistories.get(i).getViewstart());
-                        }
-                        if (viewthan > viewFix||viewFix-viewthan<50) {
-                            viewthan = viewFix;
-                        }
-                        float price_refund = ((viewthan) / (float) viewFix) * videoViewHistories.get(i).getPrice();
-                        //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
-                        if (videoViewHistories.get(i).getPrice() < price_refund) {
-                            price_refund = videoViewHistories.get(i).getPrice();
-                        }
-                        float pricebuffed = (videoViewHistories.get(i).getPrice() - price_refund);
-                        videoViewHistories.get(i).setPrice(pricebuffed);
-                        videoViewHistories.get(i).setViewend(viewcount);
-                        videoViewHistories.get(i).setTimecheckbh(System.currentTimeMillis());
-                        videoViewHistories.get(i).setViewtotal(viewFix - viewthan);
-                        videoViewHistories.get(i).setRefund(1);
-                        if (videoViewHistories.get(i).getViewtotal()==0) {
-                            videoViewHistories.get(i).setCancel(1);
-                        } else {
-                            videoViewHistories.get(i).setCancel(2);
-                        }
-                        videoViewHistoryRepository.save(videoViewHistories.get(i));
-                        //hoàn tiền & add thong báo số dư
-                        videoViewRepository.deletevideoByVideoIdBH(videoViewHistories.get(i).getVideoid());
-                        Float balance_update=adminRepository.updateBalanceFine(price_refund,videoViewHistories.get(i).getUser().trim());
-                        Balance balance = new Balance();
-                        balance.setUser(user.get(0).getUsername().trim());
-                        balance.setTime(System.currentTimeMillis());
-                        balance.setTotalblance(balance_update);
-                        balance.setBalance(price_refund);
-                        balance.setService(videoViewHistories.get(i).getService());
-                        balance.setNote("Refund " + (viewthan) + "view cho " + videoViewHistories.get(i).getVideoid());
-                        balanceRepository.save(balance);
-
-                        obj.put(videoViewHistories.get(i).getVideoid().trim(), "Refund  " + viewthan + " view!");
-                        obj.put("videoview", "true");
-                        obj.put("videoid", videoViewHistories.get(i).getVideoid().trim());
-                        obj.put("balance", admins.get(0).getBalance());
-                        obj.put("price", price_refund);
-                        obj.put("time", viewthan);
-                        if(videoViewHistories.get(i).getPrice()==0){
-                            return "Đã hoàn 100%";
-                        }else{
-                            return "Đã hoàn phần thiếu";
-                        }
-                    } catch (Exception e) {
-                        System.out.println(e.getStackTrace()[0].getLineNumber());
-                        throw new RuntimeException(e);
-                    }
-                }
+                channelTikTokHistoryRepository.save(channelTikTokHistory);
+                return "Đủ follower | " +follower_count+"/"+(followerFix+channelTikTokHistory.getFollower_start());
             }
-            return "0";
+            if (followerThan > followerFix||followerFix-followerThan<10) {
+                followerThan = followerFix;
+            }
+            float price_refund = ((followerThan) / (float) followerFix) * channelTikTokHistory.getPrice();
+            if (channelTikTokHistory.getPrice() < price_refund) {
+                price_refund = channelTikTokHistory.getPrice();
+            }
+            float pricebuffed = ( channelTikTokHistory.getPrice()- price_refund);
+            channelTikTokHistory.setPrice(pricebuffed);
+            channelTikTokHistory.setFollower_end(follower_count);
+            channelTikTokHistory.setTime_check_refill(System.currentTimeMillis());
+            channelTikTokHistory.setFollower_total(followerFix - followerThan);
+            channelTikTokHistory.setRefund(1);
+            if (channelTikTokHistory.getFollower_total()==0) {
+                channelTikTokHistory.setCancel(1);
+            } else {
+                channelTikTokHistory.setCancel(2);
+            }
+            channelTikTokHistoryRepository.save(channelTikTokHistory);
+            //hoàn tiền & add thong báo số dư
+
+            Float balance_update=adminRepository.updateBalanceFine(price_refund,channelTikTokHistory.getUser().trim());
+            Balance balance = new Balance();
+            balance.setUser(user.get(0).getUsername().trim());
+            balance.setTime(System.currentTimeMillis());
+            balance.setTotalblance(balance_update);
+            balance.setBalance(price_refund);
+            balance.setService(channelTikTokHistory.getService());
+            balance.setNote("Refund " + (followerThan) + "follower cho " + channelTikTokHistory.getTiktok_id());
+            balanceRepository.save(balance);
+
+            if(channelTikTokHistory.getPrice()==0){
+                return "Đã hoàn 100%";
+            }else{
+                return "Đã hoàn phần thiếu";
+            }
         } catch (Exception e) {
             return "Fail";
         }
@@ -2346,9 +2272,15 @@ public class ChannelTikTokController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
-            //historyRepository.updateHistoryByAccount();
+            SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
             List<ChannelTiktok> channelTiktoks = channelTikTokRepository.getOrderFullFollowerOrder();
             for (int i = 0; i < channelTiktoks.size(); i++) {
+
+                Integer follower_count=TikTokApi.getFollowerCountLive(channelTiktoks.get(i).getTiktok_id().trim().split("@")[1]);
+                if(follower_count<channelTiktoks.get(i).getFollower_order()+channelTiktoks.get(i).getFollower_order()*(settingTiktok.getMax_bonus()/100)+channelTiktoks.get(i).getFollower_start()){
+                    continue;
+                }
+
                 Long enddate = System.currentTimeMillis();
 
                 ChannelTikTokHistory channelTikTokHistory = new ChannelTikTokHistory();
@@ -2525,129 +2457,6 @@ public class ChannelTikTokController {
         }
     }
 
-    @GetMapping(path = "updateRefundHis", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRefundHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid,@RequestParam(defaultValue = "1") Integer checkview) {
-        JSONObject resp = new JSONObject();
-        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
-        List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
-        if (Authorization.length() == 0 || admins.size() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "Token expired");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-        try {
-            String[] videoidIdArr = orderid.split(",");
-            JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < videoidIdArr.length; i++) {
-                String status="No refunds";
-                Integer viewcheck=-1;
-                VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                Integer checkBH=checkview==1?videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim()):0;
-                if(checkBH==0&&checkview==1){
-                    checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
-                }
-                Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
-                if((service.getChecktime()==0?(System.currentTimeMillis()- video.getEnddate())/1000/60/60>=8:true) && checkBH==0 && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
-                    OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-                    Request request1 = null;
-                    List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
-                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + video.getVideoid()).get().build();
-                    keys.get(0).setCount(keys.get(0).getCount() + 1L);
-                    googleAPIKeyRepository.save(keys.get(0));
-                    Response response1 = client1.newCall(request1).execute();
-                    String resultJson1 = response1.body().string();
-                    Object obj1 = new JSONParser().parse(resultJson1);
-                    JSONObject jsonObject1 = (JSONObject) obj1;
-                    JSONArray items = (JSONArray) jsonObject1.get("items");
-                    Iterator k = items.iterator();
-                    if (items != null || k.hasNext() != false) {
-                        try {
-                            JSONObject videocheck = (JSONObject) k.next();
-                            JSONObject obj = new JSONObject();
-                            JSONObject statistics = (JSONObject) videocheck.get("statistics");
-                            viewcheck=Integer.parseInt(statistics.get("viewCount").toString());
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-                if((((viewcheck!=-1 || checkview<=0) && viewcheck<video.getVieworder()+video.getViewstart())) && ((service.getChecktime()==1?video.getViewend()>-1:true) && video.getCancel()!=1) && checkBH==0){
-                    float price_refund=0F;
-                    if(checkview==-1){
-                        status="Đã hoàn 50%";
-                        price_refund=video.getPrice()*0.5F;
-                    }else{
-                        status="Đã hoàn 100%";
-                        price_refund=video.getPrice();
-                    }
-                    video.setViewtotal(0);
-                    video.setCancel(1);
-                    video.setPrice(0F);
-                    if(viewcheck!=-1){
-                        video.setViewend(viewcheck);
-                    }
-                    video.setTimecheckbh(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(video);
-                    List<Admin> user = adminRepository.getAdminByUser(video.getUser());
-                    //
-                    Float balance_update=adminRepository.updateBalanceFine(price_refund,video.getUser().trim());
-                    Balance balance = new Balance();
-                    balance.setUser(user.get(0).getUsername().trim());
-                    balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(balance_update);
-                    balance.setBalance(price_refund);
-                    balance.setService(video.getService());
-                    balance.setNote("Refund " + (video.getVieworder()) + " view cho " + video.getVideoid());
-                    balanceRepository.save(balance);
-                }else if(service.getChecktime()==1 && checkBH==0 && video.getTimecheckbh()==0 && video.getViewend()>-1 && video.getCancel()!=1 && viewcheck>=0){
-                    video.setViewend(viewcheck);
-                    videoViewHistoryRepository.save(video);
-                }else if(service.getChecktime()==0 && checkBH==0 && viewcheck>=0){
-                    video.setViewend(viewcheck);
-                    video.setTimecheckbh(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(video);
-                }else if(service.getChecktime()==1 && checkBH==0 && video.getTimecheckbh()>0 && (video.getViewend()<video.getVieworder()+video.getViewstart()) && video.getCancel()!=1 && viewcheck>=0){
-                    video.setViewend(viewcheck);
-                    video.setTimecheckbh(System.currentTimeMillis());
-                    videoViewHistoryRepository.save(video);
-                }
-                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video.getVideoid(),video.getOrderid());
-                JSONObject obj = new JSONObject();
-                if(infoQ!=null){
-                    obj.put("info", infoQ);
-                }else{
-                    obj.put("info", "");
-                }
-                obj.put("orderid", video.getOrderid());
-                obj.put("videoid", video.getVideoid());
-                obj.put("videotitle", video.getVideotitle());
-                obj.put("viewstart", video.getViewstart());
-                obj.put("maxthreads", video.getMaxthreads());
-                obj.put("insertdate", video.getInsertdate());
-                obj.put("user", video.getUser());
-                obj.put("note", video.getNote());
-                obj.put("duration", video.getDuration());
-                obj.put("enddate", video.getEnddate());
-                obj.put("cancel", video.getCancel());
-                obj.put("timestart",video.getTimestart());
-                obj.put("timecheckbh", video.getTimecheckbh());
-                obj.put("viewend", video.getViewend());
-                obj.put("viewtotal", video.getViewtotal());
-                obj.put("vieworder", video.getVieworder());
-                obj.put("price", video.getPrice());
-                obj.put("service", video.getService());
-                obj.put("status", status);
-
-                jsonArray.add(obj);
-            }
-            resp.put("videoview", jsonArray);
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", "fail");
-            resp.put("message", e.getMessage());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
     @GetMapping(path = "updateBHHis", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateBHHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid,@RequestParam(defaultValue = "1") Integer checkview) {
         JSONObject resp = new JSONObject();
@@ -2758,8 +2567,8 @@ public class ChannelTikTokController {
         }
     }
 
-    @GetMapping(path = "updateRefillHis", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRefillHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
+    @GetMapping(path = "updateRefundHis", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateRefundHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
@@ -2769,65 +2578,58 @@ public class ChannelTikTokController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            String[] videoidIdArr = orderid.split(",");
+            String[] OrderIdArr = orderid.split(",");
             JSONArray jsonArray = new JSONArray();
-            for (int i = 0; i < videoidIdArr.length; i++) {
+            for (int i = 0; i < OrderIdArr.length; i++) {
                 String status="No refunds";
-                VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                Float price_old=video.getPrice();
-                Service service = serviceRepository.getInfoService(video.getService());
-                VideoViewHistory video_refil;
-                Integer checkBH=videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim());
-                if(checkBH==0){
-                    checkBH=videoViewRepository.getCountVideoIdNotPending(video.getVideoid());
-                }
-                // ||   checkBH>0
-                if(service.getChecktime()==1 ||   checkBH>0  || (service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0)){
-                    if(checkBH>0){
-                        status="Hoàn thành < 8h";
-                    }else if(video.getCancel()==1&&video.getRefund()==0){
-                        status="Đã hủy trước đó";
-                    }else if(video.getPrice()==0&&video.getRefund()==1){
-                        status="Đã hoàn 100% trước đó";
-                    }
-                    if(service.getChecktime()==0&&videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==0){
-                        status="Quá hạn hoàn tiền";
-                    }
-                    video_refil=video;
+                ChannelTikTokHistory channel = channelTikTokHistoryRepository.getChannelTikTokHistoriesById(Long.parseLong(OrderIdArr[i].trim()));
+                Float price_old=channel.getPrice();
+                Service service = serviceRepository.getInfoService(channel.getService());
+
+                ChannelTikTokHistory channel_refil=channel;
+                if(service.getRefill()==0){
+                    status="DV không bảo hành";
+                }else if(serviceRepository.checkGuarantee(channel.getEnd_date(),service.getMaxtimerefill())==0){
+                    status="Quá hạn "+service.getMaxtimerefill()+" ngày";
+                }else if(channel.getUser().equals("baohanh01@gmail.com")){
+                    status="Đơn bảo hành";
+                }else if(channelTikTokRepository.getCountTiktokIdIsRefill(channel.getTiktok_id().trim())>0){
+                    status="Đang bảo hành";
+                }else if(channelTikTokRepository.getCountTiktokIdNotPending(channel.getTiktok_id().trim())>0){
+                    status="Đơn mới đang chạy";
+                }else if(channel.getCancel()==1){
+                    status="Được hủy trước đó";
                 }else{
-                    status=htviewfindorder(video.getOrderid());
-                    video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                    status=refundFollowerByOrderId(channel);
+                    channel_refil= channelTikTokHistoryRepository.getChannelTikTokHistoriesById(Long.parseLong(OrderIdArr[i].trim()));
                 }
                 JSONObject obj = new JSONObject();
-                String infoQ =videoViewHistoryRepository.getInfoSumOrderByVideoId(video_refil.getVideoid(),video_refil.getOrderid());
+                String infoQ =channelTikTokHistoryRepository.getInfoSumOrderByTiktokId(channel_refil.getTiktok_id(),channel_refil.getOrderid());
                 if(infoQ!=null){
                     obj.put("info", infoQ);
                 }else{
                     obj.put("info", "");
                 }
-                obj.put("orderid", video_refil.getOrderid());
-                obj.put("videoid", video_refil.getVideoid());
-                obj.put("videotitle", video_refil.getVideotitle());
-                obj.put("viewstart", video_refil.getViewstart());
-                obj.put("maxthreads", video_refil.getMaxthreads());
-                obj.put("insertdate", video_refil.getInsertdate());
-                obj.put("user", video_refil.getUser());
-                obj.put("note", video_refil.getNote());
-                obj.put("duration", video_refil.getDuration());
-                obj.put("enddate", video_refil.getEnddate());
-                obj.put("cancel", video_refil.getCancel());
-                obj.put("timestart",video_refil.getTimestart());
-                obj.put("timecheckbh", video_refil.getTimecheckbh());
-                obj.put("viewend", video_refil.getViewend());
-                obj.put("viewtotal", video_refil.getViewtotal());
-                obj.put("vieworder", video_refil.getVieworder());
-                obj.put("price", video_refil.getPrice());
-                obj.put("service", video_refil.getService());
+                obj.put("orderid", channel_refil.getOrderid());
+                obj.put("tiktok_id", channel_refil.getTiktok_id());
+                obj.put("follower_start", channel_refil.getFollower_start());
+                obj.put("max_threads", channel_refil.getMax_threads());
+                obj.put("insert_date", channel_refil.getInsert_date());
+                obj.put("user", channel_refil.getUser());
+                obj.put("note", channel_refil.getNote());
+                obj.put("end_date", channel_refil.getEnd_date());
+                obj.put("cancel", channel_refil.getCancel());
+                obj.put("time_start", channel_refil.getTime_start());
+                obj.put("time_check_refill", channel_refil.getTime_check_refill());
+                obj.put("follower_end", channel_refil.getFollower_end());
+                obj.put("follower_total",channel_refil.getFollower_total());
+                obj.put("follower_order", channel_refil.getFollower_order());
+                obj.put("price", channel_refil.getPrice());
+                obj.put("service", channel_refil.getService());
                 obj.put("status", status);
-
                 jsonArray.add(obj);
             }
-            resp.put("videoview", jsonArray);
+            resp.put("channel_tiktok", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");

@@ -36,7 +36,7 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     public Integer resetThreadByVps(String vps);
     @Modifying
     @Transactional
-    @Query(value = "update historytraffic set running=0,orderid=0 where running=1 and POSITION(orderid in listorderid)=0 and  round((UNIX_TIMESTAMP()-timeget/1000)/60)>=15",nativeQuery = true)
+    @Query(value = "update history_tiktok set running=0,orderid=0 where running=1 round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20",nativeQuery = true)
     public Integer resetThreadcron();
 
 

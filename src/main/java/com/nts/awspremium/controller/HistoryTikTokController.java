@@ -229,4 +229,34 @@ public class HistoryTikTokController {
         }
     }
 
+    @GetMapping(value = "delThreadErrorByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> delThreadErrorByCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            historyTiktokRepository.resetThreadcron();
+            resp.put("status", "true");
+            resp.put("message", "Reset thread error thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "delHistorySumByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> delHistorySumByCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            historyFollowerTikTokSumRepository.DelHistorySum();
+            resp.put("status", "true");
+            resp.put("message", "Delete history thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

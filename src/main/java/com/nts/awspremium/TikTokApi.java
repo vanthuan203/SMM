@@ -15,9 +15,14 @@ import java.net.*;
 import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.nts.awspremium.repositories.ProxyRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
 public class TikTokApi {
     public static Integer getFollowerCount(String tiktok_link,String proxycheck) {
         System.setProperty("jdk.http.auth.tunneling.disabledSchemes", "");
@@ -68,6 +73,41 @@ public class TikTokApi {
                 conn.disconnect();
                 return -2;
             }
+        } catch (Exception e) {
+            return -3;
+        }
+    }
+    public static Integer getFollowerCountLive(String tiktok_id) {
+
+        try {
+
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Random ran = new Random();
+            Request request = null;
+            request = new Request.Builder().url("https://countik.com/api/exist/" + tiktok_id).get().build();
+
+            Response response = client.newCall(request).execute();
+
+            String resultJson = response.body().string();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            if(jsonObject.get("sec_uid")==null){
+                return -100;
+            }else{
+                request = new Request.Builder().url("https://countik.com/api/userinfo?sec_user_id=" + jsonObject.get("sec_uid").toString()).get().build();
+
+                response = client.newCall(request).execute();
+
+                resultJson = response.body().string();
+                obj = new JSONParser().parse(resultJson);
+                jsonObject = (JSONObject) obj;
+                if(jsonObject.get("followerCount")==null){
+                    return -1;
+                }
+                System.out.println(jsonObject.get("followerCount"));
+                return Integer.parseInt(jsonObject.get("followerCount").toString());
+            }
+
         } catch (Exception e) {
             return -3;
         }

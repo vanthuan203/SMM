@@ -247,13 +247,9 @@ public class HistoryViewTestController {
     }
 
     @GetMapping(value = "/test", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> test(@RequestParam(defaultValue = "") String geo) throws IOException {
+    ResponseEntity<String> test(@RequestParam(defaultValue = "") String tiktok_id) throws IOException {
         JSONObject resp = new JSONObject();
-        if(geo.equals("vn")){
-
-        }
-        String proxycheck=proxyRepository.getProxyRandTrafficForCheckAPI();
-        resp.put("ff",TikTokApi.getFollowerCount("https://www.tiktok.com/@thuannguyen202203",proxycheck));
+        resp.put("ff",TikTokApi.getFollowerCountLive(tiktok_id.trim()));
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
     }
 

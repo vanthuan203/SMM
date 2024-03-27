@@ -3062,9 +3062,11 @@ public class VideoViewController {
     ResponseEntity<String> updateChannelBlackListByCron() {
         JSONObject resp = new JSONObject();
         try {
-            channelYoutubeBlackListRepository.deleteAll();
             List<String> channel_id_list=videoViewHistoryRepository.getListChannelIdBlackList();
             for(int i=0;i<channel_id_list.size();i++){
+                if(channelYoutubeBlackListRepository.getCountByChannelId(channel_id_list.get(i).trim())>0){
+                    continue;
+                }
                 ChannelBlackList channelBlackList =new ChannelBlackList();
                 channelBlackList.setChannel_id(channel_id_list.get(i).trim());
                 channelYoutubeBlackListRepository.save(channelBlackList);

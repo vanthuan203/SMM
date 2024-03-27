@@ -287,6 +287,7 @@ public class AccountTikTokController {
             vpsnew.setVpsoption("tiktok");
             vpsnew.setUrlapi("");
             vpsnew.setToken("");
+            vpsnew.setVpsreset(0);
             vpsnew.setTimecheck(System.currentTimeMillis());
             vpsRepository.save(vpsnew);
         }

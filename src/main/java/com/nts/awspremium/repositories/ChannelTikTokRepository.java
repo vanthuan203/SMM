@@ -26,8 +26,11 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     public Integer getCountTiktokId(String tiktok_id);
     @Query(value = "select * from channel_tiktok where follower_total>(follower_order + follower_order*(select max_bonus/100 from setting_tiktok where id=1))",nativeQuery = true)
     public List<ChannelTiktok> getOrderFullFollowerOrder();
-    @Query(value = "SELECT count(*) from channel_tiktok where orderid=?1 and token=?2 ",nativeQuery = true)
-    public Integer checkTrueByOrderIdAndToken(Long orderid,String token);
+    @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1 and max_threads>0 and user!='baohanh01@gmail.com'",nativeQuery = true)
+    public Integer getCountTiktokIdNotPending(String tiktok_id);
+
+    @Query(value = "SELECT count(*) from channel_tiktok where tiktok_id=?1 and user='baohanh01@gmail.com'",nativeQuery = true)
+    public Integer getCountTiktokIdIsRefill(String tiktok_id);
 
     @Query(value = "SELECT * from channel_tiktok where orderid in (?1)",nativeQuery = true)
     public List<ChannelTiktok> getChannelTiktokByListId(List<String> list_orderid);
