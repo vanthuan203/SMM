@@ -78,7 +78,7 @@ public class ServiceController {
     }
 
     @PostMapping(path = "update",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> verify_token(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Service service){
+    ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Service service){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> check=adminRepository.FindByToken(Authorization.trim());
@@ -137,6 +137,13 @@ public class ServiceController {
         obj.put("type",admins.get(0).getType());
         obj.put("live",admins.get(0).getLive());
         obj.put("checktime",admins.get(0).getChecktime());
+        obj.put("platform",admins.get(0).getPlatform());
+        obj.put("niche",admins.get(0).getNiche());
+        obj.put("playlists",admins.get(0).getPlaylists());
+        obj.put("expired",admins.get(0).getExpired());
+        obj.put("click_ads",admins.get(0).getClick_ads());
+        obj.put("click_web",admins.get(0).getClick_web());
+        obj.put("keyniche",admins.get(0).getKeyniche());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
