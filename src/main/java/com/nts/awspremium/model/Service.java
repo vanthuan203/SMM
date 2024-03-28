@@ -38,10 +38,11 @@ public class Service {
     private String keyniche;
     private Integer click_web=0;
     private Integer click_ads=0;
+    private String platform;
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads, String platform) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -72,6 +73,7 @@ public class Service {
         this.keyniche = keyniche;
         this.click_web = click_web;
         this.click_ads = click_ads;
+        this.platform = platform;
     }
 
     public Integer getMaxorder() {
@@ -311,5 +313,13 @@ public class Service {
 
     public void setClick_ads(Integer click_ads) {
         this.click_ads = click_ads;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 }

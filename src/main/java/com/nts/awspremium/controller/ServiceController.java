@@ -205,6 +205,13 @@ public class ServiceController {
             obj.put("thread",admins.get(i).getThread());
             obj.put("type",admins.get(i).getType());
             obj.put("checktime",admins.get(i).getChecktime());
+            obj.put("platform",admins.get(i).getPlatform());
+            obj.put("niche",admins.get(i).getNiche());
+            obj.put("playlists",admins.get(i).getPlaylists());
+            obj.put("expired",admins.get(i).getExpired());
+            obj.put("click_ads",admins.get(i).getClick_ads());
+            obj.put("click_web",admins.get(i).getClick_web());
+            obj.put("keyniche",admins.get(i).getKeyniche());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
@@ -363,6 +370,68 @@ public class ServiceController {
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
     }
+
+    @GetMapping(path = "getOptionService",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getOptionService(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > getAllCategory=serviceRepository.getAllCategory();
+        List<String > getAllType=serviceRepository.getAllType();
+        List<String > getAllGeo=serviceRepository.getAllGeo();
+        List<String > getAllPlatform=serviceRepository.getAllPlatform();
+        String listCategory="";
+        String listType="";
+        String listGeo="";
+        String listPlatform="";
+        for(int i=0;i<getAllCategory.size();i++){
+            if(i==0){
+                listCategory=getAllCategory.get(0);
+            }else{
+                listCategory=listCategory+","+getAllCategory.get(i);
+            }
+
+        }
+        resp.put("listCategory",listCategory);
+
+
+        for(int i=0;i<getAllGeo.size();i++){
+            if(i==0){
+                listGeo=getAllGeo.get(0);
+            }else{
+                listGeo=listGeo+","+getAllGeo.get(i);
+            }
+
+        }
+        resp.put("listGeo",listGeo);
+
+
+        for(int i=0;i<getAllType.size();i++){
+            if(i==0){
+                listType=getAllType.get(0);
+            }else{
+                listType=listType+","+getAllType.get(i);
+            }
+
+        }
+        resp.put("listType",listType);
+        for(int i=0;i<getAllPlatform.size();i++){
+            if(i==0){
+                listPlatform=getAllPlatform.get(0);
+            }else{
+                listPlatform=listPlatform+","+getAllPlatform.get(i);
+            }
+
+        }
+        resp.put("listPlatform",listPlatform);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+    }
+
     @GetMapping(path = "getAllServiceTiktok",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> getAllServiceTiktok(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String role){
         JSONObject resp = new JSONObject();

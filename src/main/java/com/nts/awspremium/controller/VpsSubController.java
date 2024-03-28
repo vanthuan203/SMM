@@ -13,10 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -147,32 +149,15 @@ public class VpsSubController {
         try{
             //proxyRepository.updaterunningByVps(vps.trim()+"%");
             List<Vps> vpscheck =vpsRepository.findVPS(vps.trim());
-            Integer resetSub=0;
-
-            Date date=new Date();
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            cal.add(Calendar.DATE, 1); //minus number would decrement the days
 
             if(vpscheck.size()>0){
-                System.out.println(vpscheck.size());
-                if(date.getDate()>vpscheck.get(0).getDayreset() && date.getMonth()==cal.getTime().getMonth()){
-                    //System.out.println(date.getDate());
-                    resetSub=1;
-                    //vpscheck.get(0).setDayreset(cal.getTime().getDate());
-                }else if(date.getHours()>=vpscheck.get(0).getTimereset() && date.getDate()==vpscheck.get(0).getDayreset()){
-                    resetSub=1;
-                    //System.out.println("2");
-                    //vpscheck.get(0).setDayreset(cal.getTime().getDate());
-                }
+
                 resp.put("status", "true");
-                //resp.put("option",vpscheck.get(0).getVpsoption());
                 resp.put("countuser",vpscheck.get(0).getThreads()==0?countuser:vpscheck.get(0).getThreads());
                 resp.put("numbersub",vpscheck.get(0).getState()==0?numbersub:vpscheck.get(0).getState());
                 resp.put("numberlive",vpscheck.get(0).getLive()==0?numbersub:vpscheck.get(0).getLive());
                 resp.put("resetacc",vpscheck.get(0).getVpsoption().equals("Yes")?1:0);
                 resp.put("threads",vpscheck.get(0).getRunning()==0?threads:vpscheck.get(0).getRunning());
-                resp.put("timeresetsub",resetSub);
                 resp.put("option",vpscheck.get(0).getVpsoption().indexOf("Pending")>=0?"Pending":vpscheck.get(0).getVpsoption());
 
 
@@ -190,8 +175,7 @@ public class VpsSubController {
                 vpsnew.setRunning(threads);
                 vpsnew.setVpsoption("Sub_Pending");
                 vpsnew.setVpsreset(0);
-                vpsnew.setTimereset(gettime==23?0:(gettime+1));
-                vpsnew.setDayreset(cal.getTime().getDate());
+                vpsnew.setDayreset(0);
                 vpsnew.setThreads(countuser);
                 vpsnew.setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpsnew);
@@ -200,12 +184,17 @@ public class VpsSubController {
                 resp.put("numbersub",numbersub);
                 resp.put("resetacc",0);
                 resp.put("threads",threads);
-                resp.put("timeresetsub",resetSub);
                 resp.put("option","Pending");
                 //resp.put("message", "Vps thêm thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
         }catch(Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
             resp.put("status","fail");
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);

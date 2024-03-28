@@ -84,4 +84,13 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
 
     @Query(value = "Select * from admin where token=?1",nativeQuery = true)
     public List<Admin>  FindByToken(String Authorization);
+
+    @Query(value = "SELECT category FROM service group by category",nativeQuery = true)
+    public List<String>  getAllCategory();
+    @Query(value = "SELECT type FROM service group by type",nativeQuery = true)
+    public List<String>  getAllType();
+    @Query(value = "SELECT geo FROM service  group by geo",nativeQuery = true)
+    public List<String>  getAllGeo();
+    @Query(value = "SELECT platform FROM service  group by platform",nativeQuery = true)
+    public List<String>  getAllPlatform();
 }
