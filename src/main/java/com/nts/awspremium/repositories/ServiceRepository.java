@@ -79,6 +79,8 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
 
     @Query(value = "SELECT FROM_UNIXTIME((?1/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d %H:%i:%s'),INTERVAL ?2 DAY)",nativeQuery = true)
     public Integer checkGuarantee(Long end_date,Integer max_refill);
+    @Query(value = "SELECT FROM_UNIXTIME((?1/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 14:0:0'),INTERVAL ?2 DAY)",nativeQuery = true)
+    public Integer checkGuaranteeByTime(Long end_date,Integer max_refill);
 
     @Query(value = "Select * from admin where token=?1",nativeQuery = true)
     public List<Admin>  FindByToken(String Authorization);

@@ -1311,13 +1311,15 @@ public class ChannelTikTokController {
     }
 
 
-    String refundFollowerByOrderId(@RequestBody() ChannelTikTokHistory channelTikTokHistory) {
+    String refundFollowerByChannelTiktok(@RequestBody() ChannelTikTokHistory channelTikTokHistory) {
         try {
             SettingTiktok settingTiktok = settingTikTokRepository.getReferenceById(1L);
             Service service = serviceRepository.getInfoService(channelTikTokHistory.getService());
 
             Integer follower_count=TikTokApi.getFollowerCountLive(channelTikTokHistory.getTiktok_id().trim().split("@")[1]);
             if(follower_count<0){
+                channelTikTokHistory.setTime_check(System.currentTimeMillis());
+                channelTikTokHistoryRepository.save(channelTikTokHistory);
                 return "Không check được follower";
             }
             List<Admin> user = adminRepository.getAdminByUser(channelTikTokHistory.getUser());
@@ -1360,7 +1362,7 @@ public class ChannelTikTokController {
             balance.setTotalblance(balance_update);
             balance.setBalance(price_refund);
             balance.setService(channelTikTokHistory.getService());
-            balance.setNote("Refund " + (followerThan) + "follower cho " + channelTikTokHistory.getTiktok_id());
+            balance.setNote("Refund " + (followerThan) + " follower cho " + channelTikTokHistory.getTiktok_id());
             balanceRepository.save(balance);
 
             if(channelTikTokHistory.getPrice()==0){
@@ -2589,8 +2591,6 @@ public class ChannelTikTokController {
                 ChannelTikTokHistory channel_refil=channel;
                 if(service.getRefill()==0){
                     status="DV không bảo hành";
-                }else if(serviceRepository.checkGuarantee(channel.getEnd_date(),service.getMaxtimerefill())==0){
-                    status="Quá hạn "+service.getMaxtimerefill()+" ngày";
                 }else if(channel.getUser().equals("baohanh01@gmail.com")){
                     status="Đơn bảo hành";
                 }else if(channelTikTokRepository.getCountTiktokIdIsRefill(channel.getTiktok_id().trim())>0){
@@ -2599,8 +2599,10 @@ public class ChannelTikTokController {
                     status="Đơn mới đang chạy";
                 }else if(channel.getCancel()==1){
                     status="Được hủy trước đó";
+                }else if(serviceRepository.checkGuarantee(channel.getEnd_date(),service.getMaxtimerefill())==0){
+                    status="Quá hạn "+service.getMaxtimerefill()+" ngày";
                 }else{
-                    status=refundFollowerByOrderId(channel);
+                    status=refundFollowerByChannelTiktok(channel);
                     channel_refil= channelTikTokHistoryRepository.getChannelTikTokHistoriesById(Long.parseLong(OrderIdArr[i].trim()));
                 }
                 JSONObject obj = new JSONObject();

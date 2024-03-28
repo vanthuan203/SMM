@@ -1400,7 +1400,97 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    String refundCMTByVideoComment(@RequestBody() VideoCommentHistory videoCommentHistory) {
 
+        try {
+            Service service = serviceRepository.getInfoService(videoCommentHistory.getService());
+            JSONObject obj = new JSONObject();
+
+            OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+            Request request1 = null;
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(statistics(commentCount))&part=statistics&id=" + videoCommentHistory.getVideoid().trim()).get().build();
+            keys.get(0).setCount(keys.get(0).getCount() + 1L);
+            googleAPIKeyRepository.save(keys.get(0));
+            Response response1 = client1.newCall(request1).execute();
+
+            String resultJson1 = response1.body().string();
+
+            Object obj1 = new JSONParser().parse(resultJson1);
+
+            JSONObject jsonObject1 = (JSONObject) obj1;
+            JSONArray items = (JSONArray) jsonObject1.get("items");
+            if (items == null) {
+                videoCommentHistory.setTimecheck(System.currentTimeMillis());
+                videoCommentHistoryRepository.save(videoCommentHistory);
+                return "Không check được cmt";
+            }
+            Iterator k = items.iterator();
+            if (k.hasNext() == false) {
+                videoCommentHistory.setTimecheck(System.currentTimeMillis());
+                videoCommentHistoryRepository.save(videoCommentHistory);
+                return "Không check được cmt";
+            }
+            while (k.hasNext()) {
+                try {
+                    JSONObject video = (JSONObject) k.next();
+                    JSONObject statistics = (JSONObject) video.get("statistics");
+                    List<Admin> user = adminRepository.getAdminByUser(videoCommentHistory.getUser());
+                    //Hoàn tiền những view chưa buff
+                    int cmtCount = Integer.parseInt(statistics.get("commentCount").toString());
+                    int cmtFix = videoCommentHistory.getCommentorder() > videoCommentHistory.getCommenttotal() ? videoCommentHistory.getCommenttotal() : videoCommentHistory.getCommentorder();
+                    int cmtThan = cmtFix + videoCommentHistory.getCommentstart() - cmtCount;
+                    if(cmtThan<=0){
+                        if(service.getChecktime()==0){
+                            videoCommentHistory.setCommentend(cmtCount);
+                            videoCommentHistory.setTimecheck(System.currentTimeMillis());
+                        }
+                        videoCommentHistoryRepository.save(videoCommentHistory);
+                        return "Đủ cmt | " +cmtCount+"/"+(cmtFix+videoCommentHistory.getCommentstart());
+                    }
+
+                    float price_refund = ((cmtThan) / (float) cmtFix) * videoCommentHistory.getPrice();
+                    //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
+                    if (videoCommentHistory.getPrice() < price_refund) {
+                        price_refund = videoCommentHistory.getPrice();
+                    }
+                    float pricebuffed = (videoCommentHistory.getPrice() - price_refund);
+                    videoCommentHistory.setPrice(pricebuffed);
+                    videoCommentHistory.setCommentend(cmtCount);
+                    videoCommentHistory.setTimecheck(System.currentTimeMillis());
+                    videoCommentHistory.setCommenttotal(cmtFix - cmtThan);
+                    videoCommentHistory.setNumbh(1);
+                    if (videoCommentHistory.getCommenttotal()==0) {
+                        videoCommentHistory.setCancel(1);
+                    } else {
+                        videoCommentHistory.setCancel(2);
+                    }
+                    videoCommentHistoryRepository.save(videoCommentHistory);
+                    //hoàn tiền & add thong báo số dư
+                    Float balance_update=adminRepository.updateBalanceFine(price_refund,videoCommentHistory.getUser().trim());
+                    Balance balance = new Balance();
+                    balance.setUser(user.get(0).getUsername().trim());
+                    balance.setTime(System.currentTimeMillis());
+                    balance.setTotalblance(balance_update);
+                    balance.setBalance(price_refund);
+                    balance.setService(videoCommentHistory.getService());
+                    balance.setNote("Refund " + (cmtThan) + " cmt cho " + videoCommentHistory.getVideoid());
+                    balanceRepository.save(balance);
+
+                    if(videoCommentHistory.getPrice()==0){
+                        return "Đã hoàn 100%";
+                    }else{
+                        return "Đã hoàn phần thiếu";
+                    }
+                } catch (Exception e) {
+                    return "Fail";
+                }
+            }
+            return "Fail";
+        } catch (Exception e) {
+            return "Fail";
+        }
+    }
     @GetMapping(path = "updateRefundHis", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updateRefundHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
         JSONObject resp = new JSONObject();
@@ -1415,42 +1505,45 @@ public class VideoCommentController {
             String[] videoidIdArr = orderid.split(",");
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
+                String status="No refunds";
                 VideoCommentHistory video = videoCommentHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
-                float price_refund=video.getPrice();
-                video.setCommenttotal(0);
-                video.setCancel(1);
-                video.setPrice(0F);
-                videoCommentHistoryRepository.save(video);
-                List<Admin> user = adminRepository.getAdminByUser(video.getUser());
-                //
-                Float balance_update=adminRepository.updateBalanceFine(price_refund,video.getUser());
-                Balance balance = new Balance();
-                balance.setUser(user.get(0).getUsername().trim());
-                balance.setTime(System.currentTimeMillis());
-                balance.setTotalblance(balance_update);
-                balance.setBalance(price_refund);
-                balance.setService(video.getService());
-                balance.setNote("Refund " + (video.getCommentorder()) + " comment cho " + video.getVideoid());
-                balanceRepository.save(balance);
+                Float price_old=video.getPrice();
+                Service service = serviceRepository.getInfoService(video.getService());
+                VideoCommentHistory video_refil=video;
+                if(service.getRefill()==0){
+                    status="DV không bảo hành";
+                }else if(video.getUser().equals("baohanh01@gmail.com")){
+                    status="Đơn bảo hành";
+                } else if(videoCommentRepository.getCountVideoIdNotPending(video.getVideoid())>0){
+                    status="Đơn mới đang chạy";
+                }else if(video.getCancel()==1){
+                    status="Được hủy trước đó";
+                }else if(serviceRepository.checkGuarantee(video.getEnddate(),service.getMaxtimerefill())==0){
+                    status="Quá hạn "+service.getMaxtimerefill()+" ngày";
+                }else{
+                    status=refundCMTByVideoComment(video);
+                    video_refil= videoCommentHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
+                }
 
                 JSONObject obj = new JSONObject();
-                obj.put("orderid", video.getOrderid());
-                obj.put("videoid", video.getVideoid());
-                obj.put("videotitle", video.getVideotitle());
-                obj.put("commentstart",video.getCommentstart());
-                obj.put("maxthreads", video.getMaxthreads());
-                obj.put("insertdate", video.getInsertdate());
-                obj.put("user", video.getUser());
-                obj.put("note", video.getNote());
-                obj.put("duration", video.getDuration());
-                obj.put("enddate", video.getEnddate());
-                obj.put("cancel", video.getCancel());
+                obj.put("orderid", video_refil.getOrderid());
+                obj.put("videoid", video_refil.getVideoid());
+                obj.put("videotitle", video_refil.getVideotitle());
+                obj.put("commentstart",video_refil.getCommentstart());
+                obj.put("maxthreads", video_refil.getMaxthreads());
+                obj.put("insertdate", video_refil.getInsertdate());
+                obj.put("user", video_refil.getUser());
+                obj.put("note", video_refil.getNote());
+                obj.put("duration", video_refil.getDuration());
+                obj.put("enddate", video_refil.getEnddate());
+                obj.put("cancel", video_refil.getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
-                obj.put("commentend", video.getCommentend());
-                obj.put("commenttotal", video.getCommenttotal());
-                obj.put("commentorder", video.getCommentorder());
-                obj.put("price", video.getPrice());
-                obj.put("service", video.getService());
+                obj.put("commentend", video_refil.getCommentend());
+                obj.put("commenttotal", video_refil.getCommenttotal());
+                obj.put("commentorder", video_refil.getCommentorder());
+                obj.put("price", video_refil.getPrice());
+                obj.put("service", video_refil.getService());
+                obj.put("status", status);
 
                 jsonArray.add(obj);
             }

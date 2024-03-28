@@ -107,7 +107,8 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT count(*) FROM videocomment where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
     public Integer getServiceByVideoId(String videoid,String geo);
 
-
+    @Query(value = "SELECT count(*) from videocomment where videoid=?1 and maxthreads>0",nativeQuery = true)
+    public Integer getCountVideoIdNotPending(String videoid);
 
     @Modifying
     @Transactional
