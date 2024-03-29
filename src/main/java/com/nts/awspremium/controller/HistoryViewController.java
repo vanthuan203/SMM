@@ -680,7 +680,7 @@ public class HistoryViewController {
                         histories.get(0).setOrderid(videos.get(0).getOrderid());
                         histories.get(0).setChannelid(videos.get(0).getChannelid());
                     }else{
-                        videos = videoViewRepository.getvideoViewRandNotGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo(), orderTrue.getValue());
+                        videos = videoViewRepository.getvideoViewRandNotGeo(histories.get(0).getGeo().trim(), histories.get(0).getListvideo(), orderSpeedTrue.getValue());
                         if(videos.size()>0){
                             geo_rand=serviceRepository.getGeoByService(videos.get(0).getService());
                             histories.get(0).setGeo_rand(geo_rand);
