@@ -17,8 +17,26 @@ public class ProxySetting {
     private String cron;
     private Integer create_version;
     private String create_url;
+    private String update_ip_version;
+    private String update_ip_url;
     private Long timeupdate;
     public ProxySetting() {
+    }
+
+    public String getUpdate_ip_version() {
+        return update_ip_version;
+    }
+
+    public void setUpdate_ip_version(String update_ip_version) {
+        this.update_ip_version = update_ip_version;
+    }
+
+    public String getUpdate_ip_url() {
+        return update_ip_url;
+    }
+
+    public void setUpdate_ip_url(String update_ip_url) {
+        this.update_ip_url = update_ip_url;
     }
 
     public Integer getCreate_version() {

@@ -359,6 +359,8 @@ public class ProxyController {
             resp.put("password",proxySetting.getPassword());
             resp.put("total_port",proxySetting.getTotal_port());
             resp.put("total_sock_port",proxySetting.getTotal_sock_port());
+            resp.put("update_ip_version",proxySetting.getUpdate_ip_version());
+            resp.put("update_ip_url",proxySetting.getUpdate_ip_url());
             resp.put("create_version",proxySetting.getCreate_version());
             resp.put("create_url",proxySetting.getCreate_url());
             resp.put("cron",proxySetting.getCron());
