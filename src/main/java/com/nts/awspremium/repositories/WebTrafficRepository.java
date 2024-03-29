@@ -44,7 +44,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     @Query(value = "SELECT count(*) from webtraffic where link=?1",nativeQuery = true)
     public Integer getCountLink(String link);
 
-    @Query(value = "SELECT * FROM  webtraffic where service in(select service from service where category='Website') and timestart>0 order by timeupdate asc",nativeQuery = true)
+    @Query(value = "SELECT * FROM  webtraffic where timestart>0 order by timeupdate asc",nativeQuery = true)
     public List<WebTraffic> getAllOrderTraffic();
 
 
@@ -57,7 +57,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
 
 
     @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid" +
-            " where  time>=webtraffic.insertdate and service in(select service from service where category='Website') and duration>0 and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
+            " where  time>=webtraffic.insertdate  and duration>0 and timestart>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalTrafficBuff();
 
     @Query(value = "SELECT webtraffic.orderid,count(*) as view FROM historytrafficsum left join webtraffic on historytrafficsum.orderid=webtraffic.orderid where time>=webtraffic.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 and duration>0 group by webtraffic.orderid order by insertdate desc",nativeQuery = true)
@@ -88,7 +88,7 @@ public interface WebTrafficRepository extends JpaRepository<WebTraffic,Long> {
     public void deletevideoByOrderId(Long orderid);
 
 
-    @Query(value = "select * from webtraffic where traffictotal>(trafficorder + trafficorder*(select bonus/100 from setting where id=1)) and service in(select service from service where category='Website')",nativeQuery = true)
+    @Query(value = "select * from webtraffic where traffictotal>(trafficorder + trafficorder*(select bonus/100 from setting where id=1))",nativeQuery = true)
     public List<WebTraffic> getOrderFullTraffic();
 
 }

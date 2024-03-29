@@ -14,7 +14,7 @@ public interface ChannelTikTokRepository extends JpaRepository<ChannelTiktok,Lon
     @Query(value = "SELECT count(*) from channel_tiktok where service=?1",nativeQuery = true)
     public Integer getCountOrderByService(Integer service);
 
-    @Query(value = "SELECT * FROM channel_tiktok where service in(select service from service where category='Tiktok') and INSTR(?1,CONCAT(tiktok_id,'|'))=0 and orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM channel_tiktok where service in(select service from service where category='Tiktok | Follower') and INSTR(?1,CONCAT(tiktok_id,'|'))=0 and orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<ChannelTiktok> getChannelTiktokByTask(String list_tiktok_id, List<String> orderid);
 
     @Query(value = "select orderid from (select channel_tiktok.orderid,count(running) as total,max_threads\n" +
