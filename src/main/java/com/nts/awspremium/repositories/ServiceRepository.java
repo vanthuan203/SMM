@@ -21,10 +21,10 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "SELECT * FROM service where enabled=1 and type=\"Custom Comments\"",nativeQuery = true)
     public List<Service> getAllServiceCmt();
 
-    @Query(value = "SELECT * FROM service where enabled=1 and category=\"Website\"",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where enabled=1 and platform='Website'",nativeQuery = true)
     public List<Service> getAllServiceTraffic();
 
-    @Query(value = "SELECT * FROM service where enabled=1 and category=\"Tiktok\"",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where enabled=1 and platform='TikTok'",nativeQuery = true)
     public List<Service> getAllServiceTiktok();
 
 
@@ -37,7 +37,7 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "SELECT * FROM service where service=?1 limit 1",nativeQuery = true)
     public Service getServiceNoCheckEnabled(Integer service);
 
-    @Query(value = "SELECT * FROM service where service=?1 and category=\"Tiktok\" limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where service=?1 and platform='TikTok' limit 1",nativeQuery = true)
     public Service getServiceTikTokNoCheckEnabled(Integer service);
 
     @Query(value = "SELECT service FROM service where geo=?1 and maxtime<=5 and enabled=1 and niche=0 and category!='Custom Comments' and type='Default'  order by rand()  limit 1",nativeQuery = true)
@@ -58,19 +58,19 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     public List<String> GetAllService();
 
 
-    @Query(value = "Select CONCAT_WS(' | ',service,name,note,concat(rate,'$')) from service where category='Website' ",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS(' | ',service,name,note,concat(rate,'$')) from service where platform='Website' ",nativeQuery = true)
     public List<String> GetAllServiceTraffic();
 
-    @Query(value = "Select CONCAT_WS(' | ',service,name,concat(rate,'$')) from service where category='TikTok' ",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS(' | ',service,name,concat(rate,'$')) from service where platform='TikTok' ",nativeQuery = true)
     public List<String> GetAllServiceFollowerTiktok();
 
     @Query(value = "Select CONCAT_WS(' | ',service,name,note,concat(rate,'$')) from service where enabled=1",nativeQuery = true)
     public List<String> GetAllServiceEnabled();
 
-    @Query(value = "Select CONCAT_WS(' | ',service,name,concat(rate,'$')) from service where category='TikTok' and enabled=1",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS(' | ',service,name,concat(rate,'$')) from service where platform='TikTok' and enabled=1",nativeQuery = true)
     public List<String> GetAllServiceTiktokEnabled();
 
-    @Query(value = "Select CONCAT_WS(' | ',service,name,note,concat(rate,'$')) from service where category='Website' and enabled=1",nativeQuery = true)
+    @Query(value = "Select CONCAT_WS(' | ',service,name,note,concat(rate,'$')) from service where platform='Website' and enabled=1",nativeQuery = true)
     public List<String> GetAllServiceTrafficEnabled();
 
     @Query(value = "Select * from service where service=?1",nativeQuery = true)

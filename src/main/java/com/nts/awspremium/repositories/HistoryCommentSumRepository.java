@@ -14,4 +14,8 @@ public interface HistoryCommentSumRepository extends JpaRepository<HistoryCommen
     @Query(value = "SELECT count(*) FROM historycommentsum where commentid=?1 limit 1",nativeQuery = true)
     public Integer checkCommentIdTrue(Long commentid);
 
+    @Transactional
+    @Query(value = "DELETE FROM historycommentsum where orderid not in (select orderid from videocomment) limit 500000",nativeQuery = true)
+    public void DelHistorySum();
+
 }
