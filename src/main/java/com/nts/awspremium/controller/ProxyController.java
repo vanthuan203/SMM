@@ -363,6 +363,8 @@ public class ProxyController {
             resp.put("update_ip_url",proxySetting.getUpdate_ip_url());
             resp.put("create_version",proxySetting.getCreate_version());
             resp.put("create_url",proxySetting.getCreate_url());
+            resp.put("crontab_version",proxySetting.getCrontab_version());
+            resp.put("crontab_url",proxySetting.getCrontab_url());
             resp.put("cron",proxySetting.getCron());
             List<String> list_ipv4=authenIPv4Repository.getAuthen();
             String authen="";

@@ -19,8 +19,26 @@ public class ProxySetting {
     private String create_url;
     private String update_ip_version;
     private String update_ip_url;
+    private String crontab_version;
+    private String crontab_url;
     private Long timeupdate;
     public ProxySetting() {
+    }
+
+    public String getCrontab_version() {
+        return crontab_version;
+    }
+
+    public void setCrontab_version(String crontab_version) {
+        this.crontab_version = crontab_version;
+    }
+
+    public String getCrontab_url() {
+        return crontab_url;
+    }
+
+    public void setCrontab_url(String crontab_url) {
+        this.crontab_url = crontab_url;
     }
 
     public String getUpdate_ip_version() {
