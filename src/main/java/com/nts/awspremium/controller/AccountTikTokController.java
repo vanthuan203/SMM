@@ -80,7 +80,7 @@ public class AccountTikTokController {
                 accountTiktokNew.setTime_check(0L);
                 accountTiktokNew.setDevice_id("");
                 accountTiktokNew.setProxy("");
-                accountTiktokNew.setRunning(account.getRunning());
+                accountTiktokNew.setRunning(0);
                 accountTiktokNew.setVps("");
                 accountRegTikTokRepository.save(accountTiktokNew);
                 //add history tiktok
@@ -114,7 +114,14 @@ public class AccountTikTokController {
                     accountTiktok.setPassword(account.getPassword().trim());
                     accountTiktok.setRecover(account.getRecover().trim());
                     accountTiktok.setVps(account.getVps().trim());
+                    accountTiktok.setDevice_id(account.getDevice_id().trim());
                     accountRepository.save(accountTiktok);
+                    HistoryTikTok historyTikTok=historyTiktokRepository.getHistoryTikTokByUsername(account.getUsername().trim());
+                    if(historyTikTok!=null){
+                        historyTikTok.setDevice_id(account.getDevice_id().trim());
+                        historyTikTok.setVps(account.getVps().trim());
+                        historyTiktokRepository.save(historyTikTok);
+                    }
                     resp.put("status", "true");
                     resp.put("message", "Update " + account.getUsername() + " thành công!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -267,6 +274,22 @@ public class AccountTikTokController {
                 resp.put("message",username.trim() + " không tồn tại");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/resetAccRegTiktokByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetAccRegTiktokByCron() {
+        JSONObject resp = new JSONObject();
+        try {;
+            accountRegTikTokRepository.resetAccountRegTitkokThanTime();
+            resp.put("status", "true");
+            resp.put("message","reset acc reg thành công");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
         } catch (Exception e) {
             resp.put("status", "fail");
             resp.put("message", e.getMessage());

@@ -34,6 +34,11 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where vps=?1",nativeQuery = true)
     public Integer resetThreadByVps(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from history_tiktok where vps=?1",nativeQuery = true)
+    public Integer deleteAllByVPS(String vps);
     @Modifying
     @Transactional
     @Query(value = "update history_tiktok set running=0,orderid=0 where running=1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20",nativeQuery = true)
@@ -41,27 +46,4 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
 
 
 
-    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'AccPremium' and COMMAND='Query' and TIME>0",nativeQuery = true)
-    public Integer PROCESSLISTVIEW();
-    @Modifying
-    @Transactional
-    @Query(value = "update historytraffic set running=0,orderid=0 where round((UNIX_TIMESTAMP()-timeget/1000)/60)>=30 and running=1",nativeQuery = true)
-    public Integer resetThreadThan30mcron();
-
-
-
-
-
-
-
-
-    @Modifying
-    @Transactional
-    @Query(value = "update historytraffic set listorderid=CONCAT(listorderid,\",\",?1) where id=?2",nativeQuery = true)
-    public Integer updateListOrderid(String videoid,Long id);
-
-    @Modifying
-    @Transactional
-    @Query(value = "update historytraffic set listorderid=?1 where id=?2",nativeQuery = true)
-    public Integer updateListOrderidNew(String videoid,Long id);
 }

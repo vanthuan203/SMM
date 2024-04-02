@@ -28,6 +28,8 @@ public class VpsTikTokController {
     @Autowired
     private AccountTikTokRepository accountTikTokRepository;
     @Autowired
+    private AccountRegTikTokRepository accountRegTikTokRepository;
+    @Autowired
     private HistoryTiktokRepository historyTiktokRepository;
     @GetMapping(value = "listVPS",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> listVPS(@RequestHeader(defaultValue = "") String Authorization){
@@ -795,15 +797,16 @@ public class VpsTikTokController {
             for(int i=0;i<vpsArr.length;i++){
 
                 accountTikTokRepository.resetAccountByVps(vpsArr[i].trim());
+                accountRegTikTokRepository.resetAccountRegByVps(vpsArr[i].trim());
+                historyTiktokRepository.deleteAllByVPS(vpsArr[i].trim());
                 vpsRepository.deleteByVps(vpsArr[i].trim());
-
 
                 JSONObject obj=new JSONObject();
                 obj.put("vps",vpsArr[i].trim());
                 jsonArray.add(obj);
 
             }
-            resp.put("vps","Fdfdfd");
+            resp.put("vps","");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e){
             resp.put("status","fail");
