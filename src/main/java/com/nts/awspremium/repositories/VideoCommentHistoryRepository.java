@@ -1,5 +1,6 @@
 package com.nts.awspremium.repositories;
 
+import com.nts.awspremium.model.OrderCommentHistory;
 import com.nts.awspremium.model.VideoCommentHistory;
 import com.nts.awspremium.model.VideoViewHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,11 +18,11 @@ public interface VideoCommentHistoryRepository extends JpaRepository<VideoCommen
     public VideoCommentHistory getVideoViewHisById(Long orderid);
     @Query(value = "SELECT * from videocommenthistory where  videoid in (?1) or orderid in (?1) order by enddate desc",nativeQuery = true)
     public List<VideoCommentHistory> getVideoViewHistoriesByListVideoId(List<String> list_orderid);
-    @Query(value = "SELECT * from videocommenthistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
-    public List<VideoCommentHistory> getVideoViewHistories();
+    @Query(value = "SELECT orderid,cancel,enddate,insertdate,videocommenthistory.note,price,videocommenthistory.service,user,videoid,commenttotal,commentend,commentorder,commentstart,geo from videocommenthistory left join service on service.service=videocommenthistory.service where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc\n",nativeQuery = true)
+    public List<OrderCommentHistory> getVideoViewHistories();
 
-    @Query(value = "SELECT * from videocommenthistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=20 order by enddate desc",nativeQuery = true)
-    public List<VideoCommentHistory> getVideoViewHistories(String user);
+    @Query(value = "SELECT orderid,cancel,enddate,insertdate,videocommenthistory.note,price,videocommenthistory.service,user,videoid,commenttotal,commentend,commentorder,commentstart,geo from videocommenthistory left join service on service.service=videocommenthistory.service where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc\n",nativeQuery = true)
+    public List<OrderCommentHistory> getVideoViewHistories(String user);
     @Modifying
     @Transactional
     @Query(value = "update videocommenthistory set price=0,commenttotal=0,cancel=1 where orderid in(?1)",nativeQuery = true)

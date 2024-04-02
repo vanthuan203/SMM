@@ -275,6 +275,7 @@ public class VideoCommentController {
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("commenttotal", orderRunnings.get(i).getCommentTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
+                obj.put("geo", serviceRepository.getGeoByService(orderRunnings.get(i).getService()));
                 jsonArray.add(obj);
             }
 
@@ -853,7 +854,7 @@ public class VideoCommentController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<VideoCommentHistory> orderRunnings;
+            List<OrderCommentHistory> orderRunnings;
             if (user.length() == 0) {
                 orderRunnings = videoCommentHistoryRepository.getVideoViewHistories();
             } else {
@@ -862,15 +863,12 @@ public class VideoCommentController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("orderid", orderRunnings.get(i).getOrderid());
+                obj.put("orderid", orderRunnings.get(i).getOrderId());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
-                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
                 obj.put("commentstart", orderRunnings.get(i).getCommentstart());
-                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
-                obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 //obj.put("home_rate", orderRunnings.get(i).get());
@@ -879,6 +877,7 @@ public class VideoCommentController {
                 obj.put("commentorder", orderRunnings.get(i).getCommentorder());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
+                obj.put("geo", orderRunnings.get(i).getGeo());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");

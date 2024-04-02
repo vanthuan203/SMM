@@ -1,5 +1,6 @@
 package com.nts.awspremium.repositories;
 
+import com.nts.awspremium.model.OrderViewHistory;
 import com.nts.awspremium.model.VideoViewHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -47,8 +48,8 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     @Query(value = "SELECT (enddate+8*60*60*1000) from videoviewhistory where videoid=?1 and cancel!=1 order by enddate desc limit 1",nativeQuery = true)
     public Long checkOrderDoneThan48h(String videoid);
 
-    @Query(value = "SELECT * from videoviewhistory where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHistories();
+    @Query(value = "SELECT orderid,cancel,enddate,insertdate,videoviewhistory.note,price,videoviewhistory.service,user,videoid,viewtotal,viewend,vieworder,viewstart,timecheckbh,timestart,geo from videoviewhistory left join service on service.service=videoviewhistory.service where round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
+    public List<OrderViewHistory> getVideoViewHistories();
 
     @Query(value = "Select channelid from (SELECT channelid,count(*) as total FROM AccPremium.videoviewhistory where cancel>0 and refund=1 and round((UNIX_TIMESTAMP()-timestart/1000)/60/60/24)<=7 group by channelid having total>=4)  as t;",nativeQuery = true)
     public List<String> getListChannelIdBlackList();
@@ -73,8 +74,8 @@ public interface VideoViewHistoryRepository extends JpaRepository<VideoViewHisto
     public String getInfoSumOrderByVideoId(String videoid,Long orderid,String user);
 
 
-    @Query(value = "SELECT * from videoviewhistory where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
-    public List<VideoViewHistory> getVideoViewHistories(String user);
+    @Query(value = "SELECT orderid,cancel,enddate,insertdate,videoviewhistory.note,price,videoviewhistory.service,user,videoid,viewtotal,viewend,vieworder,viewstart,timecheckbh,timestart,geo from videoviewhistory left join service on service.service=videoviewhistory.service where user=?1 and round((UNIX_TIMESTAMP()-enddate/1000)/60/60/24)<=10 order by enddate desc",nativeQuery = true)
+    public List<OrderViewHistory> getVideoViewHistories(String user);
 
     @Query(value = "select videoid from videoviewhistory where timestart!=0 and timecheckbh=0 and cancel=0 and DATE_FORMAT(FROM_UNIXTIME((timestart-3*60*60*1000+24*4*60*60*1000) / 1000), '%Y-%m-%d')=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%Y-%m-%d') and service in(select service from service where checktime=1) order by timestart asc limit ?1",nativeQuery = true)
     public List<String> getVideoViewHistoriesCheckViewEnd(Integer limit);

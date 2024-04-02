@@ -2865,7 +2865,7 @@ public class VideoViewController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
         try {
-            List<VideoViewHistory> orderRunnings;
+            List<OrderViewHistory> orderRunnings;
             if (user.length() == 0) {
                 orderRunnings = videoViewHistoryRepository.getVideoViewHistories();
             } else {
@@ -2874,15 +2874,12 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < orderRunnings.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("orderid", orderRunnings.get(i).getOrderid());
+                obj.put("orderid", orderRunnings.get(i).getOrderId());
                 obj.put("videoid", orderRunnings.get(i).getVideoid());
-                obj.put("videotitle", orderRunnings.get(i).getVideotitle());
                 obj.put("viewstart", orderRunnings.get(i).getViewstart());
-                obj.put("maxthreads", orderRunnings.get(i).getMaxthreads());
                 obj.put("insertdate", orderRunnings.get(i).getInsertdate());
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("note", orderRunnings.get(i).getNote());
-                obj.put("duration", orderRunnings.get(i).getDuration());
                 obj.put("enddate", orderRunnings.get(i).getEnddate());
                 obj.put("cancel", orderRunnings.get(i).getCancel());
                 obj.put("timestart", orderRunnings.get(i).getTimestart());
@@ -2892,6 +2889,7 @@ public class VideoViewController {
                 obj.put("vieworder", orderRunnings.get(i).getVieworder());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
+                obj.put("geo",orderRunnings.get(i).getGeo());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
