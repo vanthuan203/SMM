@@ -275,7 +275,7 @@ public class VideoCommentController {
                 obj.put("user", orderRunnings.get(i).getUser());
                 obj.put("commenttotal", orderRunnings.get(i).getCommentTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
-                obj.put("geo", serviceRepository.getGeoByService(orderRunnings.get(i).getService()));
+                obj.put("geo",  orderRunnings.get(i).getGeo());
                 jsonArray.add(obj);
             }
 

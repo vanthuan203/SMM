@@ -18,5 +18,6 @@ public interface OrderViewRunning {
     Float getPrice();
     Integer getService();
     Integer getPriority();
+    String getGeo();
     Long getTimeUpdate();
 }
