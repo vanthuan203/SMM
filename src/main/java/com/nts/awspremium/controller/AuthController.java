@@ -604,15 +604,19 @@ public class AuthController {
                 view_vn=view_vn!=null?view_vn:0F;
                 Float view_us=balanceRepository.getAllBalanceUSNow1DG();
                 view_us=view_us!=null?view_us:0F;
+                Float view_kr=balanceRepository.getAllBalanceKRNow1DG();
+                view_kr=view_kr!=null?view_kr:0F;
                 Float cmt_vn=balanceRepository.getAllBalanceVNNow1DGCMT();
                 cmt_vn=cmt_vn!=null?cmt_vn:0F;
                 Float cmt_us=balanceRepository.getAllBalanceUSNow1DGCMT();
                 cmt_us=cmt_us!=null?cmt_us:0F;
-                Float sum_view=view_vn+view_us;
-                Float sum_cmt=cmt_vn+cmt_us;
+                Float cmt_kr=balanceRepository.getAllBalanceKRNow1DGCMT();
+                cmt_kr=cmt_kr!=null?cmt_kr:0F;
+                Float sum_view=view_vn+view_us+view_kr;
+                Float sum_cmt=cmt_vn+cmt_us+cmt_kr;
                 Float sum1dg=sum_view+sum_cmt;
-                String view=view_vn+"$ "+view_us+"$ = "+sum_view+"$";
-                String cmt=cmt_vn+"$ "+cmt_us+"$ = "+sum_cmt+"$";
+                String view=view_vn+"$ "+view_us+"$ "+view_kr+"$ = "+sum_view+"$";
+                String cmt=cmt_vn+"$ "+cmt_us+"$ "+cmt_kr+"$ = "+sum_cmt+"$";
                 String sum=sum1dg+"$";
                 OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
@@ -654,7 +658,6 @@ public class AuthController {
             }else{
                 listuser=listuser+","+alluser.get(i);
             }
-
         }
         resp.put("user",listuser);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

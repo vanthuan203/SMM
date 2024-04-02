@@ -203,10 +203,12 @@ public class ApiController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
+                /*
                 if(service.getChecktime()==0&&(videoViewRepository.getSumThreadSetByGeo(service.getGeo())!=null?(videoViewRepository.getSumThreadSetByGeo(service.getGeo())>vpsRepository.getSumThreadsByGeo(service.getGeo())*2):false)){
                     resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                 */
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                         (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");
