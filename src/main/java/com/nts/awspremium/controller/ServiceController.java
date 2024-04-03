@@ -1,9 +1,6 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Admin;
-import com.nts.awspremium.model.Balance;
-import com.nts.awspremium.model.Service;
-import com.nts.awspremium.model.Setting;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -288,7 +285,7 @@ public class ServiceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray =new JSONArray();
-        List<Balance> balance;
+        List<BalanceHistory> balance;
         if(user.length()==0){
             balance =balanceRepository.getAllBalance();
 

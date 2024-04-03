@@ -420,7 +420,7 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray =new JSONArray();
-        List<Balance> balance;
+        List<BalanceHistory> balance;
         if(user.length()==0){
             balance =balanceRepository.getAllBalance();
 
@@ -436,6 +436,7 @@ public class AuthController {
             obj.put("time", balance.get(i).getTime());
             obj.put("id", balance.get(i).getId());
             obj.put("service", balance.get(i).getService());
+            obj.put("geo", balance.get(i).getGeo());
             jsonArray.add(obj);
         }
         resp.put("balances",jsonArray);

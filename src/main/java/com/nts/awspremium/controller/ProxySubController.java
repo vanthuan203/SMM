@@ -316,7 +316,6 @@ public class ProxySubController {
         JSONObject resp = new JSONObject();
         try{
             String[] ipv4list = ipv4.split(",");
-            System.out.println(ipv4list.length);
             for(int i=0;i<ipv4list.length;i++){
                 proxyRepository.deleteProxyByIpv4(ipv4list[i].trim());
                 ipV4Repository.DeleteIPv4(ipv4list[i].trim());
