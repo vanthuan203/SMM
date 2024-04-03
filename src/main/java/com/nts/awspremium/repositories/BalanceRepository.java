@@ -41,38 +41,38 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dg@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Views' and geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow1DG();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dg@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Views' and geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow1DG();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dg@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='kr')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Views' and geo='kr')",nativeQuery = true)
     public Float getAllBalanceKRNow1DG();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dgcmt@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='vn')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Comments' and geo='vn')",nativeQuery = true)
     public Float getAllBalanceVNNow1DGCMT();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dgcmt@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='us')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Comments' and geo='us')",nativeQuery = true)
     public Float getAllBalanceUSNow1DGCMT();
 
     @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
             "                    FROM balance\n" +
-            "                     WHERE user='1dgcmt@gmail.com' and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
-            "               AND  balance<0 and service in(select service from service where geo='kr')",nativeQuery = true)
+            "                     WHERE user in(select username from admin where role='ROLE_USER') and FROM_UNIXTIME((time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
+            "               AND  balance<0 and service in(select service from service where category='Youtube | Comments' and geo='kr')",nativeQuery = true)
     public Float getAllBalanceKRNow1DGCMT();
 
 
