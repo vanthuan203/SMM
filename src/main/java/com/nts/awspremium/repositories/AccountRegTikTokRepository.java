@@ -22,6 +22,9 @@ public interface AccountRegTikTokRepository extends JpaRepository<AccountRegTikt
     @Query(value = "UPDATE account_reg_tiktok SET running=0,vps='',proxy='',device_id='' where vps=?1",nativeQuery = true)
     public Integer resetAccountRegByVps(String vps);
 
+    @Query(value = "Select proxy from account_reg_tiktok where username=?1 limit 1",nativeQuery = true)
+    public String getProxyByUsernameReg(String username);
+
     @Query(value = "Select username from account_reg_tiktok  where vps=?1",nativeQuery = true)
     public List<String> getUsernameRegByVps(String vps);
 

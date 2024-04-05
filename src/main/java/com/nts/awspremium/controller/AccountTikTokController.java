@@ -128,7 +128,7 @@ public class AccountTikTokController {
                 accountTiktokNew.setTime_add(System.currentTimeMillis());
                 accountTiktokNew.setTime_check(0L);
                 accountTiktokNew.setDevice_id(account.getDevice_id().trim());
-                accountTiktokNew.setProxy(accountRepository.getProxyByUsername(account.getUsername().trim()));
+                accountTiktokNew.setProxy(accountRegTikTokRepository.getProxyByUsernameReg(account.getUsername().trim()));
                 accountTiktokNew.setRunning(account.getRunning());
                 accountTiktokNew.setVps(account.getVps().trim());
                 accountRepository.save(accountTiktokNew);
