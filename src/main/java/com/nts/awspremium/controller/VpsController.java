@@ -706,17 +706,6 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            /*
-            List<History> histories=historyRepository.findHistoriesByVps(vps);
-            if(histories.size()>0){
-                for (int i = 0; i < histories.size(); i++) {
-                    List<Proxy> proxies=proxyRepository.findProxy(histories.get(i).getProxy());
-                    if(proxies.size()>0 && proxies.get(0).getRunning()>0){
-                        proxies.get(0).setRunning(proxies.get(0).getRunning()-1);
-                        proxyRepository.save(proxies.get(0));
-                    }
-                }
-            }*/
             String[] vpsArr=vps.split(",");
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
@@ -725,7 +714,6 @@ public class VpsController {
                 historyViewRepository.resetHistoryViewByVps(vpsArr[i].trim());
                 historyCommentRepository.resetThreadViewByVps(vpsArr[i].trim());
                 proxyRepository.updaterunningByVps(vpsArr[i].trim());
-                //proxyRepository.updaterunningByVps(vps.trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

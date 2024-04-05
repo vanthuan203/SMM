@@ -1,7 +1,5 @@
 package com.nts.awspremium.repositories;
 
-import com.nts.awspremium.model.Proxy;
-import com.nts.awspremium.model.ProxyLive;
 import com.nts.awspremium.model.ProxySub;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

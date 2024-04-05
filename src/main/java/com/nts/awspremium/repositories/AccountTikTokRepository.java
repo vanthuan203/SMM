@@ -20,6 +20,9 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
     @Query(value = "Select count(*) from account_tiktok where username=?1 limit 1",nativeQuery = true)
     public Integer findIdByUsername(String username);
 
+    @Query(value = "Select proxy from account_tiktok where username=?1 limit 1",nativeQuery = true)
+    public String getProxyByUsername(String username);
+
     @Query(value = "Select vps,count(*) from account_tiktok group by vps",nativeQuery = true)
     public List<String> countbyVPS();
 

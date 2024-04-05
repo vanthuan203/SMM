@@ -28,7 +28,7 @@ public class ProxySubController {
     private ProxySubRepository proxyRepository;
 
     @Autowired
-    private ProxyLiveRepository proxyLiveRepository;
+    private Proxy_IPV4_TikTokRepository proxyLiveRepository;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -768,49 +768,7 @@ public class ProxySubController {
         }
 
     }
-    @GetMapping(value = "/getproxyliveOFF", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> getproxyliveOFF(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxyfail,
-                                        @RequestParam(defaultValue = "vn") String geo) {
-        JSONObject resp = new JSONObject();
-        try{
-            Random random =new Random();
-            if(vps.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Không để vps trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
 
-            if(geo.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Không để Geo trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-            if(proxyfail.length()!=0){
-                Integer proxyId= proxyLiveRepository.getIdByProxyLiveFalse(proxyfail.trim(),vps);
-                //System.out.println(proxyId);
-                if(proxyId!=null){
-                    proxyLiveRepository.updaterunningProxyLiveByVps(proxyId);
-                }
-            }
-            List<ProxyLive> proxyGet=null;
-            proxyGet=proxyLiveRepository.getProxyLive(geo.trim());
-            if(proxyGet.size()==0){
-                resp.put("status","fail");
-                resp.put("message","Hết proxy khả dụng!" );
-                Thread.sleep(1000+random.nextInt(1000));
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-            proxyLiveRepository.updateProxyLiveGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
-            resp.put("status","true");
-            resp.put("proxy",proxyGet.get(0).getProxy());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-
-        } catch (Exception e) {
-            resp.put("status", e.getStackTrace()[0].getLineNumber());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
     @GetMapping(value = "/getproxylive", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> getproxylive(@RequestParam(defaultValue = "") String vps,
                                        @RequestParam(defaultValue = "vn") String geo) {
@@ -878,32 +836,6 @@ public class ProxySubController {
 
     }
 
-    @GetMapping(value = "/resetrunningproxylive", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetrunningproxylive(@RequestParam(defaultValue = "") String vps,@RequestParam(defaultValue = "") String proxy) {
-        JSONObject resp = new JSONObject();
-        try{
-            if(vps.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Không để vps trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-            if(proxy.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Không để proxy trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-            Integer proxyId= proxyLiveRepository.getIdByProxyLive(proxy.trim(),vps.trim());
-            if(proxyId!=null){
-                proxyLiveRepository.updaterunningProxyLiveByVps(proxyId);
-            }
-            resp.put("status","true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", e.getStackTrace()[0].getLineNumber());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
 
     @GetMapping(value = "/resetproxyByVps", produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> resetproxyByVps(@RequestParam(defaultValue = "") String vps) {
@@ -915,25 +847,6 @@ public class ProxySubController {
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
             proxyRepository.updaterunningByVps(vps.trim());
-            resp.put("status","true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        } catch (Exception e) {
-            resp.put("status", e.getStackTrace()[0].getLineNumber());
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-
-    }
-
-    @GetMapping(value = "/resetproxyLiveByVps", produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> resetproxyLiveByVps(@RequestParam(defaultValue = "") String vps) {
-        JSONObject resp = new JSONObject();
-        try{
-            if(vps.length()==0){
-                resp.put("status","fail");
-                resp.put("message", "Không để vps trống");
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-            }
-            proxyLiveRepository.updaterunningByVps(vps.trim());
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {

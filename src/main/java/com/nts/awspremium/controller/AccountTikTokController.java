@@ -28,21 +28,9 @@ public class AccountTikTokController {
     private HistoryTiktokRepository historyTiktokRepository;
 
     @Autowired
-    private HistoryTrafficRepository historyTrafficRepository;
-
-    @Autowired
-    private HistoryCommentRepository historyCommentRepository;
-
-    @Autowired
-    private ProxyRepository proxyRepository;
-
-    @Autowired
     private VpsRepository vpsRepository;
     @Autowired
-    private RecoverRepository recoverRepository;
-
-    @Autowired
-    private CheckProsetListTrue checkProsetListTrue;
+    private Proxy_IPV4_TikTokRepository proxyIpv4TikTokRepository;
 
     @PostMapping(value = "/create", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> create(@RequestBody AccountTiktok account, @RequestHeader(defaultValue = "") String Authorization,
@@ -261,10 +249,12 @@ public class AccountTikTokController {
         try {
             AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.checkUsername(username.trim());
             if(accountRegTiktok!=null){
+                proxyIpv4TikTokRepository.resetProxyByProxyId(accountRegTiktok.getProxy());
                 accountRegTiktok.setLive(live);
                 accountRegTiktok.setVps("");
                 accountRegTiktok.setDevice_id("");
                 accountRegTiktok.setRunning(0);
+                accountRegTiktok.setProxy("");
                 accountRegTikTokRepository.save(accountRegTiktok);
                 resp.put("status", "true");
                 resp.put("message","update live thành công");
@@ -284,8 +274,19 @@ public class AccountTikTokController {
     @GetMapping(value = "/resetAccRegTiktokByCron", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> resetAccRegTiktokByCron() {
         JSONObject resp = new JSONObject();
-        try {;
-            accountRegTikTokRepository.resetAccountRegTitkokThanTime();
+        try {
+            List<String> stringList=accountRegTikTokRepository.getUsernameRegTitkokThanTime();
+            for(int i=0;i<stringList.size();i++){
+                AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.checkUsername(stringList.get(i));
+                if(accountRegTiktok!=null){
+                    proxyIpv4TikTokRepository.resetProxyByProxyId(accountRegTiktok.getProxy());
+                    accountRegTiktok.setVps("");
+                    accountRegTiktok.setDevice_id("");
+                    accountRegTiktok.setRunning(0);
+                    accountRegTiktok.setProxy("");
+                    accountRegTikTokRepository.save(accountRegTiktok);
+                }
+            }
             resp.put("status", "true");
             resp.put("message","reset acc reg thành công");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -301,20 +302,6 @@ public class AccountTikTokController {
     ResponseEntity<String> reg_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps, @RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         Integer checktoken = adminRepository.FindAdminByToken(Authorization);
-        List<Vps> vps_check =vpsRepository.findVPS(vps.trim());
-        if(vps_check.size()==0){
-            Vps vpsnew=new Vps();
-            vpsnew.setVps(vps.trim());
-            vpsnew.setState(1);
-            vpsnew.setRunning(0);
-            vpsnew.setVpsoption("tiktok");
-            vpsnew.setUrlapi("");
-            vpsnew.setToken("");
-            vpsnew.setVpsreset(0);
-            vpsnew.setTimecheck(System.currentTimeMillis());
-            vpsRepository.save(vpsnew);
-        }
-        vpsRepository.updateTimeCheckByVPS(System.currentTimeMillis(),vps.trim());
         if (checktoken == 0) {
             resp.put("status", "fail");
             resp.put("message", "Token expired");
@@ -330,6 +317,23 @@ public class AccountTikTokController {
             resp.put("message", "vps không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+
+        List<Vps> vps_check =vpsRepository.findVPS(vps.trim());
+        if(vps_check.size()==0){
+            Vps vpsnew=new Vps();
+            vpsnew.setVps(vps.trim());
+            vpsnew.setState(1);
+            vpsnew.setRunning(0);
+            vpsnew.setVpsoption("tiktok");
+            vpsnew.setUrlapi("");
+            vpsnew.setToken("");
+            vpsnew.setVpsreset(0);
+            vpsnew.setTimecheck(System.currentTimeMillis());
+            vpsRepository.save(vpsnew);
+        }else{
+            vps_check.get(0).setTimecheck(System.currentTimeMillis());
+            vpsRepository.save(vps_check.get(0));
+        }
         try {
             if(accountRepository.CheckRegByDeviceId(device_id.trim())>0||accountRepository.getCountByDeviceId(device_id.trim())==0){
                 String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -341,8 +345,16 @@ public class AccountTikTokController {
                 }
                 AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktok(vps.trim(),device_id.trim(),System.currentTimeMillis(),code);
                 if(accountRegTiktok!=null){
+                    Proxy_IPV4_TikTok proxy_ipv4_tikTok=proxyIpv4TikTokRepository.getProxyFixAccountTikTok();
+                    if(proxy_ipv4_tikTok!=null) {
+                        proxy_ipv4_tikTok.setRunning(proxy_ipv4_tikTok.getRunning()+1);
+                        proxy_ipv4_tikTok.setTime_get(System.currentTimeMillis());
+                        proxyIpv4TikTokRepository.save(proxy_ipv4_tikTok);
+                        accountRegTiktok.setProxy(proxy_ipv4_tikTok.getProxy());
+                        accountRegTikTokRepository.save(accountRegTiktok);
+                    }
                     resp.put("status", "true");
-                    resp.put("acc", accountRegTiktok.getUsername()+"|"+accountRegTiktok.getPassword()+"|"+accountRegTiktok.getRecover()+"|"+(accountRegTiktok.getAuthy()==null?"":accountRegTiktok.getAuthy().trim()));
+                    resp.put("acc", accountRegTiktok.getUsername()+"|"+accountRegTiktok.getPassword()+"|"+accountRegTiktok.getRecover()+"|"+(accountRegTiktok.getProxy().length()<4?"":accountRegTiktok.getProxy().trim())+"|"+(accountRegTiktok.getAuthy()==null?"":accountRegTiktok.getAuthy().trim()));
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
                     resp.put("status", "fail");

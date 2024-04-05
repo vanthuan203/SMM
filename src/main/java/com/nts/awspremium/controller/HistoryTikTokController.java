@@ -37,6 +37,15 @@ public class HistoryTikTokController {
     private SettingTikTokRepository settingTikTokRepository;
     @Autowired
     private ServiceRepository serviceRepository;
+    @Autowired
+    private IpV4Repository ipV4Repository;
+    @Autowired
+    private AccountRegTikTokRepository accountRegTikTokRepository;
+    @Autowired
+    private AccountTikTokRepository accountTikTokRepository;
+
+    @Autowired
+    private Proxy_IPV4_TikTokRepository proxyIpv4TikTokRepository;
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String username) {
         JSONObject resp = new JSONObject();
@@ -57,10 +66,27 @@ public class HistoryTikTokController {
             } else {
                 if(historyTikTok.getOption_running()==0){
                     if(activityTikTokRepository.checkActivityByUsername(username.trim())==0){
+                        String proxy=accountTikTokRepository.getProxyByUsername(username.trim());
+                        Random rand=new Random();
+                        if(ipV4Repository.checkIPv4Live(accountTikTokRepository.getProxyByUsername(username.trim()))==0){
+                            String proxy_rand=proxyIpv4TikTokRepository.getProxyRandTikTok();
+                            if(proxy_rand!=null){
+                                proxy=proxy_rand;
+                            }else{
+                                historyTikTok.setTimeget(System.currentTimeMillis());
+                                historyTiktokRepository.save(historyTikTok);
+                                resp.put("status", "fail");
+                                resp.put("username", historyTikTok.getUsername());
+                                resp.put("fail", "proxy");
+                                resp.put("message", "Hết proxy khả dụng");
+                                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                            }
+                        }
                         historyTikTok.setTimeget(System.currentTimeMillis());
                         historyTikTok.setRunning(2);
                         historyTiktokRepository.save(historyTikTok);
                         resp.put("status", "true");
+                        resp.put("proxy", proxy);
                         resp.put("task","activity");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }else{
@@ -86,10 +112,33 @@ public class HistoryTikTokController {
                 String list_tiktok_id=historyFollowerTiktokRepository.getListTiktokID(username.trim());
                 channelTiktoks = channelTikTokRepository.getChannelTiktokByTask(list_tiktok_id==null?"":list_tiktok_id,orderFollowerTrue.getValue());
                 if (channelTiktoks.size() > 0) {
+                    String proxy=accountTikTokRepository.getProxyByUsername(username.trim());
+                    Random rand=new Random();
+                    if(ipV4Repository.checkIPv4Live(accountTikTokRepository.getProxyByUsername(username.trim()))==0){
+                        String proxy_rand=proxyIpv4TikTokRepository.getProxyRandTikTok();
+                        if(proxy_rand!=null){
+                            proxy=proxy_rand;
+                        }else{
+                            historyTikTok.setTimeget(System.currentTimeMillis());
+                            historyTiktokRepository.save(historyTikTok);
+                            resp.put("status", "fail");
+                            resp.put("username", historyTikTok.getUsername());
+                            resp.put("fail", "proxy");
+                            resp.put("message", "Hết proxy khả dụng");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                    }
                     historyTikTok.setTimeget(System.currentTimeMillis());
                     historyTikTok.setOrderid(channelTiktoks.get(0).getOrderid());
                     historyTikTok.setRunning(1);
                     historyTiktokRepository.save(historyTikTok);
+                    resp.put("status", "true");
+                    resp.put("proxy", proxy);
+                    resp.put("task", "follower");
+                    resp.put("tiktok_id",channelTiktoks.get(0).getTiktok_id());
+
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+
                 } else {
                         historyTikTok.setTimeget(System.currentTimeMillis());
                         historyTiktokRepository.save(historyTikTok);
@@ -99,11 +148,6 @@ public class HistoryTikTokController {
                         resp.put("message", "Không có nhiêm vụ follower!");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                resp.put("status", "true");
-                resp.put("task", "follower");
-                resp.put("tiktok_id",channelTiktoks.get(0).getTiktok_id());
-
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
 
         } catch (Exception e) {

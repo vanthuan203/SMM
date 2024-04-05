@@ -31,6 +31,9 @@ public class VpsTikTokController {
     private AccountRegTikTokRepository accountRegTikTokRepository;
     @Autowired
     private HistoryTiktokRepository historyTiktokRepository;
+
+    @Autowired
+    private Proxy_IPV4_TikTokRepository proxyIpv4TikTokRepository;
     @GetMapping(value = "listVPS",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> listVPS(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
@@ -795,9 +798,19 @@ public class VpsTikTokController {
             String[] vpsArr=vps.split(",");
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
-
                 accountTikTokRepository.resetAccountByVps(vpsArr[i].trim());
-                accountRegTikTokRepository.resetAccountRegByVps(vpsArr[i].trim());
+                List<String> stringList=accountRegTikTokRepository.getUsernameRegByVps(vpsArr[i].trim());
+                for(int j=0;j<stringList.size();j++){
+                    AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.checkUsername(stringList.get(i));
+                    if(accountRegTiktok!=null){
+                        proxyIpv4TikTokRepository.resetProxyByProxyId(accountRegTiktok.getProxy());
+                        accountRegTiktok.setVps("");
+                        accountRegTiktok.setDevice_id("");
+                        accountRegTiktok.setRunning(0);
+                        accountRegTiktok.setProxy("");
+                        accountRegTikTokRepository.save(accountRegTiktok);
+                    }
+                }
                 historyTiktokRepository.deleteAllByVPS(vpsArr[i].trim());
                 vpsRepository.deleteByVps(vpsArr[i].trim());
 
