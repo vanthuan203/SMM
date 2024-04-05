@@ -431,7 +431,8 @@ public class ProxyController {
         try{
             String[] ipv4list = ipv4.split(",");
             for(int i=0;i<ipv4list.length;i++){
-                if(ipV4Repository.checkIpv4(ipv4list[i].trim())==0){
+                IpV4 ipV4_Check=ipV4Repository.getIpv4(ipv4list[i].trim());
+                if(ipV4_Check==null){
                     IpV4 ipV4=new IpV4();
                     ipV4.setState(1);
                     ipV4.setIpv4(ipv4list[i].trim());
@@ -439,6 +440,9 @@ public class ProxyController {
                     ipV4.setTimecheck(0L);
                     ipV4.setOption_setting(option_setting.trim());
                     ipV4Repository.save(ipV4);
+                }else{
+                    ipV4_Check.setOption_setting(option_setting.trim());
+                    ipV4Repository.save(ipV4_Check);
                 }
             }
             resp.put("status","true");
