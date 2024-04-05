@@ -37,6 +37,12 @@ public interface IpV4Repository extends JpaRepository<IpV4,Long> {
     @Query(value = "select * from ipv4",nativeQuery = true)
     public List<IpV4> getListIpv4();
 
+    @Query(value = "SELECT * from ipv4 where option_setting!='sub' order by numcheck desc, id desc;",nativeQuery = true)
+    public List<IpV4> getListV4_NEW();
+
+    @Query(value = "SELECT * from ipv4 where option_setting='sub' order by numcheck desc, id desc;",nativeQuery = true)
+    public List<IpV4> getListV4_SUB();
+
     @Modifying
     @Transactional
     @Query(value = "Update ipv4 SET cron=?1 where id=?2",nativeQuery = true)

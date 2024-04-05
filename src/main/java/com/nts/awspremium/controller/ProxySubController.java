@@ -446,18 +446,19 @@ public class ProxySubController {
     ResponseEntity<String> list_v4(){
         JSONObject resp = new JSONObject();
         try{
-            List<String> list_ipv4=proxyRepository.getListProxyV4();
+            List<IpV4> list_ipv4=ipV4Repository.getListV4_SUB();
 
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<list_ipv4.size();i++){
                 JSONObject obj = new JSONObject();
-                obj.put("ipv4",list_ipv4.get(i).split(",")[0]);
-                obj.put("totalport",list_ipv4.get(i).split(",")[1]);
-                obj.put("timecheck",list_ipv4.get(i).split(",")[2]);
-                obj.put("state",list_ipv4.get(i).split(",")[3]);
-                obj.put("geo",list_ipv4.get(i).split(",")[4]);
-                obj.put("numcheck",list_ipv4.get(i).split(",")[5]);
-                obj.put("typeproxy",list_ipv4.get(i).split(",")[6]);
+                obj.put("ipv4",list_ipv4.get(i).getIpv4());
+                obj.put("totalport",0);
+                obj.put("option_setting",list_ipv4.get(i).getOption_setting());
+                obj.put("timecheck",list_ipv4.get(i).getTimecheck());
+                obj.put("state",list_ipv4.get(i).getState());
+                obj.put("geo","");
+                obj.put("numcheck",list_ipv4.get(i).getNumcheck());
+                obj.put("typeproxy","");
                 jsonArray.add(obj);
             }
             resp.put("proxies",jsonArray);

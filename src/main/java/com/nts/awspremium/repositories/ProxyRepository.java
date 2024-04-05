@@ -16,6 +16,7 @@ public interface ProxyRepository extends JpaRepository<Proxy, Integer> {
     @Query(value = "SELECT ipv4.ipv4,count(*) as totalport,ipv4.timecheck,ipv4.state,proxy.geo,ipv4.numcheck,proxy.typeproxy FROM ipv4 left join proxy on ipv4.ipv4=proxy.ipv4 where geo!='traffic' group by ipv4.ipv4  order by geo desc, numcheck desc;",nativeQuery = true)
     public List<String> getListProxyV4();
 
+
     @Query(value = "SELECT ipv4 FROM AccPremium.proxy where typeproxy not like '%vn%' group by ipv4 ",nativeQuery = true)
     public List<String> getIpv4ProxyBuff();
 
