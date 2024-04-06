@@ -11,17 +11,19 @@ public class SettingTiktok {
     private Integer max_follower;
     private Integer max_reg;
     private Integer max_bonus;
-    private Integer max_activity;
+    private Integer max_day_activity;
+    private Integer max_activity_24h;
 
     public SettingTiktok() {
     }
 
-    public SettingTiktok(Long id, Integer max_follower, Integer max_reg, Integer max_bonus, Integer max_activity) {
+    public SettingTiktok(Long id, Integer max_follower, Integer max_reg, Integer max_bonus, Integer max_day_activity, Integer max_activity_24h) {
         this.id = id;
         this.max_follower = max_follower;
         this.max_reg = max_reg;
         this.max_bonus = max_bonus;
-        this.max_activity = max_activity;
+        this.max_day_activity = max_day_activity;
+        this.max_activity_24h = max_activity_24h;
     }
 
     public Long getId() {
@@ -56,11 +58,19 @@ public class SettingTiktok {
         this.max_bonus = max_bonus;
     }
 
-    public Integer getMax_activity() {
-        return max_activity;
+    public Integer getMax_day_activity() {
+        return max_day_activity;
     }
 
-    public void setMax_activity(Integer max_activity) {
-        this.max_activity = max_activity;
+    public void setMax_day_activity(Integer max_day_activity) {
+        this.max_day_activity = max_day_activity;
+    }
+
+    public Integer getMax_activity_24h() {
+        return max_activity_24h;
+    }
+
+    public void setMax_activity_24h(Integer max_activity_24h) {
+        this.max_activity_24h = max_activity_24h;
     }
 }

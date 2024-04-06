@@ -303,4 +303,19 @@ public class HistoryTikTokController {
         }
     }
 
+    @GetMapping(value = "updateOptionRunningByCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateOptionRunningByCron() {
+        JSONObject resp = new JSONObject();
+        try {
+            historyTiktokRepository.updateOptionRunningFollower();
+            resp.put("status", "true");
+            resp.put("message", "update running follower thành công!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

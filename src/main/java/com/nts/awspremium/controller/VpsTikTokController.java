@@ -798,7 +798,7 @@ public class VpsTikTokController {
             String[] vpsArr=vps.split(",");
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
-                accountTikTokRepository.resetAccountByVps(vpsArr[i].trim());
+                accountTikTokRepository.deleteAccountTiktokByVps(vpsArr[i].trim());
                 List<String> stringList=accountRegTikTokRepository.getUsernameRegByVps(vpsArr[i].trim());
                 for(int j=0;j<stringList.size();j++){
                     AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.checkUsername(stringList.get(i));

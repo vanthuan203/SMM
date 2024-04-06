@@ -33,8 +33,8 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_tiktok SET running=0,vps='',proxy='',device_id='' where vps=?1",nativeQuery = true)
-    public Integer resetAccountByVps(String vps);
+    @Query(value = "Delete from account_tiktok  where vps=?1",nativeQuery = true)
+    public Integer deleteAccountTiktokByVps(String vps);
 
     @Modifying
     @Transactional

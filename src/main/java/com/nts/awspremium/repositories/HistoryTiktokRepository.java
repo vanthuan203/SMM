@@ -44,6 +44,10 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Query(value = "update history_tiktok set running=0,orderid=0 where running=1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20",nativeQuery = true)
     public Integer resetThreadcron();
 
-
+    @Modifying
+    @Transactional
+    @Query(value = "update history_tiktok set option_running=1 where option_running=0 and username in (SELECT username FROM AccPremium.activity_tiktok where\n" +
+            " FROM_UNIXTIME((time_update/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')<DATE_SUB(DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 0:0:0'),INTERVAL (select max_day_activity from setting_tiktok where id=1) DAY) group by username)",nativeQuery = true)
+    public Integer updateOptionRunningFollower();
 
 }
