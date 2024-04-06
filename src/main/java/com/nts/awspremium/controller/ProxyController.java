@@ -652,6 +652,18 @@ public class ProxyController {
     }
 
 
+    @GetMapping(value = "/resetproxyLiveByVps", produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> resetproxyLiveByVps(@RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        try{
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", e.getStackTrace()[0].getLineNumber());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
 
 
 
