@@ -3919,7 +3919,7 @@ public class VideoViewController {
                     status="DV không bảo hành";
                 }else if(video.getUser().equals("baohanh01@gmail.com")){
                     status="Đơn bảo hành";
-                }else if(channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0){
+                }else if(channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0 || video.getVieworder()>=5000){
                     status="Lợi dụng chính sách";
                 }else if(service.getChecktime()==1){
                     status="Đơn check time";
