@@ -10,7 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface Proxy_IPV4_TikTokRepository extends JpaRepository<Proxy_IPV4_TikTok, String> {
-    @Query(value = "select * from proxy_ipv4_tiktok  order by running asc,rand() limit 1",nativeQuery = true)
+    @Query(value = "select * from proxy_ipv4_tiktok where ipv4 in(select ipv4 from ipv4 where state=1) order by running asc,rand() limit 1",nativeQuery = true)
     public Proxy_IPV4_TikTok getProxyFixAccountTikTok();
 
     @Query(value = "select proxy from proxy_ipv4_tiktok where ipv4 in(select ipv4 from ipv4 where state=1)  order by rand() limit 1",nativeQuery = true)
