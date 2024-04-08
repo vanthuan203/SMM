@@ -122,6 +122,7 @@ public class VpsTikTokController {
                     JSONObject obj = new JSONObject();
                     obj.put("vps", accByDeviceByVps.get(i).getVps());
                     obj.put("device_id", accByDeviceByVps.get(i).getDevice_id());
+                    obj.put("time_add", accByDeviceByVps.get(i).getTime_add());
                     obj.put("acccount", accByDeviceByVps.get(i).getTotal());
                     obj.put("acccountlive", accByDeviceByVps.get(i).getTotal());
                     obj.put("state", 1);
