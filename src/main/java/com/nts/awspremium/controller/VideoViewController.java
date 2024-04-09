@@ -3923,9 +3923,6 @@ public class VideoViewController {
                     status="DV không bảo hành";
                 }else if(video.getUser().equals("baohanh01@gmail.com")){
                     status="Đơn bảo hành";
-                }else if((channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0 || video.getVieworder()>=5000)
-                        &&serviceRepository.checkGuaranteeByTime(video.getEnddate(),1)==0){
-                    status="Lợi dụng chính sách";
                 }else if(service.getChecktime()==1){
                     status="Đơn check time";
                 }else if(videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim())>0){
@@ -3936,6 +3933,9 @@ public class VideoViewController {
                     status="Được hủy trước đó";
                 }else if(serviceRepository.checkGuaranteeByTime(video.getEnddate(),service.getMaxtimerefill())==0){
                     status="Quá hạn "+service.getMaxtimerefill()+" ngày";
+                }else if((channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0 || video.getVieworder()>=5000)
+                        &&serviceRepository.checkGuaranteeByTime(video.getEnddate(),1)==0){
+                    status="Lợi dụng chính sách";
                 }else{
                     status=refundViewByVideoView(video);
                     video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
