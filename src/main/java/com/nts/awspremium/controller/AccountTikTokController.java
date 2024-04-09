@@ -335,7 +335,7 @@ public class AccountTikTokController {
             vpsRepository.save(vps_check.get(0));
         }
         try {
-            if(accountRepository.CheckRegByDeviceId(device_id.trim())>0||accountRepository.getCountByDeviceId(device_id.trim())==0 || !vps.trim().equals("9002")){
+            if((accountRepository.CheckRegByDeviceId(device_id.trim())>0||accountRepository.getCountByDeviceId(device_id.trim())==0) && !vps.trim().equals("9002")){
                 String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
                 String code="";
                 Random ran=new Random();
