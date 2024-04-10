@@ -234,6 +234,28 @@ public class ProxyController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping(value="/addAuthenMikrotik",produces = "application/hal_json;charset=utf8")
+    ResponseEntity<String> addAuthenMikrotik(@RequestParam(defaultValue = "") String ipv4,@RequestParam(defaultValue = "") String ipv4_old){
+        JSONObject resp = new JSONObject();
+        try{
+            if(ipv4.length()==0){
+                resp.put("status","fail");
+                resp.put("message", "Không để ipv4 trống");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+            if(ipv4_old.length()!=0){
+                authenIPv4Repository.deleteAuthenByIPV4(ipv4_old.trim());
+            }
+            checkAuthenIPv4(ipv4.trim(),0);
+
+            resp.put("status","true");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status","true");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping(value="/create",produces = "application/hal_json;charset=utf8")
     ResponseEntity<String> create(@RequestBody Proxy proxy, @RequestHeader(defaultValue = "") String Authorization ){
