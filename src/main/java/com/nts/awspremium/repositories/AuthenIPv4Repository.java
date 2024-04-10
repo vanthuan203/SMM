@@ -25,6 +25,6 @@ public interface AuthenIPv4Repository extends JpaRepository<AuthenIPv4,Long> {
     @Query(value = "delete from authenipv4 where host=?1",nativeQuery = true)
     public Integer deleteAuthenByHost(String host);
 
-    @Query(value = "Select ipv4,timecheck,lockmode from authenipv4 order by timeadd desc",nativeQuery = true)
-    public List<String> getListAuthen();
+    @Query(value = "Select * from authenipv4 order by timeadd desc",nativeQuery = true)
+    public List<AuthenIPv4> getListAuthen();
 }

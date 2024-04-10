@@ -26,7 +26,7 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
     @Query(value = "Select vps,count(*) from account_tiktok group by vps",nativeQuery = true)
     public List<String> countbyVPS();
 
-    @Query(value = "Select count(*) from account_tiktok where device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account_tiktok where device_id=?1)",nativeQuery = true)
+    @Query(value = "Select count(*) from account_tiktok where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account_tiktok where live=1 and device_id=?1)",nativeQuery = true)
     public Integer CheckRegByDeviceId(String device_id);
     @Query(value = "Select count(*) from account_tiktok where device_id=?1",nativeQuery = true)
     public Integer getCountByDeviceId(String device_id);

@@ -51,14 +51,15 @@ public class ProxyController {
     ResponseEntity<String> list_authen(){
         JSONObject resp = new JSONObject();
         try{
-            List<String> list_ipv4=authenIPv4Repository.getListAuthen();
+            List<AuthenIPv4> list_ipv4=authenIPv4Repository.getListAuthen();
 
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<list_ipv4.size();i++){
                 JSONObject obj = new JSONObject();
-                obj.put("ipv4",list_ipv4.get(i).split(",")[0]);
-                obj.put("timecheck",list_ipv4.get(i).split(",")[1]);
-                obj.put("lockmode",list_ipv4.get(i).split(",")[2]);
+                obj.put("ipv4",list_ipv4.get(i).getIpv4());
+                obj.put("timecheck",list_ipv4.get(i).getTimecheck());
+                obj.put("lockmode",list_ipv4.get(i).getLockmode());
+                obj.put("host",list_ipv4.get(i).getHost());
                 jsonArray.add(obj);
             }
             resp.put("authens",jsonArray);

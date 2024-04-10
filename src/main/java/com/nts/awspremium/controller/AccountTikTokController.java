@@ -216,8 +216,12 @@ public class AccountTikTokController {
         try {
             AccountTiktok accountTiktok=accountRepository.findAccountByUsername(username.trim());
             if(accountTiktok!=null){
+                proxyIpv4TikTokRepository.resetProxyByProxyId(accountTiktok.getProxy());
                 accountTiktok.setLive(live);
                 accountRepository.save(accountTiktok);
+                if(live!=1){
+                    historyTiktokRepository.deleteHistoryTikTokByUsername(username.trim());
+                }
                 resp.put("status", "true");
                 resp.put("message","update live thành công");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

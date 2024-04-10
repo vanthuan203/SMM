@@ -24,6 +24,7 @@ import java.time.Instant;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -381,69 +382,10 @@ public class VideoViewController {
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/updateviewendcron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateviewendcron() throws IOException, ParseException {
+    @GetMapping(value = "/updateViewEndCheckTimecron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateViewEndCheckTimecron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
-        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEnd(25);
-        if (listvideo.size() == 0) {
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
-        String s_videoid = "";
-        for (int i = 0; i < listvideo.size(); i++) {
-            if (i == 0) {
-                s_videoid = listvideo.get(i);
-            } else {
-                s_videoid = s_videoid + "," + listvideo.get(i);
-            }
-        }
-        //VIDEOOOOOOOOOOOOOOO
-        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
-        Request request1 = null;
-        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
-        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
-        keys.get(0).setCount(keys.get(0).getCount() + 1L);
-        googleAPIKeyRepository.save(keys.get(0));
-        Response response1 = client1.newCall(request1).execute();
-
-        String resultJson1 = response1.body().string();
-
-        Object obj1 = new JSONParser().parse(resultJson1);
-
-        JSONObject jsonObject1 = (JSONObject) obj1;
-        JSONArray items = (JSONArray) jsonObject1.get("items");
-        JSONArray jsonArray = new JSONArray();
-        Iterator k = items.iterator();
-
-        while (k.hasNext()) {
-            try {
-                JSONObject video = (JSONObject) k.next();
-                JSONObject obj = new JSONObject();
-                JSONObject statistics = (JSONObject) video.get("statistics");
-                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
-                //jsonArray.add(obj);
-            } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }
-
-        }
-
-        resp.put("status", "true");
-        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-    }
-    @GetMapping(value = "/updateviewendAllCron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateviewendAllCron() throws IOException, ParseException {
-        JSONObject resp = new JSONObject();
-        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
-        Calendar calendar = Calendar.getInstance(timeZone);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(hour<12){
-            resp.put("status", "true");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-        }
-        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEndAll(25);
+        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEndCheckTime(25);
         if (listvideo.size() == 0) {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -485,31 +427,38 @@ public class VideoViewController {
                 videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
                 videofale.remove(video.get("id").toString());
             } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                continue;
             }
+
         }
-        System.out.println(videofale);
-        videoViewHistoryRepository.updatetimcheckError(videofale);
+        videoViewHistoryRepository.updatetimcheckAllServiceError(videofale);
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
-
-    @GetMapping(value = "/updateviewendthan5hcron", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateviewendthan5hcron() throws IOException, ParseException {
+    @GetMapping(value = "/updateViewEnddAllServiceCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateViewEnddAllServiceCron() throws IOException, ParseException {
         JSONObject resp = new JSONObject();
-        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEndThan5h(25);
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+        Calendar calendar = Calendar.getInstance(timeZone);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        if(hour<12){
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewEndAll(50);
         if (listvideo.size() == 0) {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
         String s_videoid = "";
+        List<String> videofale =  new ArrayList<String>();
         for (int i = 0; i < listvideo.size(); i++) {
             if (i == 0) {
                 s_videoid = listvideo.get(i);
             } else {
                 s_videoid = s_videoid + "," + listvideo.get(i);
             }
+            videofale.add(listvideo.get(i).toString());
         }
         //VIDEOOOOOOOOOOOOOOO
         OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -535,68 +484,67 @@ public class VideoViewController {
                 JSONObject video = (JSONObject) k.next();
                 JSONObject obj = new JSONObject();
                 JSONObject statistics = (JSONObject) video.get("statistics");
-                videoViewHistoryRepository.updateviewendthan5h(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString());
-                /*List<VideoViewHistory> videoViewHistories=videoViewHistoryRepository.getVideoBHByVideoIdThan8h(video.get("id").toString());
-                if(videoViewRepository.getCountVideoId(video.get("id").toString().trim()) ==0&&((int)(videoViewHistories.get(0).getVieworder()*1.05)+ videoViewHistories.get(0).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())) && (Integer.parseInt(statistics.get("viewCount").toString())-videoViewHistories.get(0).getViewstart()>=(videoViewHistories.get(0).getVieworder()*0.5)) && !videoViewHistories.get(0).getUser().equals("baohanh01@gmail.com")){
-                    Setting setting = settingRepository.getReferenceById(1L);
-                    List<Admin> admins = adminRepository.GetAdminByUser("baohanh01@gmail.com");
-                    Service service = serviceRepository.getInfoService(videoViewHistories.get(0).getService());
-                    int baohanh =videoViewHistories.get(0).getViewstart()+(int)(videoViewHistories.get(0).getVieworder()*1.05) - Integer.parseInt(statistics.get("viewCount").toString());
-                    float priceorder = 0;
-                    priceorder = ((baohanh+500) / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
-                    if (priceorder > (float) admins.get(0).getBalance()) {
-                        obj.put("videoview", "Số tiền không đủ!");
-                        return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
-                    }
-                    VideoView videoViewhnew = new VideoView();
-                    videoViewhnew.setDuration(videoViewHistories.get(0).getDuration());
-                    videoViewhnew.setInsertdate(System.currentTimeMillis());
-                    videoViewhnew.setView24h(0);
-                    videoViewhnew.setViewtotal(0);
-                    videoViewhnew.setVieworder(baohanh+500);
-                    videoViewhnew.setUser(admins.get(0).getUsername());
-                    videoViewhnew.setChannelid(videoViewHistories.get(0).getChannelid());
-                    videoViewhnew.setVideotitle(videoViewHistories.get(0).getVideotitle());
-                    videoViewhnew.setVideoid(videoViewHistories.get(0).getVideoid());
-                    videoViewhnew.setViewstart(Integer.parseInt(statistics.get("viewCount").toString()));
-                    videoViewhnew.setTimestart(System.currentTimeMillis());
-                    videoViewhnew.setMaxthreads((baohanh+500) / (60/service.getMaxtime()*2));
-                    videoViewhnew.setThreadset((baohanh+500) / (60/service.getMaxtime()*2));
-                    videoViewhnew.setPrice(priceorder);
-                    videoViewhnew.setService(videoViewHistories.get(0).getService());
-                    videoViewhnew.setValid(1);
-                    videoViewhnew.setNote("Refill Oderid "+videoViewHistories.get(0).getOrderid().toString());
-                    videoViewRepository.save(videoViewhnew);
-                    videoViewHistories.get(0).setNumbh(videoViewHistories.get(0).getNumbh() + 1);
-                    videoViewHistoryRepository.save(videoViewHistories.get(0));
-                    if (service.getType().equals("Special")) {
-                        String list_key = dataOrderRepository.getListKeyByOrderid(videoViewHistories.get(0).getOrderid());
-                        DataOrder dataOrder = new DataOrder();
-                        dataOrder.setOrderid(videoViewhnew.getOrderid());
-                        dataOrder.setListvideo(list_key);
-                        dataOrder.setListkey(list_key);
-                        dataOrderRepository.save(dataOrder);
-                    }
-                    System.out.println("OKE 2");
-                    Float balance_update=adminRepository.updateBalanceFine(-priceorder,admins.get(0).getUsername().trim());
-                    Balance balance = new Balance();
-                    balance.setUser(admins.get(0).getUsername().trim());
-                    balance.setTime(System.currentTimeMillis());
-                    balance.setTotalblance(balance_update);
-                    balance.setBalance(-priceorder);
-                    balance.setService(service.getService());
-                    balance.setNote("Refill " + baohanh + " view cho video " + videoViewHistories.get(0).getVideoid());
-                    balanceRepository.save(balance);
-                }
-                 */
-                //jsonArray.add(obj);
+                videoViewHistoryRepository.updateviewend(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString());
+                videofale.remove(video.get("id").toString());
             } catch (Exception e) {
-                resp.put("status", e);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+              continue;
+            }
+        }
+        videoViewHistoryRepository.updatetimcheckAllServiceError(videofale);
+        resp.put("status", "true");
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/updateViewTotalAllServiceCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateViewTotalAllServiceCron(@RequestParam(defaultValue = "8") Integer hour) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        List<String> listvideo = videoViewHistoryRepository.getVideoViewHistoriesCheckViewUpdate(hour,25);
+        if (listvideo.size() == 0) {
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+        String s_videoid = "";
+        List<String> videofale =  new ArrayList<String>();
+        for (int i = 0; i < listvideo.size(); i++) {
+            if (i == 0) {
+                s_videoid = listvideo.get(i);
+            } else {
+                s_videoid = s_videoid + "," + listvideo.get(i);
+            }
+            videofale.add(listvideo.get(i).toString());
+        }
+        //VIDEOOOOOOOOOOOOOOO
+        OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+        Request request1 = null;
+        List<GoogleAPIKey> keys = googleAPIKeyRepository.getAllByState();
+        request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + keys.get(0).getKey().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + s_videoid).get().build();
+        keys.get(0).setCount(keys.get(0).getCount() + 1L);
+        googleAPIKeyRepository.save(keys.get(0));
+        Response response1 = client1.newCall(request1).execute();
+
+        String resultJson1 = response1.body().string();
+
+        Object obj1 = new JSONParser().parse(resultJson1);
+
+        JSONObject jsonObject1 = (JSONObject) obj1;
+        JSONArray items = (JSONArray) jsonObject1.get("items");
+        JSONArray jsonArray = new JSONArray();
+        Iterator k = items.iterator();
+
+        while (k.hasNext()) {
+            try {
+                JSONObject video = (JSONObject) k.next();
+                JSONObject obj = new JSONObject();
+                JSONObject statistics = (JSONObject) video.get("statistics");
+                videoViewHistoryRepository.updateViewTotalThanHour(Integer.parseInt(statistics.get("viewCount").toString()), video.get("id").toString(),hour);
+                videofale.remove(video.get("id").toString());
+            } catch (Exception e) {
+               continue;
             }
 
         }
-
+        videoViewHistoryRepository.updatetimcheckViewTotalError(videofale,hour);
         resp.put("status", "true");
         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
     }
@@ -1204,7 +1152,6 @@ public class VideoViewController {
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        System.out.println(videoid.getVideoid().trim());
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             List<VideoViewHistory> videoViewHistories = videoViewHistoryRepository.getVideoBHByVideoId(videoid.getVideoid().trim());
@@ -2336,12 +2283,10 @@ public class VideoViewController {
                 vieworder_sum = vieworder_sum + (videoViewHistories.get(i).getVieworder() > videoViewHistories.get(i).getViewtotal() ? videoViewHistories.get(i).getViewtotal() : videoViewHistories.get(i).getVieworder());
             }
             int viewBH = vieworder_sum + videoViewHistories.get(0).getViewstart() - viewCount;
-            System.out.println(viewBH);
             for (int i = videoViewHistories.size() - 1; i >= 0; i--) {
                 if (viewBH <= 0) {
                     break;
                 }
-                System.out.println(viewBH);
                 if (videoViewHistories.get(0).getCancel() > 0 && (videoViewHistories.get(0).getRefund() == null ? 0 : videoViewHistories.get(0).getRefund()) == 0) {
                     resp.put("videoview", "Đã hủy trước đó!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -2366,7 +2311,6 @@ public class VideoViewController {
                     int viewthan = viewFix;
                     viewthan_sum = viewthan_sum + viewthan;
                     float price_refund = videoViewHistories.get(i).getPrice();
-                    System.out.println(price_refund+"|"+viewthan);
                     //float pricebuffed=(videoBuffh.get(0).getViewtotal()/1000F)*service.getRate()*((float)(100-admins.get(0).getDiscount())/100);
                     if (videoViewHistories.get(i).getPrice() < price_refund) {
                         price_refund = videoViewHistories.get(i).getPrice();
@@ -2778,7 +2722,6 @@ public class VideoViewController {
                         int baohanh = 0;
                         int viewFix = vieworder_sum;
                         baohanh = videoViewHistories.get(i).getViewstart() + viewFix - Integer.parseInt(statistics.get("viewCount").toString());
-                        System.out.println(videoViewHistories.get(i).getViewstart()+"|"+Integer.parseInt(statistics.get("viewCount").toString()));
                         if(videoViewHistories.get(i).getViewstart()>Integer.parseInt(statistics.get("viewCount").toString())){
                             obj.put("videoview", "view HT < view Start");
                             return new ResponseEntity<String>(obj.toJSONString(), HttpStatus.OK);
@@ -2920,10 +2863,8 @@ public class VideoViewController {
         }
         try {
             Integer find_channelid=videoid.trim().indexOf("@");
-            System.out.println(find_channelid);
             if(find_channelid==0){
                 videoid=videoid.replace("@","");
-                System.out.println(videoid);
             }
             List<String> ordersArrInput = new ArrayList<>();
             ordersArrInput.addAll(Arrays.asList(videoid.split(",")));
@@ -3806,7 +3747,6 @@ public class VideoViewController {
                 Integer viewcheck=-1;
                 VideoViewHistory video = videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 Service service = serviceRepository.getServiceNoCheckEnabled(video.getService());
-                System.out.println("Oke: "+videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid()));
                 if(videoViewRepository.getCountVideoId(video.getVideoid().trim()) > 0 && (System.currentTimeMillis()- video.getEnddate())/1000/60/60>24 && checkview==1 && (service.getChecktime()==0?(videoViewHistoryRepository.CheckOrderViewRefund(video.getOrderid())==1):true) && (service.getChecktime()==1?video.getViewend()>-1:true && video.getCancel()!=1) && (service.getChecktime()==1?(video.getTimecheckbh()>0?video.getViewend()<video.getVieworder()+video.getViewstart():true):true ) ){
                     OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
                     Request request1 = null;

@@ -39,6 +39,11 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Transactional
     @Query(value = "delete from history_tiktok where vps=?1",nativeQuery = true)
     public Integer deleteAllByVPS(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from history_tiktok where username=?1",nativeQuery = true)
+    public Integer deleteHistoryTikTokByUsername(String vps);
     @Modifying
     @Transactional
     @Query(value = "update history_tiktok set running=0,orderid=0 where running=1 and round((UNIX_TIMESTAMP()-timeget/1000)/60)>=20",nativeQuery = true)
