@@ -153,7 +153,7 @@ public class ProxyController {
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
     @GetMapping(value="/checkAuthenIPv4",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> checkAuthenIPv4(@RequestParam String ipv4,@RequestParam(defaultValue = "0") Integer lock){
+    ResponseEntity<String> checkAuthenIPv4(@RequestParam String ipv4,@RequestParam(defaultValue = "") String host,@RequestParam(defaultValue = "0") Integer lock){
         JSONObject resp = new JSONObject();
         try{
             if(authenIPv4Repository.CheckIPv4Exist(ipv4.trim())>0){
@@ -163,6 +163,9 @@ public class ProxyController {
             }else{
                 AuthenIPv4 authenIPv4=new AuthenIPv4();
                 authenIPv4.setIpv4(ipv4.trim());
+                if(host.length()!=0){
+                    authenIPv4.setHost(host.trim());
+                }
                 authenIPv4.setTimecheck(System.currentTimeMillis());
                 authenIPv4.setTimeadd(System.currentTimeMillis());
                 if(lock==1){
@@ -224,7 +227,7 @@ public class ProxyController {
         try{
             String[] ipv4list = ipv4.split(",");
             for(int i=0;i<ipv4list.length;i++){
-                checkAuthenIPv4(ipv4list[i].trim(),1);
+                checkAuthenIPv4(ipv4list[i].trim(),"",1);
             }
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -235,7 +238,8 @@ public class ProxyController {
         }
     }
     @GetMapping(value="/addAuthenMikrotik",produces = "application/hal_json;charset=utf8")
-    ResponseEntity<String> addAuthenMikrotik(@RequestParam(defaultValue = "") String ipv4,@RequestParam(defaultValue = "") String ipv4_old){
+    ResponseEntity<String> addAuthenMikrotik(@RequestParam(defaultValue = "") String ipv4
+            ,@RequestParam(defaultValue = "") String host){
         JSONObject resp = new JSONObject();
         try{
             if(ipv4.length()==0){
@@ -243,10 +247,10 @@ public class ProxyController {
                 resp.put("message", "Không để ipv4 trống");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             }
-            if(ipv4_old.length()!=0){
-                authenIPv4Repository.deleteAuthenByIPV4(ipv4_old.trim());
+            if(host.length()!=0){
+                authenIPv4Repository.deleteAuthenByHost(host.trim());
             }
-            checkAuthenIPv4(ipv4.trim(),0);
+            checkAuthenIPv4(ipv4.trim(),host.trim(),0);
 
             resp.put("status","true");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

@@ -7,14 +7,16 @@ import javax.persistence.*;
 public class AuthenIPv4 {
     @Id
     private String ipv4;
+    private String host="";
     private Long timecheck;
     private Integer lockmode=0;
     private Long timeadd;
     public AuthenIPv4() {
     }
 
-    public AuthenIPv4(String ipv4, Long timecheck, Integer lockmode, Long timeadd) {
+    public AuthenIPv4(String ipv4, String host, Long timecheck, Integer lockmode, Long timeadd) {
         this.ipv4 = ipv4;
+        this.host = host;
         this.timecheck = timecheck;
         this.lockmode = lockmode;
         this.timeadd = timeadd;
@@ -50,5 +52,13 @@ public class AuthenIPv4 {
 
     public void setTimeadd(Long timeadd) {
         this.timeadd = timeadd;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
     }
 }
