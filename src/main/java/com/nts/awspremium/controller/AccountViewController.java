@@ -118,7 +118,16 @@ public class AccountViewController {
                     resp.put("message", "Đã đủ acc cmt cho Vps!");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                Integer check_get = vpsRepository.checkGetAccountCmtByVps(vps.trim(),"cmt-"+geo.trim());
+                Integer check_get=0;
+                if(geo.trim().equals("vn")){
+                    check_get= vpsRepository.checkGetAccountCmtByVps(vps.trim(),"cmt-"+geo.trim());
+                }else if(geo.trim().equals("us")){
+                    check_get= vpsRepository.checkGetAccountCmtByVpsUS(vps.trim(),"cmt-"+geo.trim());
+                }else if(geo.trim().equals("kr")){
+                    check_get= vpsRepository.checkGetAccountCmtByVpsKR(vps.trim(),"cmt-"+geo.trim());
+                }else{
+                    check_get= vpsRepository.checkGetAccountCmtByVps(vps.trim(),"cmt-"+geo.trim());
+                }
                 if (check_get == 0) {
                     resp.put("status", "fail");
                     resp.put("message", "Đã đủ acc cmt cho Vps!");

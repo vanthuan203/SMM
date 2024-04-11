@@ -312,14 +312,14 @@ public class VpsController {
         }
     }
         @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit){
+    ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit,@RequestParam(defaultValue = "0") Integer vpsreset){
         JSONObject resp=new JSONObject();
         try{
             if(vpsRepository.checkResetVPSNext()>0){
                 resp.put("status", "watting");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit-vpsRepository.checkResetVPSNext());
+            vpsRepository.resetBasByCron(vpsreset,System.currentTimeMillis(),limit-vpsRepository.checkResetVPSNext());
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
@@ -330,10 +330,10 @@ public class VpsController {
     }
 
     @GetMapping(value = "resetBasNoCheckByCron",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> resetBasNoCheckByCron(@RequestParam(defaultValue = "0") Integer limit){
+    ResponseEntity<String> resetBasNoCheckByCron(@RequestParam(defaultValue = "0") Integer limit,@RequestParam(defaultValue = "0") Integer vpsreset){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
+            vpsRepository.resetBasByCron(vpsreset,System.currentTimeMillis(),limit);
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){

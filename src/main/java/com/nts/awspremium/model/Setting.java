@@ -23,13 +23,17 @@ public class Setting {
     private Float leveluser;
 
     private Integer cmtcountuser;
+
+    private Integer cmtcountuser_us;
+
+    private Integer cmtcountuser_kr;
     private Integer redirect;
     private Integer redirectvn;
     private Integer redirectus;
     private Integer threadmin;
     private Integer randview;
 
-    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin, Integer randview) {
+    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer cmtcountuser_us, Integer cmtcountuser_kr, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin, Integer randview) {
         this.id = id;
         this.maxorder = maxorder;
         this.maxorderbuffhvn = maxorderbuffhvn;
@@ -45,6 +49,8 @@ public class Setting {
         this.levelthread = levelthread;
         this.leveluser = leveluser;
         this.cmtcountuser = cmtcountuser;
+        this.cmtcountuser_us = cmtcountuser_us;
+        this.cmtcountuser_kr = cmtcountuser_kr;
         this.redirect = redirect;
         this.redirectvn = redirectvn;
         this.redirectus = redirectus;
@@ -53,6 +59,22 @@ public class Setting {
     }
 
     public Setting() {
+    }
+
+    public Integer getCmtcountuser_us() {
+        return cmtcountuser_us;
+    }
+
+    public void setCmtcountuser_us(Integer cmtcountuser_us) {
+        this.cmtcountuser_us = cmtcountuser_us;
+    }
+
+    public Integer getCmtcountuser_kr() {
+        return cmtcountuser_kr;
+    }
+
+    public void setCmtcountuser_kr(Integer cmtcountuser_kr) {
+        this.cmtcountuser_kr = cmtcountuser_kr;
     }
 
     public Float getMaxrunningam() {

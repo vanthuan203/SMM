@@ -29,6 +29,12 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
     @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where geo=?2 and running=1 and vps=?1))<(select cmtcountuser from setting where id=1)",nativeQuery = true)
     public Integer checkGetAccountCmtByVps(String vps,String geo);
 
+    @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where geo=?2 and running=1 and vps=?1))<(select cmtcountuser_us from setting where id=1)",nativeQuery = true)
+    public Integer checkGetAccountCmtByVpsUS(String vps,String geo);
+
+    @Query(value = "Select count(*) from vps where vps=?1 and ((select count(*) from account where geo=?2 and running=1 and vps=?1))<(select cmtcountuser_kr from setting where id=1)",nativeQuery = true)
+    public Integer checkGetAccountCmtByVpsKR(String vps,String geo);
+
     @Query(value = "Select count(*) from vps where vps=?1",nativeQuery = true)
     public Integer checkVpsValid(String vps);
 
@@ -79,8 +85,8 @@ public interface VpsRepository extends JpaRepository<Vps,Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE vps set vpsreset=3,get_account=1,cmt=1,proxy=1,timeresettool=?1,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?2",nativeQuery = true)
-    public void resetBasByCron(Long timeresettool,Integer limit);
+    @Query(value = "UPDATE vps set vpsreset=?1,get_account=1,cmt=1,proxy=1,timeresettool=?2,dayreset=DATE_FORMAT(ADDDATE( UTC_TIMESTAMP(), INTERVAL +7 HOUR), '%d') where timeresettool=0 order by rand() limit ?3",nativeQuery = true)
+    public void resetBasByCron(Integer vpsreset,Long timeresettool,Integer limit);
 
     @Modifying
     @Transactional
