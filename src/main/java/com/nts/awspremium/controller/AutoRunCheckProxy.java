@@ -54,7 +54,7 @@ public class AutoRunCheckProxy {
 
                                     Response response = client.newCall(request).execute();
                                 }
-                                Thread.sleep(5000);
+                                Thread.sleep(2500);
 
                             }catch (Exception e){
                                 continue;

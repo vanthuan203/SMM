@@ -17,6 +17,8 @@ public class AccountTiktok {
     private String proxy="";
     private Integer running;
     private Long time_check;
+
+    private String account_type ="";
     public AccountTiktok() {
     }
 
@@ -107,6 +109,15 @@ public class AccountTiktok {
 
     public void setNick_name(String nick_name) {
         this.nick_name = nick_name;
+    }
+
+
+    public String getAccount_type() {
+        return account_type;
+    }
+
+    public void setAccount_type(String account_type) {
+        this.account_type = account_type;
     }
 }
 

@@ -20,7 +20,16 @@ public class AccountRegTiktok {
     private Integer running;
     private Long time_check;
     private String code="";
+    private String account_type ="";
     public AccountRegTiktok() {
+    }
+
+    public String getAccount_type() {
+        return account_type;
+    }
+
+    public void setAccount_type(String account_type) {
+        this.account_type = account_type;
     }
 
     public String getAuthy() {

@@ -13,11 +13,11 @@ public class HistoryTikTok {
     private Integer running;
     private Long timeget;
     private Long orderid;
-
+    private String account_type ="";
     public HistoryTikTok() {
     }
 
-    public HistoryTikTok(String username, String vps, String device_id, Integer option_running, Integer running, Long timeget, Long orderid) {
+    public HistoryTikTok(String username, String vps, String device_id, Integer option_running, Integer running, Long timeget, Long orderid, String account_type) {
         this.username = username;
         this.vps = vps;
         this.device_id = device_id;
@@ -25,6 +25,7 @@ public class HistoryTikTok {
         this.running = running;
         this.timeget = timeget;
         this.orderid = orderid;
+        this.account_type = account_type;
     }
 
     public String getUsername() {
@@ -81,5 +82,13 @@ public class HistoryTikTok {
 
     public void setDevice_id(String device_id) {
         this.device_id = device_id;
+    }
+
+    public String getAccount_type() {
+        return account_type;
+    }
+
+    public void setAccount_type(String account_type) {
+        this.account_type = account_type;
     }
 }

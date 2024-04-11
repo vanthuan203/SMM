@@ -65,6 +65,7 @@ public class AccountTikTokController {
                 accountTiktokNew.setPassword(account.getPassword().trim());
                 accountTiktokNew.setRecover(account.getRecover().trim());
                 accountTiktokNew.setTime_add(System.currentTimeMillis());
+                accountTiktokNew.setAccount_type(account.getAccount_type());
                 accountTiktokNew.setTime_check(0L);
                 accountTiktokNew.setDevice_id("");
                 accountTiktokNew.setProxy("");
@@ -129,6 +130,7 @@ public class AccountTikTokController {
                 accountTiktokNew.setTime_check(0L);
                 accountTiktokNew.setDevice_id(account.getDevice_id().trim());
                 accountTiktokNew.setProxy(accountRegTikTokRepository.getProxyByUsernameReg(account.getUsername().trim()));
+                accountTiktokNew.setAccount_type(accountRegTikTokRepository.getAccountTypeByUsernameReg(account.getUsername().trim()));
                 accountTiktokNew.setRunning(account.getRunning());
                 accountTiktokNew.setVps(account.getVps().trim());
                 accountRepository.save(accountTiktokNew);
@@ -140,6 +142,7 @@ public class AccountTikTokController {
                     historyTikTok.setUsername(account.getUsername().trim());
                     historyTikTok.setOption_running(account.getRunning());
                     historyTikTok.setDevice_id(account.getDevice_id());
+                    historyTikTok.setAccount_type(accountRegTikTokRepository.getAccountTypeByUsernameReg(account.getUsername().trim()));
                     historyTikTok.setRunning(0);
                     historyTikTok.setVps(account.getVps().trim());
                     historyTikTok.setOrderid(0L);
@@ -358,6 +361,7 @@ public class AccountTikTokController {
                         accountRegTikTokRepository.save(accountRegTiktok);
                     }
                     resp.put("status", "true");
+                    resp.put("account_type", accountRegTiktok.getAccount_type());
                     resp.put("acc", accountRegTiktok.getUsername()+"|"+accountRegTiktok.getPassword()+"|"+accountRegTiktok.getRecover()+"|"+(accountRegTiktok.getProxy().length()<4?"":accountRegTiktok.getProxy().trim())+"|"+(accountRegTiktok.getAuthy()==null?"":accountRegTiktok.getAuthy().trim()));
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }else{
