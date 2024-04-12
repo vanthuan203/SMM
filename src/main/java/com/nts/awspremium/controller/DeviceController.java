@@ -17,6 +17,9 @@ import java.util.Random;
 public class DeviceController {
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private DeviceErrorLogRepository deviceErrorLogRepository;
     @Autowired
     private AccountRegTikTokRepository accountRegTikTokRepository;
     @Autowired
@@ -53,6 +56,23 @@ public class DeviceController {
                 resp.put("message", "Insert device_id thành công!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/error_log", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> error_log(@RequestBody JSONObject jsonObject) {
+        JSONObject resp = new JSONObject();
+        try {
+            DeviceErrorLog deviceErrorLog =new DeviceErrorLog();
+            deviceErrorLog.setDevice_id(jsonObject.get("device_id").toString());
+            deviceErrorLog.setError(jsonObject.get("error").toString());
+            deviceErrorLogRepository.save(deviceErrorLog);
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
