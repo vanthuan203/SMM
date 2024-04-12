@@ -18,7 +18,7 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where username=?1",nativeQuery = true)
     public Integer resetThreadByUsername(String username);
-    @Query(value = "SELECT device_id as vps,timeget,sum(running) as total FROM history_tiktok where timeget!=0 and vps=?1 group by device_id order by total desc",nativeQuery = true)
+    @Query(value = "select device_id as vps,time as timeget,sum as total from (select max(timeget) as time,device_id,vps,sum(running) as sum from history_tiktok where  timeget!=0 and vps=?1  group by device_id order by sum desc) as t  ;",nativeQuery = true)
     public List<VpsRunning> getDeviceRunningByVPS(String vps);
 
     @Query(value = "SELECT vps,timeget,count(*) as total FROM history_tiktok where running>0 group by vps order by total desc",nativeQuery = true)
