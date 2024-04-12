@@ -8,15 +8,27 @@ public class DeviceErrorLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long time;
     private String device_id;
+    private String username;
     private String error;
     public DeviceErrorLog() {
     }
 
-    public DeviceErrorLog(Long id, String device_id, String error) {
-        this.id = id;
-        this.device_id = device_id;
-        this.error = error;
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Long getId() {

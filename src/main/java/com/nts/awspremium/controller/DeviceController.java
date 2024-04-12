@@ -69,7 +69,9 @@ public class DeviceController {
         try {
             DeviceErrorLog deviceErrorLog =new DeviceErrorLog();
             deviceErrorLog.setDevice_id(jsonObject.get("device_id").toString());
-            deviceErrorLog.setError(jsonObject.get("error").toString());
+            deviceErrorLog.setError(jsonObject.get("error").toString()==null?"":jsonObject.get("error").toString());
+            deviceErrorLog.setUsername(jsonObject.get("username").toString()==null?"":jsonObject.get("username").toString());
+            deviceErrorLog.setTime(System.currentTimeMillis());
             deviceErrorLogRepository.save(deviceErrorLog);
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
