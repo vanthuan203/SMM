@@ -83,6 +83,7 @@ public class VpsTikTokController {
                     obj.put("timegettask", time_get_task==null?0:time_get_task);
                     obj.put("timecheck",  vps.get(i).getTimecheck());
                     obj.put("running",  vps.get(i).getRunning());
+                    obj.put("follower", historyTiktokRepository.getHistoryFollowerTikTokByVPS(vps.get(i).getVps()));
                     obj.put("total",total);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);
@@ -109,8 +110,10 @@ public class VpsTikTokController {
                 JSONArray jsonArray= new JSONArray();
                 List<VpsRunning> vpsRunnings=historyTiktokRepository.getDeviceRunningByVPS(vps.trim());
                 List<DeviceRunning> accByDeviceByVps=accountTikTokRepository.getCountAccByDeviceByVps(vps.trim());
+                List<DeviceRunning> accLiveByDeviceByVps=accountTikTokRepository.getCountAccLiveByDeviceByVps(vps.trim());
                 for(int i=0;i<accByDeviceByVps.size();i++){
                     Integer total=0;
+                    Integer total_acc_live=0;
                     Long time=0L;
                     for(int j=0;j<vpsRunnings.size();j++){
                         if(accByDeviceByVps.get(i).getDevice_id().equals(vpsRunnings.get(j).getVps())){
@@ -119,14 +122,21 @@ public class VpsTikTokController {
                             vpsRunnings.remove(j);
                         }
                     }
+                    for(int j=0;j<accLiveByDeviceByVps.size();j++){
+                        if(accByDeviceByVps.get(i).getDevice_id().equals(accLiveByDeviceByVps.get(j).getDevice_id())){
+                            total_acc_live=accLiveByDeviceByVps.get(j).getTotal();
+                            break;
+                        }
+                    }
                     JSONObject obj = new JSONObject();
                     obj.put("vps", accByDeviceByVps.get(i).getVps());
                     obj.put("device_id", accByDeviceByVps.get(i).getDevice_id());
                     obj.put("time_add", accByDeviceByVps.get(i).getTime_add());
                     obj.put("acccount", accByDeviceByVps.get(i).getTotal());
-                    obj.put("acccountlive", accByDeviceByVps.get(i).getTotal());
+                    obj.put("acccountlive", total_acc_live);
                     obj.put("state", 1);
                     obj.put("timegettask",time);
+                    obj.put("follower",historyTiktokRepository.getHistoryFollowerTikTokByDeviceId(accByDeviceByVps.get(i).getDevice_id()));
                     obj.put("running", total);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);

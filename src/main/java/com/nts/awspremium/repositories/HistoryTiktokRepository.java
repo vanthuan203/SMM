@@ -30,6 +30,13 @@ public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,Str
     public Long getTimeGetByVPS(String vps);
     @Query(value = "SELECT * FROM history_tiktok where username=?1 limit 1",nativeQuery = true)
     public HistoryTikTok getHistoryTikTokByUsername(String username);
+
+    @Query(value = "SELECT count(*) FROM history_tiktok where option_running=1 and vps=?1",nativeQuery = true)
+    public Integer getHistoryFollowerTikTokByVPS(String vps);
+
+    @Query(value = "SELECT count(*) FROM history_tiktok where option_running=1 and device_id=?1",nativeQuery = true)
+    public Integer getHistoryFollowerTikTokByDeviceId(String device_id);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where vps=?1",nativeQuery = true)

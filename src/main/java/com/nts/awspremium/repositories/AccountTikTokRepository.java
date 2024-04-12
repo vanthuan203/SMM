@@ -48,6 +48,9 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
     @Query(value = "SELECT device_id,vps,count(*) as total,max(time_add) as time_add FROM account_tiktok where vps=?1 group by device_id order by total desc",nativeQuery = true)
     public List<DeviceRunning> getCountAccByDeviceByVps(String vps);
 
+    @Query(value = "SELECT device_id,vps,count(*) as total,max(time_add) as time_add FROM account_tiktok where live=1 and vps=?1 group by device_id order by total desc",nativeQuery = true)
+    public List<DeviceRunning> getCountAccLiveByDeviceByVps(String vps);
+
     @Query(value = "SELECT vps,round(0) as time,count(*) as total FROM account_tiktok where live=1 group by vps order by total desc",nativeQuery = true)
     public List<VpsRunning> getCountAccLiveByVps();
 

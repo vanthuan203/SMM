@@ -3537,9 +3537,9 @@ public class VideoViewController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
                 List<VideoView> video = videoViewRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                Service service = serviceRepository.getInfoService(video.get(0).getService());
                 float priceorder = 0;
                 if (videoBuffh.getVieworder() != video.get(0).getVieworder()) {
-                    Service service = serviceRepository.getInfoService(video.get(0).getService());
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.getUser());
                     priceorder = ((videoBuffh.getVieworder() - video.get(0).getVieworder())) * (video.get(0).getPrice() / video.get(0).getVieworder());
 
@@ -3593,6 +3593,7 @@ public class VideoViewController {
                 obj.put("user", orderRunnings.get(0).getUser());
                 obj.put("viewtotal", orderRunnings.get(0).getViewTotal());
                 obj.put("view24h", orderRunnings.get(0).getView24h());
+                obj.put("geo", service.getGeo());
                 obj.put("price", videoBuffh.getPrice() + priceorder);
 
                 jsonArray.add(obj);

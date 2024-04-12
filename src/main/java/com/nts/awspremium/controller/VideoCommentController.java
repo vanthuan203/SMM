@@ -1336,10 +1336,10 @@ public class VideoCommentController {
             JSONArray jsonArray = new JSONArray();
             for (int i = 0; i < videoidIdArr.length; i++) {
                 List<VideoComment> video = videoCommentRepository.getVideoBuffhById(videoidIdArr[i].trim());
+                Service service = serviceRepository.getService(video.get(0).getService());
                 float priceorder = 0;
                 if (videoBuffh.getCommentorder() != video.get(0).getCommentorder()) {
                     List<Admin> user = adminRepository.getAdminByUser(videoBuffh.getUser());
-                    Service service = serviceRepository.getService(video.get(0).getService());
                     priceorder = ((videoBuffh.getCommentorder() - video.get(0).getCommentorder())) * (video.get(0).getPrice() / video.get(0).getCommentorder());
 
                     if (priceorder > (float) user.get(0).getBalance()) {
@@ -1386,6 +1386,7 @@ public class VideoCommentController {
                 obj.put("commentorder", orderRunnings.get(0).getCommentOrder());
                 obj.put("service", orderRunnings.get(0).getService());
                 obj.put("user", orderRunnings.get(0).getUser());
+                obj.put("geo", service.getGeo());
                 obj.put("commenttotal", orderRunnings.get(0).getCommentTotal());
                 obj.put("price", videoBuffh.getPrice() + priceorder);
 
