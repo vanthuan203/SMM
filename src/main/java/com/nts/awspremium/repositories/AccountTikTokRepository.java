@@ -26,6 +26,9 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
     @Query(value = "Select vps,count(*) from account_tiktok group by vps",nativeQuery = true)
     public List<String> countbyVPS();
 
+    @Query(value = "Select count(*) from account_tiktok where device_id=?1 and vps!=?2",nativeQuery = true)
+    public Integer checkDeviceAndVPS(String device_id,String vps);
+
     @Query(value = "Select count(*) from account_tiktok where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account_tiktok where live=1 and device_id=?1)",nativeQuery = true)
     public Integer CheckRegByDeviceId(String device_id);
     @Query(value = "Select count(*) from account_tiktok where device_id=?1",nativeQuery = true)
@@ -38,8 +41,13 @@ public interface AccountTikTokRepository extends JpaRepository<AccountTiktok,Str
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_tikok SET running=0 where vps=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_tiktok SET running=0 where vps=?1",nativeQuery = true)
     public void updateRunningByVPs(String vps);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account_tiktok SET vps=?1 where device_id=?2",nativeQuery = true)
+    public void updateVPSByDevice(String vps,String device_id);
 
 
     @Query(value = "SELECT vps,round(0) as time,count(*) as total FROM account_tiktok group by vps order by total desc",nativeQuery = true)

@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -64,6 +66,11 @@ public class HistoryTikTokController {
                 resp.put("status", "fail");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
             } else {
+                if(accountTikTokRepository.checkDeviceAndVPS(historyTikTok.getDevice_id().trim(),historyTikTok.getVps().trim())>0){
+                    accountTikTokRepository.updateVPSByDevice(historyTikTok.getVps().trim(),historyTikTok.getDevice_id().trim());
+                    accountRegTikTokRepository.updateVPSByDevice(historyTikTok.getVps().trim(),historyTikTok.getDevice_id().trim());
+                    historyTiktokRepository.updateVPSByDevice(historyTikTok.getVps().trim(),historyTikTok.getDevice_id().trim());
+                }
                 if(historyTikTok.getOption_running()==0){
                     if(activityTikTokRepository.checkActivityByUsername(username.trim())==0){
                         String proxy=accountTikTokRepository.getProxyByUsername(username.trim());
@@ -154,6 +161,12 @@ public class HistoryTikTokController {
             resp.put("status", "fail");
             resp.put("fail", "sum");
             resp.put("message", e.getMessage());
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }

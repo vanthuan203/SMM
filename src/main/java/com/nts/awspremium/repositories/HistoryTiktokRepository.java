@@ -13,7 +13,10 @@ import java.util.List;
 public interface HistoryTiktokRepository extends JpaRepository<HistoryTikTok,String> {
     @Query(value = "SELECT count(*) FROM history_tiktok where username=?1",nativeQuery = true)
     public Integer checkUsername(String username);
-
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE history_tiktok SET vps=?1 where device_id=?2",nativeQuery = true)
+    public void updateVPSByDevice(String vps,String device_id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE history_tiktok SET running=0,orderid=0 where username=?1",nativeQuery = true)

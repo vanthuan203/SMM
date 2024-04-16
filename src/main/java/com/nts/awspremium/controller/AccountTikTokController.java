@@ -342,6 +342,11 @@ public class AccountTikTokController {
             vpsRepository.save(vps_check.get(0));
         }
         try {
+            if(accountRepository.checkDeviceAndVPS(device_id.trim(),vps.trim())>0){
+                accountRepository.updateVPSByDevice(vps.trim(),device_id.trim());
+                accountRegTikTokRepository.updateVPSByDevice(vps.trim(),device_id.trim());
+                historyTiktokRepository.updateVPSByDevice(vps.trim(),device_id.trim());
+            }
             if(accountRepository.CheckRegByDeviceId(device_id.trim())>0||accountRepository.getCountByDeviceId(device_id.trim())==0){
                 String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
                 String code="";
