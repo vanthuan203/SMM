@@ -388,6 +388,51 @@ public class VpsController {
         }
     }
 
+    @GetMapping(value = "changer_kr",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> changer_kr(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerKR();
+            if(accountChanges.size()==0){
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("hanquoc"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("kr");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("hanquoc"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerKR();
+            }
+            Integer check=vpsRepository.changer_account_kr(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "changer_us",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> changer_us(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp=new JSONObject();
