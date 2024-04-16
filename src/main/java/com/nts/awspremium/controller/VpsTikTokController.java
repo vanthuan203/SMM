@@ -52,7 +52,7 @@ public class VpsTikTokController {
                     Integer total=0;
                     Integer totalacc=0;
                     Integer totalacclive=0;
-                    Integer totalacctasksub=0;
+                    Integer total_device=accountTikTokRepository.countDevicebyVPS(vps.get(i).getVps());
                     for(int j=0;j<vpsRunnings.size();j++){
                         if(vps.get(i).getVps().equals(vpsRunnings.get(j).getVps())){
                             total=vpsRunnings.get(j).getTotal();
@@ -85,6 +85,7 @@ public class VpsTikTokController {
                     obj.put("running",  vps.get(i).getRunning());
                     obj.put("follower", historyTiktokRepository.getHistoryFollowerTikTokByVPS(vps.get(i).getVps()));
                     obj.put("total",total);
+                    obj.put("total_device",total_device);
                     //obj.put("view24h",totalview);
                     jsonArray.add(obj);
                 }
