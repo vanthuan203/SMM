@@ -2,6 +2,7 @@ package com.nts.awspremium.repositories;
 
 
 import com.nts.awspremium.model.Admin;
+import com.nts.awspremium.model.PriorityTasks;
 import com.nts.awspremium.model.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

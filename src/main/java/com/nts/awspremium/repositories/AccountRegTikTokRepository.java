@@ -17,6 +17,9 @@ public interface AccountRegTikTokRepository extends JpaRepository<AccountRegTikt
     public AccountRegTiktok checkUsername(String username);
     @Query(value = "call update_running_acc_reg_tiktok(?1,?2,?3,?4)",nativeQuery = true)
     public AccountRegTiktok getAccountRegTiktok(String vps,String device_id,Long time_check,String code);
+
+    @Query(value = "call update_running_acc_reg_tiktok_by_type(?1,?2,?3,?4,?5)",nativeQuery = true)
+    public AccountRegTiktok getAccountRegTiktokByAccountType(String vps,String device_id,Long time_check,String code,String account_type);
     @Modifying
     @Transactional
     @Query(value = "UPDATE account_reg_tiktok SET running=0,vps='',proxy='',device_id='' where vps=?1",nativeQuery = true)

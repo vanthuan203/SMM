@@ -306,7 +306,7 @@ public class AccountTikTokController {
     }
 
     @GetMapping(value = "/reg_acc", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> reg_acc(@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps, @RequestHeader(defaultValue = "") String Authorization) {
+    ResponseEntity<String> reg_acc(@RequestParam(defaultValue = "") String account_type,@RequestParam(defaultValue = "") String device_id,@RequestParam(defaultValue = "") String vps, @RequestHeader(defaultValue = "") String Authorization) {
         JSONObject resp = new JSONObject();
         Integer checktoken = adminRepository.FindAdminByToken(Authorization);
         if (checktoken == 0) {
@@ -355,7 +355,12 @@ public class AccountTikTokController {
                     Integer ranver=ran.nextInt(stringrand.length());
                     code=code+stringrand.charAt(ranver);
                 }
-                AccountRegTiktok accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktok(vps.trim(),device_id.trim(),System.currentTimeMillis(),code);
+                AccountRegTiktok accountRegTiktok=null;
+                if(account_type.length()==0){
+                    accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktok(vps.trim(),device_id.trim(),System.currentTimeMillis(),code);
+                }else{
+                    accountRegTiktok=accountRegTikTokRepository.getAccountRegTiktokByAccountType(vps.trim(),device_id.trim(),System.currentTimeMillis(),code,account_type.trim());
+                }
                 if(accountRegTiktok!=null){
                     Proxy_IPV4_TikTok proxy_ipv4_tikTok=proxyIpv4TikTokRepository.getProxyFixAccountTikTok();
                     if(proxy_ipv4_tikTok!=null) {

@@ -39,10 +39,12 @@ public class Service {
     private Integer click_web=0;
     private Integer click_ads=0;
     private String platform;
+    private String task;
+    private String device_type="all";
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads, String platform) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads, String platform, String task, String device_type) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -74,6 +76,24 @@ public class Service {
         this.click_web = click_web;
         this.click_ads = click_ads;
         this.platform = platform;
+        this.task = task;
+        this.device_type = device_type;
+    }
+
+    public String getDevice_type() {
+        return device_type;
+    }
+
+    public void setDevice_type(String device_type) {
+        this.device_type = device_type;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public Integer getMaxorder() {
