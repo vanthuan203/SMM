@@ -765,6 +765,11 @@ public class HistoryCommentController {
                         dataReplyCommentRepository.resetRunningReply(comment_id);
                     }
                 }else{
+                    if (historyCommentRepository.getListVideoById(historieId).length() > 44) {
+                        historyCommentRepository.updateListVideoNew(videoid, historieId);
+                    } else {
+                        historyCommentRepository.updateListVideo(videoid, historieId);
+                    }
                     dataReplyCommentRepository.deleteCommentDone(comment_id);
                 }
                 resp.put("status", "true");
