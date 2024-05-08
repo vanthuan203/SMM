@@ -35,6 +35,9 @@ public class VideoCommentController {
     private BalanceRepository balanceRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+
+    @Autowired
+    private DataReplyCommentRepository dataReplyCommentRepository;
     @Autowired
     private SettingRepository settingRepository;
 
@@ -1113,7 +1116,52 @@ public class VideoCommentController {
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         try {
             //historyRepository.updateHistoryByAccount();
-            List<VideoComment> videoBuffh = videoCommentRepository.getOrderFullView();
+            List<VideoComment> videoBuffh = videoCommentRepository.getOrderFullCmt();
+            for (int i = 0; i < videoBuffh.size(); i++) {
+                Long enddate = System.currentTimeMillis();
+
+                VideoCommentHistory videoBuffhnew = new VideoCommentHistory();
+                videoBuffhnew.setOrderid(videoBuffh.get(i).getOrderid());
+                videoBuffhnew.setDuration(videoBuffh.get(i).getDuration());
+                videoBuffhnew.setInsertdate(videoBuffh.get(i).getInsertdate());
+                videoBuffhnew.setChannelid(videoBuffh.get(i).getChannelid());
+                videoBuffhnew.setVideotitle(videoBuffh.get(i).getVideotitle());
+                videoBuffhnew.setVideoid(videoBuffh.get(i).getVideoid());
+                videoBuffhnew.setCommentstart(videoBuffh.get(i).getCommentstart());
+                videoBuffhnew.setMaxthreads(videoBuffh.get(i).getMaxthreads());
+                videoBuffhnew.setNote(videoBuffh.get(i).getNote());
+                videoBuffhnew.setCancel(0);
+                videoBuffhnew.setNumbh(0);
+                videoBuffhnew.setTimecheck(0L);
+                videoBuffhnew.setUser(videoBuffh.get(i).getUser());
+                videoBuffhnew.setEnddate(enddate);
+                videoBuffhnew.setService(videoBuffh.get(i).getService());
+                videoBuffhnew.setCommenttotal(videoBuffh.get(i).getCommenttotal());
+                videoBuffhnew.setCommentorder(videoBuffh.get(i).getCommentorder());
+                videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
+                try {
+                    videoCommentHistoryRepository.save(videoBuffhnew);
+                    videoCommentRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());
+                } catch (Exception e) {
+
+                }
+            }
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateVideoReplyDoneCron", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateVideoReplyDoneCron() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            //historyRepository.updateHistoryByAccount();
+            List<VideoComment> videoBuffh = videoCommentRepository.getOrderFullReply();
             for (int i = 0; i < videoBuffh.size(); i++) {
                 Long enddate = System.currentTimeMillis();
 
@@ -1184,6 +1232,70 @@ public class VideoCommentController {
                  } else {
                      videoComments.get(i).setMaxthreads(50);
                  }
+                videoCommentRepository.save(videoComments.get(i));
+            }
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "updateStateReply", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> updateStateReply() {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        try {
+            //historyRepository.updateHistoryByAccount();
+            List<VideoComment> videoComments = videoCommentRepository.getOrderReplyThreadNull();
+            Setting setting = settingRepository.getReferenceById(1L);
+            for (int i = 0; i < videoComments.size(); i++) {
+                String[] comments = videoComments.get(i).getListcomment().split("\n");
+                System.out.println(comments);
+                for (int j = 0; j < comments.length; j++) {
+                    if (comments[j].length() == 0) {
+                        continue;
+                    }
+                    if(comments[j].indexOf("|")>0){
+                        String[] cmt_reply=comments[j].split("|");
+                        DataComment dataComment = new DataComment();
+                        dataComment.setOrderid(videoComments.get(i).getOrderid());
+                        dataComment.setComment(cmt_reply[0].trim());
+                        dataComment.setUsername("");
+                        dataComment.setRunning(0);
+                        dataComment.setTimeget(0L);
+                        dataComment.setVps("");
+                        dataCommentRepository.save(dataComment);
+
+                        DataReplyComment dataReplyComment=new DataReplyComment();
+                        dataReplyComment.setComment_id(dataComment.getId());
+                        dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
+                        dataReplyComment.setReply(cmt_reply[1].trim());
+                        dataReplyComment.setRunning(-1);
+                        dataReplyComment.setTimeget(0L);
+                        dataReplyComment.setUsername("");
+                        dataReplyComment.setVps("");
+                        dataReplyCommentRepository.save(dataReplyComment);
+                    }else{
+                        DataComment dataComment = new DataComment();
+                        dataComment.setOrderid(videoComments.get(i).getOrderid());
+                        dataComment.setComment(comments[j].trim());
+                        dataComment.setUsername("");
+                        dataComment.setRunning(0);
+                        dataComment.setTimeget(0L);
+                        dataComment.setVps("");
+                        dataCommentRepository.save(dataComment);
+                    }
+                }
+                Service service = serviceRepository.getService(videoComments.get(i).getService());
+                int max_thread = service.getThread() + ((int)(videoComments.get(i).getCommentorder() / 30)<1?0:(int)(videoComments.get(i).getCommentorder() / 30) - 1)*3;
+                if (max_thread <= 50) {
+                    videoComments.get(i).setMaxthreads(max_thread);
+                } else {
+                    videoComments.get(i).setMaxthreads(50);
+                }
                 videoCommentRepository.save(videoComments.get(i));
             }
             resp.put("status", "true");

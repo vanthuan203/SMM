@@ -389,9 +389,9 @@ public class HistoryCommentController {
                 if (history.getGeo().equals("cmt-vn")) {
                     videos = videoCommentRepository.getvideoCommentVNTest("",orderCommentTrue.getValue());
                 } else if (history.getGeo().equals("cmt-us")) {
-                    videos = videoCommentRepository.getvideoCommentUS("",orderCommentTrue.getValue());
+                    videos = videoCommentRepository.getvideoCommentUSTest("",orderCommentTrue.getValue());
                 }else if (history.getGeo().equals("cmt-kr")) {
-                    videos = videoCommentRepository.getvideoCommentKR("",orderCommentTrue.getValue());
+                    videos = videoCommentRepository.getvideoCommentKRTest("",orderCommentTrue.getValue());
                 }else{
                     fail_resp.put("status", "fail");
                     fail_resp.put("message", "Username không cmt!");
@@ -512,7 +512,7 @@ public class HistoryCommentController {
             } else {
                 List<HistoryComment> histories = historyCommentRepository.getHistoriesById(historieId);
                 //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
-                /*if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
+                if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
                     //histories.get(0).setTimeget(System.currentTimeMillis());
                     //historyViewRepository.save(histories.get(0));
                     fail_resp.put("status", "fail");
@@ -521,17 +521,15 @@ public class HistoryCommentController {
                     fail_resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
-
-                 */
                 if (histories.get(0).getGeo().equals("cmt-vn")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
                     videos = videoCommentRepository.getvideoCommentVNTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 } else if (histories.get(0).getGeo().equals("cmt-us")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                    videos = videoCommentRepository.getvideoCommentUSTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 }else if (histories.get(0).getGeo().equals("cmt-kr")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentKR(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                    videos = videoCommentRepository.getvideoCommentKRTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 }else{
                     fail_resp.put("status", "fail");
                     fail_resp.put("message", "Username không cmt!");
@@ -570,7 +568,7 @@ public class HistoryCommentController {
                     }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                }else{
+                }else {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
