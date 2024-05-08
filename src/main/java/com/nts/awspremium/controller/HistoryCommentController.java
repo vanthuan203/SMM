@@ -426,7 +426,7 @@ public class HistoryCommentController {
                         Thread.sleep(ran.nextInt(1000)+500);
                         String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                         if(reply!=null){
-                            resp.put("reply",dataCommentRepository.getCommentByCommentId(Long.parseLong(reply.split(",")[0])));
+                            resp.put("reply",dataCommentRepository.getCommentByCommentId(Long.parseLong(reply.split(",")[2])));
                             resp.put("comment_id", reply.split(",")[0]);
                             resp.put("comment", reply.split(",")[1]);
                         }else{
@@ -512,7 +512,7 @@ public class HistoryCommentController {
             } else {
                 List<HistoryComment> histories = historyCommentRepository.getHistoriesById(historieId);
                 //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
-                if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
+                /*if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
                     //histories.get(0).setTimeget(System.currentTimeMillis());
                     //historyViewRepository.save(histories.get(0));
                     fail_resp.put("status", "fail");
@@ -521,9 +521,11 @@ public class HistoryCommentController {
                     fail_resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
+
+                 */
                 if (histories.get(0).getGeo().equals("cmt-vn")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
-                    videos = videoCommentRepository.getvideoCommentVN(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                    videos = videoCommentRepository.getvideoCommentVNTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
                 } else if (histories.get(0).getGeo().equals("cmt-us")) {
                     //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
                     videos = videoCommentRepository.getvideoCommentUS(histories.get(0).getListvideo(),orderCommentTrue.getValue());
