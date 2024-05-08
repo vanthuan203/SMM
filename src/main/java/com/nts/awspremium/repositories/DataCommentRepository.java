@@ -18,6 +18,9 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Query(value = "SELECT comment FROM datacomment WHERE id=?1 limit 1",nativeQuery = true)
     public String getCommentByCommentId(Long id);
 
+    @Query(value = "SELECT count(*) FROM datacomment WHERE id=?1 limit 1",nativeQuery = true)
+    public Integer checkByCommentId(Long id);
+
     @Modifying
     @Transactional
     @Query(value = "update datacomment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and orderid=?4 and running=0 and username='' order by rand() limit 1",nativeQuery = true)

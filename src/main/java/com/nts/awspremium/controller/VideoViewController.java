@@ -3840,7 +3840,8 @@ public class VideoViewController {
     }
 
     @GetMapping(path = "updateRefillHis", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> updateRefillHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid) {
+    ResponseEntity<String> updateRefillHis(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String orderid
+            ,@RequestParam(defaultValue = "1") Integer check_time) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> admins = adminRepository.FindByToken(Authorization.trim());
@@ -3866,18 +3867,22 @@ public class VideoViewController {
                     status="Đơn bảo hành";
                 }else if(service.getChecktime()==1){
                     status="Đơn check time";
-                }else if(videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim())>0){
+                }else if(videoViewHistoryRepository.checkBHThan8h(video.getVideoid().trim())>0&&check_time==1){
                     status="Hoàn thành < 8h";
                 }else if(videoViewRepository.getCountVideoIdNotPending(video.getVideoid())>0){
                     status="Đơn mới đang chạy";
                 }else if(video.getCancel()==1){
                     status="Được hủy trước đó";
-                }else if(serviceRepository.checkGuaranteeByTime(video.getEnddate(),service.getMaxtimerefill())==0){
+                }else if(serviceRepository.checkGuaranteeByTime(video.getEnddate(),service.getMaxtimerefill())==0&&check_time==1){
                     status="Quá hạn "+service.getMaxtimerefill()+" ngày";
-                }else if((channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0 || video.getVieworder()>=5000)
+                }
+                /*
+                else if((channelYoutubeBlackListRepository.getCountByChannelId(video.getChannelid().trim())>0 || video.getVieworder()>=5000)
                         &&serviceRepository.checkGuaranteeByTime(video.getEnddate(),1)==0){
                     status="Lợi dụng chính sách";
-                }else{
+                }
+                 */
+                else{
                     status=refundViewByVideoView(video);
                     video_refil= videoViewHistoryRepository.getVideoViewHisById(Long.parseLong(videoidIdArr[i].trim()));
                 }
