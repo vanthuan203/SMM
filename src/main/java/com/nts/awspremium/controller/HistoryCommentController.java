@@ -398,7 +398,6 @@ public class HistoryCommentController {
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videos.size() > 0) {
-                    resp.put("reply","");
                     history.setVideoid(videos.get(0).getVideoid());
                     history.setTimeget(System.currentTimeMillis());
                     history.setOrderid(videos.get(0).getOrderid());
@@ -419,6 +418,12 @@ public class HistoryCommentController {
                             fail_resp.put("message", "Không còn video để comment!");
                             return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                         }
+                        resp.put("reply","");
+                        if(dataReplyCommentRepository.checkReplyByCommentId(Long.parseLong(comment.split(",")[0]))>0){
+                            resp.put("device_type","pc");
+                        }else{
+                            resp.put("device_type","mobile");
+                        }
                         resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
                     }else{
@@ -426,7 +431,8 @@ public class HistoryCommentController {
                         Thread.sleep(ran.nextInt(1000)+500);
                         String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                         if(reply!=null){
-                            resp.put("reply",dataCommentRepository.getCommentByCommentId(Long.parseLong(reply.split(",")[2])));
+                            resp.put("device_type","pc");
+                            resp.put("reply",reply.split(",")[2]);
                             resp.put("comment_id", reply.split(",")[0]);
                             resp.put("comment", reply.split(",")[1]);
                         }else{
@@ -536,7 +542,6 @@ public class HistoryCommentController {
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videos.size() > 0) {
-                    resp.put("reply","");
                     histories.get(0).setTimeget(System.currentTimeMillis());
                     histories.get(0).setVideoid(videos.get(0).getVideoid());
                     histories.get(0).setOrderid(videos.get(0).getOrderid());
@@ -566,6 +571,12 @@ public class HistoryCommentController {
                         fail_resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                     }
+                    resp.put("reply","");
+                    if(dataReplyCommentRepository.checkReplyByCommentId(Long.parseLong(comment.split(",")[0]))>0){
+                        resp.put("device_type","pc");
+                    }else{
+                        resp.put("device_type","mobile");
+                    }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
                 }else {
@@ -573,7 +584,8 @@ public class HistoryCommentController {
                     Thread.sleep(ran.nextInt(1000)+500);
                     String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
                     if(reply!=null){
-                        resp.put("reply",dataCommentRepository.getCommentByCommentId(Long.parseLong(reply.split(",")[2])));
+                        resp.put("device_type","pc");
+                        resp.put("reply",reply.split(",")[2]);
                         resp.put("comment_id", reply.split(",")[0]);
                         resp.put("comment", reply.split(",")[1]);
                     }else{
@@ -582,7 +594,7 @@ public class HistoryCommentController {
                         fail_resp.put("status", "fail");
                         fail_resp.put("username", histories.get(0).getUsername());
                         fail_resp.put("fail", "video");
-                        fail_resp.put("message", "Không còn video để R comment!");
+                        fail_resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                     }
                 }
@@ -718,7 +730,8 @@ public class HistoryCommentController {
     @GetMapping(value = "/updatevideoid", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestParam(defaultValue = "") String username,
                                          @RequestParam(defaultValue = "") String videoid,
-                                         @RequestParam(defaultValue = "0") Long comment_id
+                                         @RequestParam(defaultValue = "0") Long comment_id,
+                                         @RequestParam(defaultValue = "") String lc
                                          ) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
@@ -760,7 +773,7 @@ public class HistoryCommentController {
                         } else {
                             historyCommentRepository.updateListVideo(videoid, historieId);
                         }
-                        dataReplyCommentRepository.resetRunningReply(comment_id);
+                        dataReplyCommentRepository.resetRunningReply(lc,comment_id);
                     }
                 }else{
                     if (historyCommentRepository.getListVideoById(historieId).length() > 44) {
@@ -951,6 +964,7 @@ public class HistoryCommentController {
         JSONObject resp = new JSONObject();
         try {
             dataCommentRepository.resetRunningCommentByRunningHisCron();
+            dataReplyCommentRepository.resetRunningCommentByRunningHisCron();
             historyCommentRepository.resetThreadThan15mcron();
             dataCommentRepository.resetRunningCommentByCron();
             resp.put("status", "true");

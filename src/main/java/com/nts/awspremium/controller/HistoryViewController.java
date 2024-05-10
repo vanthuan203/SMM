@@ -34,6 +34,8 @@ public class HistoryViewController {
     @Autowired
     private DataCommentRepository dataCommentRepository;
     @Autowired
+    private DataReplyCommentRepository dataReplyCommentRepository;
+    @Autowired
     private AdminRepository adminRepository;
     @Autowired
     private HistoryViewRepository historyViewRepository;
@@ -1608,6 +1610,7 @@ public class HistoryViewController {
             historyViewRepository.resetThreadViewByVps(vps.trim());
             historyCommentRepository.resetThreadViewByVps(vps.trim());
             dataCommentRepository.resetRunningCommentByVPS(vps.trim());
+            dataReplyCommentRepository.resetRunningCommentByVPS(vps.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

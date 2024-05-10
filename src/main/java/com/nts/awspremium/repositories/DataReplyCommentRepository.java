@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 
 public interface DataReplyCommentRepository extends JpaRepository<DataReplyComment,Long> {
-    @Query(value = "SELECT id,reply,comment_id FROM data_reply_comment WHERE orderid=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
+    @Query(value = "SELECT id,reply,link FROM data_reply_comment WHERE orderid=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
     public String getCommentByOrderIdAndUsername(Long orderid,String username);
 
     @Query(value = "SELECT count(*) FROM data_reply_comment WHERE id=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
@@ -18,12 +18,12 @@ public interface DataReplyCommentRepository extends JpaRepository<DataReplyComme
     public String getCommentByCommentId(Long id);
 
 
-    @Query(value = "SELECT count(*) FROM data_reply_comment WHERE comment_id=?1 and link=''",nativeQuery = true)
-    public Integer checkLinkReply(Long id);
+    @Query(value = "SELECT count(*) FROM data_reply_comment WHERE comment_id=?1",nativeQuery = true)
+    public Integer checkReplyByCommentId(Long id);
 
     @Modifying
     @Transactional
-    @Query(value = "update data_reply_comment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and orderid=?4 and running=0 and username='' order by rand() limit 1",nativeQuery = true)
+    @Query(value = "update data_reply_comment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and link!='' and orderid=?4 and running=0 and username='' order by rand() limit 1",nativeQuery = true)
     public void updateRunningComment(Long timeget,String username,String vps,Long orderid);
     @Modifying
     @Transactional
@@ -47,8 +47,8 @@ public interface DataReplyCommentRepository extends JpaRepository<DataReplyComme
 
     @Modifying
     @Transactional
-    @Query(value = "update data_reply_comment set running=0 where comment_id=?1",nativeQuery = true)
-    public void resetRunningReply(Long comment_id );
+    @Query(value = "update data_reply_comment set running=0,link=?1 where comment_id=?2",nativeQuery = true)
+    public void resetRunningReply(String link,Long comment_id );
 
     @Modifying
     @Transactional

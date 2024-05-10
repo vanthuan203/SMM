@@ -1253,13 +1253,12 @@ public class VideoCommentController {
             Setting setting = settingRepository.getReferenceById(1L);
             for (int i = 0; i < videoComments.size(); i++) {
                 String[] comments = videoComments.get(i).getListcomment().split("\n");
-                System.out.println(comments);
                 for (int j = 0; j < comments.length; j++) {
                     if (comments[j].length() == 0) {
                         continue;
                     }
                     if(comments[j].indexOf("|")>0){
-                        String[] cmt_reply=comments[j].split("|");
+                        String[] cmt_reply=comments[j].split("\\|");
                         DataComment dataComment = new DataComment();
                         dataComment.setOrderid(videoComments.get(i).getOrderid());
                         dataComment.setComment(cmt_reply[0].trim());

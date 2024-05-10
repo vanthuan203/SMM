@@ -10,6 +10,9 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface PriorityTasksRepository extends JpaRepository<PriorityTasks,String> {
-    @Query(value = "SELECT * FROM AccPremium.priority_task where state=1;",nativeQuery = true)
+    @Query(value = "SELECT * FROM priority_task where priority>0;",nativeQuery = true)
     public List<PriorityTasks> getPriority_task();
+
+    @Query(value = "SELECT state FROM priority_task where task=?1 limit 1",nativeQuery = true)
+    public Integer getState_Task(String task);
 }

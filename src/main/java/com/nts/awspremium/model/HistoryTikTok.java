@@ -14,6 +14,7 @@ public class HistoryTikTok {
     private Long timeget;
     private Long orderid;
     private String account_type ="";
+    private String task ="";
     public HistoryTikTok() {
     }
 
@@ -26,6 +27,14 @@ public class HistoryTikTok {
         this.timeget = timeget;
         this.orderid = orderid;
         this.account_type = account_type;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public String getUsername() {
