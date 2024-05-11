@@ -17,7 +17,8 @@ import java.util.Random;
 @RequestMapping(path = "/historycomment")
 public class HistoryCommentController {
 
-
+    @Autowired
+    private ServiceRepository serviceRepository;
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -398,6 +399,7 @@ public class HistoryCommentController {
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
                 if (videos.size() > 0) {
+                    Service service = serviceRepository.getInfoService(videos.get(0).getService());
                     history.setVideoid(videos.get(0).getVideoid());
                     history.setTimeget(System.currentTimeMillis());
                     history.setOrderid(videos.get(0).getOrderid());
@@ -426,7 +428,7 @@ public class HistoryCommentController {
                         }
                         resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                    }else{
+                    }else if(service.getExpired()==1){
                         dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                         Thread.sleep(ran.nextInt(1000)+500);
                         String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -444,6 +446,14 @@ public class HistoryCommentController {
                             fail_resp.put("message", "Không còn video để comment!");
                             return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                         }
+                    }else{
+                        history.setRunning(0);
+                        historyCommentRepository.save(history);
+                        fail_resp.put("status", "fail");
+                        fail_resp.put("username", history.getUsername());
+                        fail_resp.put("fail", "video");
+                        fail_resp.put("message", "Không còn video để comment!");
+                        return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                     }
                     String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
                     if(proxy[0].trim().length()<4){
@@ -557,6 +567,7 @@ public class HistoryCommentController {
                     fail_resp.put("message", "Không còn video để comment!");
                     return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
+                Service service = serviceRepository.getInfoService(videos.get(0).getService());
                 dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                 Thread.sleep(ran.nextInt(1000)+500);
                 String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -579,7 +590,7 @@ public class HistoryCommentController {
                     }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                }else {
+                }else if(service.getExpired()==1) {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -597,6 +608,14 @@ public class HistoryCommentController {
                         fail_resp.put("message", "Không còn video để comment!");
                         return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                     }
+                }else{
+                    histories.get(0).setRunning(0);
+                    historyCommentRepository.save(histories.get(0));
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("username", histories.get(0).getUsername());
+                    fail_resp.put("fail", "video");
+                    fail_resp.put("message", "Không còn video để comment!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
                 }
                 String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
                 if(proxy[0].trim().length()<4){
@@ -776,6 +795,20 @@ public class HistoryCommentController {
                         dataReplyCommentRepository.resetRunningReply(lc,comment_id);
                     }
                 }else{
+                    HistoryCommentSum historySum = new HistoryCommentSum();
+                    historySum.setUsername(username);
+                    historySum.setTime(System.currentTimeMillis());
+                    historySum.setCommentid(comment_id);
+                    historySum.setCommnent(dataCommentRepository.getCommentByCommentId(comment_id));
+                    historySum.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
+                    try {
+                        historyCommentSumRepository.save(historySum);
+                    } catch (Exception e) {
+                        try {
+                            historyCommentSumRepository.save(historySum);
+                        } catch (Exception f) {
+                        }
+                    }
                     if (historyCommentRepository.getListVideoById(historieId).length() > 44) {
                         historyCommentRepository.updateListVideoNew(videoid, historieId);
                     } else {

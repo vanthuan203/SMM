@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -1253,23 +1254,27 @@ public class VideoCommentController {
             Setting setting = settingRepository.getReferenceById(1L);
             for (int i = 0; i < videoComments.size(); i++) {
                 String[] comments = videoComments.get(i).getListcomment().split("\n");
+                List<String> arrCmt = new ArrayList<>();
                 for (int j = 0; j < comments.length; j++) {
                     if (comments[j].length() == 0) {
                         continue;
                     }
                     if(comments[j].indexOf("|")>0){
                         String[] cmt_reply=comments[j].split("\\|");
-                        DataComment dataComment = new DataComment();
-                        dataComment.setOrderid(videoComments.get(i).getOrderid());
-                        dataComment.setComment(cmt_reply[0].trim());
-                        dataComment.setUsername("");
-                        dataComment.setRunning(0);
-                        dataComment.setTimeget(0L);
-                        dataComment.setVps("");
-                        dataCommentRepository.save(dataComment);
+                        if(!arrCmt.contains(cmt_reply[0].trim())){
+                            arrCmt.add(cmt_reply[0].trim());
+                            DataComment dataComment = new DataComment();
+                            dataComment.setOrderid(videoComments.get(i).getOrderid());
+                            dataComment.setComment(cmt_reply[0].trim());
+                            dataComment.setUsername("");
+                            dataComment.setRunning(0);
+                            dataComment.setTimeget(0L);
+                            dataComment.setVps("");
+                            dataCommentRepository.save(dataComment);
+                        }
 
                         DataReplyComment dataReplyComment=new DataReplyComment();
-                        dataReplyComment.setComment_id(dataComment.getId());
+                        dataReplyComment.setComment_id(dataCommentRepository.getByCommentId(videoComments.get(i).getOrderid(),cmt_reply[0].trim()));
                         dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
                         dataReplyComment.setReply(cmt_reply[1].trim());
                         dataReplyComment.setRunning(-1);
@@ -1278,14 +1283,19 @@ public class VideoCommentController {
                         dataReplyComment.setVps("");
                         dataReplyCommentRepository.save(dataReplyComment);
                     }else{
-                        DataComment dataComment = new DataComment();
-                        dataComment.setOrderid(videoComments.get(i).getOrderid());
-                        dataComment.setComment(comments[j].trim());
-                        dataComment.setUsername("");
-                        dataComment.setRunning(0);
-                        dataComment.setTimeget(0L);
-                        dataComment.setVps("");
-                        dataCommentRepository.save(dataComment);
+                        if(!arrCmt.equals(comments[j].trim())) {
+
+                            arrCmt.add(comments[j].trim());
+
+                            DataComment dataComment = new DataComment();
+                            dataComment.setOrderid(videoComments.get(i).getOrderid());
+                            dataComment.setComment(comments[j].trim());
+                            dataComment.setUsername("");
+                            dataComment.setRunning(0);
+                            dataComment.setTimeget(0L);
+                            dataComment.setVps("");
+                            dataCommentRepository.save(dataComment);
+                        }
                     }
                 }
                 Service service = serviceRepository.getService(videoComments.get(i).getService());
@@ -1300,6 +1310,12 @@ public class VideoCommentController {
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);

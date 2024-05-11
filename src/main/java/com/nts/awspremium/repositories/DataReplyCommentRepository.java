@@ -21,6 +21,9 @@ public interface DataReplyCommentRepository extends JpaRepository<DataReplyComme
     @Query(value = "SELECT count(*) FROM data_reply_comment WHERE comment_id=?1",nativeQuery = true)
     public Integer checkReplyByCommentId(Long id);
 
+    @Query(value = "SELECT count(*) FROM data_reply_comment WHERE comment_id=?1 and link=''",nativeQuery = true)
+    public Long checkReplyByCommentIdAndLink(Long id);
+
     @Modifying
     @Transactional
     @Query(value = "update data_reply_comment set running=1,timeget=?1,username=?2,vps=?3 where orderid  in (select orderid from videocomment) and link!='' and orderid=?4 and running=0 and username='' order by rand() limit 1",nativeQuery = true)
@@ -59,4 +62,9 @@ public interface DataReplyCommentRepository extends JpaRepository<DataReplyComme
     @Transactional
     @Query(value = "delete FROM data_reply_comment where id=?1",nativeQuery = true)
     public void deleteCommentDone(Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete FROM data_reply_comment where comment_id=?1",nativeQuery = true)
+    public void deleteReplyByCommentId(Long comment_id);
 }

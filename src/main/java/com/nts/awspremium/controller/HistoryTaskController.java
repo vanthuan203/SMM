@@ -62,6 +62,28 @@ public class HistoryTaskController {
     @Autowired
     private PriorityTasksRepository priorityTasksRepository;
 
+
+    JSONObject task_tiktok_activity(String username){
+        JSONObject resp = new JSONObject();
+        try{
+            SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
+            if(activityTikTokRepository.checkActivityByUsername(username.trim())>0){
+                resp.put("status", false);
+                return resp;
+            }
+            resp.put("status", true);
+            //resp.put("proxy", proxy);
+            resp.put("order_id",0);
+            resp.put("task", "activity");
+            resp.put("platform", "tiktok");
+            return resp;
+
+        }catch (Exception e){
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
     JSONObject task_tiktok_follower(String username){
         JSONObject resp = new JSONObject();
         try{
@@ -189,7 +211,11 @@ public class HistoryTaskController {
             String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
             while(arrTask.remove(task)) {}
             if(task.equals("task_tiktok_follower")){
-                get_task=task_tiktok_follower(username.trim());
+                if(historyTikTok.getOption_running()==0){
+                    get_task=task_tiktok_activity(username.trim());
+                }else{
+                    get_task=task_tiktok_follower(username.trim());
+                }
             }else if(task.equals("task_youtube_view")){
                 get_task=task_youtube_view(username.trim());
             }

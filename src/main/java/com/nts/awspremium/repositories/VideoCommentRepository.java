@@ -24,7 +24,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentVN(String listvideo,List<String> orderid);
 
-    @Query(value = "SELECT * FROM videocomment where service=889 and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where (service=889 or service=888) and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentVNTest(String listvideo,List<String> orderid);
 
@@ -38,7 +38,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUS(String listvideo,List<String> orderid);
 
-    @Query(value = "SELECT * FROM videocomment where service=223 and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where (service=222 or service=223) and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUSTest(String listvideo,List<String> orderid);
 
@@ -53,7 +53,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     public List<VideoComment> getvideoCommentKR(String listvideo,List<String> orderid);
 
 
-    @Query(value = "SELECT * FROM videocomment where service=1112 and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where (service=1111 or service=1112) and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentKRTest(String listvideo,List<String> orderid);
 
