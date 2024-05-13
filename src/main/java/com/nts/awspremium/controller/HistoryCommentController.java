@@ -56,8 +56,8 @@ public class HistoryCommentController {
     private VpsRepository vpsRepository;
     @Autowired
     private ProxyRepository proxyRepository;
-    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+    @GetMapping(value = "getoff", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getoff(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
         JSONObject resp = new JSONObject();
         JSONObject fail_resp = new JSONObject();
         if (vps.length() == 0) {
@@ -346,8 +346,8 @@ public class HistoryCommentController {
         }
     }
 
-    @GetMapping(value = "getoff", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getoff(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
         JSONObject resp = new JSONObject();
         JSONObject fail_resp = new JSONObject();
         if (vps.length() == 0) {
@@ -433,12 +433,13 @@ public class HistoryCommentController {
                     }else if(service.getExpired()==1){
                         dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                         Thread.sleep(ran.nextInt(1000)+500);
-                        String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
-                        if(reply!=null){
+                        Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                        if(reply_id!=null){
+                            String info_reply=dataReplyCommentRepository.getInfoReplyBYId(reply_id);
                             resp.put("device_type","pc");
-                            resp.put("reply",reply.split(",")[2]);
-                            resp.put("comment_id", reply.split(",")[0]);
-                            resp.put("comment", reply.split(",")[1]);
+                            resp.put("reply",info_reply.split(",")[0]);
+                            resp.put("comment_id", reply_id);
+                            resp.put("comment", info_reply.substring(info_reply.indexOf(",")+1));
                         }else{
                             history.setRunning(0);
                             historyCommentRepository.save(history);
@@ -595,12 +596,13 @@ public class HistoryCommentController {
                 }else if(service.getExpired()==1) {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
-                    String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
-                    if(reply!=null){
+                    Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                    if(reply_id!=null){
+                        String info_reply=dataReplyCommentRepository.getInfoReplyBYId(reply_id);
                         resp.put("device_type","pc");
-                        resp.put("reply",reply.split(",")[2]);
-                        resp.put("comment_id", reply.split(",")[0]);
-                        resp.put("comment", reply.split(",")[1]);
+                        resp.put("reply",info_reply.split(",")[0]);
+                        resp.put("comment_id", reply_id);
+                        resp.put("comment", info_reply.substring(info_reply.indexOf(",")+1));
                     }else{
                         histories.get(0).setRunning(0);
                         historyCommentRepository.save(histories.get(0));
@@ -782,12 +784,13 @@ public class HistoryCommentController {
                     }else if(service.getExpired()==1){
                         dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                         Thread.sleep(ran.nextInt(1000)+500);
-                        String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
-                        if(reply!=null){
+                        Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                        if(reply_id!=null){
+                            String info_reply=dataReplyCommentRepository.getInfoReplyBYId(reply_id);
                             resp.put("device_type","pc");
-                            resp.put("reply",reply.split(",")[2]);
-                            resp.put("comment_id", reply.split(",")[0]);
-                            resp.put("comment", reply.split(",")[1]);
+                            resp.put("reply",info_reply.split(",")[0]);
+                            resp.put("comment_id", reply_id);
+                            resp.put("comment", info_reply.substring(info_reply.indexOf(",")+1));
                         }else{
                             history.setRunning(0);
                             historyCommentRepository.save(history);
@@ -944,12 +947,13 @@ public class HistoryCommentController {
                 }else if(service.getExpired()==1) {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
-                    String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
-                    if(reply!=null){
+                    Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                    if(reply_id!=null){
+                        String info_reply=dataReplyCommentRepository.getInfoReplyBYId(reply_id);
                         resp.put("device_type","pc");
-                        resp.put("reply",reply.split(",")[2]);
-                        resp.put("comment_id", reply.split(",")[0]);
-                        resp.put("comment", reply.split(",")[1]);
+                        resp.put("reply",info_reply.split(",")[0]);
+                        resp.put("comment_id", reply_id);
+                        resp.put("comment", info_reply.substring(info_reply.indexOf(",")+1));
                     }else{
                         histories.get(0).setRunning(0);
                         historyCommentRepository.save(histories.get(0));
@@ -1036,6 +1040,11 @@ public class HistoryCommentController {
             }
 
         } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
             fail_resp.put("status", "fail");
             fail_resp.put("fail", "sum");
             fail_resp.put("message", e.getMessage());

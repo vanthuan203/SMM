@@ -8,8 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 
 public interface DataReplyCommentRepository extends JpaRepository<DataReplyComment,Long> {
-    @Query(value = "SELECT id,reply,link FROM data_reply_comment WHERE orderid=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
-    public String getCommentByOrderIdAndUsername(Long orderid,String username);
+    @Query(value = "SELECT id FROM data_reply_comment WHERE orderid=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
+    public Long getCommentByOrderIdAndUsername(Long orderid,String username);
+
+
+    @Query(value = "SELECT link,reply FROM data_reply_comment WHERE id=?1  limit 1",nativeQuery = true)
+    public String getInfoReplyBYId(Long id);
 
     @Query(value = "SELECT count(*) FROM data_reply_comment WHERE id=?1 and running=1 and username=?2 limit 1",nativeQuery = true)
     public Integer getCommentByCommentIdAndUsername(Long id,String username);
