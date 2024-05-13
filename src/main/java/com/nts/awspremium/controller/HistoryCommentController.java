@@ -56,8 +56,8 @@ public class HistoryCommentController {
     private VpsRepository vpsRepository;
     @Autowired
     private ProxyRepository proxyRepository;
-    @GetMapping(value = "getoff", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> getoff(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
         JSONObject resp = new JSONObject();
         JSONObject fail_resp = new JSONObject();
         if (vps.length() == 0) {
@@ -346,8 +346,8 @@ public class HistoryCommentController {
         }
     }
 
-    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+    @GetMapping(value = "getoff", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getoff(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
         JSONObject resp = new JSONObject();
         JSONObject fail_resp = new JSONObject();
         if (vps.length() == 0) {
