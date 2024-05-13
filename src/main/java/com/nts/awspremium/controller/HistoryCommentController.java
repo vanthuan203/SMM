@@ -56,8 +56,8 @@ public class HistoryCommentController {
     private VpsRepository vpsRepository;
     @Autowired
     private ProxyRepository proxyRepository;
-    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+    @GetMapping(value = "getoff", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getoff(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
         JSONObject resp = new JSONObject();
         JSONObject fail_resp = new JSONObject();
         if (vps.length() == 0) {
@@ -345,6 +345,355 @@ public class HistoryCommentController {
             return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
+        JSONObject resp = new JSONObject();
+        JSONObject fail_resp = new JSONObject();
+        if (vps.length() == 0) {
+            fail_resp.put("status", "fail");
+            fail_resp.put("message", "Vps không để trống");
+            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        if(vpsRepository.checkVpsCmtTrue(vps.trim())==0){
+            fail_resp.put("status", "fail");
+            fail_resp.put("message", "Vps không chạy cmt!");
+            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+        }
+        if (username.length() == 0) {
+            fail_resp.put("status", "fail");
+            fail_resp.put("message", "Username không để trống");
+            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        /*
+        if (historyViewRepository.PROCESSLISTVIEW() >= 40) {
+            resp.put("status", "fail");
+            resp.put("username", "");
+            resp.put("fail", "video");
+            resp.put("message", "Không còn video để comment!");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+         */
+        Random ran = new Random();
+        try {
+            Thread.sleep(ran.nextInt(1000));
+            Long historieId = historyCommentRepository.getId(username);
+            List<VideoComment> videos = null;
+            if (historieId == null) {
+                HistoryComment history = new HistoryComment();
+                history.setUsername(username);
+                history.setListvideo("");
+                history.setRunning(0);
+                history.setVps(vps);
+                history.setVideoid("");
+                history.setOrderid(0L);
+                history.setGeo(accountRepository.getGeoByUsername(username.trim()));
+                history.setTimeget(System.currentTimeMillis());
+                if (history.getGeo().equals("cmt-vn")) {
+                    videos = videoCommentRepository.getvideoCommentVNTest("",orderCommentTrue.getValue());
+                } else if (history.getGeo().equals("cmt-us")) {
+                    videos = videoCommentRepository.getvideoCommentUSTest("",orderCommentTrue.getValue());
+                }else if (history.getGeo().equals("cmt-kr")) {
+                    videos = videoCommentRepository.getvideoCommentKRTest("",orderCommentTrue.getValue());
+                }else{
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("message", "Username không cmt!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+                if (videos.size() > 0) {
+                    Service service = serviceRepository.getInfoService(videos.get(0).getService());
+                    history.setVideoid(videos.get(0).getVideoid());
+                    history.setTimeget(System.currentTimeMillis());
+                    history.setOrderid(videos.get(0).getOrderid());
+                    history.setRunning(1);
+                    historyCommentRepository.save(history);
+
+                    dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
+                    Thread.sleep(ran.nextInt(1000)+500);
+                    String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                    if(comment!=null){
+                        if(historyCommentSumRepository.checkCommentIdTrue(Long.parseLong(comment.split(",")[0]))>0){
+                            dataCommentRepository.updateRunningCommentDone(Long.parseLong(comment.split(",")[0]));
+                            history.setRunning(0);
+                            historyCommentRepository.save(history);
+                            fail_resp.put("status", "fail");
+                            fail_resp.put("username", history.getUsername());
+                            fail_resp.put("fail", "video");
+                            fail_resp.put("message", "Không còn video để comment!");
+                            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                        }
+                        resp.put("reply","");
+                        if(dataReplyCommentRepository.checkReplyByCommentId(Long.parseLong(comment.split(",")[0]))>0){
+                            resp.put("device_type","pc");
+                        }else{
+                            resp.put("device_type","mobile");
+                        }
+                        resp.put("comment_id", comment.split(",")[0]);
+                        resp.put("comment", comment.substring(comment.indexOf(",")+1));
+                    }else if(service.getExpired()==1){
+                        dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
+                        Thread.sleep(ran.nextInt(1000)+500);
+                        String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                        if(reply!=null){
+                            resp.put("device_type","pc");
+                            resp.put("reply",reply.split(",")[2]);
+                            resp.put("comment_id", reply.split(",")[0]);
+                            resp.put("comment", reply.split(",")[1]);
+                        }else{
+                            history.setRunning(0);
+                            historyCommentRepository.save(history);
+                            fail_resp.put("status", "fail");
+                            fail_resp.put("username", history.getUsername());
+                            fail_resp.put("fail", "video");
+                            fail_resp.put("message", "Không còn video để comment!");
+                            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                        }
+                    }else{
+                        history.setRunning(0);
+                        historyCommentRepository.save(history);
+                        fail_resp.put("status", "fail");
+                        fail_resp.put("username", history.getUsername());
+                        fail_resp.put("fail", "video");
+                        fail_resp.put("message", "Không còn video để comment!");
+                        return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                    }
+                    String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
+                    if(proxy[0].trim().length()<4){
+                        List<Proxy> proxies=null;
+                        if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn")) {
+                            proxies=proxyRepository.getProxyFixAccountByGeo("vn");
+                        } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us")) {
+                            proxies=proxyRepository.getProxyFixAccountByGeo("us");
+                        } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-kr")) {
+                            proxies=proxyRepository.getProxyFixAccountByGeo("kr");
+                        }
+                        if(proxies.size()!=0) {
+                            proxy=proxies.get(0).getProxy().split(":");
+                            Account account=accountRepository.findAccountByUsername(username.trim());
+                            account.setProxy(proxies.get(0).getProxy());
+                            accountRepository.save(account);
+                            proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
+                        }
+                    }else{
+                        Random rand=new Random();
+                        if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
+                            if(history.getGeo().equals("vn")){
+                                proxy=proxyVNTrue.getValue().get(rand.nextInt(proxyVNTrue.getValue().size())).split(":");
+                            }else if(history.getGeo().equals("us")){
+                                proxy=proxyUSTrue.getValue().get(rand.nextInt(proxyUSTrue.getValue().size())).split(":");
+                            }else if(history.getGeo().equals("kr")){
+                                proxy=proxyKRTrue.getValue().get(rand.nextInt(proxyKRTrue.getValue().size())).split(":");
+                            }
+                            if(proxy.length==0){
+                                history.setRunning(0);
+                                history.setTimeget(System.currentTimeMillis());
+                                historyCommentRepository.save(history);
+                                fail_resp.put("status", "fail");
+                                fail_resp.put("message", "Proxy die!");
+                                return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                            }
+                        }
+                    }
+                    String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
+                    resp.put("channel_id", videos.get(0).getChannelid());
+                    resp.put("status", "true");
+                    resp.put("video_id", videos.get(0).getVideoid());
+                    resp.put("video_title", videos.get(0).getVideotitle());
+                    resp.put("username", history.getUsername());
+                    resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                    resp.put("proxy",proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
+                    if(ran.nextInt(1000)<300){
+                        resp.put("like", 1);
+                    }else{
+                        resp.put("like", 0);
+                    }
+                    if (ran.nextInt(10000) > 5000) {
+                        resp.put("source", "dtn");
+                    } else {
+                        resp.put("source", "search");
+                    }
+                    if (videos.get(0).getDuration() > 360) {
+                        resp.put("video_duration", 180 + ran.nextInt(180));
+                    } else {
+                        resp.put("video_duration", videos.get(0).getDuration());
+                    }
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                } else {
+                    history.setRunning(0);
+                    historyCommentRepository.save(history);
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("username", history.getUsername());
+                    fail_resp.put("fail", "video");
+                    fail_resp.put("message", "Không còn video để comment!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+            } else {
+                List<HistoryComment> histories = historyCommentRepository.getHistoriesById(historieId);
+                //System.out.println(System.currentTimeMillis()-histories.get(0).getTimeget());
+                if (System.currentTimeMillis() - histories.get(0).getTimeget() < (30000L + (long) ran.nextInt(60000))) {
+                    //histories.get(0).setTimeget(System.currentTimeMillis());
+                    //historyViewRepository.save(histories.get(0));
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("username", histories.get(0).getUsername());
+                    fail_resp.put("fail", "video");
+                    fail_resp.put("message", "Không còn video để comment!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+                if (histories.get(0).getGeo().equals("cmt-vn")) {
+                    //videos=videoViewRepository.getvideoViewNoCheckMaxThreadVN(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentVNTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                } else if (histories.get(0).getGeo().equals("cmt-us")) {
+                    //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentUSTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                }else if (histories.get(0).getGeo().equals("cmt-kr")) {
+                    //videos=videoViewRepository.getvideoViewNoCheckMaxThreadUS(histories.get(0).getListvideo());
+                    videos = videoCommentRepository.getvideoCommentKRTest(histories.get(0).getListvideo(),orderCommentTrue.getValue());
+                }else{
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("message", "Username không cmt!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+                if (videos.size() > 0) {
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    histories.get(0).setVideoid(videos.get(0).getVideoid());
+                    histories.get(0).setOrderid(videos.get(0).getOrderid());
+                    histories.get(0).setRunning(1);
+                    historyCommentRepository.save(histories.get(0));
+                } else {
+                    histories.get(0).setTimeget(System.currentTimeMillis());
+                    histories.get(0).setRunning(0);
+                    historyCommentRepository.save(histories.get(0));
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("username", histories.get(0).getUsername());
+                    fail_resp.put("fail", "video");
+                    fail_resp.put("message", "Không còn video để comment!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+                Service service = serviceRepository.getInfoService(videos.get(0).getService());
+                dataCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
+                Thread.sleep(ran.nextInt(1000)+500);
+                String comment=dataCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                if(comment!=null){
+                    if(historyCommentSumRepository.checkCommentIdTrue(Long.parseLong(comment.split(",")[0]))>0){
+                        dataCommentRepository.updateRunningCommentDone(Long.parseLong(comment.split(",")[0]));
+                        histories.get(0).setRunning(0);
+                        historyCommentRepository.save(histories.get(0));
+                        fail_resp.put("status", "fail");
+                        fail_resp.put("username", histories.get(0).getUsername());
+                        fail_resp.put("fail", "video");
+                        fail_resp.put("message", "Không còn video để comment!");
+                        return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                    }
+                    resp.put("reply","");
+                    if(dataReplyCommentRepository.checkReplyByCommentId(Long.parseLong(comment.split(",")[0]))>0){
+                        resp.put("device_type","pc");
+                    }else{
+                        resp.put("device_type","mobile");
+                    }
+                    resp.put("comment_id", comment.split(",")[0]);
+                    resp.put("comment", comment.substring(comment.indexOf(",")+1));
+                }else if(service.getExpired()==1) {
+                    dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
+                    Thread.sleep(ran.nextInt(1000)+500);
+                    String reply=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
+                    if(reply!=null){
+                        resp.put("device_type","pc");
+                        resp.put("reply",reply.split(",")[2]);
+                        resp.put("comment_id", reply.split(",")[0]);
+                        resp.put("comment", reply.split(",")[1]);
+                    }else{
+                        histories.get(0).setRunning(0);
+                        historyCommentRepository.save(histories.get(0));
+                        fail_resp.put("status", "fail");
+                        fail_resp.put("username", histories.get(0).getUsername());
+                        fail_resp.put("fail", "video");
+                        fail_resp.put("message", "Không còn video để comment!");
+                        return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                    }
+                }else{
+                    histories.get(0).setRunning(0);
+                    historyCommentRepository.save(histories.get(0));
+                    fail_resp.put("status", "fail");
+                    fail_resp.put("username", histories.get(0).getUsername());
+                    fail_resp.put("fail", "video");
+                    fail_resp.put("message", "Không còn video để comment!");
+                    return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                }
+                String[] proxy=accountRepository.getProxyByUsername(username.trim()).split(":");
+                if(proxy[0].trim().length()<4){
+                    List<Proxy> proxies=null;
+                    if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-vn")) {
+                        proxies=proxyRepository.getProxyFixAccountByGeo("vn");
+                    } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-us")) {
+                        proxies=proxyRepository.getProxyFixAccountByGeo("us");
+                    } else if (accountRepository.getGeoByUsername(username.trim()).equals("cmt-kr")) {
+                        proxies=proxyRepository.getProxyFixAccountByGeo("kr");
+                    }
+                    if(proxies.size()!=0) {
+                        proxy=proxies.get(0).getProxy().split(":");
+                        Account account=accountRepository.findAccountByUsername(username.trim());
+                        account.setProxy(proxies.get(0).getProxy());
+                        accountRepository.save(account);
+                        proxyRepository.updateProxyGet(vps,System.currentTimeMillis(),proxies.get(0).getId());
+                    }
+                }else{
+                    Random rand=new Random();
+                    if(proxyRepository.checkProxyLiveByUsername(username.trim())==0){
+                        if(histories.get(0).getGeo().equals("vn")){
+                            proxy=proxyVNTrue.getValue().get(rand.nextInt(proxyVNTrue.getValue().size())).split(":");
+                        }else if(histories.get(0).getGeo().equals("us")){
+                            proxy=proxyUSTrue.getValue().get(rand.nextInt(proxyUSTrue.getValue().size())).split(":");
+                        }else if(histories.get(0).getGeo().equals("kr")){
+                            proxy=proxyKRTrue.getValue().get(rand.nextInt(proxyKRTrue.getValue().size())).split(":");
+                        }
+                        if(proxy.length==0){
+                            histories.get(0).setRunning(0);
+                            histories.get(0).setTimeget(System.currentTimeMillis());
+                            historyCommentRepository.save(histories.get(0));
+                            fail_resp.put("status", "fail");
+                            fail_resp.put("message", "Proxy die!");
+                            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.OK);
+                        }
+                    }
+                }
+                String[] proxysetting=proxySettingRepository.getUserPassByHost(proxy[0]).split(",");
+                histories.get(0).setTimeget(System.currentTimeMillis());
+                histories.get(0).setVps(vps);
+                histories.get(0).setRunning(1);
+                historyCommentRepository.save(histories.get(0));
+                resp.put("channel_id", videos.get(0).getChannelid());
+                resp.put("status", "true");
+                resp.put("video_id", videos.get(0).getVideoid());
+                resp.put("video_title", videos.get(0).getVideotitle());
+                resp.put("username", histories.get(0).getUsername());
+                resp.put("geo", accountRepository.getGeoByUsername(username.trim()));
+                resp.put("proxy", proxy[0]+":"+proxy[1]+":"+proxysetting[0]+":"+proxysetting[1]);
+                if(ran.nextInt(1000)<300){
+                    resp.put("like", 1);
+                }else{
+                    resp.put("like", 0);
+                }
+                if (ran.nextInt(10000) > 5000) {
+                    resp.put("source", "dtn");
+                } else {
+                    resp.put("source", "search");
+                }
+                if (videos.get(0).getDuration() > 360) {
+                    resp.put("video_duration", 180 + ran.nextInt(180));
+                } else {
+                    resp.put("video_duration", videos.get(0).getDuration());
+                }
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+
+        } catch (Exception e) {
+            fail_resp.put("status", "fail");
+            fail_resp.put("fail", "sum");
+            fail_resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping(value = "gettest", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> gettest(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String vps) {
@@ -693,6 +1042,7 @@ public class HistoryCommentController {
             return new ResponseEntity<String>(fail_resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping(value = "/updatevideoidoff", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoidoff(@RequestParam(defaultValue = "") String username,
