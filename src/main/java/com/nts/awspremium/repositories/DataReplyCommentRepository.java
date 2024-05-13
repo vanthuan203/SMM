@@ -17,6 +17,9 @@ public interface DataReplyCommentRepository extends JpaRepository<DataReplyComme
     @Query(value = "SELECT comment FROM data_reply_comment WHERE id=?1 limit 1",nativeQuery = true)
     public String getCommentByCommentId(Long id);
 
+    @Query(value = "SELECT count(*) FROM data_reply_comment WHERE id=?1 and check_done=1 limit 1",nativeQuery = true)
+    public Integer checkCheckDoneByCommentId(Long id);
+
 
     @Query(value = "SELECT count(*) FROM data_reply_comment WHERE comment_id=?1",nativeQuery = true)
     public Integer checkReplyByCommentId(Long id);

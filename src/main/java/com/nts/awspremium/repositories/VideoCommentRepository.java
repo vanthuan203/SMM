@@ -111,6 +111,9 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT videocomment.videoid,count(*) as view FROM datacomment left join videocomment on videocomment.orderid=datacomment.orderid and running=2  group by videocomment.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalCommentBuffByDataComment();
 
+    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM datacomment left join videocomment on videocomment.orderid=datacomment.orderid and running=2  group by videocomment.orderid order by insertdate desc",nativeQuery = true)
+    public List<String> getTotalCommentBuffByDataCommentAndDataReply();
+
 
 
     @Modifying

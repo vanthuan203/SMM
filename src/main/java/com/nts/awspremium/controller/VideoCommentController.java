@@ -1259,6 +1259,7 @@ public class VideoCommentController {
                     if (comments[j].length() == 0) {
                         continue;
                     }
+                    int check_done=0;
                     if(comments[j].indexOf("|")>0){
                         String[] cmt_reply=comments[j].split("\\|");
                         if(!arrCmt.contains(cmt_reply[0].trim())){
@@ -1271,6 +1272,8 @@ public class VideoCommentController {
                             dataComment.setTimeget(0L);
                             dataComment.setVps("");
                             dataCommentRepository.save(dataComment);
+                        }else{
+                            check_done=1;
                         }
 
                         DataReplyComment dataReplyComment=new DataReplyComment();
@@ -1278,6 +1281,7 @@ public class VideoCommentController {
                         dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
                         dataReplyComment.setReply(cmt_reply[1].trim());
                         dataReplyComment.setRunning(-1);
+                        dataReplyComment.setCheck_done(check_done);
                         dataReplyComment.setTimeget(0L);
                         dataReplyComment.setUsername("");
                         dataReplyComment.setVps("");

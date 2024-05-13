@@ -14,13 +14,14 @@ public class DataReplyComment {
     private String link;
     private String username;
     private Integer running;
+    private Integer check_done=0;
     private Long timeget;
     private String vps;
 
     public DataReplyComment() {
     }
 
-    public DataReplyComment(Long id, Long orderid, Long comment_id, String reply, String link, String username, Integer running, Long timeget, String vps) {
+    public DataReplyComment(Long id, Long orderid, Long comment_id, String reply, String link, String username, Integer running, Integer check_done, Long timeget, String vps) {
         this.id = id;
         this.orderid = orderid;
         this.comment_id = comment_id;
@@ -28,6 +29,7 @@ public class DataReplyComment {
         this.link = link;
         this.username = username;
         this.running = running;
+        this.check_done = check_done;
         this.timeget = timeget;
         this.vps = vps;
     }
@@ -102,5 +104,13 @@ public class DataReplyComment {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public Integer getCheck_done() {
+        return check_done;
+    }
+
+    public void setCheck_done(Integer check_done) {
+        this.check_done = check_done;
     }
 }

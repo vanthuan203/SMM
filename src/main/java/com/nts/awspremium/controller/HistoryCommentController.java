@@ -799,7 +799,7 @@ public class HistoryCommentController {
                     historySum.setUsername(username);
                     historySum.setTime(System.currentTimeMillis());
                     historySum.setCommentid(comment_id);
-                    historySum.setCommnent(dataCommentRepository.getCommentByCommentId(comment_id));
+                    historySum.setCommnent("Reply: "+dataReplyCommentRepository.getCommentByCommentId(comment_id));
                     historySum.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
                     try {
                         historyCommentSumRepository.save(historySum);
@@ -813,6 +813,16 @@ public class HistoryCommentController {
                         historyCommentRepository.updateListVideoNew(videoid, historieId);
                     } else {
                         historyCommentRepository.updateListVideo(videoid, historieId);
+                    }
+                    if(dataReplyCommentRepository.checkCheckDoneByCommentId(comment_id)>0){
+                        DataComment dataComment = new DataComment();
+                        dataComment.setOrderid(videoCommentRepository.getOrderIdByVideoId(videoid.trim()));
+                        dataComment.setComment("reply done");
+                        dataComment.setUsername(username);
+                        dataComment.setRunning(2);
+                        dataComment.setTimeget(System.currentTimeMillis());
+                        dataComment.setVps("");
+                        dataCommentRepository.save(dataComment);
                     }
                     dataReplyCommentRepository.deleteCommentDone(comment_id);
                 }
@@ -1016,6 +1026,7 @@ public class HistoryCommentController {
         JSONObject resp = new JSONObject();
         try {
             dataCommentRepository.deleteCommentDoneByCron();
+            dataReplyCommentRepository.deleteCommentDoneByCron();
             resp.put("status", "true");
             resp.put("message", "Delete comment thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
