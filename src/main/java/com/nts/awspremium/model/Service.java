@@ -40,6 +40,7 @@ public class Service {
     private Integer click_ads=0;
     private String platform;
     private String task;
+    private Integer reply=0;
     private String device_type="all";
     public Service() {
     }
@@ -78,6 +79,14 @@ public class Service {
         this.platform = platform;
         this.task = task;
         this.device_type = device_type;
+    }
+
+    public Integer getReply() {
+        return reply;
+    }
+
+    public void setReply(Integer reply) {
+        this.reply = reply;
     }
 
     public String getDevice_type() {

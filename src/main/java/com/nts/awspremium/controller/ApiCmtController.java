@@ -198,7 +198,19 @@ public class ApiCmtController {
                     resp.put("error", "Cant filter videoid from link");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
+                String lc="";
+                if(service.getReply()==2){
+                    if(data.getLink().indexOf("&lc")<0 || data.getLink().indexOf("AaABAg")<0){
+                        resp.put("error", "The reply link is not valid");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }else{
+                        lc=data.getLink().substring(data.getLink().indexOf("&lc=")+4,data.getLink().indexOf("AaABAg")+6);
+                        if(lc.length()==0){
+                            resp.put("error", "The reply link is not valid");
+                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                        }
+                    }
+                }
                 int count = StringUtils.countOccurrencesOf(videolist, ",") + 1;
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
 
@@ -221,7 +233,6 @@ public class ApiCmtController {
                     resp.put("error", "Can't get video info");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-
                 /////////////////////////////////////////////
                 while (k.hasNext()) {
                     try {
@@ -257,6 +268,11 @@ public class ApiCmtController {
                         }
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoComment videoViewhnew = new VideoComment();
+                        if(service.getReply()==2){
+                            videoViewhnew.setLc_code(lc);
+                        }else{
+                            videoViewhnew.setLc_code("");
+                        }
                         videoViewhnew.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                         videoViewhnew.setInsertdate(System.currentTimeMillis());
                         videoViewhnew.setCommenttotal(0);

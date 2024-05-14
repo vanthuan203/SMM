@@ -1253,56 +1253,76 @@ public class VideoCommentController {
             List<VideoComment> videoComments = videoCommentRepository.getOrderReplyThreadNull();
             Setting setting = settingRepository.getReferenceById(1L);
             for (int i = 0; i < videoComments.size(); i++) {
+                Service service = serviceRepository.getService(videoComments.get(i).getService());
                 String[] comments = videoComments.get(i).getListcomment().split("\n");
                 List<String> arrCmt = new ArrayList<>();
-                for (int j = 0; j < comments.length; j++) {
-                    if (comments[j].length() == 0) {
-                        continue;
-                    }
-                    int check_done=0;
-                    if(comments[j].indexOf("|")>0){
-                        String[] cmt_reply=comments[j].split("\\|");
-                        if(!arrCmt.contains(cmt_reply[0].trim())){
-                            arrCmt.add(cmt_reply[0].trim());
-                            DataComment dataComment = new DataComment();
-                            dataComment.setOrderid(videoComments.get(i).getOrderid());
-                            dataComment.setComment(cmt_reply[0].trim());
-                            dataComment.setUsername("");
-                            dataComment.setRunning(0);
-                            dataComment.setTimeget(0L);
-                            dataComment.setVps("");
-                            dataCommentRepository.save(dataComment);
-                        }else{
-                            check_done=1;
+                if(service.getReply()==1){
+                    for (int j = 0; j < comments.length; j++) {
+                        if (comments[j].length() == 0) {
+                            continue;
                         }
+                        int check_done=0;
+                        if(comments[j].indexOf("|")>0){
+                            String[] cmt_reply=comments[j].split("\\|");
+                            if(!arrCmt.contains(cmt_reply[0].trim())){
+                                arrCmt.add(cmt_reply[0].trim());
+                                DataComment dataComment = new DataComment();
+                                dataComment.setOrderid(videoComments.get(i).getOrderid());
+                                dataComment.setComment(cmt_reply[0].trim());
+                                dataComment.setUsername("");
+                                dataComment.setRunning(0);
+                                dataComment.setTimeget(0L);
+                                dataComment.setVps("");
+                                dataCommentRepository.save(dataComment);
+                            }else{
+                                check_done=1;
+                            }
 
+                            DataReplyComment dataReplyComment=new DataReplyComment();
+                            dataReplyComment.setComment_id(dataCommentRepository.getByCommentId(videoComments.get(i).getOrderid(),cmt_reply[0].trim()));
+                            dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
+                            dataReplyComment.setReply(cmt_reply[1].trim());
+                            dataReplyComment.setRunning(-1);
+                            dataReplyComment.setCheck_done(check_done);
+                            dataReplyComment.setTimeget(0L);
+                            dataReplyComment.setUsername("");
+                            dataReplyComment.setVps("");
+                            dataReplyCommentRepository.save(dataReplyComment);
+                        }else{
+                            if(!arrCmt.equals(comments[j].trim())) {
+
+                                arrCmt.add(comments[j].trim());
+
+                                DataComment dataComment = new DataComment();
+                                dataComment.setOrderid(videoComments.get(i).getOrderid());
+                                dataComment.setComment(comments[j].trim());
+                                dataComment.setUsername("");
+                                dataComment.setRunning(0);
+                                dataComment.setTimeget(0L);
+                                dataComment.setVps("");
+                                dataCommentRepository.save(dataComment);
+                            }
+                        }
+                    }
+                }else{
+                    for (int j = 0; j < comments.length; j++) {
+                        if (comments[j].length() == 0) {
+                            continue;
+                        }
                         DataReplyComment dataReplyComment=new DataReplyComment();
-                        dataReplyComment.setComment_id(dataCommentRepository.getByCommentId(videoComments.get(i).getOrderid(),cmt_reply[0].trim()));
+                        dataReplyComment.setComment_id(-1L);
                         dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
-                        dataReplyComment.setReply(cmt_reply[1].trim());
-                        dataReplyComment.setRunning(-1);
-                        dataReplyComment.setCheck_done(check_done);
+                        dataReplyComment.setReply(comments[j].trim());
+                        dataReplyComment.setRunning(0);
+                        dataReplyComment.setCheck_done(0);
                         dataReplyComment.setTimeget(0L);
                         dataReplyComment.setUsername("");
+                        dataReplyComment.setLink(videoComments.get(i).getLc_code());
                         dataReplyComment.setVps("");
                         dataReplyCommentRepository.save(dataReplyComment);
-                    }else{
-                        if(!arrCmt.equals(comments[j].trim())) {
 
-                            arrCmt.add(comments[j].trim());
-
-                            DataComment dataComment = new DataComment();
-                            dataComment.setOrderid(videoComments.get(i).getOrderid());
-                            dataComment.setComment(comments[j].trim());
-                            dataComment.setUsername("");
-                            dataComment.setRunning(0);
-                            dataComment.setTimeget(0L);
-                            dataComment.setVps("");
-                            dataCommentRepository.save(dataComment);
-                        }
                     }
                 }
-                Service service = serviceRepository.getService(videoComments.get(i).getService());
                 int max_thread = service.getThread() + ((int)(videoComments.get(i).getCommentorder() / 30)<1?0:(int)(videoComments.get(i).getCommentorder() / 30) - 1)*3;
                 if (max_thread <= 50) {
                     videoComments.get(i).setMaxthreads(max_thread);

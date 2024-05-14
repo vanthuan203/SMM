@@ -24,7 +24,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentVN(String listvideo,List<String> orderid);
 
-    @Query(value = "SELECT * FROM videocomment where (service=889 or service=888) and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='vn' and task='comment') and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentVNTest(String listvideo,List<String> orderid);
 
@@ -38,7 +38,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUS(String listvideo,List<String> orderid);
 
-    @Query(value = "SELECT * FROM videocomment where (service=222 or service=223) and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='us' and task='comment') and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUSTest(String listvideo,List<String> orderid);
 
@@ -53,7 +53,7 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     public List<VideoComment> getvideoCommentKR(String listvideo,List<String> orderid);
 
 
-    @Query(value = "SELECT * FROM videocomment where (service=1111 or service=1112) and INSTR(?1,videoid)=0 and\n" +
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='kr' and task='comment') and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentKRTest(String listvideo,List<String> orderid);
 
@@ -142,16 +142,16 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     public void deletevideoByVideoId(String videoid);
 
 
-    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and category='Youtube | Comments') ",nativeQuery = true)
+    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and reply=0) ",nativeQuery = true)
     public List<VideoComment> getOrderFullCmt();
 
-    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and category='Youtube | Comments + Reply') and orderid not in(select orderid from data_reply_comment group by orderid) ",nativeQuery = true)
+    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and reply>0) and orderid not in(select orderid from data_reply_comment group by orderid) ",nativeQuery = true)
     public List<VideoComment> getOrderFullReply();
 
-    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and category='Youtube | Comments') order by insertdate asc limit 5\n",nativeQuery = true)
+    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and reply=0) order by insertdate asc limit 5\n",nativeQuery = true)
     public List<VideoComment> getOrderThreadNull();
 
-    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and category='Youtube | Comments + Reply') order by insertdate asc limit 5\n",nativeQuery = true)
+    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and reply>0) order by insertdate asc limit 5\n",nativeQuery = true)
     public List<VideoComment> getOrderReplyThreadNull();
 
 }

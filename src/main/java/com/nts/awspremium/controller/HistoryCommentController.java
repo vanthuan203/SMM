@@ -430,7 +430,7 @@ public class HistoryCommentController {
                         }
                         resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                    }else if(service.getExpired()==1){
+                    }else if(service.getReply()>0){
                         dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                         Thread.sleep(ran.nextInt(1000)+500);
                         Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -593,7 +593,7 @@ public class HistoryCommentController {
                     }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                }else if(service.getExpired()==1) {
+                }else if(service.getReply()>0) {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -781,7 +781,7 @@ public class HistoryCommentController {
                         }
                         resp.put("comment_id", comment.split(",")[0]);
                         resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                    }else if(service.getExpired()==1){
+                    }else if(service.getReply()>0){
                         dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                         Thread.sleep(ran.nextInt(1000)+500);
                         Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());
@@ -944,7 +944,7 @@ public class HistoryCommentController {
                     }
                     resp.put("comment_id", comment.split(",")[0]);
                     resp.put("comment", comment.substring(comment.indexOf(",")+1));
-                }else if(service.getExpired()==1) {
+                }else if(service.getReply()>0) {
                     dataReplyCommentRepository.updateRunningComment(System.currentTimeMillis(),username.trim(),vps.trim(),videos.get(0).getOrderid());
                     Thread.sleep(ran.nextInt(1000)+500);
                     Long reply_id=dataReplyCommentRepository.getCommentByOrderIdAndUsername(videos.get(0).getOrderid(),username.trim());

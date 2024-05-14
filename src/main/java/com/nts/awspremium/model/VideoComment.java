@@ -23,6 +23,7 @@ public class VideoComment {
     private Integer commentorder;
     private Integer commenttotal;
     private String listcomment;
+    private String lc_code="";
     private Long timeupdate;
     private Float price;
     private Integer valid;
@@ -202,5 +203,13 @@ public class VideoComment {
 
     public void setValid(Integer valid) {
         this.valid = valid;
+    }
+
+    public String getLc_code() {
+        return lc_code;
+    }
+
+    public void setLc_code(String lc_code) {
+        this.lc_code = lc_code;
     }
 }
