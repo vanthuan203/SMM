@@ -1314,13 +1314,12 @@ public class VideoCommentController {
                         dataReplyComment.setOrderid(videoComments.get(i).getOrderid());
                         dataReplyComment.setReply(comments[j].trim());
                         dataReplyComment.setRunning(0);
-                        dataReplyComment.setCheck_done(0);
+                        dataReplyComment.setCheck_done(1);
                         dataReplyComment.setTimeget(0L);
                         dataReplyComment.setUsername("");
                         dataReplyComment.setLink(videoComments.get(i).getLc_code());
                         dataReplyComment.setVps("");
                         dataReplyCommentRepository.save(dataReplyComment);
-
                     }
                 }
                 int max_thread = service.getThread() + ((int)(videoComments.get(i).getCommentorder() / 30)<1?0:(int)(videoComments.get(i).getCommentorder() / 30) - 1)*3;
