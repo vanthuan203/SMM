@@ -203,6 +203,12 @@ public class ApiController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                 }
+                /*
+                if(service.getChecktime()==0&&(videoViewRepository.getSumThreadSetByGeo(service.getGeo())!=null?(videoViewRepository.getSumThreadSetByGeo(service.getGeo())>vpsRepository.getSumThreadsByGeo(service.getGeo())*2):false)){
+                    resp.put("error", "System busy try again");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                 */
                 if (videoViewRepository.getCountOrderByUser(admins.get(0).getUsername().trim()) >= admins.get(0).getMaxorder() || (service.getGeo().equals("vn") && settingRepository.getMaxOrderVN() == 0) ||
                         (service.getGeo().equals("us") && settingRepository.getMaxOrderUS() == 0) || service.getMaxorder() <= videoViewRepository.getCountOrderByService(data.getService())) {
                     resp.put("error", "System busy try again");
@@ -238,30 +244,36 @@ public class ApiController {
                 }
                 //VIDEOOOOOOOOOOOOOOO
                 OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
-
+                Random ran = new Random();
                 Request request1 = null;
-                request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
+                Iterator k = null;
+                String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw"};
+                for (int i=0;i<10;i++){
+                    request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videolist).get().build();
 
-                Response response1 = client1.newCall(request1).execute();
+                    Response response1 = client1.newCall(request1).execute();
 
-                String resultJson1 = response1.body().string();
-                Object obj1 = new JSONParser().parse(resultJson1);
-                JSONObject jsonObject1 = (JSONObject) obj1;
-                JSONArray items = (JSONArray) jsonObject1.get("items");
-                if (items == null) {
-                    resp.put("error", "Can't get video info");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    String resultJson1 = response1.body().string();
+                    Object obj1 = new JSONParser().parse(resultJson1);
+                    JSONObject jsonObject1 = (JSONObject) obj1;
+                    JSONArray items = (JSONArray) jsonObject1.get("items");
+                    if (items == null) {
+                        continue;
+                    }
+                    k = items.iterator();
+                    if (k.hasNext() == false) {
+                        resp.put("error", "Can't get video info");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    break;
                 }
-                Iterator k = items.iterator();
-                if (k.hasNext() == false) {
-                    resp.put("error", "Can't get video info");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
+
                 /////////////////////////////////////////////
                 while (k.hasNext()) {
                     try {
                         JSONObject video = (JSONObject) k.next();
                         JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                        JSONObject snippet = (JSONObject) video.get("snippet");
                         if (videoViewRepository.getCountVideoId(video.get("id").toString().trim()) > 0) {
                             resp.put("error", "This video in process");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -270,7 +282,7 @@ public class ApiController {
                             resp.put("error", "This video is a livestream video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() != 0&&service.getLive()==1) {
+                        if (snippet.get("liveBroadcastContent").toString().equals("none")&&service.getLive()==1) {
                             resp.put("error", "This video is not a livestream video");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
@@ -309,58 +321,50 @@ public class ApiController {
                         }
                          */
                         float priceorder = 0;
-                        int time = 0;
                         priceorder = (data.getQuantity() / 1000F) * service.getRate() * ((float) (admins.get(0).getRate()) / 100) * ((float) (100 - admins.get(0).getDiscount()) / 100);
                         if (priceorder > (float) admins.get(0).getBalance()) {
                             resp.put("error", "Your balance not enough");
                             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                         }
-                        JSONObject snippet = (JSONObject) video.get("snippet");
-                        /*
-                        if(!snippet.get("liveBroadcastContent").toString().equals("none")){
-                            resp.put("error", "This video is not a pure public video");
-                            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                        }
-                         */
                         JSONObject statistics = (JSONObject) video.get("statistics");
                         VideoView videoViewhnew = new VideoView();
 
-                        int thread_set = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        //int thread_set_fix = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
+                        int duration_min=2+(int)(Duration.parse(contentDetails.get("duration").toString()).getSeconds()/60);
+                        int thread_set=50;
+                        if(duration_min<service.getMintime()){
+                            thread_set= service.getChecktime()==0?(data.getQuantity() / (60/(duration_min==1?10:duration_min)*2)):(int)(data.getQuantity()/2.6);
+                        }else{
+                            thread_set= service.getChecktime()==0?(data.getQuantity() / (60/(service.getMaxtime()==1?10:service.getMaxtime())*2)):(int)(data.getQuantity()/2.6);
+                        }
                         if (thread_set <= setting.getMaxthread()){
                             videoViewhnew.setThreadset(thread_set);
                         }else{
                             videoViewhnew.setThreadset(setting.getMaxthread());
                             thread_set=setting.getMaxthread();
                         }
-
+                        Long scheduledStartTime=0L;
                         if (snippet.get("liveBroadcastContent").toString().equals("none")) {
-                            /*
-                            int max_thread = service.getThread() + ((int) (data.getQuantity() / 1000) - 1) * setting.getLevelthread();
-                            if (max_thread <= setting.getMaxthread()&&limitService==null) {
-                                videoViewhnew.setMaxthreads(max_thread);
-                            } else if(limitService!=null) {
-                                videoViewhnew.setMaxthreads(-1);
-                            }else {
-                                videoViewhnew.setMaxthreads(setting.getMaxthread());
-                            }
-                            if(limitService!=null){
-                                videoViewhnew.setTimestart(0L);
-                            }else{
-                                videoViewhnew.setTimestart(System.currentTimeMillis());
-                            }
-                             */
                             if(limitService!=null) {
                                 videoViewhnew.setMaxthreads(-1);
                                 videoViewhnew.setTimestart(0L);
                             }else {
-                                videoViewhnew.setMaxthreads((int)(thread_set*0.05));
+                                videoViewhnew.setMaxthreads((int)(thread_set*0.05<1?2:(thread_set*0.05)));
                                 videoViewhnew.setTimestart(System.currentTimeMillis());
                             }
                             videoViewhnew.setMinstart(service.getMaxtime());
                         } else if (snippet.get("liveBroadcastContent").toString().equals("live")&& service.getLive()==1) {
-                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*(setting.getBonus()/100F)));
+                            videoViewhnew.setMaxthreads(data.getQuantity()+(int)(data.getQuantity()*0.15));
+                            videoViewhnew.setThreadset(data.getQuantity()+(int)(data.getQuantity()*0.15));
                             videoViewhnew.setTimestart(System.currentTimeMillis());
                             videoViewhnew.setMinstart(service.getMaxtime());
+                        } else if (snippet.get("liveBroadcastContent").toString().equals("upcoming")&& service.getLive()==1) {
+                            JSONObject liveStreamingDetails = (JSONObject) video.get("liveStreamingDetails");
+                            Instant instant = Instant.parse(liveStreamingDetails.get("scheduledStartTime").toString());
+                            scheduledStartTime=instant.toEpochMilli();
+                            videoViewhnew.setTimestart(scheduledStartTime);
+                            videoViewhnew.setMaxthreads(-2);
+                            videoViewhnew.setThreadset(data.getQuantity()+(int)(data.getQuantity()*0.15));
                         }else{
                             videoViewhnew.setMaxthreads(0);
                             videoViewhnew.setTimestart(0L);

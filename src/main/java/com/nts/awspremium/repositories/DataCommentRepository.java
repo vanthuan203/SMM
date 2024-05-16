@@ -18,12 +18,11 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Query(value = "SELECT comment FROM datacomment WHERE id=?1 limit 1",nativeQuery = true)
     public String getCommentByCommentId(Long id);
 
-    @Query(value = "SELECT count(*) FROM datacomment WHERE orderid=?1 and running=1",nativeQuery = true)
-    public Integer checkCommentDone(Long orderid);
+    @Query(value = "SELECT count(*) FROM datacomment WHERE id=?1 limit 1",nativeQuery = true)
+    public Integer checkByCommentId(Long id);
 
-
-    @Query(value = "SELECT * FROM datacomment WHERE orderid=?1 and running=1",nativeQuery = true)
-    public Integer checkCommentDoneLK(Long orderid);
+    @Query(value = "SELECT id FROM datacomment WHERE orderid=?1 and comment=?2 limit 1",nativeQuery = true)
+    public Long getByCommentId(Long orderid,String comment);
 
     @Modifying
     @Transactional
@@ -41,13 +40,13 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update datacomment set running=0,username='',vps='' where username=?1 and running=1",nativeQuery = true)
-    public void resetRunningComment(String username);
+    @Query(value = "update  datacomment set running=0,username='',vps='' where round((UNIX_TIMESTAMP()-timeget/1000)/60)>40 and running=1",nativeQuery = true)
+    public void resetRunningCommentByCron();
 
     @Modifying
     @Transactional
-    @Query(value = "update  datacomment set running=0,username='',vps='' where round((UNIX_TIMESTAMP()-timeget/1000)/60)>20 and running=1",nativeQuery = true)
-    public void resetRunningCommentByCron();
+    @Query(value = "update datacomment set running=0,username='',vps='' where running=1 and username in(select username from historycomment where running=0)",nativeQuery = true)
+    public void resetRunningCommentByRunningHisCron();
 
     @Modifying
     @Transactional

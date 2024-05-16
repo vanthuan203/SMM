@@ -12,7 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -164,6 +167,7 @@ public class VpsController {
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 resp.put("option",vpscheck.get(0).getVpsoption());
+                resp.put("cmt",vpscheck.get(0).getCmt());
                 resp.put("threads",vpscheck.get(0).getThreads());
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
                 resp.put("get_account",vpscheck.get(0).getGet_account());
@@ -172,7 +176,11 @@ public class VpsController {
                 if(vpscheck.get(0).getVpsreset()>0){
                     vpscheck.get(0).setVpsreset(0);
                 }
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
+                vpscheck.get(0).setTimereset(day);
                 vpsRepository.save(vpscheck.get(0));
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
 
@@ -221,14 +229,7 @@ public class VpsController {
             if(vpscheck.size()>0){
                 vpscheck.get(0).setTimecheck(System.currentTimeMillis());
                 vpsRepository.save(vpscheck.get(0));
-                List<VideoView> videoViews=viewRepository.getvideoPreTrue();
-                if(videoViews.size()!=0&&vpsRepository.CheckVPSLiveTrue(vps.trim())==1){
-                    resp.put("time_start",videoViews.get(0).getInsertdate());
-                    resp.put("option","live");
-                }else {
-                    resp.put("time_start",0L);
-                    resp.put("option",vpscheck.get(0).getVpsoption());
-                }
+                resp.put("option",vpscheck.get(0).getVpsoption());
                 resp.put("status", "true");
                 resp.put("vpsreset",vpscheck.get(0).getVpsreset());
 
@@ -284,12 +285,55 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
-
-    @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit){
+    @GetMapping(value = "setResetBasDaily",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> setResetBasDaily(){
         JSONObject resp=new JSONObject();
         try{
-            vpsRepository.resetBasByCron(System.currentTimeMillis(),limit);
+            vpsRepository.resetVPSDaily();
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "resetBasDailyByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasDailyByCron(@RequestParam(defaultValue = "0") Integer limit){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetBasDailyByCron(System.currentTimeMillis(),limit);
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+        @GetMapping(value = "resetBasByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasByCron(@RequestParam(defaultValue = "0") Integer limit,@RequestParam(defaultValue = "0") Integer vpsreset){
+        JSONObject resp=new JSONObject();
+        try{
+            if(vpsRepository.checkResetVPSNext()>0){
+                resp.put("status", "watting");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            vpsRepository.resetBasByCron(vpsreset,System.currentTimeMillis(),limit-vpsRepository.checkResetVPSNext());
+            resp.put("status", "true");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "resetBasNoCheckByCron",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> resetBasNoCheckByCron(@RequestParam(defaultValue = "0") Integer limit,@RequestParam(defaultValue = "0") Integer vpsreset){
+        JSONObject resp=new JSONObject();
+        try{
+            vpsRepository.resetBasByCron(vpsreset,System.currentTimeMillis(),limit);
             resp.put("status", "true");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
@@ -311,18 +355,77 @@ public class VpsController {
         try{
             List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerVN();
             if(accountChanges.size()==0){
-                resp.put("status", -1);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                Integer check=vpsRepository.changer_account_vn(accountChanges.get(0).getName().trim());
-                if(check>0){
-                    accountChanges.get(0).setRunning(1);
-                    accountChanges.get(0).setTime(System.currentTimeMillis());
-                    accountChangeRepository.save(accountChanges.get(0));
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("vietnam"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                resp.put("status", check);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("vn");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("vietnam"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerVN();
             }
+            Integer check=vpsRepository.changer_account_vn(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch(Exception e){
+            resp.put("status","fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "changer_kr",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> changer_kr(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp=new JSONObject();
+        Integer checktoken= adminRepository.FindAdminByToken(Authorization);
+        if(checktoken==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerKR();
+            if(accountChanges.size()==0){
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("hanquoc"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("kr");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("hanquoc"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerKR();
+            }
+            Integer check=vpsRepository.changer_account_kr(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
@@ -342,18 +445,32 @@ public class VpsController {
         try{
             List<AccountChange> accountChanges=accountChangeRepository.getGeoChangerUS();
             if(accountChanges.size()==0){
-                resp.put("status", -1);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-            }else{
-                Integer check=vpsRepository.changer_account_us(accountChanges.get(0).getName().trim());
-                if(check>0){
-                    accountChanges.get(0).setRunning(1);
-                    accountChanges.get(0).setTime(System.currentTimeMillis());
-                    accountChangeRepository.save(accountChanges.get(0));
+                TimeZone timeZone = TimeZone.getTimeZone("GMT+7");
+                Calendar calendar = Calendar.getInstance(timeZone);
+                int month =1+ calendar.get(Calendar.MONTH);
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                if(accountChangeRepository.checkRunningChanger("hoaky"+day+"."+month)>0){
+                    resp.put("status", -1);
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                resp.put("status", check);
-                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                AccountChange accountChange=new AccountChange();
+                accountChange.setTime(0L);
+                accountChange.setGeo("us");
+                accountChange.setNote("");
+                accountChange.setPriority(0);
+                accountChange.setRunning(0);
+                accountChange.setName("hoaky"+day+"."+month);
+                accountChangeRepository.save(accountChange);
+                accountChanges=accountChangeRepository.getGeoChangerUS();
             }
+            Integer check=vpsRepository.changer_account_us(accountChanges.get(0).getName().trim());
+            if(check>0){
+                accountChanges.get(0).setRunning(1);
+                accountChanges.get(0).setTime(System.currentTimeMillis());
+                accountChangeRepository.save(accountChanges.get(0));
+            }
+            resp.put("status", check);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch(Exception e){
             resp.put("status","fail");
             resp.put("message", e.getMessage());
@@ -433,8 +550,8 @@ public class VpsController {
                     //vpsupdate.get(0).setTimecheck(System.currentTimeMillis());
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setGet_account(vps.getGet_account());
-                    if(vps.getVpsreset()==2){
-                        vpsupdate.get(0).setState(2);
+                    if(vps.getVpsreset()>0){
+                        vpsupdate.get(0).setTimeresettool(System.currentTimeMillis());
                     }
                     vpsRepository.save(vpsupdate.get(0));
 
@@ -487,6 +604,9 @@ public class VpsController {
             for(int i=0;i<vpsArr.length;i++){
                 List<Vps> vpsupdate =vpsRepository.findVPS(vpsArr[i].trim());
                 if(vpsupdate.size()>0) {
+                    if(vps.getVpsreset()>0){
+                        vpsupdate.get(0).setTimeresettool(System.currentTimeMillis());
+                    }
                     vpsupdate.get(0).setVpsreset(vps.getVpsreset());
                     vpsupdate.get(0).setGet_account(vps.getGet_account());
                     vpsupdate.get(0).setVpsoption(vps.getVpsoption());
@@ -631,17 +751,6 @@ public class VpsController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            /*
-            List<History> histories=historyRepository.findHistoriesByVps(vps);
-            if(histories.size()>0){
-                for (int i = 0; i < histories.size(); i++) {
-                    List<Proxy> proxies=proxyRepository.findProxy(histories.get(i).getProxy());
-                    if(proxies.size()>0 && proxies.get(0).getRunning()>0){
-                        proxies.get(0).setRunning(proxies.get(0).getRunning()-1);
-                        proxyRepository.save(proxies.get(0));
-                    }
-                }
-            }*/
             String[] vpsArr=vps.split(",");
             JSONArray jsonArray=new JSONArray();
             for(int i=0;i<vpsArr.length;i++){
@@ -650,7 +759,6 @@ public class VpsController {
                 historyViewRepository.resetHistoryViewByVps(vpsArr[i].trim());
                 historyCommentRepository.resetThreadViewByVps(vpsArr[i].trim());
                 proxyRepository.updaterunningByVps(vpsArr[i].trim());
-                //proxyRepository.updaterunningByVps(vps.trim()+"%");
                 if(vpsArr.length==1){
                     resp.put("vps",vpsArr[i].trim());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

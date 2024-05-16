@@ -3,8 +3,8 @@ package com.nts.awspremium.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name="proxylive")
-public class ProxyLive {
+@Table(name="proxysub")
+public class ProxySub {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
@@ -17,10 +17,10 @@ public class ProxyLive {
     private String geo;
     private String vps;
 
-    public ProxyLive() {
+    public ProxySub() {
     }
 
-    public ProxyLive(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy, String geo, String vps) {
+    public ProxySub(Integer id, String proxy, Integer state, Long timeget, String ipv4, Integer running, String typeproxy, String geo, String vps) {
         this.id = id;
         this.proxy = proxy;
         this.state = state;

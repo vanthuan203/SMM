@@ -9,6 +9,10 @@ public class Setting {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer maxorder;
+    private Integer maxorderbuffhvn;
+    private Integer maxorderbuffhus;
+    private Float maxrunningam;
+    private Float maxrunningpm;
     private Integer mintimebuff;
     private Integer maxthread;
     private Integer pricerate;
@@ -19,16 +23,23 @@ public class Setting {
     private Float leveluser;
 
     private Integer cmtcountuser;
+
+    private Integer cmtcountuser_us;
+
+    private Integer cmtcountuser_kr;
     private Integer redirect;
-
+    private Integer redirectvn;
+    private Integer redirectus;
     private Integer threadmin;
+    private Integer randview;
 
-    public Setting() {
-    }
-
-    public Setting(Long id, Integer maxorder, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer redirect, Integer threadmin) {
+    public Setting(Long id, Integer maxorder, Integer maxorderbuffhvn, Integer maxorderbuffhus, Float maxrunningam, Float maxrunningpm, Integer mintimebuff, Integer maxthread, Integer pricerate, Integer bonus, Integer maxordervn, Integer maxorderus, Integer levelthread, Float leveluser, Integer cmtcountuser, Integer cmtcountuser_us, Integer cmtcountuser_kr, Integer redirect, Integer redirectvn, Integer redirectus, Integer threadmin, Integer randview) {
         this.id = id;
         this.maxorder = maxorder;
+        this.maxorderbuffhvn = maxorderbuffhvn;
+        this.maxorderbuffhus = maxorderbuffhus;
+        this.maxrunningam = maxrunningam;
+        this.maxrunningpm = maxrunningpm;
         this.mintimebuff = mintimebuff;
         this.maxthread = maxthread;
         this.pricerate = pricerate;
@@ -38,8 +49,48 @@ public class Setting {
         this.levelthread = levelthread;
         this.leveluser = leveluser;
         this.cmtcountuser = cmtcountuser;
+        this.cmtcountuser_us = cmtcountuser_us;
+        this.cmtcountuser_kr = cmtcountuser_kr;
         this.redirect = redirect;
+        this.redirectvn = redirectvn;
+        this.redirectus = redirectus;
         this.threadmin = threadmin;
+        this.randview = randview;
+    }
+
+    public Setting() {
+    }
+
+    public Integer getCmtcountuser_us() {
+        return cmtcountuser_us;
+    }
+
+    public void setCmtcountuser_us(Integer cmtcountuser_us) {
+        this.cmtcountuser_us = cmtcountuser_us;
+    }
+
+    public Integer getCmtcountuser_kr() {
+        return cmtcountuser_kr;
+    }
+
+    public void setCmtcountuser_kr(Integer cmtcountuser_kr) {
+        this.cmtcountuser_kr = cmtcountuser_kr;
+    }
+
+    public Float getMaxrunningam() {
+        return maxrunningam;
+    }
+
+    public void setMaxrunningam(Float maxrunningam) {
+        this.maxrunningam = maxrunningam;
+    }
+
+    public Float getMaxrunningpm() {
+        return maxrunningpm;
+    }
+
+    public void setMaxrunningpm(Float maxrunningpm) {
+        this.maxrunningpm = maxrunningpm;
     }
 
     public Integer getLevelthread() {
@@ -144,5 +195,45 @@ public class Setting {
 
     public void setCmtcountuser(Integer cmtcountuser) {
         this.cmtcountuser = cmtcountuser;
+    }
+
+    public Integer getMaxorderbuffhvn() {
+        return maxorderbuffhvn;
+    }
+
+    public void setMaxorderbuffhvn(Integer maxorderbuffhvn) {
+        this.maxorderbuffhvn = maxorderbuffhvn;
+    }
+
+    public Integer getMaxorderbuffhus() {
+        return maxorderbuffhus;
+    }
+
+    public void setMaxorderbuffhus(Integer maxorderbuffhus) {
+        this.maxorderbuffhus = maxorderbuffhus;
+    }
+
+    public Integer getRedirectvn() {
+        return redirectvn;
+    }
+
+    public void setRedirectvn(Integer redirectvn) {
+        this.redirectvn = redirectvn;
+    }
+
+    public Integer getRedirectus() {
+        return redirectus;
+    }
+
+    public void setRedirectus(Integer redirectus) {
+        this.redirectus = redirectus;
+    }
+
+    public Integer getRandview() {
+        return randview;
+    }
+
+    public void setRandview(Integer randview) {
+        this.randview = randview;
     }
 }

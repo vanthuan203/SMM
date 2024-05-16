@@ -103,4 +103,5 @@ public class Proxy {
     public void setIpv4(String ipv4) {
         this.ipv4 = ipv4;
     }
+
 }

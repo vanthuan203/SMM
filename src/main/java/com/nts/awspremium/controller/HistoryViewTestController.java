@@ -1,6 +1,8 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
+import com.nts.awspremium.model.Proxy;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,16 +11,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
+import java.security.Timestamp;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(path = "/historylive")
 public class HistoryViewTestController {
-
+    @Autowired
+    private ProxyVNTrue proxyVNTrue;
+    @Autowired
+    private ProxyUSTrue proxyUSTrue;
+    @Autowired
+    private ProxyKRTrue proxyKRTrue;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -43,10 +53,11 @@ public class HistoryViewTestController {
     private OrderTrue orderTrue;
 
     @Autowired
-    private ProxyLiveRepository proxyRepository;
+    private ProxyRepository proxyRepository;
 
     @Autowired
     private ServiceRepository serviceRepository;
+
 
     @GetMapping(value = "get", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get(@RequestParam(defaultValue = "") String vps, @RequestParam(defaultValue = "vn") String geo) {
@@ -87,8 +98,9 @@ public class HistoryViewTestController {
                 resp.put("message", "Không còn video để view!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             }
-            List<ProxyLive> proxyGet=null;
-            proxyGet=proxyRepository.getProxyLive(geo.trim());
+            List<Proxy> proxyGet=null;
+            proxyGet = proxyRepository.getProxyNotRunningAndLive(histories.get(0).getGeo());
+            String[] proxy;
             if(proxyGet.size()==0){
                 historyViewRepository.save(histories.get(0));
                 resp.put("status","fail");
@@ -96,39 +108,42 @@ public class HistoryViewTestController {
                 resp.put("fail", "proxy");
                 resp.put("message","Hết proxy khả dụng!" );
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }else {
+                proxy = proxyGet.get(0).getProxy().split(":");
             }
             proxyRepository.updateProxyLiveGet(vps,System.currentTimeMillis(),proxyGet.get(0).getId());
-            resp.put("proxy", proxyGet.get(0).getProxy());
+            resp.put("proxy",proxy[0] + ":" + proxy[1] + ":1:1");
 
-            Service service = serviceRepository.getService(videos.get(0).getService());
+            Service service = serviceRepository.getServiceNoCheckEnabled(videos.get(0).getService());
 
             histories.get(0).setTimeget(System.currentTimeMillis());
             histories.get(0).setRunning(1);
             historyViewRepository.save(histories.get(0));
-            if(videos.get(0).getInsertdate()>=System.currentTimeMillis()){
+            if(videos.get(0).getTimestart()>=System.currentTimeMillis()){
                 List<Long> arrTime = new ArrayList<>();
                 for (int i = 0; i < 20; i++) {
-                    arrTime.add(0L);
+                    arrTime.add(System.currentTimeMillis());
                 }
                 for (int i = 0; i < 15; i++) {
-                    arrTime.add(ran.nextInt((int)(videos.get(0).getDuration()*0.1))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(TimeUnit.MINUTES.toMillis((ran.nextInt((int)(service.getMaxtime()*0.1))) +videos.get(0).getTimestart()));
                 }
                 for (int i = 0; i < 25; i++) {
-                    arrTime.add((int)(videos.get(0).getDuration()*0.1)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.4))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.1))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.4))));
                 }
                 for (int i = 0; i < 40; i++) {
-                    arrTime.add((int)(videos.get(0).getDuration()*0.4)*1000+ran.nextInt((int)(videos.get(0).getDuration()*0.6))* 1000 +videos.get(0).getInsertdate());
+                    arrTime.add(videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*0.4))+TimeUnit.MINUTES.toMillis(ran.nextInt((int)(service.getMaxtime()*0.6))));
                 }
 
                 resp.put("time_start", arrTime.get(ran.nextInt(arrTime.size())));
             }else{
-                resp.put("time_start", 0);
+                resp.put("time_start", System.currentTimeMillis());
             }
             resp.put("channel_id", videos.get(0).getChannelid());
             resp.put("status", "true");
+            resp.put("time_end", (videos.get(0).getTimestart()+ TimeUnit.MINUTES.toMillis((long)(service.getMaxtime()*1.5))));
             resp.put("video_id", videos.get(0).getVideoid());
             resp.put("video_title", videos.get(0).getVideotitle());
-            resp.put("geo", videos.get(0).getInsertdate());
+            resp.put("geo", "live");
             resp.put("username", histories.get(0).getUsername());
             resp.put("like", "fail");
             resp.put("sub", "fail");
@@ -152,6 +167,18 @@ public class HistoryViewTestController {
             for (int i = 0; i < service.getDtn(); i++) {
                 arrSource.add("dtn");
             }
+            for (int i = 0; i < service.getEmbed(); i++) {
+                arrSource.add("embed");
+            }
+            for (int i = 0; i < service.getDirect(); i++) {
+                arrSource.add("direct");
+            }
+            for (int i = 0; i < service.getExternal(); i++) {
+                arrSource.add("external");
+            }
+            for (int i = 0; i < service.getPlaylists(); i++) {
+                arrSource.add("playlists");
+            }
             String source_view=arrSource.get(ran.nextInt(arrSource.size())).trim();
             if(source_view.equals("suggest")&&service.getType().equals("Special")){
                 resp.put("suggest_type", "true");
@@ -173,7 +200,7 @@ public class HistoryViewTestController {
 
     @GetMapping(value = "/updatevideoid", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> updatevideoid(@RequestParam(defaultValue = "") String username,
-                                         @RequestParam(defaultValue = "") String videoid, @RequestParam(defaultValue = "") String channelid, @RequestParam(defaultValue = "0") Integer duration) {
+                                         @RequestParam(defaultValue = "") String videoid) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");
@@ -192,7 +219,7 @@ public class HistoryViewTestController {
                 resp.put("message", "Không tìm thấy username!");
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
             } else {
-                if (historyViewRepository.getListVideoById(historieId).length() > 200) {
+                if (historyViewRepository.getListVideoById(historieId).length() > 44) {
                     historyViewRepository.updateListVideoNew(videoid, historieId);
                 } else {
                     historyViewRepository.updateListVideo(videoid, historieId);
@@ -217,6 +244,13 @@ public class HistoryViewTestController {
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/test", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> test(@RequestParam(defaultValue = "") String tiktok_id) throws IOException {
+        JSONObject resp = new JSONObject();
+        resp.put("ff",TikTokApi.getFollowerCountLive(tiktok_id.trim()));
+        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/update", produces = "application/hal+json;charset=utf8")
@@ -281,31 +315,16 @@ public class HistoryViewTestController {
     }
 
     @GetMapping(value = "delthreadbyusername", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> delthreadbyusername(@RequestParam(defaultValue = "") String username, @RequestParam(defaultValue = "") String proxy,@RequestParam(defaultValue = "") String vps) {
+    ResponseEntity<String> delthreadbyusername(@RequestParam(defaultValue = "") String username) {
         JSONObject resp = new JSONObject();
         if (username.length() == 0) {
             resp.put("status", "fail");
             resp.put("message", "username không để trống");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
-        if (vps.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "vps không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
-        if (proxy.length() == 0) {
-            resp.put("status", "fail");
-            resp.put("message", "proxy không để trống");
-            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
-        }
         try {
             Long historieId = historyViewRepository.getId(username.trim());
             historyViewRepository.resetThreadBuffhById(historieId);
-            Integer proxyId= proxyRepository.getIdByProxyLive(proxy.trim(),vps.trim());
-            if(proxyId!=null){
-                proxyRepository.updaterunningProxyLiveByVps(proxyId);
-            }
-            //dataCommentRepository.resetRunningComment(username.trim());
             resp.put("status", "true");
             resp.put("message", "Update running thành công!");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

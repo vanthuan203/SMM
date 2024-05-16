@@ -12,18 +12,37 @@ public interface SettingRepository  extends JpaRepository<Setting,Long> {
     @Query(value = "SELECT pricerate FROM setting where id=1",nativeQuery = true)
     public Integer getPrice();
 
-    @Query(value = "SELECT redirect FROM setting where id=1",nativeQuery = true)
-    public Integer getRedirect();
+    @Query(value = "SELECT redirectvn FROM setting where id=1",nativeQuery = true)
+    public Integer getRedirectVN();
+    @Query(value = "SELECT randview FROM setting where id=1",nativeQuery = true)
+    public Integer getRandView();
+
+
+    @Query(value = "SELECT redirectus FROM setting where id=1",nativeQuery = true)
+    public Integer getRedirectUS();
+
+
 
     @Modifying
     @Transactional
-    @Query(value = "update setting set redirect=?1 where id=1",nativeQuery = true)
-    public void updateRedirect(Integer redirect);
+    @Query(value = "update setting set redirectvn=?1 where id=1",nativeQuery = true)
+    public void updateRedirectVN(Integer redirect);
 
     @Modifying
     @Transactional
-    @Query(value = "update setting set maxorder=?1 where id=1",nativeQuery = true)
-    public void updateMaxRunningBuffH(Integer redirect);
+    @Query(value = "update setting set redirectus=?1 where id=1",nativeQuery = true)
+    public void updateRedirectUS(Integer redirect);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "update setting set maxorderbuffhvn=?1 where id=1",nativeQuery = true)
+    public void updateMaxRunningBuffHVN(Integer redirect);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update setting set maxorderbuffhus=?1 where id=1",nativeQuery = true)
+    public void updateMaxRunningBuffHUS(Integer redirect);
 
     @Query(value = "SELECT bonus FROM setting where id=1",nativeQuery = true)
     public Integer getBonus();

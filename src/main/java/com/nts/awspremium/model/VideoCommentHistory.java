@@ -26,6 +26,8 @@ public class VideoCommentHistory {
     private String note;
     private String user;
     private Float price;
+    private String listcomment;
+    private String lc_code="";
     private Long timecheck;
     private Integer numbh;
     public VideoCommentHistory() {
@@ -212,5 +214,21 @@ public class VideoCommentHistory {
 
     public void setNumbh(Integer numbh) {
         this.numbh = numbh;
+    }
+
+    public String getListcomment() {
+        return listcomment;
+    }
+
+    public void setListcomment(String listcomment) {
+        this.listcomment = listcomment;
+    }
+
+    public String getLc_code() {
+        return lc_code;
+    }
+
+    public void setLc_code(String lc_code) {
+        this.lc_code = lc_code;
     }
 }

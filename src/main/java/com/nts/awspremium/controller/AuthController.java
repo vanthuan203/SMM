@@ -2,6 +2,9 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -124,13 +134,13 @@ public class AuthController {
         admins.get(0).setDiscount(admin.getDiscount());
         admins.get(0).setBalance(balance_update);
         admins.get(0).setRate(admin.getRate());
-        if(admin.getBalance()>0){
+        if(admin.getBalance()!=0){
             Balance balance=new Balance();
             balance.setUser(admin.getUsername().trim());
             balance.setTime(System.currentTimeMillis());
             balance.setTotalblance(balance_update);
             balance.setBalance(admin.getBalance());
-            balance.setNote("Admin nạp tiền");
+            balance.setNote(admin.getBalance()>0?"Admin nạp tiền":"Admin trừ tiền");
             balanceRepository.save(balance);
         }
         admins.get(0).setNote(admin.getNote());
@@ -164,21 +174,25 @@ public class AuthController {
         }
         List<Setting> setting1=settingRepository.getSetting();
         setting1.get(0).setBonus(setting.getBonus());
-        setting1.get(0).setMaxorder(setting.getMaxorder());
+        setting1.get(0).setMaxorderbuffhvn(setting.getMaxorderbuffhvn());
+        setting1.get(0).setMaxorderbuffhus(setting.getMaxorderbuffhus());
         setting1.get(0).setMaxordervn(setting.getMaxordervn());
         setting1.get(0).setMaxorderus(setting.getMaxorderus());
         setting1.get(0).setThreadmin(setting.getThreadmin());
-        setting1.get(0).setRedirect(setting.getRedirect());
+        setting1.get(0).setRedirectvn(setting.getRedirectvn());
+        setting1.get(0).setRedirectus(setting.getRedirectus());
         settingRepository.save(setting1.get(0));
         JSONObject obj = new JSONObject();
         obj.put("id", setting.getId());
         obj.put("pricerate", setting.getPricerate());
         obj.put("bonus", setting.getBonus());
-        obj.put("maxordervn", setting.getMaxordervn());
+        obj.put("maxorderbuffhus", setting.getMaxorderbuffhus());
+        obj.put("maxorderbuffhvn", setting.getMaxorderbuffhvn());
         obj.put("maxorderus", setting.getMaxorderus());
-        obj.put("maxorder", setting.getMaxorder());
+        obj.put("maxordervn", setting.getMaxordervn());
         obj.put("threadmin", setting.getThreadmin());
-        obj.put("redirect", setting.getRedirect());
+        obj.put("redirectvn", setting.getRedirectvn());
+        obj.put("redirectus", setting.getRedirectus());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
@@ -256,11 +270,13 @@ public class AuthController {
             obj.put("id", setting.get(i).getId());
             obj.put("pricerate", setting.get(i).getPricerate());
             obj.put("bonus", setting.get(i).getBonus());
-            obj.put("maxorder", setting.get(i).getMaxorder());
+            obj.put("maxorderbuffhus", setting.get(i).getMaxorderbuffhus());
+            obj.put("maxorderbuffhvn", setting.get(i).getMaxorderbuffhvn());
             obj.put("maxordervn", setting.get(i).getMaxordervn());
             obj.put("maxorderus", setting.get(i).getMaxorderus());
             obj.put("threadmin", setting.get(i).getThreadmin());
-            obj.put("redirect", setting.get(i).getRedirect());
+            obj.put("redirectvn", setting.get(i).getRedirectvn());
+            obj.put("redirectus", setting.get(i).getRedirectus());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
@@ -307,14 +323,22 @@ public class AuthController {
     ResponseEntity<String> updateRedirectCron(){
         Setting setting = settingRepository.getReferenceById(1L);
         JSONObject resp = new JSONObject();
-        if(historyViewRepository.getThreadRunningView()<videoViewRepository.getCountThreadView()*(setting.getThreadmin()/100F)){
-            settingRepository.updateRedirect(settingRepository.getRedirect()==0?0:(settingRepository.getRedirect()-100));
-        }else if(historyViewRepository.getThreadRunningView()>videoViewRepository.getCountThreadView()){
-            settingRepository.updateRedirect(settingRepository.getRedirect()>=1000?1000:(settingRepository.getRedirect()+100));
+        if(historyViewRepository.getThreadRunningViewVN()<(videoViewRepository.getCountThreadViewVN()==null?0:videoViewRepository.getCountThreadViewVN())*(setting.getThreadmin()/100F)){
+            settingRepository.updateRedirectVN(settingRepository.getRedirectVN()==0?0:(settingRepository.getRedirectVN()-100));
+        }else{
+            settingRepository.updateRedirectVN(settingRepository.getRedirectVN()>=1000?1000:(settingRepository.getRedirectVN()+100));
         }
-        settingRepository.updateMaxRunningBuffH(videoViewRepository.getMaxRunningBuffH()<=0?0:videoViewRepository.getMaxRunningBuffH());
+        if(historyViewRepository.getThreadRunningViewUS()<(videoViewRepository.getCountThreadViewUS()==null?0:videoViewRepository.getCountThreadViewUS())*(setting.getThreadmin()/100F)){
+            settingRepository.updateRedirectUS(settingRepository.getRedirectUS()==0?0:(settingRepository.getRedirectUS()-100));
+        }else if(historyViewRepository.getThreadRunningViewUS()>(videoViewRepository.getCountThreadViewUS()==null?0:videoViewRepository.getCountThreadViewUS())){
+            settingRepository.updateRedirectUS(settingRepository.getRedirectUS()>=1000?1000:(settingRepository.getRedirectUS()+100));
+        }
+        int maxrunningVN=videoViewRepository.getMaxRunningBuffHVN()==null?0:videoViewRepository.getMaxRunningBuffHVN();
+        int maxrunningUS=videoViewRepository.getMaxRunningBuffHUS()==null?0:videoViewRepository.getMaxRunningBuffHUS();
+        settingRepository.updateMaxRunningBuffHVN(maxrunningVN<=0?0:maxrunningVN);
+        settingRepository.updateMaxRunningBuffHUS(maxrunningUS<=0?0:maxrunningUS);
         videoViewRepository.speedup_threads();
-        resp.put("redirect=",settingRepository.getRedirect());
+        resp.put("redirect=",true);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 
@@ -396,7 +420,7 @@ public class AuthController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray =new JSONArray();
-        List<Balance> balance;
+        List<BalanceHistory> balance;
         if(user.length()==0){
             balance =balanceRepository.getAllBalance();
 
@@ -412,6 +436,7 @@ public class AuthController {
             obj.put("time", balance.get(i).getTime());
             obj.put("id", balance.get(i).getId());
             obj.put("service", balance.get(i).getService());
+            obj.put("geo", balance.get(i).getGeo());
             jsonArray.add(obj);
         }
         resp.put("balances",jsonArray);
@@ -419,6 +444,201 @@ public class AuthController {
 
 
     }
+
+    @GetMapping(path = "balanceNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balanceNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float vn=balanceRepository.getAllBalanceVNNow();
+        Float us=balanceRepository.getAllBalanceUSNow();
+        Float kr=balanceRepository.getAllBalanceKRNow();
+        Float sum=(vn!=null?vn:0)+(us!=null?us:0)+(kr!=null?kr:0);
+        resp.put("balance",(sum!=null?sum.toString():"0")+"$,"+(vn!=null?vn.toString():"0")+"$,"+(us!=null?us.toString():"0")+"$"+","+(kr!=null?kr.toString():"0")+"$");
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(path = "fluctuationsNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<Balance> balances=balanceRepository.getfluctuationsNow();
+        if(balances.size()==0){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balances.get(0).getTime());
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+            String formattedDateTime = newDateTime.format(formatter);
+            resp.put("noti","\uD83D\uDD14 "+ formattedDateTime+ " | Tài khoản "+balances.get(0).getUser().replace("@gmail.com","")+" "+balances.get(0).getNote()+(balances.get(0).getService()==null?" ":(" | Serivce "+balances.get(0).getService()))+" | Biến động "+balances.get(0).getBalance()+"$");
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(value = "getbalance7day", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getbalance7day(@RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> time7day;
+            List<String> timesub7day;
+            time7day = balanceRepository.Getbalance7day();
+            timesub7day = balanceRepository.GetbalanceSub7day();
+            float count_view=0;
+            float count_viewsub=0;
+            int count_order=0;
+            JSONArray jsonArray = new JSONArray();
+            Float maxview = 0F;
+            Float maxsubview = 0F;
+
+            for (int i = 0; i < time7day.size(); i++) {
+                if(time7day.get(i).split(",")[0].equals(timesub7day.get(i).split(",")[0])){
+                    count_order=count_order+Integer.parseInt(time7day.get(i).split(",")[2]);
+                    count_view=count_view+Float.parseFloat(time7day.get(i).split(",")[1]);
+                    if (maxview < Float.parseFloat(time7day.get(i).split(",")[1])) {
+                        maxview = Float.parseFloat(time7day.get(i).split(",")[1]);
+                    }
+                }
+            }
+            for (int i = 0; i < timesub7day.size(); i++) {
+                //System.out.println(time7day.get(i).split(",")[1]);
+                count_viewsub=-Float.parseFloat(timesub7day.get(i).split(",")[1])+count_viewsub;
+                if (maxsubview < -Float.parseFloat(timesub7day.get(i).split(",")[1])) {
+                    maxsubview = -Float.parseFloat(timesub7day.get(i).split(",")[1]);
+                }
+            }
+            for (int i = 0; i < time7day.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("date", time7day.get(i).split(",")[0]);
+                obj.put("view", Float.parseFloat(time7day.get(i).split(",")[1]));
+                obj.put("viewsub", -Float.parseFloat(timesub7day.get(i).split(",")[1]));
+                obj.put("maxview", maxview);
+                obj.put("maxsubview", maxsubview);
+                obj.put("count_view", count_view);
+                obj.put("count_viewsub", count_viewsub);
+                obj.put("count_order", count_order);
+
+                jsonArray.add(obj);
+            }
+            resp.put("view7day", jsonArray);
+
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "fluctuationsMobile",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsMobile(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<Balance> balances=balanceRepository.getfluctuationsNow();
+        if(balances.size()==0){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balances.get(0).getTime());
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+            String formattedDateTime = newDateTime.format(formatter);
+            resp.put("noti","\uD83D\uDD14 "+ formattedDateTime+" ⏩ "+balances.get(0).getBalance()+"$");
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
+    @GetMapping(path = "fluctuations5M",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuations5M(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float balances=balanceRepository.getfluctuations5M();
+        if(balances==null){
+            resp.put("price",0);
+        }else{
+            resp.put("price",balances);
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(value = "balanceNowIFTTT",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balanceNowIFTTT(){
+        JSONObject resp=new JSONObject();
+        try{
+            try{
+                Float view_vn=balanceRepository.getAllBalanceVNNow1DG();
+                view_vn=view_vn!=null?view_vn:0F;
+                Float view_us=balanceRepository.getAllBalanceUSNow1DG();
+                view_us=view_us!=null?view_us:0F;
+                Float view_kr=balanceRepository.getAllBalanceKRNow1DG();
+                view_kr=view_kr!=null?view_kr:0F;
+                Float cmt_vn=balanceRepository.getAllBalanceVNNow1DGCMT();
+                cmt_vn=cmt_vn!=null?cmt_vn:0F;
+                Float cmt_us=balanceRepository.getAllBalanceUSNow1DGCMT();
+                cmt_us=cmt_us!=null?cmt_us:0F;
+                Float cmt_kr=balanceRepository.getAllBalanceKRNow1DGCMT();
+                cmt_kr=cmt_kr!=null?cmt_kr:0F;
+                Float sum_view=view_vn+view_us+view_kr;
+                Float sum_cmt=cmt_vn+cmt_us+cmt_kr;
+                Float sum1dg=sum_view+sum_cmt;
+                String view=view_vn+"$ "+view_us+"$ "+view_kr+"$ = "+sum_view+"$";
+                String cmt=cmt_vn+"$ "+cmt_us+"$ "+cmt_kr+"$ = "+sum_cmt+"$";
+                String sum=sum1dg+"$";
+                OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+                Request request = null;
+
+                request = new Request.Builder().url("https://maker.ifttt.com/trigger/order/with/key/eh3Ut1_iinzl4yCeH5-BC2d21WpaAKdzXTWzVfXurdc?value1=" + view+"&value2="+cmt+"&value3="+sum).get().build();
+
+                Response response = client.newCall(request).execute();
+
+                resp.put("status", "true");
+
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }catch(Exception e){
+                resp.put("status","fail");
+                resp.put("message", e.getMessage());
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+            }
+        }
 
 
     @GetMapping(path = "getalluser",produces = "application/hal+json;charset=utf8")
@@ -439,7 +659,6 @@ public class AuthController {
             }else{
                 listuser=listuser+","+alluser.get(i);
             }
-
         }
         resp.put("user",listuser);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

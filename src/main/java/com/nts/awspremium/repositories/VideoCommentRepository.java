@@ -20,11 +20,47 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentVN(String listvideo);
 
+    @Query(value = "SELECT * FROM videocomment where service=888 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentVN(String listvideo,List<String> orderid);
+
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='vn' and task='comment') and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentVNTest(String listvideo,List<String> orderid);
+
     @Query(value = "SELECT * FROM videocomment where service=222 and INSTR(?1,videoid)=0 and\n" +
             "            orderid in (select orderid from (select videocomment.orderid,count(*) as total,maxthreads\n" +
             "            from videocomment left join historycomment on historycomment.orderid=videocomment.orderid and running=1\n" +
             "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
     public List<VideoComment> getvideoCommentUS(String listvideo);
+
+    @Query(value = "SELECT * FROM videocomment where service=222 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentUS(String listvideo,List<String> orderid);
+
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='us' and task='comment') and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentUSTest(String listvideo,List<String> orderid);
+
+    @Query(value = "SELECT * FROM videocomment where service=1111 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (select orderid from (select videocomment.orderid,count(*) as total,maxthreads\n" +
+            "            from videocomment left join historycomment on historycomment.orderid=videocomment.orderid and running=1\n" +
+            "            group by orderid having total<maxthreads) as t) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentKR(String listvideo);
+
+    @Query(value = "SELECT * FROM videocomment where service=1111 and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentKR(String listvideo,List<String> orderid);
+
+
+    @Query(value = "SELECT * FROM videocomment where service in(select service from service where geo='kr' and task='comment') and INSTR(?1,videoid)=0 and\n" +
+            "            orderid in (?2) order by rand() limit 1",nativeQuery = true)
+    public List<VideoComment> getvideoCommentKRTest(String listvideo,List<String> orderid);
+
+    @Query(value = "select orderid from (select videocomment.orderid,count(running) as total,maxthreads\n" +
+            "                      from videocomment left join historycomment on historycomment.orderid=videocomment.orderid and running=1\n" +
+            "                       group by orderid having total<maxthreads) as t",nativeQuery = true)
+    public List<String> getListOrderTrueThreadON();
 
     @Query(value = "SELECT * from videocomment where orderid in (?1)",nativeQuery = true)
     public List<VideoComment> getVideoViewByListId(List<String> list_orderid);
@@ -54,13 +90,16 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "SELECT * FROM videocomment where valid=0 order by insertdate asc",nativeQuery = true)
     public List<VideoComment> getAllOrderCheckCancel();
 
-    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(running) as total,maxthreads,insertdate,videocomment.note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,videocomment.service,service.geo,lc_code from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 left join service on videocomment.service=service.service group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrder();
+
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(running) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where maxthreads>0 and commenttotal=0 and round((UNIX_TIMESTAMP()-insertdate/1000)/60/60)>2 group by videoid having total>=1 order by insertdate asc",nativeQuery = true)
+    public List<OrderCommentRunning> getOrderCancelThan2h();
 
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrderCheckCancel();
 
-    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
+    @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(running) as total,maxthreads,insertdate,videocomment.note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,videocomment.service,service.geo,lc_code from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 left join service on videocomment.service=service.service where user=?1 group by videoid order by insertdate desc",nativeQuery = true)
     public List<OrderCommentRunning> getOrder(String user);
 
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,view24h,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where user=?1 and videoview.valid=0 group by videoid order by insertdate desc",nativeQuery = true)
@@ -69,44 +108,30 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     @Query(value = "Select videocomment.orderid,videocomment.videoid,videocomment.videotitle,count(*) as total,maxthreads,insertdate,note,duration,commentstart,commentorder,user,commenttotal,timeupdate,price,service from videocomment left join historycomment on historycomment.videoid=videocomment.videoid and running=1 where videocomment.videoid=?1",nativeQuery = true)
     public List<OrderCommentRunning> getVideoViewById(String videoid);
 
-    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.orderid=videocomment.orderid where  time>=videocomment.insertdate group by videocomment.orderid order by insertdate desc",nativeQuery = true)
-    public List<String> getTotalCommentBuff();
-
     @Query(value = "SELECT videocomment.videoid,count(*) as view FROM datacomment left join videocomment on videocomment.orderid=datacomment.orderid and running=2  group by videocomment.orderid order by insertdate desc",nativeQuery = true)
     public List<String> getTotalCommentBuffByDataComment();
 
-    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM historycommentsum left join videocomment on historycommentsum.videoid=videocomment.videoid where time>=videocomment.insertdate and round((UNIX_TIMESTAMP()-time/1000)/60/60)<24 group by videocomment.videoid order by insertdate desc",nativeQuery = true)
-    public List<String> get24hViewBuff();
+    @Query(value = "SELECT videocomment.videoid,count(*) as view FROM datacomment left join videocomment on videocomment.orderid=datacomment.orderid and running=2  group by videocomment.orderid order by insertdate desc",nativeQuery = true)
+    public List<String> getTotalCommentBuffByDataCommentAndDataReply();
+
+
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE videocomment set commenttotal=?1,timeupdate=?2 where videoid=?3",nativeQuery = true)
     public void updateViewOrderByVideoId(Integer viewtotal,Long timeupdate,String videoid);
 
-    @Modifying
-    @Transactional
-    @Query(value = "update videocomment set valid=0 where videoid not in (select videoid from historyviewsum where round((UNIX_TIMESTAMP()-time/1000)/60)<=5  group by videoid ) and round((UNIX_TIMESTAMP()-insertdate/1000)/60)>20",nativeQuery = true)
-    public void updateOrderCheckCancel();
+    @Query(value = "SELECT count(*) FROM videocomment where videoid=?1 and service in(select service from service where geo=?2)",nativeQuery = true)
+    public Integer getServiceByVideoId(String videoid,String geo);
+
+    @Query(value = "SELECT count(*) from videocomment where videoid=?1 and maxthreads>0",nativeQuery = true)
+    public Integer getCountVideoIdNotPending(String videoid);
 
     @Modifying
     @Transactional
     @Query(value = "update videocomment set valid=1 where videoid=?1",nativeQuery = true)
     public void updateOrderCheck(String videoid);
 
-    @Query(value = "SELECT sum(vieworder) as total FROM videocomment",nativeQuery = true)
-    public Integer getCountViewBuffOrder();
-
-    @Query(value = "SELECT *  FROM videocomment where orderid=?1 limit 1",nativeQuery = true)
-    public VideoComment getInfoByOrderId(Long orderid);
-
-    @Query(value = "SELECT sum(vieworder) as total FROM videocomment where user=?1",nativeQuery = true)
-    public Integer getCountViewBuffOrder(String user);
-
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videocomment on historyviewsum.videoid=videocomment.videoid where historyviewsum.duration>0 and time>=videocomment.insertdate",nativeQuery = true)
-    public Integer getCountViewBuffedOrder();
-
-    @Query(value = "SELECT count(*) as viewbuff FROM historyviewsum left join videocomment on historyviewsum.videoid=videocomment.videoid where historyviewsum.duration>0 and videocomment.user=?1  time>=videocomment.insertdate",nativeQuery = true)
-    public Integer getCountViewBuffedOrder(String user);
 
     @Query(value = "SELECT * from videocomment  where videoid=?1 limit 1",nativeQuery = true)
     public List<VideoComment> getVideoBuffhById(String videoid);
@@ -117,10 +142,16 @@ public interface VideoCommentRepository extends JpaRepository<VideoComment,Long>
     public void deletevideoByVideoId(String videoid);
 
 
-    @Query(value = "select * from videocomment where commenttotal>=commentorder",nativeQuery = true)
-    public List<VideoComment> getOrderFullView();
+    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and reply=0) ",nativeQuery = true)
+    public List<VideoComment> getOrderFullCmt();
 
-    @Query(value = "select * from videocomment where maxthreads=0 order by insertdate asc limit 5",nativeQuery = true)
+    @Query(value = "select * from videocomment where commenttotal>=commentorder and service in(select service from service where task='comment' and reply>0) and orderid not in(select orderid from data_reply_comment group by orderid) ",nativeQuery = true)
+    public List<VideoComment> getOrderFullReply();
+
+    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and reply=0) order by insertdate asc limit 5\n",nativeQuery = true)
     public List<VideoComment> getOrderThreadNull();
+
+    @Query(value = "select * from videocomment where maxthreads=0 and service in(select service from service where task='comment' and reply>0) order by insertdate asc limit 5\n",nativeQuery = true)
+    public List<VideoComment> getOrderReplyThreadNull();
 
 }

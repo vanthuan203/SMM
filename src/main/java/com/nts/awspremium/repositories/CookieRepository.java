@@ -22,14 +22,7 @@ public interface CookieRepository extends JpaRepository<Cookie,Long> {
     @Query(value = "INSERT INTO cookie(username,cookie) VALUES(?1,?2)",nativeQuery = true)
     public void insertCookieSub(String username,String cookie);
 
-    @Modifying
-    @Transactional
-    @Query(value = "INSERT INTO cookie(username,cookie) VALUES(?1,?2)",nativeQuery = true)
-    public void insertCookieView(String username,String cookie);
 
-
-    @Query(value = "SELECT cookie FROM cookie WHERE username=?1 limit 1",nativeQuery = true)
-    public String findCookieSub(String username);
     @Query(value = "SELECT cookie FROM cookie WHERE id=?1 limit 1",nativeQuery = true)
     public String findCookieSubById(Long id);
     @Query(value = "SELECT id FROM cookie WHERE username=?1 limit 1",nativeQuery = true)

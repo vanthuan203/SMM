@@ -6,6 +6,7 @@ import com.nts.awspremium.repositories.HistoryViewRepository;
 import com.nts.awspremium.repositories.ProxyRepository;
 import com.nts.awspremium.repositories.VideoViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,27 +20,28 @@ public class AutoCheckProsetList {
     private HistoryViewRepository historyViewRepository ;
     @Autowired
     private CheckProsetListTrue checkProsetListTrue;
-
+    @Autowired
+    private Environment env;
     @PostConstruct
     public void init() throws InterruptedException {
         try{
-            new Thread(() -> {
-                Random rand =new Random();
-                while(true) {
-                    try{
+                new Thread(() -> {
+                    Random rand = new Random();
+                    while (true) {
                         try {
-                            Thread.sleep(100+rand.nextInt(200));
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            try {
+                                Thread.sleep(1000 + rand.nextInt(200));
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            //checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
+                            checkProsetListTrue.setValue(historyViewRepository.PROCESSLISTVIEW());
+                            //System.out.println(checkProsetListTrue.getValue());
+                        } catch (Exception e) {
+                            continue;
                         }
-                        //checkProsetListTrue.setValue(proxyRepository.PROCESSLISTVIEW());
-                        checkProsetListTrue.setValue(historyViewRepository.PROCESSLISTVIEW());
-                        //System.out.println(checkProsetListTrue.getValue());
-                    }catch (Exception e){
-                        continue;
                     }
-                }
-            }).start();
+                }).start();
         }catch (Exception e){
 
         }

@@ -26,16 +26,26 @@ public class Service {
     private Integer direct;
     private Integer embed;
     private Integer external;
+    private Integer playlists;
     private Integer mintime;
     private Integer maxtime;
     private Integer refill;
     private Integer maxtimerefill;
     private Integer checktime;
     private Integer live;
+    private Integer expired=0;
+    private Integer niche;
+    private String keyniche;
+    private Integer click_web=0;
+    private Integer click_ads=0;
+    private String platform;
+    private String task;
+    private Integer reply=0;
+    private String device_type="all";
     public Service() {
     }
 
-    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live) {
+    public Service(Integer service, String name, String type, String category, Float rate, Integer min, Integer max, Integer thread, String note, String geo, Integer enabled, Integer maxorder, Integer search, Integer suggest, Integer dtn, Integer direct, Integer embed, Integer external, Integer playlists, Integer mintime, Integer maxtime, Integer refill, Integer maxtimerefill, Integer checktime, Integer live, Integer expired, Integer niche, String keyniche, Integer click_web, Integer click_ads, String platform, String task, String device_type) {
         this.service = service;
         this.name = name;
         this.type = type;
@@ -54,12 +64,45 @@ public class Service {
         this.direct = direct;
         this.embed = embed;
         this.external = external;
+        this.playlists = playlists;
         this.mintime = mintime;
         this.maxtime = maxtime;
         this.refill = refill;
         this.maxtimerefill = maxtimerefill;
         this.checktime = checktime;
         this.live = live;
+        this.expired = expired;
+        this.niche = niche;
+        this.keyniche = keyniche;
+        this.click_web = click_web;
+        this.click_ads = click_ads;
+        this.platform = platform;
+        this.task = task;
+        this.device_type = device_type;
+    }
+
+    public Integer getReply() {
+        return reply;
+    }
+
+    public void setReply(Integer reply) {
+        this.reply = reply;
+    }
+
+    public String getDevice_type() {
+        return device_type;
+    }
+
+    public void setDevice_type(String device_type) {
+        this.device_type = device_type;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public Integer getMaxorder() {
@@ -251,5 +294,61 @@ public class Service {
 
     public void setExternal(Integer external) {
         this.external = external;
+    }
+
+    public Integer getNiche() {
+        return niche;
+    }
+
+    public void setNiche(Integer niche) {
+        this.niche = niche;
+    }
+
+    public String getKeyniche() {
+        return keyniche;
+    }
+
+    public void setKeyniche(String keyniche) {
+        this.keyniche = keyniche;
+    }
+
+    public Integer getPlaylists() {
+        return playlists;
+    }
+
+    public void setPlaylists(Integer playlists) {
+        this.playlists = playlists;
+    }
+
+    public Integer getExpired() {
+        return expired;
+    }
+
+    public void setExpired(Integer expired) {
+        this.expired = expired;
+    }
+
+    public Integer getClick_web() {
+        return click_web;
+    }
+
+    public void setClick_web(Integer click_web) {
+        this.click_web = click_web;
+    }
+
+    public Integer getClick_ads() {
+        return click_ads;
+    }
+
+    public void setClick_ads(Integer click_ads) {
+        this.click_ads = click_ads;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 }

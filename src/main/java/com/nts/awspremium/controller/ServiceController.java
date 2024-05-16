@@ -1,9 +1,6 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Admin;
-import com.nts.awspremium.model.Balance;
-import com.nts.awspremium.model.Service;
-import com.nts.awspremium.model.Setting;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -78,7 +75,7 @@ public class ServiceController {
     }
 
     @PostMapping(path = "update",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> verify_token(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Service service){
+    ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Service service){
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         List<Admin> check=adminRepository.FindByToken(Authorization.trim());
@@ -137,6 +134,13 @@ public class ServiceController {
         obj.put("type",admins.get(0).getType());
         obj.put("live",admins.get(0).getLive());
         obj.put("checktime",admins.get(0).getChecktime());
+        obj.put("platform",admins.get(0).getPlatform());
+        obj.put("niche",admins.get(0).getNiche());
+        obj.put("playlists",admins.get(0).getPlaylists());
+        obj.put("expired",admins.get(0).getExpired());
+        obj.put("click_ads",admins.get(0).getClick_ads());
+        obj.put("click_web",admins.get(0).getClick_web());
+        obj.put("keyniche",admins.get(0).getKeyniche());
         resp.put("account",obj);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
@@ -195,6 +199,7 @@ public class ServiceController {
             obj.put("direct",admins.get(i).getDirect());
             obj.put("embed",admins.get(i).getEmbed());
             obj.put("external",admins.get(i).getExternal());
+            obj.put("playlists",admins.get(i).getPlaylists());
             obj.put("dtn",admins.get(i).getDtn());
             obj.put("mintime",admins.get(i).getMintime());
             obj.put("maxtime",admins.get(i).getMaxtime());
@@ -204,6 +209,13 @@ public class ServiceController {
             obj.put("thread",admins.get(i).getThread());
             obj.put("type",admins.get(i).getType());
             obj.put("checktime",admins.get(i).getChecktime());
+            obj.put("platform",admins.get(i).getPlatform());
+            obj.put("niche",admins.get(i).getNiche());
+            obj.put("playlists",admins.get(i).getPlaylists());
+            obj.put("expired",admins.get(i).getExpired());
+            obj.put("click_ads",admins.get(i).getClick_ads());
+            obj.put("click_web",admins.get(i).getClick_web());
+            obj.put("keyniche",admins.get(i).getKeyniche());
             jsonArray.add(obj);
         }
         resp.put("accounts",jsonArray);
@@ -273,7 +285,7 @@ public class ServiceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         JSONArray jsonArray =new JSONArray();
-        List<Balance> balance;
+        List<BalanceHistory> balance;
         if(user.length()==0){
             balance =balanceRepository.getAllBalance();
 
@@ -315,6 +327,132 @@ public class ServiceController {
         }else{
             System.out.println("ROLE_USER");
             allservice=serviceRepository.GetAllServiceEnabled();
+        }
+        String listuser="";
+        for(int i=0;i<allservice.size();i++){
+            if(i==0){
+                listuser=allservice.get(0);
+            }else{
+                listuser=listuser+","+allservice.get(i);
+            }
+
+        }
+        resp.put("user",listuser);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+    }
+
+    @GetMapping(path = "getallservicetraffic",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getallservicetraffic(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String role){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        System.out.println(admins.get(0).getUsername());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > allservice;
+        if(role.equals("ROLE_ADMIN")){
+            System.out.println("ROLE_ADMIN");
+            allservice=serviceRepository.GetAllServiceTraffic();
+        }else{
+            System.out.println("ROLE_USER");
+            allservice=serviceRepository.GetAllServiceTrafficEnabled();
+        }
+        String listuser="";
+        for(int i=0;i<allservice.size();i++){
+            if(i==0){
+                listuser=allservice.get(0);
+            }else{
+                listuser=listuser+","+allservice.get(i);
+            }
+
+        }
+        resp.put("user",listuser);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+    }
+
+    @GetMapping(path = "getOptionService",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getOptionService(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > getAllCategory=serviceRepository.getAllCategory();
+        List<String > getAllType=serviceRepository.getAllType();
+        List<String > getAllGeo=serviceRepository.getAllGeo();
+        List<String > getAllPlatform=serviceRepository.getAllPlatform();
+        String listCategory="";
+        String listType="";
+        String listGeo="";
+        String listPlatform="";
+        for(int i=0;i<getAllCategory.size();i++){
+            if(i==0){
+                listCategory=getAllCategory.get(0);
+            }else{
+                listCategory=listCategory+","+getAllCategory.get(i);
+            }
+
+        }
+        resp.put("listCategory",listCategory);
+
+
+        for(int i=0;i<getAllGeo.size();i++){
+            if(i==0){
+                listGeo=getAllGeo.get(0);
+            }else{
+                listGeo=listGeo+","+getAllGeo.get(i);
+            }
+
+        }
+        resp.put("listGeo",listGeo);
+
+
+        for(int i=0;i<getAllType.size();i++){
+            if(i==0){
+                listType=getAllType.get(0);
+            }else{
+                listType=listType+","+getAllType.get(i);
+            }
+
+        }
+        resp.put("listType",listType);
+        for(int i=0;i<getAllPlatform.size();i++){
+            if(i==0){
+                listPlatform=getAllPlatform.get(0);
+            }else{
+                listPlatform=listPlatform+","+getAllPlatform.get(i);
+            }
+
+        }
+        resp.put("listPlatform",listPlatform);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+    }
+
+    @GetMapping(path = "getAllServiceTiktok",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getAllServiceTiktok(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String role){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<Admin> admins=adminRepository.FindByToken(Authorization.trim());
+        System.out.println(admins.get(0).getUsername());
+        if(Authorization.length()==0|| admins.size()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        List<String > allservice;
+        if(role.equals("ROLE_ADMIN")){
+            allservice=serviceRepository.GetAllServiceFollowerTiktok();
+        }else{
+            System.out.println("ROLE_USER");
+            allservice=serviceRepository.GetAllServiceTiktokEnabled();
         }
         String listuser="";
         for(int i=0;i<allservice.size();i++){

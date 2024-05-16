@@ -33,10 +33,12 @@ public class VideoView {
     private Integer priority=0;
     private Integer speedup=0;
 
+    private String link="";
+
     public VideoView() {
     }
 
-    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Integer threadset, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup) {
+    public VideoView(Long orderid, String videoid, String videotitle, String channelid, String channeltitle, Integer viewstart, Long insertdate, Long timestart, Integer minstart, Integer maxthreads, Integer threadset, Long duration, Integer service, String note, String user, Integer enddate, Integer vieworder, Integer viewtotal, Integer timetotal, Integer view24h, Long timeupdate, Float price, Integer valid, Integer priority, Integer speedup, String link) {
         this.orderid = orderid;
         this.videoid = videoid;
         this.videotitle = videotitle;
@@ -62,6 +64,7 @@ public class VideoView {
         this.valid = valid;
         this.priority = priority;
         this.speedup = speedup;
+        this.link = link;
     }
 
     public Integer getTimetotal() {
@@ -262,5 +265,13 @@ public class VideoView {
 
     public void setSpeedup(Integer speedup) {
         this.speedup = speedup;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
 }
