@@ -280,6 +280,7 @@ public class VideoCommentController {
                 obj.put("commenttotal", orderRunnings.get(i).getCommentTotal());
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("geo",  orderRunnings.get(i).getGeo());
+                obj.put("lc_code",  orderRunnings.get(i).getLc_code());
                 jsonArray.add(obj);
             }
 
@@ -882,6 +883,7 @@ public class VideoCommentController {
                 obj.put("price", orderRunnings.get(i).getPrice());
                 obj.put("service", orderRunnings.get(i).getService());
                 obj.put("geo", orderRunnings.get(i).getGeo());
+                obj.put("lc_code",  orderRunnings.get(i).getLc_code());
                 jsonArray.add(obj);
             }
             //JSONArray lineItems = jsonObject.getJSONArray("lineItems");
@@ -1062,6 +1064,7 @@ public class VideoCommentController {
                 videoBuffhnew.setCommentorder(videoBuffh.get(0).getCommentorder());
                 videoBuffhnew.setMaxthreads(videoBuffh.get(0).getMaxthreads());
                 videoBuffhnew.setNote(videoBuffh.get(0).getNote());
+                videoBuffhnew.setLc_code(videoBuffh.get(0).getLc_code());
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
                 //videoBuffhnew.setPrice(videoBuffh.get(0).getPrice());
@@ -1135,6 +1138,7 @@ public class VideoCommentController {
                 videoBuffhnew.setNumbh(0);
                 videoBuffhnew.setTimecheck(0L);
                 videoBuffhnew.setUser(videoBuffh.get(i).getUser());
+                videoBuffhnew.setLc_code(videoBuffh.get(i).getLc_code());
                 videoBuffhnew.setEnddate(enddate);
                 videoBuffhnew.setService(videoBuffh.get(i).getService());
                 videoBuffhnew.setCommenttotal(videoBuffh.get(i).getCommenttotal());
@@ -1185,6 +1189,7 @@ public class VideoCommentController {
                 videoBuffhnew.setCommenttotal(videoBuffh.get(i).getCommenttotal());
                 videoBuffhnew.setCommentorder(videoBuffh.get(i).getCommentorder());
                 videoBuffhnew.setPrice(videoBuffh.get(i).getPrice());
+                videoBuffhnew.setLc_code(videoBuffh.get(i).getLc_code());
                 try {
                     videoCommentHistoryRepository.save(videoBuffhnew);
                     videoCommentRepository.deletevideoByVideoId(videoBuffh.get(i).getVideoid().trim());

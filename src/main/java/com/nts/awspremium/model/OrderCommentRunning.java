@@ -17,5 +17,6 @@ public interface OrderCommentRunning {
     Float getPrice();
     Integer getService();
     String getGeo();
+    String getLc_code();
     Long getTimeUpdate();
 }
