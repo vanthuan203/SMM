@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.nts</groupId>
-	<artifactId>AWSPremium</artifactId>
+	<artifactId>SMM</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>AWSPremium</name>
-	<description>AWSPremium</description>
+	<name>SMM</name>
+	<description>SMM</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
