@@ -1,206 +1,55 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.*;
+import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 
+import javax.persistence.*;
+@Getter
+@Setter
 @Entity
 @Table(name = "account")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String username;
+    private String account_id;
+
+    @Column(nullable = false)
     private String password;
-    private String oldpassword;
-    private String recover;
+
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String recover_mail;
+
+    @Column(columnDefinition = "integer default 1")
     private Integer live;
-    private String encodefinger;
-    private String cookie;
-    private Long timeupdateinfo;
-    private Long endtrial;
-    private String endtrialstring;
-    private String vps;
-    private String proxy="";
-    private String proxy2="";
+
+    @Column(columnDefinition = "integer default 0")
     private Integer running;
-    private Long timecheck;
-    private  String date;
-    private String geo;
-    private Integer timebuff;
-    public Account() {
-    }
 
-    public Account(Long id, String username, String password, String oldpassword, String recover, Integer live, String encodefinger, String cookie, Long timeupdateinfo, Long endtrial, String endtrialstring, String vps, String proxy, String proxy2, Integer running, Long timecheck, String date, String geo, Integer timebuff) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.oldpassword = oldpassword;
-        this.recover = recover;
-        this.live = live;
-        this.encodefinger = encodefinger;
-        this.cookie = cookie;
-        this.timeupdateinfo = timeupdateinfo;
-        this.endtrial = endtrial;
-        this.endtrialstring = endtrialstring;
-        this.vps = vps;
-        this.proxy = proxy;
-        this.proxy2 = proxy2;
-        this.running = running;
-        this.timecheck = timecheck;
-        this.date = date;
-        this.geo = geo;
-        this.timebuff = timebuff;
-    }
+    @Column(columnDefinition = "bigint default 0")
+    private Long add_time;
 
-    public Long getTimeupdateinfo() {
-        return timeupdateinfo;
-    }
+    @Column(columnDefinition = "bigint default 0")
+    private Long get_time;
 
-    public void setTimeupdateinfo(Long timeupdateinfo) {
-        this.timeupdateinfo = timeupdateinfo;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String auth_2fa="";
 
-    public String getOldpassword() {
-        return oldpassword;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String profile_id="";
 
-    public void setOldpassword(String oldpassword) {
-        this.oldpassword = oldpassword;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String device_id="";
 
-    public Integer getTimebuff() {
-        return timebuff;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String computer_id="";
 
-    public void setTimebuff(Integer timebuff) {
-        this.timebuff = timebuff;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String platform="";
 
-    public String getProxy2() {
-        return proxy2;
-    }
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String note="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String code="";
 
-    public void setProxy2(String proxy2) {
-        this.proxy2 = proxy2;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRecover() {
-        return recover;
-    }
-
-    public void setRecover(String recover) {
-        this.recover = recover;
-    }
-
-    public Integer getLive() {
-        return live;
-    }
-
-    public void setLive(Integer live) {
-        this.live = live;
-    }
-
-    public String getEncodefinger() {
-        return encodefinger;
-    }
-
-    public void setEncodefinger(String encodefinger) {
-        this.encodefinger = encodefinger;
-    }
-
-    public String getCookie() {
-        return cookie;
-    }
-
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
-    }
-
-    public Long getEndtrial() {
-        return endtrial;
-    }
-
-    public void setEndtrial(Long endtrial) {
-        this.endtrial = endtrial;
-    }
-
-    public String getEndtrialstring() {
-        return endtrialstring;
-    }
-
-    public void setEndtrialstring(String endtrialstring) {
-        this.endtrialstring = endtrialstring;
-    }
-
-    public String getVps() {
-        return vps;
-    }
-
-    public void setVps(String vps) {
-        this.vps = vps;
-    }
-
-    public String getProxy() {
-        return proxy;
-    }
-
-    public void setProxy(String proxy) {
-        this.proxy = proxy;
-    }
-
-    public Integer getRunning() {
-        return running;
-    }
-
-    public void setRunning(Integer running) {
-        this.running = running;
-    }
-
-    public Long getTimecheck() {
-        return timecheck;
-    }
-
-    public void setTimecheck(Long timecheck) {
-        this.timecheck = timecheck;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getGeo() {
-        return geo;
-    }
-
-    public void setGeo(String geo) {
-        this.geo = geo;
-    }
 }
-

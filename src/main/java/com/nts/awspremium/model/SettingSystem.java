@@ -8,23 +8,19 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name = "setting_tiktok")
-public class SettingTiktok {
+@Table(name = "setting_system")
+public class SettingSystem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(columnDefinition = "integer default 0")
-    private Integer max_follower;
+    private Integer max_acc;
     @Column(columnDefinition = "integer default 0")
-    private Integer max_reg;
+    private Integer max_task;
     @Column(columnDefinition = "integer default 0")
-    private Integer max_bonus;
-    @Column(columnDefinition = "integer default 0")
-    private Integer max_day_activity;
-    @Column(columnDefinition = "integer default 0")
-    private Integer max_activity_24h;
+    private Integer max_profile;
 
-    public SettingTiktok() {
+    public SettingSystem() {
     }
 
 }

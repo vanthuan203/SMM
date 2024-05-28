@@ -1,105 +1,28 @@
 package com.nts.awspremium.model;
 
-import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
+@Setter
+@Getter
 @Entity
 @Table(name = "balance")
 public class Balance {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(columnDefinition = "varchar(255) default 0")
     private String user;
     private Float balance;
-    private Float totalblance;
-    private Long time;
+    private Float total_blance;
+    private Long add_time;
+    @Column(columnDefinition = "varchar(255) default 0")
     private String note;
-    private String currency;
     private Integer service;
+    @Column(columnDefinition = "integer default 0")
     private Integer noti=0;
     public Balance() {
     }
 
-    public Balance(Long id, String user, Float balance, Float totalblance, Long time, String note, String currency, Integer service, Integer noti) {
-        this.id = id;
-        this.user = user;
-        this.balance = balance;
-        this.totalblance = totalblance;
-        this.time = time;
-        this.note = note;
-        this.currency = currency;
-        this.service = service;
-        this.noti = noti;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public Float getBalance() {
-        return balance;
-    }
-
-    public void setBalance(Float balance) {
-        this.balance = balance;
-    }
-
-    public Float getTotalblance() {
-        return totalblance;
-    }
-
-    public void setTotalblance(Float totalblance) {
-        this.totalblance = totalblance;
-    }
-
-    public Long getTime() {
-        return time;
-    }
-
-    public void setTime(Long time) {
-        this.time = time;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public Integer getService() {
-        return service;
-    }
-
-    public void setService(Integer service) {
-        this.service = service;
-    }
-
-    public Integer getNoti() {
-        return noti;
-    }
-
-    public void setNoti(Integer noti) {
-        this.noti = noti;
-    }
 }

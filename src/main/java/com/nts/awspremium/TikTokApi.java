@@ -1,27 +1,17 @@
 package com.nts.awspremium;
 
-import com.nts.awspremium.repositories.ProxyRepository;
 import okhttp3.*;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
 import java.net.Authenticator;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import com.nts.awspremium.repositories.ProxyRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 public class TikTokApi {
     public static Integer getFollowerCount(String tiktok_link,String proxycheck) {

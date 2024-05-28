@@ -1,19 +1,16 @@
 package com.nts.awspremium.repositories;
 
-
-import com.nts.awspremium.model.Admin;
-import com.nts.awspremium.model.PriorityTasks;
+import com.nts.awspremium.model.Account;
 import com.nts.awspremium.model.Service;
+import com.nts.awspremium.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
-    @Query(value = "SELECT * FROM service where enabled=1 and type!=\"Custom Comments\"",nativeQuery = true)
-    public List<Service> getAllService();
+    @Query(value = "SELECT * FROM service where enabled=1",nativeQuery = true)
+    public List<Service> get_All_Service_Enabled();
     @Query(value = "Select geo from service group by geo",nativeQuery = true)
     public List<String> GetAllGeoService();
     @Query(value = "SELECT * FROM service ",nativeQuery = true)
@@ -29,7 +26,7 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     public List<Service> getAllServiceTiktok();
 
 
-    @Query(value = "SELECT * FROM service where service=?1 and enabled=1 limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where service_id=?1 and enabled=1 limit 1",nativeQuery = true)
     public Service getService(Integer service);
 
     @Query(value = "SELECT geo FROM service where service=?1 limit 1",nativeQuery = true)
@@ -84,7 +81,7 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     public Integer checkGuaranteeByTime(Long end_date,Integer max_refill);
 
     @Query(value = "Select * from admin where token=?1",nativeQuery = true)
-    public List<Admin>  FindByToken(String Authorization);
+    public List<User>  FindByToken(String Authorization);
 
     @Query(value = "SELECT category FROM service group by category",nativeQuery = true)
     public List<String>  getAllCategory();
