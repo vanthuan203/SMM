@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
+import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class TaskController {
     @Autowired
     private OrderThreadCheck orderThreadCheck;
     @Autowired
-    private ServiceRepository serviceRepository;
+    private MySQLCheck mySQLCheck;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -451,13 +452,16 @@ public class TaskController {
                 deviceRepository.save(device);
                 if(profile!=null){
                     if(profile.getNum_account()<settingSystem.getMax_acc()) {
-                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        String code="";
-                        for(int i=0;i<50;i++){
-                            Integer ranver=ran.nextInt(stringrand.length());
-                            code=code+stringrand.charAt(ranver);
+                        Account account_get=null;
+                        if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<50;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                         }
-                        Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                         if(account_get!=null){
                             AccountTask accountTask=new AccountTask();
                             accountTask.setAccount_id(account_get.getAccount_id().trim());
@@ -539,14 +543,16 @@ public class TaskController {
                     deviceRepository.save(device);
 
                     if(0<settingSystem.getMax_acc()) {
-                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        String code="";
-                        for(int i=0;i<50;i++){
-                            Integer ranver=ran.nextInt(stringrand.length());
-                            code=code+stringrand.charAt(ranver);
+                        Account account_get=null;
+                        if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<50;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                         }
-                        Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
-                        System.out.println(account_get);
                         if(account_get!=null){
                             AccountTask accountTask=new AccountTask();
                             accountTask.setAccount_id(account_get.getAccount_id().trim());
@@ -604,14 +610,16 @@ public class TaskController {
                 deviceRepository.save(device);
 
                 if(0<settingSystem.getMax_acc()) {
-                    String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                    String code="";
-                    for(int i=0;i<50;i++){
-                        Integer ranver=ran.nextInt(stringrand.length());
-                        code=code+stringrand.charAt(ranver);
+                    Account account_get=null;
+                    if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                        String code="";
+                        for(int i=0;i<50;i++){
+                            Integer ranver=ran.nextInt(stringrand.length());
+                            code=code+stringrand.charAt(ranver);
+                        }
+                        account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                     }
-                    Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
-                    System.out.println(account_get);
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
                         accountTask.setAccount_id(account_get.getAccount_id().trim());
@@ -834,8 +842,10 @@ public class TaskController {
                         Integer ranver=ran.nextInt(stringrand.length());
                         code=code+stringrand.charAt(ranver);
                     }
-                    Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
-                    System.out.println(account_get);
+                    Account account_get=null;
+                    if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                        account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
+                    }
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
                         accountTask.setAccount_id(account_get.getAccount_id().trim());

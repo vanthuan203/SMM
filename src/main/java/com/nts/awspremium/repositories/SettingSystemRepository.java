@@ -16,7 +16,8 @@ public interface SettingSystemRepository extends JpaRepository<SettingSystem,Lon
     @Transactional
     @Query(value = "update setting set redirectvn=?1 where id=1",nativeQuery = true)
     public void updateRedirectVN(Integer redirect);
-
+    @Query(value = "select count(*) from INFORMATION_SCHEMA.PROCESSLIST where db = 'Data' and COMMAND='Query' and TIME>0",nativeQuery = true)
+    public Integer check_MySQL();
     @Modifying
     @Transactional
     @Query(value = "update setting set redirectus=?1 where id=1",nativeQuery = true)

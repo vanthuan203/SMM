@@ -19,6 +19,8 @@ public class SettingSystem {
     private Integer max_task;
     @Column(columnDefinition = "integer default 0")
     private Integer max_profile;
+    @Column(columnDefinition = "integer default 0")
+    private Integer max_mysql;
 
     public SettingSystem() {
     }
