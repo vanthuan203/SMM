@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="ThuanN" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ALTERNATIVE_JRE_PATH" value="$PROJECT_DIR$/../../../../Program Files/Java/jdk-18.0.2.1" />
-    <module name="AWSPremium" />
+    <module name="SMM" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="com.nts.awspremium.AwsPremiumApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
