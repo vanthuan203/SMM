@@ -6,14 +6,19 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "account")
-public class Account {
+public class Account implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private String account_id;
-
     @Column(nullable = false)
     private String password;
 
@@ -37,6 +42,9 @@ public class Account {
 
     @Column(columnDefinition = "varchar(255) default ''")
     private String profile_id="";
+
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String box_id="";
 
     @Column(columnDefinition = "varchar(255) default ''")
     private String device_id="";

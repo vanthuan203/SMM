@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account,String> {
+    @Query(value = "SELECT * FROM account where account_id=?1 limit 1",nativeQuery = true)
+    public Account get_Account_By_Account_id(String account_id);
     @Query(value = "Select count(*) from account where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account where live=1 and device_id=?1)",nativeQuery = true)
     public Integer Check_Get_Account_By_DeviceId(String device_id);
 

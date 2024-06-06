@@ -1,6 +1,9 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
+import com.nts.awspremium.controller.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,6 +16,8 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.nts.awspremium.controller.GoogleKeyController.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -94,7 +99,6 @@ public class SetupController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
     @GetMapping(value = "/check_task", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> check_task(@RequestParam(defaultValue = "") String device_id,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();

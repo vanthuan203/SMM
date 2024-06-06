@@ -11,27 +11,26 @@ import javax.persistence.*;
 @Setter
 public class OrderHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")
     private String order_key;
     @Column(columnDefinition = "varchar(255) default ''")
-    private String youtube_video_title;
+    private String video_title;
     @Column(columnDefinition = "varchar(255) default ''")
-    private String youtube_channel_id;
+    private String channel_id;
     @Column(columnDefinition = "MEDIUMTEXT")
-    private String youtube_list_comment="";
+    private String comment_list="";
     @Column(columnDefinition = "TEXT")
-    private String youtube_list_keyword;
+    private String keyword_list;
     @Column(columnDefinition = "TEXT")
-    private String youtube_list_video;
+    private String video_list;
     @Column(columnDefinition = "integer default 0")
     private Integer start_count;
     @Column(columnDefinition = "bigint default 0")
     private Long insert_time;
     @Column(columnDefinition = "bigint default 0")
     private Long start_time;
-    @Column(columnDefinition = "integer default 0")
+    @Column(columnDefinition = "bigint default 0")
     private Long end_time;
     @Column(columnDefinition = "bigint default 0")
     private Long duration;
@@ -48,7 +47,7 @@ public class OrderHistory {
     @Column(columnDefinition = "integer default 0")
     private Integer total;
     @Column(columnDefinition = "integer default 0")
-    private Integer youtube_time_total;
+    private Integer time_total;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "float default 0")

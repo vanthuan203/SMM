@@ -16,6 +16,8 @@ public class SettingTiktok {
     @Column(columnDefinition = "integer default 0")
     private Integer max_follower;
     @Column(columnDefinition = "integer default 0")
+    private Integer max_like;
+    @Column(columnDefinition = "integer default 0")
     private Integer max_reg;
     @Column(columnDefinition = "integer default 0")
     private Integer max_bonus;

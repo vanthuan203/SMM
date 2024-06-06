@@ -6,13 +6,15 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 @Getter
 @Setter
 @Entity
 @Table(name = "device")
-public class Device {
+public class Device implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     private String device_id;
     @ManyToOne(fetch = FetchType.LAZY)

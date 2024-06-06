@@ -102,12 +102,46 @@ public class TikTokApi {
             return -3;
         }
     }
+
+    public static JSONObject getInfoVideoTikTok(String link) {
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("url", link);
+            // Convert JSON object to RequestBody
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, String.valueOf(json));
+            Request request = new Request.Builder()
+                    .url("https://countik.com/api/video/exist")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            return jsonObject;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     public static String getTiktokId(String url) {
         String pattern = "tiktok\\.com\\/@([a-zA-Z0-9_.]+)";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(url);
         if (m.find()) {
             return "@" + m.group(1);
+        } else {
+            return null;
+        }
+    }
+    public static String getVideoId(String url) {
+        String pattern = "tiktok\\.com/.*/video/(\\d+)";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(url);
+        if (m.find()) {
+            return m.group(1);
         } else {
             return null;
         }

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
 @Getter
 @Entity
 @Table(name = "profile")
-public class Profile {
+public class Profile implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     private String profile_id;
     @Column(columnDefinition = " varchar(255) default ''")

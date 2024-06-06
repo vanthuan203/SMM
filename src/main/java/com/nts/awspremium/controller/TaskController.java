@@ -29,7 +29,10 @@ public class TaskController {
     @Autowired
     private YoutubeViewHistoryRepository youtubeVideoHistoryRepository;
     @Autowired
-    private YoutubeSubscribeHistoryRepository youtubeChannelHistoryRepository;
+    private YoutubeSubscriberHistoryRepository youtubeChannelHistoryRepository;
+
+    @Autowired
+    private YoutubeLikeHistoryRepository youtubeLikeHistoryRepository;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -46,13 +49,30 @@ public class TaskController {
     private SettingTikTokRepository settingTikTokRepository;
     @Autowired
     private SettingSystemRepository settingSystemRepository;
+    @Autowired
+    private YoutubeLike24hRepository youtubeLike24hRepository;
+    @Autowired
+    private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
 
     @Autowired
     private TikTokFollower24hRepository tikTokFollower24hRepository;
 
     @Autowired
+    private TikTokLike24hRepository tikTokLike24hRepository;
+
+    @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
 
+    @Autowired
+    private TikTokLikeHistoryRepository tikTokLikeHistoryRepository;
+
+    @Autowired
+    private TikTokCommentHistoryRepository tikTokCommentHistoryRepository;
+
+    @Autowired
+    private HistorySumRepository historySumRepository;
+
+    @GetMapping("/task_tiktok_follower")
     Map<String, Object> task_tiktok_follower(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -63,7 +83,44 @@ public class TaskController {
                 return resp;
             }
             String list_tiktok_id=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Tiktok_By_Task("tiktok","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
+            if (orderRunning!=null) {
+                Service service=orderRunning.getService();
+                resp.put("status", true);
+                data.put("order_id", orderRunning.getOrder_id());
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", service.getTask());
+                data.put("task_key",orderRunning.getOrder_key());
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", false);
+            return resp;
+        }
+    }
+    Map<String, Object> task_tiktok_like(String account_id){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
+            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_like()){
+                resp.put("status", false);
+                return resp;
+            }
+            String list_videoId=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -96,7 +153,7 @@ public class TaskController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             String list_video_id=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Tiktok_By_Task("youtube","view",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 Random ran=new Random();
@@ -110,16 +167,16 @@ public class TaskController {
 
 
                 if(service.getService_type().trim().equals("Special")){
-                    String list_key = orderRunning.getYoutube_list_keyword();
+                    String list_key = orderRunning.getKeyword_list();
                     String key = "";
                     if (list_key != null && list_key.length() != 0) {
                         String[] keyArr = list_key.split(",");
                         key = keyArr[ran.nextInt(keyArr.length)];
                     }
-                    data.put("keyword", key.length() == 0 ? orderRunning.getYoutube_video_title() : key);
+                    data.put("keyword", key.length() == 0 ? orderRunning.getVideo_title() : key);
 
                 }else{
-                    data.put("keyword", orderRunning.getYoutube_video_title());
+                    data.put("keyword", orderRunning.getVideo_title());
                 }
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
@@ -155,12 +212,13 @@ public class TaskController {
             return resp;
         }
     }
+
     Map<String, Object> task_youtube_like(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            String list_video_id=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Tiktok_By_Task("youtube","like",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
+            String list_video_id=youtubeLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 Random ran=new Random();
@@ -171,36 +229,6 @@ public class TaskController {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("task_key", orderRunning.getOrder_key());
-
-
-                if(service.getService_type().trim().equals("Special")){
-                    String list_key = orderRunning.getYoutube_list_keyword();
-                    String key = "";
-                    if (list_key != null && list_key.length() != 0) {
-                        String[] keyArr = list_key.split(",");
-                        key = keyArr[ran.nextInt(keyArr.length)];
-                    }
-                    data.put("keyword", key.length() == 0 ? orderRunning.getYoutube_video_title() : key);
-
-                }else{
-                    data.put("keyword", orderRunning.getYoutube_video_title());
-                }
-                if (service.getMin_time() != service.getMax_time()) {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
-                    } else {
-                        data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
-                    }
-                }else {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
-                    } else {
-                        data.put("viewing_time", orderRunning.getDuration());
-                    }
-                }
-                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMax_time()==1){
-                    data.put("viewing_time",ran.nextInt(30)+10);
-                }
                 resp.put("data",data);
                 return resp;
 
@@ -256,7 +284,7 @@ public class TaskController {
                     Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
-                        accountTask.setAccount_id(account_get.getAccount_id().trim());
+                        accountTask.setAccount(account_get);
                         accountTask.setDevice(device);
                         accountTask.setAccount_level(0);
                         accountTask.setGet_time(0L);
@@ -301,7 +329,7 @@ public class TaskController {
                     System.out.println(account_get);
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
-                        accountTask.setAccount_id(account_get.getAccount_id().trim());
+                        accountTask.setAccount(account_get);
                         accountTask.setDevice(device);
                         accountTask.setAccount_level(0);
                         accountTask.setGet_time(0L);
@@ -331,7 +359,7 @@ public class TaskController {
             //Check số lần get nhiệm vụ của 1 account
             if(accountTask!=null){
                 if(accountTask.getTask_index()>=settingSystem.getMax_task()){
-                    accountTaskRepository.reset_Thread_Index_By_AccountId(accountTask.getAccount_id().trim());
+                    accountTaskRepository.reset_Thread_Index_By_AccountId(accountTask.getAccount().getAccount_id().trim());
                     accountTask = accountTaskRepository.get_Account_By_DeviceId(device_id.trim());
                 }
             }else{
@@ -366,9 +394,13 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
                 if(task.equals("task_tiktok_follower")){
-                    get_task=task_tiktok_follower(accountTask.getAccount_id().trim());
+                    get_task=task_tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("task_youtube_view")){
-                    get_task=task_youtube_view(accountTask.getAccount_id().trim());
+                    get_task=task_youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("task_youtube_like")){
+                    get_task=task_youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("task_tiktok_like")){
+                    get_task=task_tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -429,7 +461,7 @@ public class TaskController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             Random ran=new Random();
-            Thread.sleep(ran.nextInt(2000));
+            //Thread.sleep(ran.nextInt(2000));
             Integer checktoken = userRepository.FindUserByToken(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
@@ -464,7 +496,7 @@ public class TaskController {
                         }
                         if(account_get!=null){
                             AccountTask accountTask=new AccountTask();
-                            accountTask.setAccount_id(account_get.getAccount_id().trim());
+                            accountTask.setAccount(account_get);
                             accountTask.setDevice(device);
                             accountTask.setAccount_level(0);
                             accountTask.setGet_time(0L);
@@ -555,7 +587,7 @@ public class TaskController {
                         }
                         if(account_get!=null){
                             AccountTask accountTask=new AccountTask();
-                            accountTask.setAccount_id(account_get.getAccount_id().trim());
+                            accountTask.setAccount(account_get);
                             accountTask.setDevice(device);
                             accountTask.setAccount_level(0);
                             accountTask.setGet_time(0L);
@@ -622,7 +654,7 @@ public class TaskController {
                     }
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
-                        accountTask.setAccount_id(account_get.getAccount_id().trim());
+                        accountTask.setAccount(account_get);
                         accountTask.setDevice(device);
                         accountTask.setAccount_level(0);
                         accountTask.setGet_time(0L);
@@ -656,8 +688,10 @@ public class TaskController {
             //Check số lần get nhiệm vụ của 1 account
             if(accountTask!=null){
                 if(accountTask.getTask_index()>=settingSystem.getMax_task()){
-                    accountTaskRepository.reset_Thread_Index_By_AccountId(accountTask.getAccount_id().trim());
-                    accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                    accountTaskRepository.reset_Thread_Index_By_AccountId(accountTask.getAccount().getAccount_id().trim());
+                    if(profile.getNum_account()>1){
+                        accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                    }
                 }
             }else{
                 profile.setUpdate_time(System.currentTimeMillis());
@@ -667,12 +701,16 @@ public class TaskController {
             if(accountTask==null){
                 accountTaskRepository.reset_Thread_Index_By_ProfileId(profile_id.trim());
                 profile=profileRepository.get_Profile_Get_Task(device_id.trim());
-                if(profile!=null){
+                if(profile!=null&&device.getNum_profile()>1){
                     resp.put("status", true);
                     data.put("task", "profile_changer");
                     data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(profile!=null&&device.getNum_profile()==1){
+                    profile.setUpdate_time(System.currentTimeMillis());
+                    profileRepository.save(profile);
+                    accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
                 }else{
                     resp.put("status", false);
                     data.put("message", "Không có account để chạy");
@@ -701,11 +739,16 @@ public class TaskController {
             String task_index=null;
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
+                System.out.println(task);
                 while(arrTask.remove(task)) {}
                 if(task.equals("task_tiktok_follower")){
-                    get_task=task_tiktok_follower(accountTask.getAccount_id().trim());
+                    get_task=task_tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("task_youtube_view")){
-                    get_task=task_youtube_view(accountTask.getAccount_id().trim());
+                    get_task=task_youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("task_youtube_like")){
+                    get_task=task_youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("task_tiktok_like")){
+                    get_task=task_tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -801,7 +844,7 @@ public class TaskController {
                     Account account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
-                        accountTask.setAccount_id(account_get.getAccount_id().trim());
+                        accountTask.setAccount(account_get);
                         accountTask.setDevice(device);
                         accountTask.setAccount_level(0);
                         accountTask.setGet_time(0L);
@@ -848,7 +891,7 @@ public class TaskController {
                     }
                     if(account_get!=null){
                         AccountTask accountTask=new AccountTask();
-                        accountTask.setAccount_id(account_get.getAccount_id().trim());
+                        accountTask.setAccount(account_get);
                         accountTask.setDevice(device);
                         accountTask.setAccount_level(0);
                         accountTask.setGet_time(0L);
@@ -1021,7 +1064,7 @@ public class TaskController {
                             youtubeVideoHistoryRepository.save(youtubeVideoHistory);
                         }else{
                             YoutubeViewHistory youtubeVideoHistory_New=new YoutubeViewHistory();
-                            youtubeVideoHistory_New.setAccountTask(accountTaskRepository.get_Account_By_Account_id(account_id.trim()));
+                            youtubeVideoHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                             youtubeVideoHistory_New.setUpdate_time(System.currentTimeMillis());
                             youtubeVideoHistory_New.setList_id(task_key.trim()+"|");
                             youtubeVideoHistoryRepository.save(youtubeVideoHistory_New);
@@ -1029,20 +1072,44 @@ public class TaskController {
                     }
                 }else  if(task.toLowerCase().trim().equals("sub")){
                     if(status==true){
-                        YoutubeSubscribeHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
+                        YoutubeSubscriberHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
                         if(youtubeChannelHistory!=null){
                             youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+task_key.trim()+"|");
                             youtubeChannelHistory.setUpdate_time(System.currentTimeMillis());
                             youtubeChannelHistoryRepository.save(youtubeChannelHistory);
                         }else{
-                            YoutubeSubscribeHistory youtubeChannelHistory_New=new YoutubeSubscribeHistory();
-                            youtubeChannelHistory_New.setAccountTask(accountTaskRepository.get_Account_By_Account_id(account_id.trim()));
+                            YoutubeSubscriberHistory youtubeChannelHistory_New=new YoutubeSubscriberHistory();
+                            youtubeChannelHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                             youtubeChannelHistory_New.setUpdate_time(System.currentTimeMillis());
                             youtubeChannelHistory_New.setList_id(task_key.trim()+"|");
                             youtubeChannelHistoryRepository.save(youtubeChannelHistory_New);
                         }
+                        YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
+                        youtubeSubscribe24h.setId(account_id.trim()+task_key.trim());
+                        youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
+                        youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
+                    }
+                }else  if(task.toLowerCase().trim().equals("like")){
+                    if(status==true){
+                        YoutubeLikeHistory youtubeLikeHistory=youtubeLikeHistoryRepository.get_By_AccountId(account_id.trim());
+                        if(youtubeLikeHistory!=null){
+                            youtubeLikeHistory.setList_id(youtubeLikeHistory.getList_id()+task_key.trim()+"|");
+                            youtubeLikeHistory.setUpdate_time(System.currentTimeMillis());
+                            youtubeLikeHistoryRepository.save(youtubeLikeHistory);
+                        }else{
+                            YoutubeLikeHistory youtubeLikeHistory_New=new YoutubeLikeHistory();
+                            youtubeLikeHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                            youtubeLikeHistory_New.setUpdate_time(System.currentTimeMillis());
+                            youtubeLikeHistory_New.setList_id(task_key.trim()+"|");
+                            youtubeLikeHistoryRepository.save(youtubeLikeHistory_New);
+                        }
+                        YoutubeLike24h youtubeLike24h =new YoutubeLike24h();
+                        youtubeLike24h.setId(account_id.trim()+task_key.trim());
+                        youtubeLike24h.setUpdate_time(System.currentTimeMillis());
+                        youtubeLike24hRepository.save(youtubeLike24h);
                     }
                 }
+
             }else if(platform.toLowerCase().trim().equals("tiktok")){
                 if(task.toLowerCase().trim().equals("follower")){
                     if(status==true){
@@ -1053,7 +1120,7 @@ public class TaskController {
                             tikTokAccountHistoryRepository.save(tikTokAccountHistory);
                         }else{
                             TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
-                            tikTokAccountHistory_New.setAccountTask(accountTaskRepository.get_Account_By_Account_id(account_id.trim()));
+                            tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                             tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
                             tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
                             tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
@@ -1063,6 +1130,54 @@ public class TaskController {
                         tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
                         tikTokFollower24hRepository.save(tiktokFollower24h);
                     }
+                }else  if(task.toLowerCase().trim().equals("like")){
+                    if(status==true){
+                        TikTokLikeHistory tikTokLikeHistory=tikTokLikeHistoryRepository.get_By_AccountId(account_id.trim());
+                        if(tikTokLikeHistory!=null){
+                            tikTokLikeHistory.setList_id(tikTokLikeHistory.getList_id()+task_key.trim()+"|");
+                            tikTokLikeHistory.setUpdate_time(System.currentTimeMillis());
+                            tikTokLikeHistoryRepository.save(tikTokLikeHistory);
+                        }else{
+                            TikTokLikeHistory tikTokLikeHistory_New=new TikTokLikeHistory();
+                            tikTokLikeHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                            tikTokLikeHistory_New.setUpdate_time(System.currentTimeMillis());
+                            tikTokLikeHistory_New.setList_id(task_key.trim()+"|");
+                            tikTokLikeHistoryRepository.save(tikTokLikeHistory_New);
+                        }
+                        TiktokLike24h tiktokLike24h =new TiktokLike24h();
+                        tiktokLike24h.setId(account_id.trim()+task_key.trim());
+                        tiktokLike24h.setUpdate_time(System.currentTimeMillis());
+                        tikTokLike24hRepository.save(tiktokLike24h);
+                    }
+                }else  if(task.toLowerCase().trim().equals("comment")){
+                    if(status==true){
+                        TikTokCommentHistory tikTokCommentHistory=tikTokCommentHistoryRepository.get_By_AccountId(account_id.trim());
+                        if(tikTokCommentHistory!=null){
+                            tikTokCommentHistory.setList_id(tikTokCommentHistory.getList_id()+task_key.trim()+"|");
+                            tikTokCommentHistory.setUpdate_time(System.currentTimeMillis());
+                            tikTokCommentHistoryRepository.save(tikTokCommentHistory);
+                        }else{
+                            TikTokCommentHistory tikTokCommentHistory_New=new TikTokCommentHistory();
+                            tikTokCommentHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                            tikTokCommentHistory_New.setUpdate_time(System.currentTimeMillis());
+                            tikTokCommentHistory_New.setList_id(task_key.trim()+"|");
+                            tikTokCommentHistoryRepository.save(tikTokCommentHistory_New);
+                        }
+                    }
+                }
+            }
+            if(status==true){
+                try {
+                    OrderRunning orderRunning=orderRunningRepository.find_Order_By_Order_Key(task_key.trim(),task.trim(),platform.trim());
+                    if(orderRunning!=null){
+                        HistorySum historySum=new HistorySum();
+                        historySum.setOrderRunning(orderRunning);
+                        historySum.setAccount_id(account_id.trim());
+                        historySum.setAdd_time(System.currentTimeMillis());
+                        historySumRepository.save(historySum);
+                    }
+
+                }catch (Exception e){
                 }
             }
             resp.put("status", true);

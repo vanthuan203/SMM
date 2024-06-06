@@ -15,7 +15,7 @@ public class TikTokFollowerHistory {
     private Long id;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id",referencedColumnName = "account_id",updatable = true,insertable = true)
-    private AccountTask accountTask;
+    private Account account;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String list_id;
     @Column(columnDefinition = "bigint default 0")

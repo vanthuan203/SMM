@@ -76,6 +76,10 @@ public class Service {
     private String task;
     @Column(columnDefinition = "integer default 0")
     private Integer youtube_reply;
+    @Column(columnDefinition = "integer default 0")
+    private Float bonus ;
+    @Column(columnDefinition = "integer default 0")
+    private Integer check_done ;
     @Column(columnDefinition = "varchar(255) default 'all'")
     private String device_type;
 }

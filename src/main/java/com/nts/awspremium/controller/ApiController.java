@@ -40,7 +40,7 @@ public class ApiController {
     @Autowired
     private YoutubeViewHistoryRepository youtubeVideoHistoryRepository;
     @Autowired
-    private YoutubeSubscribeHistoryRepository youtubeChannelHistoryRepository;
+    private YoutubeSubscriberHistoryRepository youtubeChannelHistoryRepository;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -61,7 +61,7 @@ public class ApiController {
 
 
     @PostMapping(value = "/ver1", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> api(DataRequest data) throws IOException, ParseException {
+    ResponseEntity<String> ver1(DataRequest data) throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         try{
             User user = userRepository.find_User_By_Token(data.getKey().trim());
@@ -190,15 +190,29 @@ public class ApiController {
                 if(service.getPlatform().trim().equals("youtube")){
                     if(service.getTask().trim().equals("view")){
                         get_task=youtube_view(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=youtube_like(data,service,user);
                     }
                 }else if(service.getPlatform().trim().equals("tiktok")){
                     if(service.getTask().trim().equals("follower")){
                         get_task=tiktok_follower(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=tiktok_like(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=tiktok_comment(data,service,user);
+                    }else if(service.getTask().trim().equals("view")){
+                        get_task=tiktok_view(data,service,user);
                     }
                 }
             }
             return new ResponseEntity<String>(get_task.toJSONString(), HttpStatus.OK);
         }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
             resp.put("error", "api system error");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -313,25 +327,26 @@ public class ApiController {
                     orderRunning.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                     orderRunning.setInsert_time(System.currentTimeMillis());
                     orderRunning.setTotal(0);
-                    orderRunning.setYoutube_time_total(0);
+                    orderRunning.setTime_total(0);
                     orderRunning.setQuantity(data.getQuantity());
                     orderRunning.setUser(user);
-                    orderRunning.setYoutube_channel_id(snippet.get("channelId").toString());
-                    orderRunning.setYoutube_video_title(snippet.get("title").toString());
+                    orderRunning.setChannel_id(snippet.get("channelId").toString());
+                    orderRunning.setVideo_title(snippet.get("title").toString());
                     orderRunning.setOrder_key(video.get("id").toString());
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("viewCount").toString()));
                     ////////////////
                     orderRunning.setCharge(priceorder);
                     orderRunning.setNote("");
                     orderRunning.setService(service);
+                    orderRunning.setSpeed_up(0);
                     orderRunning.setValid(1);
 
                     if (service.getService_type().equals("Special")) {
-                        orderRunning.setYoutube_list_keyword(data.getList());
+                        orderRunning.setKeyword_list(data.getList());
 
                     } else if (service.getService_type().equals("Special 1")) {
-                        orderRunning.setYoutube_list_video(data.getSuggest());
-                        orderRunning.setYoutube_list_keyword(data.getList());
+                        orderRunning.setVideo_list(data.getSuggest());
+                        orderRunning.setKeyword_list(data.getList());
                     }
                     orderRunningRepository.save(orderRunning);
 
@@ -371,6 +386,114 @@ public class ApiController {
         }
     }
 
+    JSONObject youtube_like(DataRequest data,Service service,User user)  throws IOException, ParseException{
+        JSONObject resp = new JSONObject();
+        try{
+            String videoId = GoogleApi.getYoutubeId(data.getLink());
+            if (videoId == null) {
+                resp.put("error", "Cant filter videoid from link");
+                return resp;
+            }
+            OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Random ran = new Random();
+            Request request1 = null;
+            Iterator k = null;
+            String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw"};
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(statistics(likeCount))&part=statistics&id=" + videoId).get().build();
+
+            Response response1 = client1.newCall(request1).execute();
+
+            String resultJson1 = response1.body().string();
+            Object obj1 = new JSONParser().parse(resultJson1);
+            JSONObject jsonObject1 = (JSONObject) obj1;
+            JSONArray items = (JSONArray) jsonObject1.get("items");
+            if (items == null) {
+                resp.put("error", "Can't get video info");
+                return resp;
+            }
+            k = items.iterator();
+            if (k.hasNext() == false) {
+                resp.put("error", "Can't get video info");
+                return resp;
+            }
+            while (k.hasNext()) {
+                try {
+                    JSONObject video = (JSONObject) k.next();
+
+                    if (orderRunningRepository.get_Order_By_Order_Key(videoId.trim()) > 0) {
+                        resp.put("error", "This video in process");
+                        return resp;
+                    }
+                    float priceorder = 0;
+                    priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
+                    if (priceorder > (float) user.getBalance()) {
+                        resp.put("error", "Your balance not enough");
+                        return resp;
+                    }
+                    JSONObject statistics = (JSONObject) video.get("statistics");
+                    OrderRunning orderRunning = new OrderRunning();
+                    int thread=(int)(data.getQuantity()/1000)*service.getThread();
+                    if(thread<2){
+                        orderRunning.setThread(2);
+                    }else{
+                        orderRunning.setThread(thread);
+                    }
+                    orderRunning.setThread_set(0);
+                    orderRunning.setDuration(0L);
+                    orderRunning.setInsert_time(System.currentTimeMillis());
+                    orderRunning.setTotal(0);
+                    orderRunning.setTime_total(0);
+                    orderRunning.setQuantity(data.getQuantity());
+                    orderRunning.setUser(user);
+                    orderRunning.setChannel_id("");
+                    orderRunning.setVideo_title("");
+                    orderRunning.setOrder_key(videoId);
+                    orderRunning.setStart_count(Integer.parseInt(statistics.get("likeCount").toString()));
+                    ////////////////
+                    orderRunning.setCharge(priceorder);
+                    orderRunning.setNote("");
+                    orderRunning.setService(service);
+                    orderRunning.setValid(1);
+                    orderRunning.setSpeed_up(0);
+
+                    orderRunningRepository.save(orderRunning);
+
+                    Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+                    Balance balance = new Balance();
+                    balance.setUser(user.getUsername().trim());
+                    balance.setAdd_time(System.currentTimeMillis());
+                    balance.setTotal_blance(balance_update);
+                    balance.setBalance(-priceorder);
+                    balance.setService(data.getService());
+                    balance.setNote("Order " + data.getQuantity() + " like cho video " + orderRunning.getOrder_key());
+                    balanceRepository.save(balance);
+                    resp.put("order", orderRunning.getOrder_id());
+                    return resp;
+
+                }catch (Exception e) {
+                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                    System.out.println(stackTraceElement.getMethodName());
+                    System.out.println(stackTraceElement.getLineNumber());
+                    System.out.println(stackTraceElement.getClassName());
+                    System.out.println(stackTraceElement.getFileName());
+                    System.out.println("Error : " + e.getMessage());
+                    resp.put("error", "Cant insert video");
+                    return resp;
+                }
+            }
+            return resp;
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("error", "Cant insert video");
+            return resp;
+        }
+    }
+
     JSONObject tiktok_follower(DataRequest data,Service service,User user)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
@@ -380,7 +503,7 @@ public class ApiController {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key(tiktok_id.trim()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This Tiktok_Id in process");
                 return resp;
             }
             Integer follower_count=TikTokApi.getFollowerCountLive(tiktok_id.trim().split("@")[1]);
@@ -410,6 +533,7 @@ public class ApiController {
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
+            orderRunning.setSpeed_up(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
@@ -420,6 +544,203 @@ public class ApiController {
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
             balance.setNote("Order " + data.getQuantity() + " follower cho tiktok_id " + tiktok_id.trim());
+            balanceRepository.save(balance);
+            resp.put("order", orderRunning.getOrder_id());
+            return resp;
+
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("error", "Cant insert video");
+            return resp;
+        }
+    }
+
+    JSONObject tiktok_like(DataRequest data,Service service,User user)  throws IOException, ParseException{
+        JSONObject resp = new JSONObject();
+        try{
+            String video_id= TikTokApi.getVideoId(data.getLink().trim());
+            if (video_id == null) {
+                resp.put("error", "Cant filter video_id from link");
+                return resp;
+            }
+            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+                resp.put("error", "This video in process");
+                return resp;
+            }
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            if(videoInfo.get("status").toString().equals("error")){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
+            float priceorder = 0;
+            priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
+            if (priceorder > (float) user.getBalance()) {
+                resp.put("error", "Your balance not enough");
+                return resp;
+            }
+
+            OrderRunning orderRunning = new OrderRunning();
+            orderRunning.setInsert_time(System.currentTimeMillis());
+            orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("likes").toString()));
+            orderRunning.setTotal(0);
+            orderRunning.setOrder_key(video_id.trim());
+            orderRunning.setUser(user);
+            orderRunning.setUpdate_time(0L);
+            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("likes").toString())<0?0:System.currentTimeMillis());
+            orderRunning.setThread(Integer.parseInt(videoInfo.get("likes").toString())<0?0:service.getThread());
+            orderRunning.setThread_set(service.getThread());
+            orderRunning.setNote("");
+            orderRunning.setCharge(priceorder);
+            orderRunning.setService(service);
+            orderRunning.setValid(1);
+            orderRunning.setSpeed_up(0);
+            orderRunningRepository.save(orderRunning);
+
+            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Balance balance = new Balance();
+            balance.setUser(user.getUsername().trim());
+            balance.setAdd_time(System.currentTimeMillis());
+            balance.setTotal_blance(balance_update);
+            balance.setBalance(-priceorder);
+            balance.setService(data.getService());
+            balance.setNote("Order " + data.getQuantity() + " like cho id " + video_id.trim());
+            balanceRepository.save(balance);
+            resp.put("order", orderRunning.getOrder_id());
+            return resp;
+
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("error", "Cant insert video");
+            return resp;
+        }
+    }
+
+    JSONObject tiktok_comment(DataRequest data,Service service,User user)  throws IOException, ParseException{
+        JSONObject resp = new JSONObject();
+        try{
+            String video_id= TikTokApi.getVideoId(data.getLink().trim());
+            if (video_id == null) {
+                resp.put("error", "Cant filter video_id from link");
+                return resp;
+            }
+            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+                resp.put("error", "This video in process");
+                return resp;
+            }
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            if(videoInfo.get("status").toString().equals("error")){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
+            float priceorder = 0;
+            priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
+            if (priceorder > (float) user.getBalance()) {
+                resp.put("error", "Your balance not enough");
+                return resp;
+            }
+
+            OrderRunning orderRunning = new OrderRunning();
+            orderRunning.setInsert_time(System.currentTimeMillis());
+            orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setComment_list(data.getList());
+            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("comments").toString()));
+            orderRunning.setTotal(0);
+            orderRunning.setOrder_key(video_id.trim());
+            orderRunning.setUser(user);
+            orderRunning.setUpdate_time(0L);
+            orderRunning.setStart_time(0L);
+            orderRunning.setThread(0);
+            orderRunning.setThread_set(0);
+            orderRunning.setNote("");
+            orderRunning.setCharge(priceorder);
+            orderRunning.setService(service);
+            orderRunning.setValid(1);
+            orderRunningRepository.save(orderRunning);
+
+            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Balance balance = new Balance();
+            balance.setUser(user.getUsername().trim());
+            balance.setAdd_time(System.currentTimeMillis());
+            balance.setTotal_blance(balance_update);
+            balance.setBalance(-priceorder);
+            balance.setService(data.getService());
+            balance.setNote("Order " + data.getQuantity() + " comment cho id " + video_id.trim());
+            balanceRepository.save(balance);
+            resp.put("order", orderRunning.getOrder_id());
+            return resp;
+
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("error", "Cant insert video");
+            return resp;
+        }
+    }
+
+    JSONObject tiktok_view(DataRequest data,Service service,User user)  throws IOException, ParseException{
+        JSONObject resp = new JSONObject();
+        try{
+            String video_id= TikTokApi.getVideoId(data.getLink().trim());
+            if (video_id == null) {
+                resp.put("error", "Cant filter video_id from link");
+                return resp;
+            }
+            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+                resp.put("error", "This video in process");
+                return resp;
+            }
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            if(videoInfo.get("status").toString().equals("error")){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
+            float priceorder = 0;
+            priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
+            if (priceorder > (float) user.getBalance()) {
+                resp.put("error", "Your balance not enough");
+                return resp;
+            }
+
+            OrderRunning orderRunning = new OrderRunning();
+            orderRunning.setInsert_time(System.currentTimeMillis());
+            orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("plays").toString()));
+            orderRunning.setTotal(0);
+            orderRunning.setOrder_key(video_id.trim());
+            orderRunning.setUser(user);
+            orderRunning.setUpdate_time(0L);
+            orderRunning.setStart_time(0L);
+            orderRunning.setThread(0);
+            orderRunning.setThread_set(0);
+            orderRunning.setNote("");
+            orderRunning.setCharge(priceorder);
+            orderRunning.setService(service);
+            orderRunning.setValid(1);
+            orderRunningRepository.save(orderRunning);
+
+            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Balance balance = new Balance();
+            balance.setUser(user.getUsername().trim());
+            balance.setAdd_time(System.currentTimeMillis());
+            balance.setTotal_blance(balance_update);
+            balance.setBalance(-priceorder);
+            balance.setService(data.getService());
+            balance.setNote("Order " + data.getQuantity() + " view cho id " + video_id.trim());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
