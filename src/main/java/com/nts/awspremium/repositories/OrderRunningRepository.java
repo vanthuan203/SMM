@@ -22,6 +22,8 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "SELECT count(*) from order_running where order_key=?1",nativeQuery = true)
     public Integer get_Order_By_Order_Key(String order_id);
+    @Query(value = "SELECT count(*) from order_running where order_key=?1 and service_id in(select service_id from service where task=?2)",nativeQuery = true)
+    public Integer get_Order_By_Order_Key_And_Task(String order_id,String task);
 
     @Query(value = "SELECT * from order_running where order_key=?1 and  service_id in(select service_id from service where task=?2 and platform=?3) limit 1",nativeQuery = true)
     public OrderRunning find_Order_By_Order_Key(String order_key,String task,String platform);

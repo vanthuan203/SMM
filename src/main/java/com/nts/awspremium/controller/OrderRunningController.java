@@ -1,9 +1,11 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.repositories.*;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -157,14 +159,13 @@ public class OrderRunningController {
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Running_Done(0);
             for (int i=0;i<orderRunningList.size();i++){
                 String key = get_key();
-                if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){
+                if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){ ///////________YOUTUBE_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("like")){
                         int count=GoogleApi.getCountLike(orderRunningList.get(i).getOrder_key(),key.trim());
                         if(count==-2)
                         {
                             continue;
-                        }else if(count>=0);
-                        {
+                        }else if(count>=0) {
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
@@ -174,26 +175,63 @@ public class OrderRunningController {
                         if(count==-2)
                         {
                             continue;
-                        }else if(count>=0);
-                        {
+                        }else if(count>=0) {
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
-                        int count=GoogleApi.getCountLike(orderRunningList.get(i).getOrder_key(),key.trim());
+                        int count=GoogleApi.getCountSubcriber(orderRunningList.get(i).getOrder_key());
                         if(count==-2)
                         {
                             continue;
-                        }else if(count>=0);
-                        {
+                        }else if(count>=0) {
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
                     }
-                }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
-
+                }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){ ///////________TIKTOK_______//////
+                    if(orderRunningList.get(i).getService().getTask().equals("follower")){
+                        int count= TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().split("@")[1]);
+                        if(count==-2) {
+                            continue;
+                        }else if(count>=0){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                    }else if(orderRunningList.get(i).getService().getTask().equals("like")){
+                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
+                        if(jsonObject==null) {
+                            continue;
+                        }else{
+                            int count=Integer.parseInt(jsonObject.get("likes").toString());
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                    }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
+                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
+                        if(jsonObject==null) {
+                            continue;
+                        }else{
+                            int count=Integer.parseInt(jsonObject.get("comments").toString());
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                    }else if(orderRunningList.get(i).getService().getTask().equals("view")){
+                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
+                        if(jsonObject==null) {
+                            continue;
+                        }else{
+                            int count=Integer.parseInt(jsonObject.get("plays").toString());
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                    }
                 }
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunningList.get(i).getOrder_id());

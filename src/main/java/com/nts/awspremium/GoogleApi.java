@@ -131,4 +131,23 @@ public class GoogleApi {
         }
 
     }
+    public static Integer getCountSubcriber(String order_key){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Request request = null;
+            request = new Request.Builder().url("https://api.socialcounts.org/youtube-live-subscriber-count/" + order_key).get().build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson1 = response.body().string();
+                Object obj1 = new JSONParser().parse(resultJson1);
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                return Integer.parseInt(jsonObject1.get("est_sub").toString());
+            }else{
+                return -2;
+            }
+        } catch (IOException | ParseException e) {
+            return -2;
+        }
+
+    }
 }

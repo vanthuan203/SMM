@@ -227,6 +227,10 @@ public class ApiController {
                 resp.put("error", "Cant filter videoid from link");
                 return resp;
             }
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(videoId.trim(),service.getTask()) > 0) {
+                resp.put("error", "This video in process");
+                return resp;
+            }
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Random ran = new Random();
             Request request1 = null;
@@ -255,10 +259,6 @@ public class ApiController {
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     JSONObject snippet = (JSONObject) video.get("snippet");
 
-                    if (orderRunningRepository.get_Order_By_Order_Key(video.get("id").toString().trim()) > 0) {
-                        resp.put("error", "This video in process");
-                        return resp;
-                    }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
                         resp.put("error", "This video is a livestream video");
                         return resp;
@@ -394,6 +394,10 @@ public class ApiController {
                 resp.put("error", "Cant filter videoid from link");
                 return resp;
             }
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(videoId.trim(),service.getTask()) > 0) {
+                resp.put("error", "This video in process");
+                return resp;
+            }
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Random ran = new Random();
             Request request1 = null;
@@ -420,10 +424,6 @@ public class ApiController {
                 try {
                     JSONObject video = (JSONObject) k.next();
 
-                    if (orderRunningRepository.get_Order_By_Order_Key(videoId.trim()) > 0) {
-                        resp.put("error", "This video in process");
-                        return resp;
-                    }
                     float priceorder = 0;
                     priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
                     if (priceorder > (float) user.getBalance()) {
@@ -502,11 +502,11 @@ public class ApiController {
                 resp.put("error", "Cant filter tiktok_id from link");
                 return resp;
             }
-            if (orderRunningRepository.get_Order_By_Order_Key(tiktok_id.trim()) > 0) {
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(tiktok_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This Tiktok_Id in process");
                 return resp;
             }
-            Integer follower_count=TikTokApi.getFollowerCountLive(tiktok_id.trim().split("@")[1]);
+            Integer follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1]);
             if(follower_count==-100){
                 resp.put("error", "This account cannot be found");
                 return resp;
@@ -568,11 +568,11 @@ public class ApiController {
                 resp.put("error", "Cant filter video_id from link");
                 return resp;
             }
-            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
             if(videoInfo.get("status").toString().equals("error")){
                 resp.put("error", "This video cannot be found");
                 return resp;
@@ -634,11 +634,11 @@ public class ApiController {
                 resp.put("error", "Cant filter video_id from link");
                 return resp;
             }
-            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
             if(videoInfo.get("status").toString().equals("error")){
                 resp.put("error", "This video cannot be found");
                 return resp;
@@ -700,11 +700,11 @@ public class ApiController {
                 resp.put("error", "Cant filter video_id from link");
                 return resp;
             }
-            if (orderRunningRepository.get_Order_By_Order_Key(video_id.trim()) > 0) {
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(data.getLink().trim());
+            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
             if(videoInfo.get("status").toString().equals("error")){
                 resp.put("error", "This video cannot be found");
                 return resp;

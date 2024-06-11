@@ -72,8 +72,7 @@ public class TaskController {
     @Autowired
     private HistorySumRepository historySumRepository;
 
-    @GetMapping("/task_tiktok_follower")
-    Map<String, Object> task_tiktok_follower(String account_id){
+    Map<String, Object> tiktok_follower(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -110,7 +109,7 @@ public class TaskController {
             return resp;
         }
     }
-    Map<String, Object> task_tiktok_like(String account_id){
+    Map<String, Object> tiktok_like(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -148,7 +147,7 @@ public class TaskController {
         }
     }
 
-    Map<String, Object> task_youtube_view(String account_id){
+    Map<String, Object> youtube_view(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -213,7 +212,7 @@ public class TaskController {
         }
     }
 
-    Map<String, Object> task_youtube_like(String account_id){
+    Map<String, Object> youtube_like(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -379,7 +378,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             accountTask.setTask_index(accountTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.getPriority_task();
+            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task();
 
             List<String> arrTask = new ArrayList<>();
 
@@ -393,14 +392,14 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
-                if(task.equals("task_tiktok_follower")){
-                    get_task=task_tiktok_follower(accountTask.getAccount().getAccount_id().trim());
-                }else if(task.equals("task_youtube_view")){
-                    get_task=task_youtube_view(accountTask.getAccount().getAccount_id().trim());
-                }else if(task.equals("task_youtube_like")){
-                    get_task=task_youtube_like(accountTask.getAccount().getAccount_id().trim());
+                if(task.equals("tiktok_follower")){
+                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_view")){
+                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_like")){
+                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("task_tiktok_like")){
-                    get_task=task_tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -423,7 +422,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.getState_Task(task_index));
+                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -726,7 +725,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             accountTask.setTask_index(accountTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.getPriority_task();
+            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task();
 
             List<String> arrTask = new ArrayList<>();
 
@@ -741,14 +740,14 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 System.out.println(task);
                 while(arrTask.remove(task)) {}
-                if(task.equals("task_tiktok_follower")){
-                    get_task=task_tiktok_follower(accountTask.getAccount().getAccount_id().trim());
-                }else if(task.equals("task_youtube_view")){
-                    get_task=task_youtube_view(accountTask.getAccount().getAccount_id().trim());
-                }else if(task.equals("task_youtube_like")){
-                    get_task=task_youtube_like(accountTask.getAccount().getAccount_id().trim());
-                }else if(task.equals("task_tiktok_like")){
-                    get_task=task_tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                if(task.equals("tiktok_follower")){
+                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_view")){
+                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_like")){
+                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_like")){
+                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -771,7 +770,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.getState_Task(task_index));
+                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -799,6 +798,357 @@ public class TaskController {
         }
 
     }
+
+
+    @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
+                                                       @RequestParam(defaultValue = "") String device_id,
+                                                       @RequestParam(defaultValue = "") String profile_id) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran=new Random();
+            //Thread.sleep(ran.nextInt(2000));
+            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (device_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "device_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            //---------------------get_Account------------------//
+            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            Profile profile =profileRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            if(device!=null){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                if(profile!=null){
+                    if(profile.getNum_account()<settingSystem.getMax_acc()) {
+                        Account account_get=null;
+                        if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<50;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
+                        }
+                        if(account_get!=null){
+                            AccountTask accountTask=new AccountTask();
+                            accountTask.setAccount(account_get);
+                            accountTask.setDevice(device);
+                            accountTask.setAccount_level(0);
+                            accountTask.setGet_time(0L);
+                            accountTask.setOrder_id(0L);
+                            accountTask.setRunning(0);
+                            accountTask.setState(1);
+                            accountTask.setState(1);
+                            accountTask.setProfile(profile);
+                            accountTask.setTask_index(0);
+                            accountTaskRepository.save(accountTask);
+
+                            device.setNum_account(device.getNum_account()+1);
+                            deviceRepository.save(device);
+                            profile.setNum_account(profile.getNum_account()+1);
+                            profileRepository.save(profile);
+                            resp.put("status", true);
+                            data.put("task", "account");
+                            data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                            data.put("account_id", account_get.getAccount_id().trim());
+                            data.put("password", account_get.getPassword().trim());
+                            data.put("recover_mail", account_get.getRecover_mail().trim());
+                            data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                            resp.put("data",data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }
+                    }else{
+                        if(device.getNum_profile()<settingSystem.getMax_profile()){
+                            String pro_id=device_id.trim()+"_P-"+(10000000+ran.nextInt(999999));
+                            while(profileRepository.count_ProfileId(pro_id)!=0){
+                                pro_id=device_id.trim()+"_P-"+(10000000+ran.nextInt(999999));
+                            }
+                            Profile profile_new=new Profile();
+                            profile_new.setProfile_id(pro_id);
+                            profile_new.setAdd_time(System.currentTimeMillis());
+                            profile_new.setDevice(device);
+                            profile_new.setNum_account(0);
+                            profile_new.setUpdate_time(0L);
+                            profile_new.setState(1);
+                            profileRepository.save(profile_new);
+                            profile=profile_new;
+
+                            device.setNum_profile(device.getNum_profile()+1);
+                            deviceRepository.save(device);
+
+                            resp.put("status", true);
+                            data.put("task", "profile_changer");
+                            data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                            resp.put("data",data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }else{
+                            profile=profileRepository.get_Profile_Get_Account_By_DeviceId(device_id.trim());
+                            if(profile!=null){
+                                resp.put("status", true);
+                                data.put("task", "profile_changer");
+                                data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                                resp.put("data",data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }else{
+                                profile=profileRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                            }
+                        }
+                    }
+                }
+                else {
+                    Profile profile_new=new Profile();
+                    profile_new.setProfile_id(profile_id.trim());
+                    profile_new.setAdd_time(System.currentTimeMillis());
+                    profile_new.setDevice(device);
+                    profile_new.setNum_account(0);
+                    profile_new.setUpdate_time(0L);
+                    profile_new.setState(1);
+                    profileRepository.save(profile_new);
+                    profile=profile_new;
+
+                    device.setNum_profile(device.getNum_profile()+1);
+                    deviceRepository.save(device);
+
+                    if(0<settingSystem.getMax_acc()) {
+                        Account account_get=null;
+                        if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<50;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
+                        }
+                        if(account_get!=null){
+                            AccountTask accountTask=new AccountTask();
+                            accountTask.setAccount(account_get);
+                            accountTask.setDevice(device);
+                            accountTask.setAccount_level(0);
+                            accountTask.setGet_time(0L);
+                            accountTask.setOrder_id(0L);
+                            accountTask.setRunning(0);
+                            accountTask.setState(1);
+                            accountTask.setState(1);
+                            accountTask.setProfile(profile);
+                            accountTask.setTask_index(0);
+                            accountTaskRepository.save(accountTask);
+
+                            device.setNum_account(device.getNum_account()+1);
+                            deviceRepository.save(device);
+                            profile.setNum_account(profile.getNum_account()+1);
+                            profileRepository.save(profile);
+
+                            resp.put("status", true);
+                            data.put("task", "account");
+                            data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                            data.put("account_id", account_get.getAccount_id().trim());
+                            data.put("password", account_get.getPassword().trim());
+                            data.put("recover_mail", account_get.getRecover_mail().trim());
+                            data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                            resp.put("data",data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }
+                    }
+                }
+            }else{
+                Device device_new=new Device();
+                device_new.setDevice_id(device_id.trim());
+                device_new.setAdd_time(System.currentTimeMillis());
+                device_new.setState(1);
+                device_new.setBox(null);
+                device_new.setUpdate_time(System.currentTimeMillis());
+                device_new.setNum_account(0);
+                device_new.setNum_profile(0);
+                deviceRepository.save(device_new);
+                device=device_new;
+
+                Profile profile_new=new Profile();
+                profile_new.setProfile_id(device_id.trim()+"_"+profile_id.trim());
+                profile_new.setAdd_time(System.currentTimeMillis());
+                profile_new.setDevice(device);
+                profile_new.setNum_account(0);
+                profile_new.setUpdate_time(0L);
+                profile_new.setState(1);
+                profileRepository.save(profile_new);
+                profile=profile_new;
+
+                device.setNum_profile(device.getNum_profile()+1);
+                deviceRepository.save(device);
+
+                if(0<settingSystem.getMax_acc()) {
+                    Account account_get=null;
+                    if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                        String code="";
+                        for(int i=0;i<50;i++){
+                            Integer ranver=ran.nextInt(stringrand.length());
+                            code=code+stringrand.charAt(ranver);
+                        }
+                        account_get= accountRepository.get_Account_By_DeviceId(device_id,System.currentTimeMillis(),code);
+                    }
+                    if(account_get!=null){
+                        AccountTask accountTask=new AccountTask();
+                        accountTask.setAccount(account_get);
+                        accountTask.setDevice(device);
+                        accountTask.setAccount_level(0);
+                        accountTask.setGet_time(0L);
+                        accountTask.setOrder_id(0L);
+                        accountTask.setRunning(0);
+                        accountTask.setState(1);
+                        accountTask.setState(1);
+                        accountTask.setProfile(profile);
+                        accountTask.setTask_index(0);
+                        accountTaskRepository.save(accountTask);
+
+                        device.setNum_account(device.getNum_account()+1);
+                        deviceRepository.save(device);
+                        profile.setNum_account(profile.getNum_account()+1);
+                        profileRepository.save(profile);
+
+                        resp.put("status", true);
+                        data.put("task", "account");
+                        data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                        data.put("account_id", account_get.getAccount_id().trim());
+                        data.put("password", account_get.getPassword().trim());
+                        data.put("recover_mail", account_get.getRecover_mail().trim());
+                        data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
+                }
+            }
+            //--------------------end_get_Account----------------------//
+            AccountTask accountTask = accountTaskRepository.check_Account_Running_By_ProfileId(device_id.trim()+"_"+profile_id);
+            //Check số lần get nhiệm vụ của 1 account
+            if(accountTask!=null){
+                if(accountTask.getTask_index()>=settingSystem.getMax_task()){
+                    accountTaskRepository.reset_Thread_Index_By_AccountId(accountTask.getAccount().getAccount_id().trim());
+                    if(profile.getNum_account()>1){
+                        accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                    }else{
+                        accountTask=null;
+                    }
+                }
+            }else{
+                profile.setUpdate_time(System.currentTimeMillis());
+                profileRepository.save(profile);
+                accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            }
+            if(accountTask==null){
+                accountTaskRepository.reset_Thread_Index_By_ProfileId(profile_id.trim());
+                profile=profileRepository.get_Profile_Get_Task(device_id.trim());
+                if(profile!=null&&device.getNum_profile()>1){
+                    resp.put("status", true);
+                    data.put("task", "profile_changer");
+                    data.put("profile", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(profile!=null&&device.getNum_profile()==1){
+                    profile.setUpdate_time(System.currentTimeMillis());
+                    profileRepository.save(profile);
+                    accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                }else{
+                    resp.put("status", false);
+                    data.put("message", "Không có account để chạy");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+
+            }
+            if(!device.getDevice_id().equals(accountTask.getDevice().getDevice_id())){
+                resp.put("status", false);
+                data.put("message", "account_id & device_id không khớp");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            accountTask.setTask_index(accountTask.getTask_index()+1);
+            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(accountTask.getPlatform());
+
+            List<String> arrTask = new ArrayList<>();
+
+            for(int i=0;i<priorityTasks.size();i++){
+                for (int j = 0; j < priorityTasks.get(i).getPriority(); j++) {
+                    arrTask.add(priorityTasks.get(i).getTask());
+                }
+            }
+            Map<String, Object> get_task =null;
+            String task_index=null;
+            while (arrTask.size()>0){
+                String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
+                System.out.println(task);
+                while(arrTask.remove(task)) {}
+                if(task.equals("tiktok_follower")){
+                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_view")){
+                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_like")){
+                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_like")){
+                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                }
+                if(get_task.get("status").equals(true)){
+                    task_index=task;
+                    break;
+                }
+            }
+            if(get_task==null){
+                resp.put("status",false);
+                data.put("message","Không có nhiệm vụ!");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            Map<String, Object> respJson=new LinkedHashMap<>();
+            Map<String, Object> dataJson=new LinkedHashMap<>();
+            if(get_task.get("status").equals(true)){
+                dataJson= (Map<String, Object>) get_task.get("data");
+                //System.out.println(dataJson);
+                respJson.put("status",true);
+                respJson.put("data",dataJson);
+                //--------------------------------------------//
+                accountTask.setGet_time(System.currentTimeMillis());
+                accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
+                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setTask(dataJson.get("task").toString());
+                accountTask.setPlatform(dataJson.get("platform").toString());
+                accountTask.setTask_key(dataJson.get("task_key").toString());
+                accountTaskRepository.save(accountTask);
+                //--------------------------------------------//
+                dataJson.remove("order_id");
+            }else{
+                respJson.put("status",false);
+                dataJson.put("message","Không có nhiệm vụ!");
+                respJson.put("data",dataJson);
+                accountTask.setRunning(0);
+                accountTask.setGet_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+            return new ResponseEntity<>(respJson, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", "fail");
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     @GetMapping(value = "getTaskOFF", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTaskOFF(@RequestHeader(defaultValue = "") String Authorization,
@@ -932,7 +1282,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            List<TaskPriority> priorityTasks =taskPriorityRepository.getPriority_task();
+            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task();
 
             List<String> arrTask = new ArrayList<>();
 
@@ -947,10 +1297,10 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 System.out.println(task);
                 while(arrTask.remove(task)) {}
-                if(task.equals("task_tiktok_follower")){
-                    get_task=task_tiktok_follower(account_id.trim());
-                }else if(task.equals("task_youtube_view")){
-                    get_task=task_youtube_view(account_id.trim());
+                if(task.equals("tiktok_follower")){
+                    get_task=tiktok_follower(account_id.trim());
+                }else if(task.equals("youtube_view")){
+                    get_task=youtube_view(account_id.trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -973,7 +1323,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.getState_Task(task_index));
+                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());

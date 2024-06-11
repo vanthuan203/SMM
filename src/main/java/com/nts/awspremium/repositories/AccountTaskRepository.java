@@ -21,22 +21,22 @@ public interface AccountTaskRepository extends JpaRepository<AccountTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',platform='',task_key='' where account_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='' where account_id=?1",nativeQuery = true)
     public Integer reset_Thread_By_AccountId(String account_id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',platform='',task_key='',task_index=0 where account_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0 where account_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_AccountId(String account_id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',platform='',task_key='',task_index=0 where profile_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0 where profile_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_ProfileId(String profile_id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',platform='',task_key='',task_index=0 where device_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0 where device_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_DeviceId(String device_id);
 
     @Query(value = "SELECT * FROM account_task where account_id=?1 limit 1",nativeQuery = true)
