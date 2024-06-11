@@ -19,6 +19,9 @@ public interface AccountTaskRepository extends JpaRepository<AccountTask,String>
     @Query(value = "Select * from account_task where state=-1 and running=1 order by time_get asc limit 1",nativeQuery = true)
     public AccountTask find_AccountTask_Changer_Profile();
 
+    @Query(value = "Select count(*) from account_task where account_id=?1",nativeQuery = true)
+    public Integer find_AccountTask_By_AccountId(String account_id);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='' where account_id=?1",nativeQuery = true)

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -258,6 +259,26 @@ public class SetupController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            data.put("message", e.getMessage());
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/test", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> test() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            List<String> stringList=GoogleApi.getVideoLinks("https://www.youtube.com/@Vps2-im3xv/videos");
+            System.out.println(stringList);
+            resp.put("status", true);
+            data.put("task", "create_profile");
+            data.put("profile_id", stringList);
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
             data.put("message", e.getMessage());

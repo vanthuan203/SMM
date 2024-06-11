@@ -8,6 +8,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -22,6 +26,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class GoogleApi {
     public static String getYoutubeId(String url) {
@@ -149,5 +154,25 @@ public class GoogleApi {
             return -2;
         }
 
+    }
+
+    public static List<String> getVideoLinks(String channelUrl) throws IOException {
+        List<String> videoLinks = new ArrayList<>();
+        Document doc = Jsoup.parse(channelUrl);
+        // Tìm tất cả các thẻ <a> có thuộc tính href
+        // Mẫu regex để khớp với các liên kết video
+        Pattern pattern = Pattern.compile("^/watch\\?v=.*");
+        Elements links = doc.getElementsMatchingText(pattern);
+        System.out.println(links);
+
+        for (Element link : links) {
+            String href = link.attr("href");
+            Matcher matcher = pattern.matcher(href);
+            if (matcher.find()) {
+                videoLinks.add("https://www.youtube.com" + href);
+            }
+        }
+
+        return videoLinks;
     }
 }

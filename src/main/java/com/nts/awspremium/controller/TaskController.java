@@ -1352,6 +1352,196 @@ public class TaskController {
 
     }
 
+
+    @GetMapping(value = "getTaskTEST", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getTaskTEST(@RequestHeader(defaultValue = "") String Authorization,
+                                                   @RequestParam(defaultValue = "") String account_id,
+                                                   @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran=new Random();
+            Thread.sleep(500+ran.nextInt(1500));
+            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (account_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "account_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (device_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "account_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            //---------------------get_Account------------------//
+            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            if(device!=null){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                if(accountTaskRepository.find_AccountTask_By_AccountId(account_id.trim())==0)
+                {
+                    Account account= accountRepository.get_Account_By_Account_id(account_id.trim());
+                    if(account==null){
+                        Account account_new=new Account();
+                        account_new.setAccount_id(account_id);
+                        account_new.setPassword("");
+                        account_new.setRecover_mail("");
+                        account_new.setLive(1);
+                        account_new.setAuth_2fa(account_new.getAuth_2fa());
+                        account_new.setComputer_id(null);
+                        account_new.setBox_id(null);
+                        account_new.setDevice_id(null);
+                        account_new.setProfile_id(null);
+                        account_new.setAdd_time(System.currentTimeMillis());
+                        account_new.setGet_time(System.currentTimeMillis());
+                        accountRepository.save(account_new);
+                        account=account_new;
+                    }
+
+
+                    AccountTask accountTask=new AccountTask();
+                    accountTask.setAccount(account);
+                    accountTask.setDevice(device);
+                    accountTask.setAccount_level(0);
+                    accountTask.setGet_time(0L);
+                    accountTask.setOrder_id(0L);
+                    accountTask.setRunning(0);
+                    accountTask.setState(1);
+                    accountTask.setState(1);
+                    accountTask.setProfile(null);
+                    accountTask.setTask_index(0);
+                    accountTaskRepository.save(accountTask);
+                }
+            }else{
+                Device device_new=new Device();
+                device_new.setDevice_id(device_id.trim());
+                device_new.setAdd_time(System.currentTimeMillis());
+                device_new.setState(1);
+                device_new.setBox(null);
+                device_new.setUpdate_time(System.currentTimeMillis());
+                device_new.setNum_account(0);
+                deviceRepository.save(device_new);
+                device=device_new;
+                if(accountTaskRepository.find_AccountTask_By_AccountId(account_id.trim())==0)
+                {
+                    Account account= accountRepository.get_Account_By_Account_id(account_id.trim());
+                    if(account==null){
+                        Account account_new=new Account();
+                        account_new.setAccount_id(account_id);
+                        account_new.setPassword("");
+                        account_new.setRecover_mail("");
+                        account_new.setLive(1);
+                        account_new.setAuth_2fa(account_new.getAuth_2fa());
+                        account_new.setComputer_id(null);
+                        account_new.setBox_id(null);
+                        account_new.setDevice_id(null);
+                        account_new.setProfile_id(null);
+                        account_new.setAdd_time(System.currentTimeMillis());
+                        account_new.setGet_time(System.currentTimeMillis());
+                        accountRepository.save(account_new);
+                        account=account_new;
+                    }
+
+
+                    AccountTask accountTask=new AccountTask();
+                    accountTask.setAccount(account);
+                    accountTask.setDevice(device);
+                    accountTask.setAccount_level(0);
+                    accountTask.setGet_time(0L);
+                    accountTask.setOrder_id(0L);
+                    accountTask.setRunning(0);
+                    accountTask.setState(1);
+                    accountTask.setState(1);
+                    accountTask.setProfile(null);
+                    accountTask.setTask_index(0);
+                    accountTaskRepository.save(accountTask);
+                }
+            }
+            //--------------------end_get_Account----------------------//
+            AccountTask accountTask = accountTaskRepository.get_Account_By_Account_id(account_id.trim());
+
+            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task();
+
+            List<String> arrTask = new ArrayList<>();
+
+            for(int i=0;i<priorityTasks.size();i++){
+                for (int j = 0; j < priorityTasks.get(i).getPriority(); j++) {
+                    arrTask.add(priorityTasks.get(i).getTask());
+                }
+            }
+            Map<String, Object> get_task =null;
+            String task_index=null;
+            while (arrTask.size()>0){
+                String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
+                while(arrTask.remove(task)) {}
+                if(task.equals("tiktok_follower")){
+                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_view")){
+                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_like")){
+                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_like")){
+                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                }
+                if(get_task.get("status").equals(true)){
+                    task_index=task;
+                    break;
+                }
+            }
+            if(get_task==null){
+                resp.put("status",false);
+                data.put("message","Không có nhiệm vụ!");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            Map<String, Object> respJson=new LinkedHashMap<>();
+            Map<String, Object> dataJson=new LinkedHashMap<>();
+            if(get_task.get("status").equals(true)){
+                dataJson= (Map<String, Object>) get_task.get("data");
+                System.out.println(dataJson);
+                respJson.put("status",true);
+                respJson.put("data",dataJson);
+                //--------------------------------------------//
+                accountTask.setGet_time(System.currentTimeMillis());
+                accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
+                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setTask(dataJson.get("task").toString());
+                accountTask.setPlatform(dataJson.get("platform").toString());
+                accountTask.setTask_key(dataJson.get("task_key").toString());
+                accountTaskRepository.save(accountTask);
+                //--------------------------------------------//
+                dataJson.remove("order_id");
+            }else{
+                respJson.put("status",false);
+                dataJson.put("message","Không có nhiệm vụ!");
+                respJson.put("data",dataJson);
+                accountTask.setRunning(0);
+                accountTask.setGet_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+            return new ResponseEntity<>(respJson, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", "fail");
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping(value = "/updateTask", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> updateTask(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String account_id,@RequestParam  Boolean status,
