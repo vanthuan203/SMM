@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "order_running")
 @Getter
 @Setter
-public class OrderRunning {
+public class OrderRunning implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long order_id;
@@ -47,6 +49,8 @@ public class OrderRunning {
     private User user;
     @Column(columnDefinition = "integer default 0")
     private Integer quantity;
+    @Column(columnDefinition = "integer default 0")
+    private Integer current_count;
     @Column(columnDefinition = "integer default 0")
     private Integer total;
     @Column(columnDefinition = "integer default 0")

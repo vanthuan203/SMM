@@ -97,6 +97,46 @@ public class OrderRunningController {
         }
 
     }
+
+    @GetMapping(value = "update_Current_Total", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> update_Current_Total() throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count();
+            for(int i=0;i<orderRunningList.size();i++){
+                try {
+                    if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){
+                        if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
+                            int current_Count=GoogleApi.getCountSubcriber(orderRunningList.get(i).getOrder_key());
+                            if(current_Count>=0){
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+
+                }
+            }
+            resp.put("status",true);
+            data.put("message", "update thành công");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping(value = "update_Order_Running_Done_No_Check", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Order_Running_Done_No_Check() throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -149,7 +189,6 @@ public class OrderRunningController {
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
-
     }
     @GetMapping(value = "update_Order_Running_Done_Check", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Order_Running_Done_Check() throws InterruptedException {

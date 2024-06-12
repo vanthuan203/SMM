@@ -272,8 +272,26 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            List<String> stringList=GoogleApi.getVideoLinks("https://www.youtube.com/@Vps2-im3xv/videos");
-            System.out.println(stringList);
+            List<String> stringList=GoogleApi.getVideoLinks("https://www.youtube.com/channel/UC4WQ4kUYWTqkcetAcD7oYjw/videos");
+            resp.put("status", true);
+            data.put("task", "create_profile");
+            data.put("profile_id", stringList);
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            data.put("message", e.getMessage());
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> test2() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            String stringList=GoogleApi.getChannelId("https://www.youtube.com/@22again-thinhtamuong78/");
             resp.put("status", true);
             data.put("task", "create_profile");
             data.put("profile_id", stringList);

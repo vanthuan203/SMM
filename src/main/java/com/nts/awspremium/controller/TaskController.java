@@ -39,6 +39,9 @@ public class TaskController {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private AccountTaskRepository accountTaskRepository;
 
@@ -47,6 +50,9 @@ public class TaskController {
 
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
+
+    @Autowired
+    private SettingYoutubeRepository settingYoutubeRepository;
     @Autowired
     private SettingSystemRepository settingSystemRepository;
     @Autowired
@@ -76,7 +82,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_follower()){
                 resp.put("status", false);
                 return resp;
@@ -113,7 +119,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingTiktok settingTiktok=settingTikTokRepository.getReferenceById(1L);
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_like()){
                 resp.put("status", false);
                 return resp;
@@ -212,10 +218,74 @@ public class TaskController {
         }
     }
 
+    Map<String, Object> youtube_subscriber(String account_id){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
+            if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_subscriber()){
+                resp.put("status", false);
+                return resp;
+            }
+            String list_channel_id=youtubeChannelHistoryRepository.get_List_ChannelId_By_AccountId(account_id.trim());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",list_channel_id==null?"":list_channel_id, orderThreadCheck.getValue());
+            if (orderRunning!=null) {
+                Service service=orderRunning.getService();
+                Random ran=new Random();
+                resp.put("status", true);
+                data.put("order_id", orderRunning.getOrder_id());
+                //resp.put("proxy", proxy);
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", service.getTask());
+
+                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_key());
+                data.put("task_key", dataSubscriber.getVideo_id());
+                data.put("keyword", dataSubscriber.getVideo_title());
+                if (service.getMin_time() != service.getMax_time()) {
+                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
+                    } else {
+                        data.put("viewing_time", service.getMin_time() * 60 < dataSubscriber.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(dataSubscriber.getDuration() - service.getMin_time() * 60))) : dataSubscriber.getDuration());
+                    }
+                }else {
+                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
+                    } else {
+                        data.put("viewing_time", dataSubscriber.getDuration());
+                    }
+                }
+                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMin_time()==0){
+                    data.put("viewing_time",ran.nextInt(30)+10);
+                }
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
     Map<String, Object> youtube_like(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
+            if(youtubeLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_like()){
+                resp.put("status", false);
+                return resp;
+            }
             String list_video_id=youtubeLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
             if (orderRunning!=null) {
@@ -1483,12 +1553,15 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
+                System.out.println(task);
                 if(task.equals("tiktok_follower")){
                     get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
                     get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
                     get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_subscriber")){
+                    get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }

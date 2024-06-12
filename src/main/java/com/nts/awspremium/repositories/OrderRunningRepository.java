@@ -22,6 +22,9 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "SELECT count(*) from order_running where order_key=?1",nativeQuery = true)
     public Integer get_Order_By_Order_Key(String order_id);
+
+    @Query(value = "SELECT * from order_running where service_id in(select service_id from service where check_count=1) and start_time>0",nativeQuery = true)
+    public List<OrderRunning> get_Order_By_Check_Count();
     @Query(value = "SELECT count(*) from order_running where order_key=?1 and service_id in(select service_id from service where task=?2)",nativeQuery = true)
     public Integer get_Order_By_Order_Key_And_Task(String order_id,String task);
 
@@ -31,7 +34,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
     public List<OrderRunning> get_Order_By_ListId(List<String> list_orderid);
 
-    @Query(value = "SELECT order_running.order_id,count(*) as total FROM history_sum left join order_running  on history_sum.order_id=order_running.order_id group by order_running.order_id order by insert_time desc",nativeQuery = true)
+    @Query(value = "SELECT order_running.order_id,count(*) as total FROM history_sum left join order_running  on history_sum.order_id=order_running.order_id where order_running.start_time>0 group by order_running.order_id order by insert_time desc",nativeQuery = true)
     public List<String> get_Total_Buff_Cron();
 
     @Query(value = "select o.* from order_running o join service s on o.service_id=s.service_id and s.check_done=0 where o.total>=(o.quantity+o.quantity*s.bonus) order by start_time desc",nativeQuery = true)

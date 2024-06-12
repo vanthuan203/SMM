@@ -1,6 +1,11 @@
 package com.nts.awspremium;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import com.nts.awspremium.controller.GoogleKeyController;
 import com.nts.awspremium.repositories.GoogleKeyRepository;
 import okhttp3.*;
@@ -19,13 +24,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.io.StringReader;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 public class GoogleApi {
@@ -155,24 +159,117 @@ public class GoogleApi {
         }
 
     }
+    public static String getChannelId(String channelUrl) {
+        try {
+            // Kết nối tới trang YouTube và lấy nội dung trang
+            Document doc = Jsoup.connect(channelUrl).get();
 
-    public static List<String> getVideoLinks(String channelUrl) throws IOException {
-        List<String> videoLinks = new ArrayList<>();
-        Document doc = Jsoup.parse(channelUrl);
-        // Tìm tất cả các thẻ <a> có thuộc tính href
-        // Mẫu regex để khớp với các liên kết video
-        Pattern pattern = Pattern.compile("^/watch\\?v=.*");
-        Elements links = doc.getElementsMatchingText(pattern);
-        System.out.println(links);
-
-        for (Element link : links) {
-            String href = link.attr("href");
-            Matcher matcher = pattern.matcher(href);
-            if (matcher.find()) {
-                videoLinks.add("https://www.youtube.com" + href);
+            // Tìm tất cả các thẻ <script> chứa đoạn JSON
+            Elements scriptElements = doc.select("script");
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                if (scriptContent.contains("channelId")) {
+                    // Lấy phần JSON trong nội dung của thẻ script
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    // Phân tích cú pháp JSON và trích xuất videoId
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    //System.out.println(jsonObject);
+                    String id = jsonObject.getAsJsonObject("header")
+                            .getAsJsonObject("c4TabbedHeaderRenderer")
+                            .get("channelId").toString().replace("\"","");
+                    return id;
+                }
             }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public static List<String> getVideoLinks(String channelUrl) {
+        List<String> videoList = new ArrayList<>();
+
+        try {
+            // Kết nối tới trang YouTube và lấy nội dung trang
+            Document doc = Jsoup.connect(channelUrl).get();
+
+            // Tìm tất cả các thẻ <script> chứa đoạn JSON
+            Elements scriptElements = doc.select("script");
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                if (scriptContent.contains("videoRenderer")) {
+                    // Lấy phần JSON trong nội dung của thẻ script
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    // Phân tích cú pháp JSON và trích xuất videoId
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    //System.out.println(jsonObject);
+                    JsonArray items = jsonObject.getAsJsonObject("contents")
+                            .getAsJsonObject("twoColumnBrowseResultsRenderer")
+                            .getAsJsonArray("tabs");
+
+                    JsonArray item_video=items.get(1).getAsJsonObject().
+                            getAsJsonObject("tabRenderer")
+                            .getAsJsonObject("content")
+                            .getAsJsonObject("richGridRenderer")
+                            .getAsJsonArray("contents");
+                    if(item_video.size()>0){
+                        for (int i=0;i<item_video.size();i++){
+                            try{
+                                String video_id=item_video.get(i).getAsJsonObject().
+                                        getAsJsonObject("richItemRenderer")
+                                        .getAsJsonObject("content")
+                                        .getAsJsonObject("videoRenderer").get("videoId").toString().replace("\"","");
+                                String video_title=item_video.get(i).getAsJsonObject().
+                                        getAsJsonObject("richItemRenderer")
+                                        .getAsJsonObject("content")
+                                        .getAsJsonObject("videoRenderer")
+                                        .getAsJsonObject("title")
+                                        .getAsJsonArray("runs").get(0).getAsJsonObject().get("text").toString().replace("\"","");
+                                String video_duration=item_video.get(i).getAsJsonObject().
+                                        getAsJsonObject("richItemRenderer")
+                                        .getAsJsonObject("content")
+                                        .getAsJsonObject("videoRenderer")
+                                        .getAsJsonObject("lengthText").get("simpleText").toString().replace("\"","");
+                                String[] duration_Text=video_duration.toString().split(":");
+                                Long duration=0L;
+                                if(duration_Text.length==4){
+                                    duration=Long.parseLong(duration_Text[0].trim())*3600*24+Long.parseLong(duration_Text[0].trim())*3600+Long.parseLong(duration_Text[1].trim())*60+Long.parseLong(duration_Text[2].trim());
+                                }else if(duration_Text.length==3){
+                                    duration=Long.parseLong(duration_Text[0].trim())*3600+Long.parseLong(duration_Text[1].trim())*60+Long.parseLong(duration_Text[2].trim());
+                                }else if(duration_Text.length==2){
+                                    duration=Long.parseLong(duration_Text[0].trim())*60+Long.parseLong(duration_Text[1].trim());
+                                    if(duration<90){
+                                        continue;
+                                    }
+                                }else{
+                                    continue;
+                                }
+                                videoList.add(video_id+"~#"+video_title+"~#"+duration) ;
+                                if(videoList.size()>=5){
+                                    break;
+                                }
+                            }catch (Exception e){
+                                System.out.println(e.getMessage());
+                            }
+
+                        }
+                    }
+                }
+            }
+            return videoList;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        return videoLinks;
+        return videoList;
     }
 }

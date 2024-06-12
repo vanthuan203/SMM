@@ -80,6 +80,8 @@ public class Service {
     private Float bonus ;
     @Column(columnDefinition = "integer default 0")
     private Integer check_done ;
+    @Column(columnDefinition = "integer default 0")
+    private Integer check_count ;
     @Column(columnDefinition = "varchar(255) default 'all'")
     private String device_type;
 }
