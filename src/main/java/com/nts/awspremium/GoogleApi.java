@@ -159,6 +159,35 @@ public class GoogleApi {
         }
 
     }
+    public static Integer getCountLikeCurrent(String order_key){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Request request = null;
+            request = new Request.Builder().url("https://api.socialcounts.org/youtube-video-live-view-count/" + order_key).get().build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson = response.body().string();
+                Object obj = new JsonParser().parse(resultJson);
+                JsonObject jsonObject = (JsonObject) obj;
+
+                // Get the table array
+                JsonArray tableArray = jsonObject.getAsJsonArray("table");
+
+                // Iterate through the table array to find the Like Count
+                for (JsonElement element : tableArray) {
+                    JsonObject tableItem = element.getAsJsonObject();
+                    if (tableItem.get("name").getAsString().equals("Like Count")) {
+                        return  tableItem.get("count").getAsInt();
+                    }
+                }
+                return -2;
+            }else{
+                return -2;
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+    }
     public static String getChannelId(String channelUrl) {
         try {
             // Kết nối tới trang YouTube và lấy nội dung trang

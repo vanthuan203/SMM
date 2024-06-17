@@ -352,7 +352,7 @@ public class ApiController {
                     }
                     orderRunningRepository.save(orderRunning);
 
-                    Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+                    Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
                     Balance balance = new Balance();
                     balance.setUser(user.getUsername().trim());
                     balance.setAdd_time(System.currentTimeMillis());
@@ -461,7 +461,7 @@ public class ApiController {
 
                     orderRunningRepository.save(orderRunning);
 
-                    Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+                    Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
                     Balance balance = new Balance();
                     balance.setUser(user.getUsername().trim());
                     balance.setAdd_time(System.currentTimeMillis());
@@ -565,7 +565,7 @@ public class ApiController {
                 dataSubscriberRepository.save(dataSubscriber);
             }
 
-            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
             balance.setUser(user.getUsername().trim());
             balance.setAdd_time(System.currentTimeMillis());
@@ -630,7 +630,7 @@ public class ApiController {
             orderRunning.setSpeed_up(0);
             orderRunningRepository.save(orderRunning);
 
-            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
             balance.setUser(user.getUsername().trim());
             balance.setAdd_time(System.currentTimeMillis());
@@ -696,7 +696,7 @@ public class ApiController {
             orderRunning.setSpeed_up(0);
             orderRunningRepository.save(orderRunning);
 
-            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
             balance.setUser(user.getUsername().trim());
             balance.setAdd_time(System.currentTimeMillis());
@@ -762,7 +762,7 @@ public class ApiController {
             orderRunning.setValid(1);
             orderRunningRepository.save(orderRunning);
 
-            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
             balance.setUser(user.getUsername().trim());
             balance.setAdd_time(System.currentTimeMillis());
@@ -827,7 +827,7 @@ public class ApiController {
             orderRunning.setValid(1);
             orderRunningRepository.save(orderRunning);
 
-            Float balance_update=userRepository.updateBalanceFine(-priceorder,user.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
             balance.setUser(user.getUsername().trim());
             balance.setAdd_time(System.currentTimeMillis());

@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BalanceRepository extends JpaRepository<Balance,Long> {
-
+    @Query(value = "call update_balance(?1,?2)",nativeQuery = true)
+    public Float update_Balance(Float a,String username);
 }

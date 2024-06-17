@@ -41,9 +41,7 @@ public class GoogleKeyController {
         Map<String, Object> data = new LinkedHashMap<>();
         try {
             String key = get_key();
-            resp.put("like", GoogleApi.getCountLike(video_id.trim(),key.trim()));
-            resp.put("cmt", GoogleApi.getCountComment(video_id.trim(),key.trim()));
-            resp.put("view", GoogleApi.getCountView(video_id.trim(),key.trim()));
+            resp.put("like", GoogleApi.getCountLikeCurrent(video_id.trim()));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

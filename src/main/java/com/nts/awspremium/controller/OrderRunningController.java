@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.google.gson.JsonObject;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
@@ -113,6 +114,52 @@ public class OrderRunningController {
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
+                            }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("like")){
+                            int current_Count=GoogleApi.getCountLikeCurrent(orderRunningList.get(i).getOrder_key());
+                            if(current_Count>=0){
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
+                            }
+                        }
+                    }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
+                        if(orderRunningList.get(i).getService().getTask().equals("follower")){
+                            int current_Count=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key());
+                            if(current_Count>=0){
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
+                            }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("like")){
+                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
+                            if(jsonObject.get("status").equals("success")){
+                                int current_Count=Integer.parseInt(jsonObject.get("likes").toString());
+                                if(current_Count>=0){
+                                    orderRunningList.get(i).setCurrent_count(current_Count);
+                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningRepository.save(orderRunningList.get(i));
+                                }
+                            }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
+                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
+                            if(jsonObject.get("status").equals("success")){
+                                int current_Count=Integer.parseInt(jsonObject.get("comments").toString());
+                                if(current_Count>=0){
+                                    orderRunningList.get(i).setCurrent_count(current_Count);
+                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningRepository.save(orderRunningList.get(i));
+                                }
+                            }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("view")){
+                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
+                            if(jsonObject.get("status").equals("success")){
+                                int current_Count=Integer.parseInt(jsonObject.get("plays").toString());
+                                if(current_Count>=0){
+                                    orderRunningList.get(i).setCurrent_count(current_Count);
+                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningRepository.save(orderRunningList.get(i));
+                                }
                             }
                         }
                     }

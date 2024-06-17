@@ -62,7 +62,7 @@ public class AccountController {
         try{
             Random ran=new Random();
             Thread.sleep(500+ran.nextInt(1500));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");

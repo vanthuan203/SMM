@@ -298,6 +298,23 @@ public class TaskController {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("task_key", orderRunning.getOrder_key());
+                data.put("keyword", orderRunning.getVideo_title());
+                if (service.getMin_time() != service.getMax_time()) {
+                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
+                    } else {
+                        data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
+                    }
+                }else {
+                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
+                    } else {
+                        data.put("viewing_time", orderRunning.getDuration());
+                    }
+                }
+                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMin_time()==0){
+                    data.put("viewing_time",ran.nextInt(30)+10);
+                }
                 resp.put("data",data);
                 return resp;
 
@@ -324,7 +341,7 @@ public class TaskController {
         try{
             Random ran=new Random();
             Thread.sleep(500+ran.nextInt(1500));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");
@@ -531,7 +548,7 @@ public class TaskController {
         try{
             Random ran=new Random();
             //Thread.sleep(ran.nextInt(2000));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");
@@ -879,7 +896,7 @@ public class TaskController {
         try{
             Random ran=new Random();
             //Thread.sleep(ran.nextInt(2000));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");
@@ -1229,7 +1246,7 @@ public class TaskController {
         try{
             Random ran=new Random();
             Thread.sleep(500+ran.nextInt(1500));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");
@@ -1432,7 +1449,7 @@ public class TaskController {
         try{
             Random ran=new Random();
             Thread.sleep(500+ran.nextInt(1500));
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");
@@ -1624,7 +1641,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            Integer checktoken = userRepository.FindUserByToken(Authorization);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
                 data.put("message", "Token expired");

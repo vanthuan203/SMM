@@ -41,7 +41,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> add_device(@RequestBody JSONObject device_info,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
-        Integer checktoken = userRepository.FindUserByToken(Authorization);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
         if (checktoken >0) {
             resp.put("status", false);
             data.put("message", "Token expired");
@@ -104,7 +104,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> check_task(@RequestParam(defaultValue = "") String device_id,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
-        Integer checktoken = userRepository.FindUserByToken(Authorization);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
         if (checktoken >0) {
             resp.put("status", false);
             data.put("message", "Token expired");
@@ -174,7 +174,7 @@ public class SetupController {
                                                            @RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
-        Integer checktoken = userRepository.FindUserByToken(Authorization);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
         if (checktoken ==0) {
             resp.put("status", false);
             data.put("message", "Token expired");
@@ -232,7 +232,7 @@ public class SetupController {
                                                     @RequestParam(defaultValue = "") String device_id,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
-        Integer checktoken = userRepository.FindUserByToken(Authorization);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
         if (checktoken ==0) {
             resp.put("status", false);
             data.put("message", "Token expired");

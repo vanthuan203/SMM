@@ -123,7 +123,9 @@ public class TikTokApi {
             JSONObject jsonObject = (JSONObject) obj;
             return jsonObject;
         } catch (Exception e) {
-            return null;
+            JSONObject resp=new JSONObject();
+            resp.put("status","error");
+            return resp;
         }
     }
     public static String getTiktokId(String url) {
