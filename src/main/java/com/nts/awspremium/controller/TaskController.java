@@ -1683,7 +1683,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             accountTaskRepository.reset_Thread_By_AccountId(account_id.trim());
-
+            System.out.println(task.trim());
             if(platform.toLowerCase().trim().equals("youtube")){
                 if(task.toLowerCase().trim().equals("view")){
                     if(status==true){
@@ -1700,22 +1700,23 @@ public class TaskController {
                             youtubeVideoHistoryRepository.save(youtubeVideoHistory_New);
                         }
                     }
-                }else  if(task.toLowerCase().trim().equals("sub")){
+                }else  if(task.toLowerCase().trim().equals("subscriber")){
                     if(status==true){
+                        String order_Key= dataSubscriberRepository.get_OrderKey_By_VideoId(task_key.trim());
                         YoutubeSubscriberHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
                         if(youtubeChannelHistory!=null){
-                            youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+task_key.trim()+"|");
+                            youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+order_Key.trim()+"|");
                             youtubeChannelHistory.setUpdate_time(System.currentTimeMillis());
                             youtubeChannelHistoryRepository.save(youtubeChannelHistory);
                         }else{
                             YoutubeSubscriberHistory youtubeChannelHistory_New=new YoutubeSubscriberHistory();
                             youtubeChannelHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                             youtubeChannelHistory_New.setUpdate_time(System.currentTimeMillis());
-                            youtubeChannelHistory_New.setList_id(task_key.trim()+"|");
+                            youtubeChannelHistory_New.setList_id(order_Key.trim()+"|");
                             youtubeChannelHistoryRepository.save(youtubeChannelHistory_New);
                         }
                         YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
-                        youtubeSubscribe24h.setId(account_id.trim()+task_key.trim());
+                        youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
                         youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                         youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
                     }

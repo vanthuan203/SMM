@@ -11,4 +11,7 @@ public interface DataSubscriberRepository extends JpaRepository<DataSubscriber,S
     @Query(value = "Select * from data_subscriber where order_key=?1 order by rand() limit 1",nativeQuery = true)
     public DataSubscriber get_Data_Subscriber(String order_key);
 
+    @Query(value = "Select order_key from data_subscriber where video_id=?1  limit 1",nativeQuery = true)
+    public String get_OrderKey_By_VideoId(String video_id);
+
 }
