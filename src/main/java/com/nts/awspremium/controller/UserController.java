@@ -68,4 +68,22 @@ public class UserController {
 
 
     }
+
+    @GetMapping(path = "get_List_User",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_List_User(){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<String > all_User=userRepository.get_All_User();
+        String list_User="";
+        for(int i=0;i<all_User.size();i++){
+            if(i==0){
+                list_User=all_User.get(0);
+            }else{
+                list_User=list_User+","+all_User.get(i);
+            }
+        }
+        resp.put("user",list_User);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+    }
 }

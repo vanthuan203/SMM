@@ -182,7 +182,7 @@ public class ApiController {
             JSONObject get_task = null;
             if (data.getAction().equals("add")) {
 
-                Service service = serviceRepository.getService(data.getService());
+                Service service = serviceRepository.get_Service(data.getService());
                 if (service == null) {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
