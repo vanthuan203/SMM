@@ -53,8 +53,8 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
-            "o.start_count,o.quantity,o.username,o.total,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,\n" +
+            "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time>0 \n" +
@@ -63,11 +63,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
-            "o.start_count,o.quantity,o.username,o.total,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,\n" +
+            "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
-            "left join service s on o.service_id=s.service_id where username=?1  o.start_time>0 \n" +
+            "left join service s on o.service_id=s.service_id where username=?1 and  o.start_time>0 \n" +
             "group by o.order_id order by o.start_time desc",nativeQuery = true)
     public List<OrderRunningShow> get_Order_Running(String username);
 

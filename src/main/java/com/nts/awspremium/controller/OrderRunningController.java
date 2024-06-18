@@ -74,6 +74,8 @@ public class OrderRunningController {
                 obj.put("start_time", orderRunnings.get(i).getStart_time());
                 obj.put("update_time", orderRunnings.get(i).getUpdate_time());
                 obj.put("start_count", orderRunnings.get(i).getStart_count());
+                obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("current_count", orderRunnings.get(i).getCurrent_count());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("quantity", orderRunnings.get(i).getQuantity());
                 obj.put("note", orderRunnings.get(i).getNote());
@@ -151,7 +153,8 @@ public class OrderRunningController {
                         }
                     }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
-                            int current_Count=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key());
+                            int current_Count=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@",""));
+                            System.out.println(current_Count);
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());

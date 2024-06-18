@@ -338,6 +338,8 @@ public class ApiController {
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("viewCount").toString()));
                     ////////////////
                     orderRunning.setCharge(priceorder);
+                    orderRunning.setUpdate_time(0L);
+                    orderRunning.setCurrent_count(0);
                     orderRunning.setNote("");
                     orderRunning.setService(service);
                     orderRunning.setSpeed_up(0);
@@ -453,6 +455,8 @@ public class ApiController {
                     orderRunning.setOrder_key(videoId);
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("likeCount").toString()));
                     ////////////////
+                    orderRunning.setUpdate_time(0L);
+                    orderRunning.setCurrent_count(0);
                     orderRunning.setCharge(priceorder);
                     orderRunning.setNote("");
                     orderRunning.setService(service);
@@ -539,12 +543,14 @@ public class ApiController {
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setTotal(0);
             orderRunning.setTime_total(0);
+            orderRunning.setUpdate_time(0L);
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setUser(user);
             orderRunning.setChannel_id("");
             orderRunning.setVideo_title("");
             orderRunning.setOrder_key(channelId);
             orderRunning.setStart_count(start_Count);
+            orderRunning.setCurrent_count(0);
             ////////////////
             orderRunning.setCharge(priceorder);
             orderRunning.setNote("");
@@ -626,6 +632,7 @@ public class ApiController {
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
+            orderRunning.setCurrent_count(0);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
             orderRunningRepository.save(orderRunning);
@@ -694,6 +701,7 @@ public class ApiController {
             orderRunning.setService(service);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
+            orderRunning.setCurrent_count(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -760,6 +768,7 @@ public class ApiController {
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
+            orderRunning.setCurrent_count(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -825,6 +834,7 @@ public class ApiController {
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
+            orderRunning.setCurrent_count(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
