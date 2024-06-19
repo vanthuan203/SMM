@@ -14,6 +14,8 @@ public class DataRequest {
     private Long order=-1L;
     private String orders="";
     private String list="";
+    private int thread=0;
+    private String note="";
     private String search="";
     private String suggest="";
     private String comments="";

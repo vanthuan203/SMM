@@ -99,6 +99,60 @@ public class OrderRunningController {
         }
     }
 
+    @GetMapping(path = "get_Order_Pending", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Order_Pending(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0|| user==null){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<OrderRunningShow> orderRunnings;
+            if (user.length() == 0) {
+                orderRunnings = orderRunningRepository.get_Order_Pending();
+
+            } else {
+                orderRunnings = orderRunningRepository.get_Order_Pending(user.trim());
+            }
+
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderRunnings.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderRunnings.get(i).getOrder_id());
+                obj.put("order_key", orderRunnings.get(i).getOrder_key());
+                obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
+                obj.put("thread", orderRunnings.get(i).getThread());
+                obj.put("insert_time", orderRunnings.get(i).getInsert_time());
+                obj.put("start_time", orderRunnings.get(i).getStart_time());
+                obj.put("update_time", orderRunnings.get(i).getUpdate_time());
+                obj.put("start_count", orderRunnings.get(i).getStart_count());
+                obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("current_count", orderRunnings.get(i).getCurrent_count());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("quantity", orderRunnings.get(i).getQuantity());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("service_id", orderRunnings.get(i).getService_id());
+                obj.put("username", orderRunnings.get(i).getUsername());
+                obj.put("charge", orderRunnings.get(i).getCharge());
+                obj.put("task", orderRunnings.get(i).getTask());
+                obj.put("platform", orderRunnings.get(i).getPlatform());
+                jsonArray.add(obj);
+            }
+
+            resp.put("total", orderRunnings.size());
+            resp.put("order_running", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "update_Total_Buff", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Total_Buff() throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();

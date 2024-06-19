@@ -221,6 +221,56 @@ public class ApiController {
     }
 
 
+    @PostMapping(value = "/web", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> web(@RequestBody DataRequest data, @RequestHeader(defaultValue = "") String Authorization) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        try{
+            User user = userRepository.find_User_By_Token(Authorization.trim());
+            if (user==null) {
+                resp.put("error", "Key not found");
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            JSONObject get_task = null;
+            Service service = serviceRepository.get_Service_Web(data.getService());
+            if(service.getPlatform().trim().equals("youtube")){
+                if(service.getTask().trim().equals("view")){
+                    get_task=youtube_view(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=youtube_like(data,service,user);
+                }else if(service.getTask().trim().equals("subscriber")){
+                    get_task=youtube_subscriber(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("tiktok")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=tiktok_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=tiktok_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=tiktok_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=tiktok_view(data,service,user);
+                }
+            }
+            if(get_task.get("error")==null){
+                resp.put("order_running", true);
+                resp.put("order_id",get_task.get("order"));
+            }else{
+                resp.put("error", get_task.get("error"));
+            }
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("error", "api system error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        }
+    }
+
+
     JSONObject youtube_view(DataRequest data,Service service,User user)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
@@ -237,7 +287,7 @@ public class ApiController {
             Random ran = new Random();
             Request request1 = null;
             Iterator k = null;
-            String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw"};
+            String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
             request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
@@ -406,7 +456,7 @@ public class ApiController {
             Random ran = new Random();
             Request request1 = null;
             Iterator k = null;
-            String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyA7km25RCx-pTfOkX4fexR_wrtJoEachGw"};
+            String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
             request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(statistics(likeCount))&part=statistics&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
