@@ -411,7 +411,7 @@ public class ApiController {
                     balance.setTotal_blance(balance_update);
                     balance.setBalance(-priceorder);
                     balance.setService(data.getService());
-                    balance.setNote("Order " + data.getQuantity() + " view cho video " + orderRunning.getOrder_key());
+                    balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id " + orderRunning.getOrder_id());
                     balanceRepository.save(balance);
                     resp.put("order", orderRunning.getOrder_id());
                     return resp;
@@ -522,7 +522,7 @@ public class ApiController {
                     balance.setTotal_blance(balance_update);
                     balance.setBalance(-priceorder);
                     balance.setService(data.getService());
-                    balance.setNote("Order " + data.getQuantity() + " like cho video " + orderRunning.getOrder_key());
+                    balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id "+ orderRunning.getOrder_id());
                     balanceRepository.save(balance);
                     resp.put("order", orderRunning.getOrder_id());
                     return resp;
@@ -628,7 +628,7 @@ public class ApiController {
             balance.setTotal_blance(balance_update);
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
-            balance.setNote("Order " + data.getQuantity() + " subscriber cho video " + orderRunning.getOrder_key());
+            balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id " + orderRunning.getOrder_id());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
@@ -694,7 +694,7 @@ public class ApiController {
             balance.setTotal_blance(balance_update);
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
-            balance.setNote("Order " + data.getQuantity() + " follower cho tiktok_id " + tiktok_id.trim());
+            balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id "+ orderRunning.getOrder_id());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
@@ -761,7 +761,7 @@ public class ApiController {
             balance.setTotal_blance(balance_update);
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
-            balance.setNote("Order " + data.getQuantity() + " like cho id " + video_id.trim());
+            balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id "+ orderRunning.getOrder_id());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
@@ -828,7 +828,7 @@ public class ApiController {
             balance.setTotal_blance(balance_update);
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
-            balance.setNote("Order " + data.getQuantity() + " comment cho id " + video_id.trim());
+            balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id "+ orderRunning.getOrder_id());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
@@ -894,7 +894,7 @@ public class ApiController {
             balance.setTotal_blance(balance_update);
             balance.setBalance(-priceorder);
             balance.setService(data.getService());
-            balance.setNote("Order " + data.getQuantity() + " view cho id " + video_id.trim());
+            balance.setNote("Order " + data.getQuantity()+" " +service.getTask()+ " for Id "+ orderRunning.getOrder_id());
             balanceRepository.save(balance);
             resp.put("order", orderRunning.getOrder_id());
             return resp;
