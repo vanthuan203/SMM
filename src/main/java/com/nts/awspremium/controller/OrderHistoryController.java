@@ -1,10 +1,8 @@
 package com.nts.awspremium.controller;
 
-import com.google.gson.JsonObject;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
-import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -13,13 +11,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/order_running")
-public class OrderRunningController {
+@RequestMapping(value = "/order_history")
+public class OrderHistoryController {
 
     @Autowired
     private OrderRunningRepository orderRunningRepository;
@@ -45,8 +46,8 @@ public class OrderRunningController {
         }
     }
 
-    @GetMapping(path = "get_Order_Running", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get_Order_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
+    @GetMapping(path = "get_Order_History", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Order_History(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         User users=userRepository.find_User_By_Token(Authorization.trim());
@@ -56,41 +57,41 @@ public class OrderRunningController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try {
-            List<OrderRunningShow> orderRunnings;
+            List<OrderHistoryShow> orderHistories;
             if (user.length() == 0) {
-                orderRunnings = orderRunningRepository.get_Order_Running();
+                orderHistories = orderHistoryRepository.get_Order_History();
 
             } else {
-                orderRunnings = orderRunningRepository.get_Order_Running(user.trim());
+                orderHistories = orderHistoryRepository.get_Order_History(user.trim());
             }
 
             JSONArray jsonArray = new JSONArray();
 
-            for (int i = 0; i < orderRunnings.size(); i++) {
+            for (int i = 0; i < orderHistories.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("order_id", orderRunnings.get(i).getOrder_id());
-                obj.put("order_key", orderRunnings.get(i).getOrder_key());
-                obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
-                obj.put("thread", orderRunnings.get(i).getThread());
-                obj.put("insert_time", orderRunnings.get(i).getInsert_time());
-                obj.put("start_time", orderRunnings.get(i).getStart_time());
-                obj.put("update_time", orderRunnings.get(i).getUpdate_time());
-                obj.put("start_count", orderRunnings.get(i).getStart_count());
-                obj.put("check_count", orderRunnings.get(i).getCheck_count());
-                obj.put("current_count", orderRunnings.get(i).getCurrent_count());
-                obj.put("total", orderRunnings.get(i).getTotal());
-                obj.put("quantity", orderRunnings.get(i).getQuantity());
-                obj.put("note", orderRunnings.get(i).getNote());
-                obj.put("service_id", orderRunnings.get(i).getService_id());
-                obj.put("username", orderRunnings.get(i).getUsername());
-                obj.put("charge", orderRunnings.get(i).getCharge());
-                obj.put("task", orderRunnings.get(i).getTask());
-                obj.put("platform", orderRunnings.get(i).getPlatform());
+                obj.put("order_id", orderHistories.get(i).getOrder_id());
+                obj.put("order_key", orderHistories.get(i).getOrder_key());
+                obj.put("insert_time", orderHistories.get(i).getInsert_time());
+                obj.put("start_time", orderHistories.get(i).getStart_time());
+                obj.put("end_time", orderHistories.get(i).getEnd_time());
+                obj.put("cancel", orderHistories.get(i).getCancel());
+                obj.put("update_time", orderHistories.get(i).getUpdate_time());
+                obj.put("start_count", orderHistories.get(i).getStart_count());
+                obj.put("check_count", orderHistories.get(i).getCheck_count());
+                obj.put("current_count", orderHistories.get(i).getCurrent_count());
+                obj.put("total", orderHistories.get(i).getTotal());
+                obj.put("quantity", orderHistories.get(i).getQuantity());
+                obj.put("note", orderHistories.get(i).getNote());
+                obj.put("service_id", orderHistories.get(i).getService_id());
+                obj.put("username", orderHistories.get(i).getUsername());
+                obj.put("charge", orderHistories.get(i).getCharge());
+                obj.put("task", orderHistories.get(i).getTask());
+                obj.put("platform", orderHistories.get(i).getPlatform());
                 jsonArray.add(obj);
             }
 
-            resp.put("total", orderRunnings.size());
-            resp.put("order_running", jsonArray);
+            resp.put("total", orderHistories.size());
+            resp.put("order_history", jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
             resp.put("status", "fail");
