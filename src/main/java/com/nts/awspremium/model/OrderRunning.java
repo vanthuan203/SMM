@@ -21,6 +21,8 @@ public class OrderRunning implements Serializable {
     private String video_title;
     @Column(columnDefinition = "varchar(255) default ''")
     private String channel_id;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String channel_title;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String comment_list;
     @Column(columnDefinition = "TEXT")

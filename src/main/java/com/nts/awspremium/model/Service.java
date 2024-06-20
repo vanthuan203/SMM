@@ -39,7 +39,7 @@ public class Service {
     @Column(columnDefinition = "integer default 0")
     private Integer youtube_search;
     @Column(columnDefinition = "integer default 0")
-    private Integer youtube__suggest;
+    private Integer youtube_suggest;
     @Column(columnDefinition = "integer default 0")
     private Integer youtube_dtn;
     @Column(columnDefinition = "integer default 0")

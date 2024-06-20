@@ -77,6 +77,38 @@ public class GoogleApi {
 
     }
 
+    public static Integer getCountSubcriber(String order_key,String key){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Random ran = new Random();
+            Request request = null;
+            Iterator k = null;
+            request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key.trim()+"&fields=items(statistics(likeCount))&part=statistics&id=" + order_key).get().build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson1 = response.body().string();
+                Object obj1 = new JSONParser().parse(resultJson1);
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                    return -2;
+                }
+                k = items.iterator();
+                if (k.hasNext() == false) {
+                    return -1;
+                }
+                JSONObject video = (JSONObject) k.next();
+                JSONObject statistics = (JSONObject) video.get("statistics");
+                return Integer.parseInt(statistics.get("likeCount").toString());
+            }else{
+                return -2;
+            }
+        } catch (IOException | ParseException e) {
+            return -2;
+        }
+
+    }
+
     public static Integer getCountComment(String order_key,String key){
         try {
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -140,7 +172,7 @@ public class GoogleApi {
         }
 
     }
-    public static Integer getCountSubcriber(String order_key){
+    public static Integer getCountSubcriberCurrent(String order_key){
         try {
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Request request = null;

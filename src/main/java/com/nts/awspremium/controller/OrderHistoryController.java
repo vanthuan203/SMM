@@ -140,7 +140,7 @@ public class OrderHistoryController {
                 try {
                     if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){
                         if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
-                            int current_Count=GoogleApi.getCountSubcriber(orderRunningList.get(i).getOrder_key());
+                            int current_Count=GoogleApi.getCountSubcriberCurrent(orderRunningList.get(i).getOrder_key());
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
@@ -397,7 +397,7 @@ public class OrderHistoryController {
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
-                        int count=GoogleApi.getCountSubcriber(orderRunningList.get(i).getOrder_key());
+                        int count=GoogleApi.getCountSubcriberCurrent(orderRunningList.get(i).getOrder_key());
                         if(count==-2)
                         {
                             continue;

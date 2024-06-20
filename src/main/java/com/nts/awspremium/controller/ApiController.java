@@ -288,7 +288,7 @@ public class ApiController {
             Request request1 = null;
             Iterator k = null;
             String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,channelTitle,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -383,6 +383,7 @@ public class ApiController {
                     orderRunning.setQuantity(data.getQuantity());
                     orderRunning.setUser(user);
                     orderRunning.setChannel_id(snippet.get("channelId").toString());
+                    orderRunning.setChannel_title(snippet.get("channelTitle").toString());
                     orderRunning.setVideo_title(snippet.get("title").toString());
                     orderRunning.setOrder_key(video.get("id").toString());
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("viewCount").toString()));
@@ -457,7 +458,7 @@ public class ApiController {
             Request request1 = null;
             Iterator k = null;
             String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(statistics(likeCount))&part=statistics&id=" + videoId).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(snippet(title,channelId,channelTitle),statistics(likeCount))&part=statistics&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -477,7 +478,7 @@ public class ApiController {
             while (k.hasNext()) {
                 try {
                     JSONObject video = (JSONObject) k.next();
-
+                    JSONObject snippet = (JSONObject) video.get("snippet");
                     float priceorder = 0;
                     priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
                     if (priceorder > (float) user.getBalance()) {
@@ -500,7 +501,8 @@ public class ApiController {
                     orderRunning.setTime_total(0);
                     orderRunning.setQuantity(data.getQuantity());
                     orderRunning.setUser(user);
-                    orderRunning.setChannel_id("");
+                    orderRunning.setChannel_id(snippet.get("channelId").toString());
+                    orderRunning.setChannel_title(snippet.get("channelTitle").toString());
                     orderRunning.setVideo_title("");
                     orderRunning.setOrder_key(videoId);
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("likeCount").toString()));
@@ -569,7 +571,7 @@ public class ApiController {
                 resp.put("error", "Can't get video info");
                 return resp;
             }
-            int start_Count =GoogleApi.getCountSubcriber(channelId);
+            int start_Count =GoogleApi.getCountSubcriberCurrent(channelId);
             if(videoList.size()==0){
                 resp.put("error", "Can't get video info");
                 return resp;
