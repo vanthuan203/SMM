@@ -16,6 +16,22 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
     @Query(value = "SELECT * from order_history where order_id in (?1)",nativeQuery = true)
     public List<OrderHistory> get_Order_By_ListId(List<String> list_orderid);
 
+
+    @Query(value = "Select o.order_id,o.order_key,o.insert_time,o.start_time,o.end_time,o.cancel,o.note,\n" +
+            "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "s.task from order_history o left join service s on o.service_id=s.service_id where o.order_key in (?1) or o.order_id in (?1)\n" +
+            "group by o.order_id order by o.end_time desc",nativeQuery = true)
+    public List<OrderHistoryShow> get_Order_History_By_Key(List<String> key);
+
+
+    @Query(value = "Select o.order_id,o.order_key,o.insert_time,o.start_time,o.end_time,o.cancel,o.note,\n" +
+            "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "s.task from order_history o left join service s on o.service_id=s.service_id where  (o.order_key in (?1) or o.order_id in (?1)) and o.username=?2 \n" +
+            "group by o.order_id order by o.end_time desc",nativeQuery = true)
+    public List<OrderHistoryShow> get_Order_History_By_Key(List<String> key,String user);
+
     @Query(value = "Select o.order_id,o.order_key,o.insert_time,o.start_time,o.end_time,o.cancel,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +

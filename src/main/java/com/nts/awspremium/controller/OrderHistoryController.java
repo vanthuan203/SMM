@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -51,7 +48,7 @@ public class OrderHistoryController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         User users=userRepository.find_User_By_Token(Authorization.trim());
-        if(Authorization.length()==0|| user==null){
+        if(Authorization.length()==0|| users==null){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -65,6 +62,59 @@ public class OrderHistoryController {
                 orderHistories = orderHistoryRepository.get_Order_History(user.trim());
             }
 
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderHistories.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderHistories.get(i).getOrder_id());
+                obj.put("order_key", orderHistories.get(i).getOrder_key());
+                obj.put("insert_time", orderHistories.get(i).getInsert_time());
+                obj.put("start_time", orderHistories.get(i).getStart_time());
+                obj.put("end_time", orderHistories.get(i).getEnd_time());
+                obj.put("cancel", orderHistories.get(i).getCancel());
+                obj.put("update_time", orderHistories.get(i).getUpdate_time());
+                obj.put("start_count", orderHistories.get(i).getStart_count());
+                obj.put("check_count", orderHistories.get(i).getCheck_count());
+                obj.put("current_count", orderHistories.get(i).getCurrent_count());
+                obj.put("total", orderHistories.get(i).getTotal());
+                obj.put("quantity", orderHistories.get(i).getQuantity());
+                obj.put("note", orderHistories.get(i).getNote());
+                obj.put("service_id", orderHistories.get(i).getService_id());
+                obj.put("username", orderHistories.get(i).getUsername());
+                obj.put("charge", orderHistories.get(i).getCharge());
+                obj.put("task", orderHistories.get(i).getTask());
+                obj.put("platform", orderHistories.get(i).getPlatform());
+                jsonArray.add(obj);
+            }
+
+            resp.put("total", orderHistories.size());
+            resp.put("order_history", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "find_Order_History", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> find_Order_History(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String order_key) {
+        JSONObject resp = new JSONObject();
+        User user=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0|| user==null){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<String> ordersArrInput = new ArrayList<>();
+            ordersArrInput.addAll(Arrays.asList(order_key.split(",")));
+            List<OrderHistoryShow> orderHistories;
+            if(user.getRole().equals("ROLE_USER")){
+                orderHistories = orderHistoryRepository.get_Order_History_By_Key(ordersArrInput);
+            }else{
+                orderHistories = orderHistoryRepository.get_Order_History_By_Key(ordersArrInput,user.getUsername().trim());
+            }
             JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < orderHistories.size(); i++) {
