@@ -1,11 +1,20 @@
 package com.nts.awspremium;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import okhttp3.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.*;
 import java.net.Authenticator;
 import java.util.Random;
@@ -134,6 +143,42 @@ public class TikTokApi {
         if (m.find()) {
             return "@" + m.group(1);
         } else {
+            return null;
+        }
+    }
+    public static String checkTiktokTrue(String url) {
+        try {
+            // Kết nối tới trang YouTube và lấy nội dung trang
+            Document doc = Jsoup.connect(url).get();
+            // Tìm tất cả các thẻ <script> chứa đoạn JSON
+            Elements scriptElements = doc.select("script");
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                System.out.println(scriptContent);
+                if (scriptContent.contains("responseContext")) {
+                    // Lấy phần JSON trong nội dung của thẻ script
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    //System.out.println(jsonString);
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
+                    System.out.println(jsonElement11);
+                    String id = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("title").toString().replace("\"","");
+                    String chann = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("externalId").toString().replace("\"","");
+                    return id+","+chann;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
             return null;
         }
     }

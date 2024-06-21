@@ -563,18 +563,20 @@ public class ApiController {
                 resp.put("error", "Cant filter channel from link");
                 return resp;
             }
-            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(channelId.trim(),service.getTask()) > 0) {
+            String title=channelId.split(",")[0];
+            String uId=channelId.split(",")[1];
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uId.trim(),service.getTask()) > 0) {
                 resp.put("error", "This channel in process");
                 return resp;
             }
-            List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+channelId+"/videos");
-            if(videoList.size()==0){
+            List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
+            if(videoList.size()<3){
                 resp.put("error", "Can't get video info");
                 return resp;
             }
-            int start_Count =GoogleApi.getCountSubcriberCurrent(channelId);
-            if(videoList.size()==0){
-                resp.put("error", "Can't get video info");
+            int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
+            if(start_Count==-2){
+                resp.put("error", "Can't get SubcriberCurrent");
                 return resp;
             }
             float priceorder = 0;
@@ -599,9 +601,10 @@ public class ApiController {
             orderRunning.setUpdate_time(0L);
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setUser(user);
-            orderRunning.setChannel_id("");
+            orderRunning.setChannel_id(uId);
+            orderRunning.setChannel_title(title);
             orderRunning.setVideo_title("");
-            orderRunning.setOrder_key(channelId);
+            orderRunning.setOrder_key(uId);
             orderRunning.setStart_count(start_Count);
             orderRunning.setCurrent_count(0);
             ////////////////
@@ -659,8 +662,17 @@ public class ApiController {
                 resp.put("error", "This Tiktok_Id in process");
                 return resp;
             }
-            Integer follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1]);
-            if(follower_count==-100){
+            Integer follower_count=-2;
+            int check=0;
+            while(follower_count==-2){
+                check=check+1;
+                follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1]);
+                if(check>2){
+                    break;
+                }
+
+            }
+            if(follower_count==-2){
                 resp.put("error", "This account cannot be found");
                 return resp;
             }

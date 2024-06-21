@@ -6,9 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.nts.awspremium.controller.GoogleKeyController;
-import com.nts.awspremium.repositories.GoogleKeyRepository;
 import okhttp3.*;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,14 +16,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.*;
+import java.net.Authenticator;
+import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -224,33 +225,38 @@ public class GoogleApi {
         try {
             // Kết nối tới trang YouTube và lấy nội dung trang
             Document doc = Jsoup.connect(channelUrl).get();
-
             // Tìm tất cả các thẻ <script> chứa đoạn JSON
             Elements scriptElements = doc.select("script");
             for (Element scriptElement : scriptElements) {
                 String scriptContent = scriptElement.html();
-                if (scriptContent.contains("channelId")) {
+                if (scriptContent.contains("responseContext")) {
                     // Lấy phần JSON trong nội dung của thẻ script
                     int startIndex = scriptContent.indexOf("{");
                     int endIndex = scriptContent.lastIndexOf("}") + 1;
                     String jsonString = scriptContent.substring(startIndex, endIndex);
-                    // Phân tích cú pháp JSON và trích xuất videoId
+                    //System.out.println(jsonString);
                     JsonReader reader = new JsonReader(new StringReader(jsonString));
                     reader.setLenient(true);
                     JsonElement jsonElement = JsonParser.parseReader(reader);
                     JsonObject jsonObject =  jsonElement.getAsJsonObject();
-                    //System.out.println(jsonObject);
-                    String id = jsonObject.getAsJsonObject("header")
-                            .getAsJsonObject("c4TabbedHeaderRenderer")
-                            .get("channelId").toString().replace("\"","");
-                    return id;
+                    JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
+                    System.out.println(jsonElement11);
+                    String id = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("title").toString().replace("\"","");
+                    String chann = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("externalId").toString().replace("\"","");
+                    return id+","+chann;
                 }
             }
             return null;
         } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
             return null;
         }
     }
+
     public static List<String> getVideoLinks(String channelUrl) {
         List<String> videoList = new ArrayList<>();
 

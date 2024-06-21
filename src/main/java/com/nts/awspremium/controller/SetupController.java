@@ -291,7 +291,7 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            String stringList=GoogleApi.getChannelId("https://www.youtube.com/@22again-thinhtamuong78/");
+            String stringList=TikTokApi.checkTiktokTrue("https://www.tiktok.com/@constancefgfgfgfgfffffperez19785?lang=vi-VN");
             resp.put("status", true);
             data.put("task", "create_profile");
             data.put("profile_id", stringList);
