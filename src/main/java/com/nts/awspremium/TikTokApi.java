@@ -93,7 +93,6 @@ public class TikTokApi {
                 if(jsonObject.get("followerCount")==null){
                     return -2;
                 }
-                System.out.println(jsonObject.get("followerCount"));
                 return Integer.parseInt(jsonObject.get("followerCount").toString());
             }
 

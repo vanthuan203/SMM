@@ -169,6 +169,8 @@ public class TaskController {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("task_key", orderRunning.getOrder_key());
+                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_title", orderRunning.getChannel_title());
 
 
                 if(service.getService_type().trim().equals("Special")){
@@ -238,8 +240,9 @@ public class TaskController {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
-
-                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_key());
+                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_title", orderRunning.getChannel_title());
+                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
                 data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("keyword", dataSubscriber.getVideo_title());
                 if (service.getMin_time() != service.getMax_time()) {
@@ -299,6 +302,8 @@ public class TaskController {
                 data.put("task", service.getTask());
                 data.put("task_key", orderRunning.getOrder_key());
                 data.put("keyword", orderRunning.getVideo_title());
+                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_title", orderRunning.getChannel_title());
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
                         data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
@@ -833,6 +838,8 @@ public class TaskController {
                     get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
                     get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("youtube_subscriber")){
+                    get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
@@ -1659,16 +1666,6 @@ public class TaskController {
                 data.put("message", "task không để trống");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }else {
-                if (task.equals("activity")) {
-                    if (status == true) {
-                        //////////////////
-                    } else {
-                        resp.put("status", "true");
-                        data.put("message", "Update activity thành công");
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
-                    }
-                }
             }
             if (platform.length() == 0) {
                 resp.put("status", false);

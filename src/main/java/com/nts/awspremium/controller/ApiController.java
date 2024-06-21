@@ -458,7 +458,7 @@ public class ApiController {
             Request request1 = null;
             Iterator k = null;
             String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(snippet(title,channelId,channelTitle),statistics(likeCount))&part=statistics&id=" + videoId).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,channelTitle),statistics(likeCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -479,22 +479,23 @@ public class ApiController {
                 try {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject snippet = (JSONObject) video.get("snippet");
+                    JSONObject contentDetails = (JSONObject) video.get("contentDetails");
+                    JSONObject statistics = (JSONObject) video.get("statistics");
                     float priceorder = 0;
                     priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
                     if (priceorder > (float) user.getBalance()) {
                         resp.put("error", "Your balance not enough");
                         return resp;
                     }
-                    JSONObject statistics = (JSONObject) video.get("statistics");
                     OrderRunning orderRunning = new OrderRunning();
                     int thread=(int)(data.getQuantity()/1000)*service.getThread();
                     if(thread<2){
-                        orderRunning.setThread(2);
+                        orderRunning.setThread(5);
                     }else{
                         orderRunning.setThread(thread);
                     }
                     orderRunning.setThread_set(0);
-                    orderRunning.setDuration(0L);
+                    orderRunning.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                     orderRunning.setInsert_time(System.currentTimeMillis());
                     orderRunning.setStart_time(System.currentTimeMillis());
                     orderRunning.setTotal(0);
@@ -503,7 +504,7 @@ public class ApiController {
                     orderRunning.setUser(user);
                     orderRunning.setChannel_id(snippet.get("channelId").toString());
                     orderRunning.setChannel_title(snippet.get("channelTitle").toString());
-                    orderRunning.setVideo_title("");
+                    orderRunning.setVideo_title(snippet.get("title").toString());
                     orderRunning.setOrder_key(videoId);
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("likeCount").toString()));
                     ////////////////
@@ -813,8 +814,8 @@ public class ApiController {
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(0L);
-            orderRunning.setThread(0);
+            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("comments").toString())<0?0:System.currentTimeMillis());
+            orderRunning.setThread(Integer.parseInt(videoInfo.get("comments").toString())<0?0:service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);
@@ -879,8 +880,8 @@ public class ApiController {
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(0L);
-            orderRunning.setThread(0);
+            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("plays").toString())<0?0:System.currentTimeMillis());
+            orderRunning.setThread(Integer.parseInt(videoInfo.get("plays").toString())<0?0:service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);

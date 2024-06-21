@@ -7,11 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Entity
 @Table(name = "service")
-public class Service {
+public class Service implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     private Integer service_id;
     @Column(columnDefinition = "varchar(255) default ''")

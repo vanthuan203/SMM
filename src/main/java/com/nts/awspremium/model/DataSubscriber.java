@@ -13,7 +13,7 @@ public class DataSubscriber {
     @Id
     private String video_id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_key",referencedColumnName = "order_key",updatable = true,insertable = true)
+    @JoinColumn(name = "order_id",referencedColumnName = "order_id",updatable = true,insertable = true)
     private OrderRunning orderRunning;
     @Column(columnDefinition = "varchar(555) default ''")
     private String video_title;
