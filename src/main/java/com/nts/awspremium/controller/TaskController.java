@@ -1447,8 +1447,8 @@ public class TaskController {
     }
 
 
-    @GetMapping(value = "getTaskTEST", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getTaskTEST(@RequestHeader(defaultValue = "") String Authorization,
+    @GetMapping(value = "getTask001", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getTask001(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String account_id,
                                                    @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
