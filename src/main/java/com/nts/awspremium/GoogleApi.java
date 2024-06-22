@@ -84,7 +84,7 @@ public class GoogleApi {
             Random ran = new Random();
             Request request = null;
             Iterator k = null;
-            request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key.trim()+"&fields=items(statistics(likeCount))&part=statistics&id=" + order_key).get().build();
+            request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/channels?key="+key.trim()+"&fields=items(statistics(subscriberCount))&part=statistics&id=" + order_key).get().build();
             Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 String resultJson1 = response.body().string();
@@ -100,7 +100,7 @@ public class GoogleApi {
                 }
                 JSONObject video = (JSONObject) k.next();
                 JSONObject statistics = (JSONObject) video.get("statistics");
-                return Integer.parseInt(statistics.get("likeCount").toString());
+                return Integer.parseInt(statistics.get("subscriberCount").toString());
             }else{
                 return -2;
             }

@@ -61,6 +61,252 @@ public class OrderHistoryController {
             } else {
                 orderHistories = orderHistoryRepository.get_Order_History(user.trim());
             }
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderHistories.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderHistories.get(i).getOrder_id());
+                obj.put("order_key", orderHistories.get(i).getOrder_key());
+                obj.put("insert_time", orderHistories.get(i).getInsert_time());
+                obj.put("start_time", orderHistories.get(i).getStart_time());
+                obj.put("end_time", orderHistories.get(i).getEnd_time());
+                obj.put("cancel", orderHistories.get(i).getCancel());
+                obj.put("update_time", orderHistories.get(i).getUpdate_time());
+                obj.put("start_count", orderHistories.get(i).getStart_count());
+                obj.put("check_count", orderHistories.get(i).getCheck_count());
+                obj.put("current_count", orderHistories.get(i).getCurrent_count());
+                obj.put("total", orderHistories.get(i).getTotal());
+                obj.put("quantity", orderHistories.get(i).getQuantity());
+                obj.put("note", orderHistories.get(i).getNote());
+                obj.put("service_id", orderHistories.get(i).getService_id());
+                obj.put("username", orderHistories.get(i).getUsername());
+                obj.put("charge", orderHistories.get(i).getCharge());
+                obj.put("task", orderHistories.get(i).getTask());
+                obj.put("platform", orderHistories.get(i).getPlatform());
+                jsonArray.add(obj);
+            }
+
+            resp.put("total", orderHistories.size());
+            resp.put("order_history", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(path = "refund", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> refund(@RequestHeader(defaultValue = "") String Authorization,
+                                  @RequestParam(defaultValue = "") String order_id,
+                                  @RequestParam(defaultValue = "true") Boolean check_current,
+                                  @RequestParam(defaultValue = "true") Boolean check_end_time) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0|| users==null){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            String[] orders = order_id.split(",");
+            JSONArray jsonArray = new JSONArray();
+            for(int i=0;i<orders.length;i++){
+                String status="✔ Không hoàn tiền";
+                OrderHistory orderHistory=orderHistoryRepository.get_Order_By_Id(Long.parseLong(orders[i].trim()));
+                if(orderHistory==null){
+                    continue;
+                }
+                orderHistory.setUpdate_time(System.currentTimeMillis());
+                orderHistoryRepository.save(orderHistory);
+                if(orderHistory.getService().getRefund()==0){
+                    status="✘ DV không bảo hành";
+                }else if(orderHistory.getCancel()==1){
+                    if(orderHistory.getRefund()>0){
+                            status="✘ Hoàn 100% trước đó";
+                        }else{
+                            status="✘ Hủy trước đó";
+                    }
+                }else if(orderRunningRepository.get_Order_By_Order_Key_And_Task(orderHistory.getOrder_key(),orderHistory.getService().getTask())>0){
+                    status="✘ Đơn mới đang chạy";
+                } else if(orderHistory.getService().getRefund_time()<((System.currentTimeMillis()-orderHistory.getEnd_time())/1000/60/60/24)){
+                    status="✘ Hết hạn bảo hành";
+                }else if(check_end_time==true&&((System.currentTimeMillis()-orderHistory.getEnd_time())/1000/60/60)<orderHistory.getService().getCheck_end_time()){
+                    status="✘ Hoàn thành <"+orderHistory.getService().getCheck_end_time()+"h";
+                }else if(check_current==false){
+                    Float charge_Refund=orderHistory.getCharge();
+                    int quantity_Refund=orderHistory.getQuantity();
+                    status="✔ Hoàn "+quantity_Refund+" "+orderHistory.getService().getTask();
+                    orderHistory.setTotal(0);
+                    orderHistory.setCancel(1);
+                    orderHistory.setCharge(0F);
+                    orderHistory.setRefund(1);
+                    orderHistory.setRefund_time(System.currentTimeMillis());
+                    orderHistoryRepository.save(orderHistory);
+                    ///////////////////////
+                    Float balance_update=balanceRepository.update_Balance(charge_Refund,orderHistory.getUser().getUsername().trim());
+                    Balance balance = new Balance();
+                    balance.setUser(orderHistory.getUser().getUsername().trim());
+                    balance.setAdd_time(System.currentTimeMillis());
+                    balance.setTotal_blance(balance_update);
+                    balance.setBalance(charge_Refund);
+                    balance.setService(orderHistory.getService().getService_id());
+                    balance.setNote("Refund " + quantity_Refund+" " +orderHistory.getService().getTask()+ " for Id "+ orderHistory.getOrder_id());
+                    balanceRepository.save(balance);
+                }else{
+                    int current_Count=0;
+                    if(orderHistory.getService().getPlatform().equals("youtube")){
+                        if(orderHistory.getService().getTask().equals("view")){
+                            current_Count=GoogleApi.getCountView(orderHistory.getOrder_key(),get_key());
+                        }else if(orderHistory.getService().getTask().equals("like")){
+                            current_Count=GoogleApi.getCountLike(orderHistory.getOrder_key(),get_key());
+                        }else if(orderHistory.getService().getTask().equals("subscriber")){
+                            current_Count=GoogleApi.getCountSubcriber(orderHistory.getOrder_key(),get_key());
+                        }
+                        if(current_Count>=0){
+                            int quantity=orderHistory.getQuantity()>orderHistory.getTotal()?orderHistory.getTotal():orderHistory.getQuantity();
+                            System.out.println(quantity);
+                            int count_Sum=quantity+orderHistory.getStart_count();
+                            int quantity_Refund= count_Sum-current_Count ;
+                            if(quantity_Refund<=0){
+                                orderHistory.setCurrent_count(current_Count);
+                                status="✘ Đủ "+orderHistory.getService().getTask()+" | "+current_Count+"/"+count_Sum;
+                            }else{
+                                if(quantity_Refund>quantity){
+                                    quantity_Refund=quantity;
+                                }
+                                status="✔ Hoàn "+quantity_Refund+" "+orderHistory.getService().getTask();
+
+                                Float charge_Refund= (Math.round((((quantity_Refund)/(float)quantity)*orderHistory.getCharge()) * 1000000f) / 1000000f);
+                                int total=quantity-quantity_Refund;
+                                orderHistory.setTotal(total<=0?0:total);
+                                orderHistory.setCancel(total<=0?1:2);
+                                orderHistory.setCharge(Math.round((orderHistory.getCharge()-charge_Refund) * 1000000f) / 1000000f);
+                                orderHistory.setRefund(1);
+                                orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setRefund_time(System.currentTimeMillis());
+                                orderHistoryRepository.save(orderHistory);
+
+                                Float balance_update=balanceRepository.update_Balance(charge_Refund,orderHistory.getUser().getUsername().trim());
+                                Balance balance = new Balance();
+                                balance.setUser(orderHistory.getUser().getUsername().trim());
+                                balance.setAdd_time(System.currentTimeMillis());
+                                balance.setTotal_blance(balance_update);
+                                balance.setBalance(charge_Refund);
+                                balance.setService(orderHistory.getService().getService_id());
+                                balance.setNote("Refund " + quantity_Refund+" " +orderHistory.getService().getTask()+ " for Id "+ orderHistory.getOrder_id());
+                                balanceRepository.save(balance);
+                            }
+                        }else{
+                            status="✘ Lỗi check Current Count";
+                        }
+                    }else if(orderHistory.getService().getPlatform().equals("tiktok")){
+                        JSONObject videoInfo;
+                        if(orderHistory.getService().getTask().equals("follower")){
+                            current_Count=TikTokApi.getFollowerCount(orderHistory.getOrder_key().replace("@",""));
+                        }else if(orderHistory.getService().getTask().equals("like")){
+                            current_Count=TikTokApi.getCountLike(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("view")){
+                            current_Count=TikTokApi.getCountView(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("comment")){
+                            current_Count=TikTokApi.getCountComment(orderHistory.getOrder_key());
+                        }
+                        if(current_Count>=0){
+                            int quantity=orderHistory.getQuantity()>orderHistory.getTotal()?orderHistory.getTotal():orderHistory.getQuantity();
+                            System.out.println(quantity);
+                            int count_Sum=quantity+orderHistory.getStart_count();
+                            int quantity_Refund= count_Sum-current_Count ;
+                            if(quantity_Refund<=0){
+                                orderHistory.setCurrent_count(current_Count);
+                                status="✘ Đủ "+orderHistory.getService().getTask()+" | "+current_Count+"/"+count_Sum;
+                            }else{
+                                if(quantity_Refund>quantity){
+                                    quantity_Refund=quantity;
+                                }
+                                status="✔ Hoàn "+quantity_Refund+" "+orderHistory.getService().getTask();
+
+                                Float charge_Refund= (Math.round((((quantity_Refund)/(float)quantity)*orderHistory.getCharge()) * 1000000f) / 1000000f);
+                                int total=quantity-quantity_Refund;
+                                orderHistory.setTotal(total<=0?0:total);
+                                orderHistory.setCancel(total<=0?1:2);
+                                orderHistory.setCharge(Math.round((orderHistory.getCharge()-charge_Refund) * 1000000f) / 1000000f);
+                                orderHistory.setRefund(1);
+                                orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setRefund_time(System.currentTimeMillis());
+                                orderHistoryRepository.save(orderHistory);
+
+                                Float balance_update=balanceRepository.update_Balance(charge_Refund,orderHistory.getUser().getUsername().trim());
+                                Balance balance = new Balance();
+                                balance.setUser(orderHistory.getUser().getUsername().trim());
+                                balance.setAdd_time(System.currentTimeMillis());
+                                balance.setTotal_blance(balance_update);
+                                balance.setBalance(charge_Refund);
+                                balance.setService(orderHistory.getService().getService_id());
+                                balance.setNote("Refund " + quantity_Refund+" " +orderHistory.getService().getTask()+ " for Id "+ orderHistory.getOrder_id());
+                                balanceRepository.save(balance);
+                            }
+                        }else{
+                            status="✘ Lỗi check Current Count";
+                        }
+                    }
+                }
+                OrderHistoryShow orderHistoryShow =orderHistoryRepository.get_Order_History(orderHistory.getOrder_id());
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderHistoryShow.getOrder_id());
+                obj.put("order_key", orderHistoryShow.getOrder_key());
+                obj.put("insert_time", orderHistoryShow.getInsert_time());
+                obj.put("start_time", orderHistoryShow.getStart_time());
+                obj.put("end_time", orderHistoryShow.getEnd_time());
+                obj.put("cancel", orderHistoryShow.getCancel());
+                obj.put("update_time", orderHistoryShow.getUpdate_time());
+                obj.put("start_count", orderHistoryShow.getStart_count());
+                obj.put("check_count", orderHistoryShow.getCheck_count());
+                obj.put("current_count", orderHistoryShow.getCurrent_count());
+                obj.put("total", orderHistoryShow.getTotal());
+                obj.put("quantity", orderHistoryShow.getQuantity());
+                obj.put("note", orderHistoryShow.getNote());
+                obj.put("service_id", orderHistoryShow.getService_id());
+                obj.put("username", orderHistoryShow.getUsername());
+                obj.put("charge", orderHistoryShow.getCharge());
+                obj.put("task", orderHistoryShow.getTask());
+                obj.put("platform", orderHistoryShow.getPlatform());
+                obj.put("status", status);
+                jsonArray.add(obj);
+
+            }
+            resp.put("order_history", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "refill", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> refill(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0|| users==null){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<OrderHistoryShow> orderHistories;
+            if (user.length() == 0) {
+                orderHistories = orderHistoryRepository.get_Order_History();
+
+            } else {
+                orderHistories = orderHistoryRepository.get_Order_History(user.trim());
+            }
 
             JSONArray jsonArray = new JSONArray();
 

@@ -64,6 +64,8 @@ public class Service implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer check_time;
     @Column(columnDefinition = "integer default 0")
+    private Integer check_end_time;
+    @Column(columnDefinition = "integer default 0")
     private Integer expired=0;
     @Column(columnDefinition = "integer default 0")
     private Integer youtube_niche;

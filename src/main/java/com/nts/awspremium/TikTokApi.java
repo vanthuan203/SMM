@@ -90,7 +90,7 @@ public class TikTokApi {
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("sec_uid")==null){
-                return -2;
+                return getFollowerCount(tiktok_id);
             }else{
                 request = new Request.Builder().url("https://countik.com/api/userinfo?sec_user_id=" + jsonObject.get("sec_uid").toString()).get().build();
 
@@ -134,6 +134,91 @@ public class TikTokApi {
             JSONObject resp=new JSONObject();
             resp.put("status","error");
             return resp;
+        }
+    }
+
+    public static Integer getCountLike(String video_id) {
+
+        try {
+            JSONObject json = new JSONObject();
+            String link="https://www.tiktok.com/video/"+video_id;
+            json.put("url", link);
+            // Convert JSON object to RequestBody
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, String.valueOf(json));
+            Request request = new Request.Builder()
+                    .url("https://countik.com/api/video/exist")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            if(jsonObject.get("status").toString().equals("error")){
+                return -2;
+            }else{
+                return Integer.parseInt(jsonObject.get("likes").toString());
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+    }
+    public static Integer getCountView(String video_id) {
+
+        try {
+            JSONObject json = new JSONObject();
+            String link="https://www.tiktok.com/video/"+video_id;
+            json.put("url", link);
+            // Convert JSON object to RequestBody
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, String.valueOf(json));
+            Request request = new Request.Builder()
+                    .url("https://countik.com/api/video/exist")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            if(jsonObject.get("status").toString().equals("error")){
+                return -2;
+            }else{
+                return Integer.parseInt(jsonObject.get("plays").toString());
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+    }
+    public static Integer getCountComment(String video_id) {
+
+        try {
+            JSONObject json = new JSONObject();
+            String link="https://www.tiktok.com/video/"+video_id;
+            json.put("url", link);
+            // Convert JSON object to RequestBody
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("application/json");
+            RequestBody body = RequestBody.create(mediaType, String.valueOf(json));
+            Request request = new Request.Builder()
+                    .url("https://countik.com/api/video/exist")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            if(jsonObject.get("status").toString().equals("error")){
+                return -2;
+            }else{
+                return Integer.parseInt(jsonObject.get("comments").toString());
+            }
+        } catch (Exception e) {
+            return -2;
         }
     }
     public static String getTiktokId(String url) {

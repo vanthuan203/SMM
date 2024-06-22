@@ -380,9 +380,10 @@ public class OrderRunningController {
                     User user=userRepository.find_User_By_Token(Authorization.trim());
                     int remains = orderRunning.getQuantity() - (orderRunning.getTotal() > orderRunning.getQuantity() ? orderRunning.getQuantity() : orderRunning.getTotal());
                     //System.out.println(videoBuffh.get(0).getViewtotal() > videoBuffh.get(0).getVieworder() ? videoBuffh.get(0).getVieworder() : videoBuffh.get(0).getViewtotal());
-                    float price_Refund = (remains / (float) orderRunning.getQuantity()) * orderRunning.getCharge();
+                    float price_Refund = (Math.round(((remains / (float) orderRunning.getQuantity()) * orderRunning.getCharge()) * 1000000f) / 1000000f);
                     float price_Buff = (orderRunning.getCharge() - price_Refund);
-                    orderHistory.setCharge(price_Buff);
+
+                    orderHistory.setCharge(Math.round(price_Buff * 1000000f) / 1000000f);
                     if (orderRunning.getTotal() == 0) {
                         orderHistory.setCancel(1);
                     } else if (remains<=0) {

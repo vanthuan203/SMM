@@ -738,8 +738,8 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
-            if(videoInfo.get("status").toString().equals("error")){
+            Integer like_count=-TikTokApi.getCountLike(video_id.trim());
+            if(like_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
@@ -753,13 +753,13 @@ public class ApiController {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("likes").toString()));
+            orderRunning.setStart_count(like_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("likes").toString())<0?0:System.currentTimeMillis());
-            orderRunning.setThread(Integer.parseInt(videoInfo.get("likes").toString())<0?0:service.getThread());
+            orderRunning.setStart_time(System.currentTimeMillis());
+            orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);
@@ -805,8 +805,8 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
-            if(videoInfo.get("status").toString().equals("error")){
+            Integer comment_count=-TikTokApi.getCountComment(video_id.trim());
+            if(comment_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
@@ -821,13 +821,13 @@ public class ApiController {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setComment_list(data.getList());
-            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("comments").toString()));
+            orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("comments").toString())<0?0:System.currentTimeMillis());
-            orderRunning.setThread(Integer.parseInt(videoInfo.get("comments").toString())<0?0:service.getThread());
+            orderRunning.setStart_time(System.currentTimeMillis());
+            orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);
@@ -872,8 +872,8 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            JSONObject videoInfo=TikTokApi.getInfoVideoTikTok(video_id.trim());
-            if(videoInfo.get("status").toString().equals("error")){
+            Integer view_count=-TikTokApi.getCountView(video_id.trim());
+            if(view_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
@@ -887,13 +887,13 @@ public class ApiController {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setStart_count(Integer.parseInt(videoInfo.get("plays").toString()));
+            orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(Integer.parseInt(videoInfo.get("plays").toString())<0?0:System.currentTimeMillis());
-            orderRunning.setThread(Integer.parseInt(videoInfo.get("plays").toString())<0?0:service.getThread());
+            orderRunning.setStart_time(System.currentTimeMillis());
+            orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setNote("");
             orderRunning.setCharge(priceorder);
