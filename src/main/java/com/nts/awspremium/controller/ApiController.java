@@ -738,7 +738,7 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            Integer like_count=-TikTokApi.getCountLike(video_id.trim());
+            Integer like_count=TikTokApi.getCountLike(video_id.trim());
             if(like_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
@@ -805,7 +805,7 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            Integer comment_count=-TikTokApi.getCountComment(video_id.trim());
+            Integer comment_count=TikTokApi.getCountComment(video_id.trim());
             if(comment_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
@@ -872,7 +872,7 @@ public class ApiController {
                 resp.put("error", "This video in process");
                 return resp;
             }
-            Integer view_count=-TikTokApi.getCountView(video_id.trim());
+            Integer view_count=TikTokApi.getCountView(video_id.trim());
             if(view_count==-2){
                 resp.put("error", "This video cannot be found");
                 return resp;
