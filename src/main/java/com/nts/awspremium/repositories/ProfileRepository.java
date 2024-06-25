@@ -5,7 +5,11 @@ import com.nts.awspremium.model.Box;
 import com.nts.awspremium.model.Device;
 import com.nts.awspremium.model.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import javax.transaction.Transactional;
+
 public interface ProfileRepository extends JpaRepository<Profile,String> {
 
     @Query(value = "Select barcode from profile where profile_id=?1 limit 1",nativeQuery = true)
@@ -27,10 +31,15 @@ public interface ProfileRepository extends JpaRepository<Profile,String> {
     @Query(value = "Select * from profile where num_account<(SELECT max_acc FROM Data.setting_system) and device_id=?1 order by update_time asc limit 1",nativeQuery = true)
     public Profile get_Profile_Get_Account_By_DeviceId(String device_id);
 
-    @Query(value = "Select * from profile where num_account>0 and device_id=?1 order by update_time asc limit 1",nativeQuery = true)
+    @Query(value = "Select * from profile where  device_id=?1 order by update_time asc limit 1",nativeQuery = true)
     public Profile get_Profile_Get_Task(String device_id);
 
     @Query(value = "Select count(*) from profile where profile_id=?1 limit 1",nativeQuery = true)
     public Integer count_ProfileId(String profile_id);
+    @Modifying
+    @Transactional
+    @Query(value = "update profile set num_account=IF(num_account>0, num_account-1, 0) where profile_id=?1",nativeQuery = true)
+    public Integer reset_Num_Account_By_ProfileId(String profile_id);
+
 
 }

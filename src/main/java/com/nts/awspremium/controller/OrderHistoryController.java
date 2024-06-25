@@ -83,6 +83,7 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistories.get(i).getCharge());
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
+                obj.put("bonus", orderHistories.get(i).getBonus());
                 jsonArray.add(obj);
             }
 
@@ -270,6 +271,7 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistoryShow.getCharge());
                 obj.put("task", orderHistoryShow.getTask());
                 obj.put("platform", orderHistoryShow.getPlatform());
+                obj.put("bouns", orderHistoryShow.getBonus());
                 obj.put("status", status);
                 jsonArray.add(obj);
 
@@ -330,6 +332,7 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistories.get(i).getCharge());
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
+                obj.put("bonus", orderHistories.get(i).getBonus());
                 jsonArray.add(obj);
             }
 
@@ -383,6 +386,7 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistories.get(i).getCharge());
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
+                obj.put("bonus", orderHistories.get(i).getBonus());
                 jsonArray.add(obj);
             }
 

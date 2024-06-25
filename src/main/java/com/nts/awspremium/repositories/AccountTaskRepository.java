@@ -42,6 +42,26 @@ public interface AccountTaskRepository extends JpaRepository<AccountTask,String>
     @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0 where device_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_DeviceId(String device_id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>30",nativeQuery = true)
+    public Integer reset_Task_Error();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account_task SET running=0 where profile_id=?1",nativeQuery = true)
+    public Integer reset_Task_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE account_task SET running=0 where device_id=?1",nativeQuery = true)
+    public Integer reset_Task_By_DeviceId(String device_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete account_task where account_id=?1",nativeQuery = true)
+    public Integer delete_Account_By_AccountId(String account_id);
+
     @Query(value = "SELECT * FROM account_task where account_id=?1 limit 1",nativeQuery = true)
     public AccountTask get_Account_By_Account_id(String account_id);
     @Query(value = "SELECT * FROM account_task where task_index>0 and device_id=?1 limit 1",nativeQuery = true)

@@ -141,7 +141,7 @@ public class TikTokApi {
 
         try {
             JSONObject json = new JSONObject();
-            String link="https://www.tiktok.com/video/"+video_id;
+            String link="https://www.tiktok.com/@/video/"+video_id;
             json.put("url", link);
             // Convert JSON object to RequestBody
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -169,7 +169,7 @@ public class TikTokApi {
 
         try {
             JSONObject json = new JSONObject();
-            String link="https://www.tiktok.com/video/"+video_id;
+            String link="https://www.tiktok.com/@/video/"+video_id;
             json.put("url", link);
             // Convert JSON object to RequestBody
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -197,7 +197,7 @@ public class TikTokApi {
 
         try {
             JSONObject json = new JSONObject();
-            String link="https://www.tiktok.com/video/"+video_id;
+            String link="https://www.tiktok.com/@/video/"+video_id;
             json.put("url", link);
             // Convert JSON object to RequestBody
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();

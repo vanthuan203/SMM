@@ -19,5 +19,6 @@ public interface OrderRunningShow {
     Integer getCurrent_count();
     String getPlatform();
     String getTask();
+    Integer getBonus();
 
 }

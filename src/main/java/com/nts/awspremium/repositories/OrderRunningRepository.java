@@ -2,6 +2,8 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.OrderRunning;
 import com.nts.awspremium.model.OrderRunningShow;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -54,7 +56,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time>0 \n" +
@@ -64,7 +66,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,0 as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
@@ -73,7 +75,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,0 as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
@@ -82,7 +84,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,\n" +
+            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time>0 \n" +

@@ -9,8 +9,13 @@ import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -86,6 +91,7 @@ public class OrderRunningController {
                 obj.put("charge", orderRunnings.get(i).getCharge());
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
+                obj.put("bonus", orderRunnings.get(i).getBonus());
                 jsonArray.add(obj);
             }
 
@@ -140,6 +146,7 @@ public class OrderRunningController {
                 obj.put("charge", orderRunnings.get(i).getCharge());
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
+                obj.put("bonus", orderRunnings.get(i).getBonus());
                 jsonArray.add(obj);
             }
 

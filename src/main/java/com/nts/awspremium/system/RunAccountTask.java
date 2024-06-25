@@ -1,48 +1,47 @@
 package com.nts.awspremium.system;
 
-import com.nts.awspremium.model_system.MySQLCheck;
+import com.nts.awspremium.controller.OrderRunningController;
+import com.nts.awspremium.controller.TaskController;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.repositories.AccountTaskRepository;
 import com.nts.awspremium.repositories.OrderRunningRepository;
-import com.nts.awspremium.repositories.SettingSystemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Random;
 
 @Component
-public class RunMySQLCheck {
+public class RunAccountTask {
     @Autowired
-    private SettingSystemRepository settingSystemRepository;
+    private AccountTaskRepository accountTaskRepository;
     @Autowired
-    private MySQLCheck mySQLCheck;
+    private TaskController taskController;
     @Autowired
     private Environment env;
     @PostConstruct
     public void init() throws InterruptedException {
         try{
+            if(Integer.parseInt(env.getProperty("server.port"))==8000){
                 new Thread(() -> {
-                    Random rand =new Random();
+                    //Random rand =new Random();
                     while (true) {
                         try {
-                            mySQLCheck.setValue(settingSystemRepository.check_MySQL());
                             try {
-                                Thread.sleep(1000+rand.nextInt(250));
+                                Thread.sleep(60000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-
+                            taskController.resetTaskError();
                         } catch (Exception e) {
                             continue;
                         }
                     }
                 }).start();
+            }
         }catch (Exception e){
 
         }
-
-
 
     }
 }

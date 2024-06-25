@@ -53,7 +53,55 @@ public class AccountController {
     @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
 
-
+    @GetMapping(value = "updateLive", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> updateLive(@RequestHeader(defaultValue = "") String Authorization,
+                                                          @RequestParam(defaultValue = "") String account_id,
+                                                          @RequestParam(defaultValue = "-1") Integer live) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (account_id.length() ==0) {
+                resp.put("status", false);
+                data.put("message", "account_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (live ==-1) {
+                resp.put("status", false);
+                data.put("message", "live không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(live!=1){
+                Account account=accountRepository.get_Account_By_Account_id(account_id.trim());
+                if(account!=null){
+                    account.setLive(live);
+                    account.setRunning(0);
+                    account.setProfile_id("");
+                    account.setDevice_id("");
+                    accountRepository.save(account);
+                    AccountTask accountTask=accountTaskRepository.get_Account_By_Account_id(account_id.trim());
+                    profileRepository.reset_Num_Account_By_ProfileId(accountTask.getProfile().getProfile_id());
+                    accountTaskRepository.delete(accountTask);
+                }
+            }
+            accountTaskRepository.reset_Task_Error();
+            resp.put("status",true);
+            data.put("message", "reset thành công");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping(value = "add_Account", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> add_Account(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestBody Account account) throws InterruptedException {
@@ -101,8 +149,6 @@ public class AccountController {
                     data.put("message", "add account thành công");
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-
-
                 }else{
                     Profile profile_new=new Profile();
                     profile_new.setProfile_id(account.getProfile_id());
