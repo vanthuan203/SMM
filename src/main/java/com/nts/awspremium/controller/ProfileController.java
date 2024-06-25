@@ -2,6 +2,7 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.Device;
 import com.nts.awspremium.model.Profile;
+import com.nts.awspremium.model.ProfileShow;
 import com.nts.awspremium.repositories.DeviceRepository;
 import com.nts.awspremium.repositories.ProfileRepository;
 import org.json.simple.JSONArray;
@@ -34,18 +35,22 @@ public class ProfileController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
 
-                List< Profile> profiles =profileRepository.get_Profile_By_DeviceId(device_id.toString());
+                List<ProfileShow> profiles =profileRepository.get_Profile_By_DeviceId(device_id.toString());
 
             JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < profiles.size(); i++) {
                 JSONObject obj = new JSONObject();
-                obj.put("device_id", profiles.get(i).getDevice().getDevice_id());
+                obj.put("device_id", profiles.get(i).getDevice_id());
                 obj.put("profile_id", profiles.get(i).getProfile_id());
                 obj.put("add_time", profiles.get(i).getAdd_time());
                 obj.put("update_time", profiles.get(i).getUpdate_time());
                 obj.put("num_account", profiles.get(i).getNum_account());
                 obj.put("state", profiles.get(i).getState());
+                obj.put("platform", profiles.get(i).getPlatform());
+                obj.put("task", profiles.get(i).getTask());
+                obj.put("state", profiles.get(i).getState());
+                obj.put("running", profiles.get(i).getRunning());
                 jsonArray.add(obj);
             }
             resp.put("profiles", jsonArray);

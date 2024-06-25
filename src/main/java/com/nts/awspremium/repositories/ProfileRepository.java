@@ -1,9 +1,6 @@
 package com.nts.awspremium.repositories;
 
-import com.nts.awspremium.model.AccountTask;
-import com.nts.awspremium.model.Box;
-import com.nts.awspremium.model.Device;
-import com.nts.awspremium.model.Profile;
+import com.nts.awspremium.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,8 +18,8 @@ public interface ProfileRepository extends JpaRepository<Profile,String> {
     @Query(value = "select count(*) from profile where device_id=?1",nativeQuery = true)
     public Integer check_Profile_By_DeviceId(String device_id);
 
-    @Query(value = "select * from profile where device_id=?1",nativeQuery = true)
-    public List<Profile> get_Profile_By_DeviceId(String device_id);
+    @Query(value = "SELECT p.*,a.running as running,a.get_time,a.platform,a.task FROM profile p  left join account_task a on p.profile_id=a.profile_id and a.running=1 where p.device_id=?1",nativeQuery = true)
+    public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
 
     @Query(value = "Select * from profile where state=-1 order by time_update asc limit 1",nativeQuery = true)
     public Profile find_Profile_Changer_Profile();

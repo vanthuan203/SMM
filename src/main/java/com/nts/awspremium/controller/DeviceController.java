@@ -1,10 +1,7 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Device;
-import com.nts.awspremium.model.OrderRunning;
-import com.nts.awspremium.model.User;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.DeviceRepository;
-import com.nts.awspremium.repositories.UserRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,24 +42,28 @@ public class DeviceController {
                 sortable = Sort.by(sort_type).descending();
             }
             Pageable pageable = PageRequest.of(page, size, sortable);
-            Page<Device> devicePage;
+            Page<DeviceShow> devicePage;
             if(key.length()>0){
                 devicePage=deviceRepository.get_List_Device(pageable,key.trim());
             }else{
                 devicePage=deviceRepository.get_List_Device(pageable);
             }
-            List<Device> deviceList=devicePage.getContent();
+            List<DeviceShow> deviceList=devicePage.getContent();
+            System.out.println(deviceList.get(0).getTask());
             JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
                 obj.put("device_id", deviceList.get(i).getDevice_id());
-                obj.put("box", null);
-
                 obj.put("add_time", deviceList.get(i).getAdd_time());
+                obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
+                obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("platform", deviceList.get(i).getPlatform());
+                obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 jsonArray.add(obj);
             }
