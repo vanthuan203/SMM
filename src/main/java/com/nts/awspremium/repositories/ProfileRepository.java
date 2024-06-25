@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface ProfileRepository extends JpaRepository<Profile,String> {
 
@@ -19,6 +20,9 @@ public interface ProfileRepository extends JpaRepository<Profile,String> {
 
     @Query(value = "select count(*) from profile where device_id=?1",nativeQuery = true)
     public Integer check_Profile_By_DeviceId(String device_id);
+
+    @Query(value = "select * from profile where device_id=?1",nativeQuery = true)
+    public List<Profile> get_Profile_By_DeviceId(String device_id);
 
     @Query(value = "Select * from profile where state=-1 order by time_update asc limit 1",nativeQuery = true)
     public Profile find_Profile_Changer_Profile();
