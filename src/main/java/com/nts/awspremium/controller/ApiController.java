@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -54,7 +55,7 @@ public class ApiController {
     private TikTokFollower24hRepository tikTokFollower24hRepository;
 
     @Autowired
-    private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
+    private LogErrorRepository logErrorRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -214,11 +215,21 @@ public class ApiController {
             return new ResponseEntity<String>(get_task.toJSONString(), HttpStatus.OK);
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "api system error");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -264,11 +275,21 @@ public class ApiController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "api system error");
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
@@ -405,11 +426,21 @@ public class ApiController {
             return resp;
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -506,11 +537,21 @@ public class ApiController {
 
                 }catch (Exception e) {
                     StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-                    System.out.println(stackTraceElement.getMethodName());
-                    System.out.println(stackTraceElement.getLineNumber());
-                    System.out.println(stackTraceElement.getClassName());
-                    System.out.println(stackTraceElement.getFileName());
-                    System.out.println("Error : " + e.getMessage());
+                    LogError logError =new LogError();
+                    logError.setMethod_name(stackTraceElement.getMethodName());
+                    logError.setLine_number(stackTraceElement.getLineNumber());
+                    logError.setClass_name(stackTraceElement.getClassName());
+                    logError.setFile_name(stackTraceElement.getFileName());
+                    logError.setMessage(e.getMessage());
+                    logError.setAdd_time(System.currentTimeMillis());
+                    Date date_time = new Date(System.currentTimeMillis());
+                    // Tạo SimpleDateFormat với múi giờ GMT+7
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                    String formattedDate = sdf.format(date_time);
+                    logError.setDate_time(formattedDate);
+                    logErrorRepository.save(logError);
+
                     resp.put("error", "Cant insert video");
                     return resp;
                 }
@@ -518,11 +559,21 @@ public class ApiController {
             return resp;
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -614,11 +665,21 @@ public class ApiController {
             return resp;
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -690,11 +751,21 @@ public class ApiController {
 
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -757,11 +828,21 @@ public class ApiController {
 
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -824,11 +905,21 @@ public class ApiController {
 
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }
@@ -890,11 +981,21 @@ public class ApiController {
 
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("error", "Cant insert video");
             return resp;
         }

@@ -40,7 +40,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT order_running.order_id,count(*) as total FROM history_sum left join order_running  on history_sum.order_id=order_running.order_id where order_running.start_time>0 group by order_running.order_id order by insert_time desc",nativeQuery = true)
     public List<String> get_Total_Buff_Cron();
 
-    @Query(value = "select o.* from order_running o join service s on o.service_id=s.service_id and s.check_done=0 where o.total>=(o.quantity+o.quantity*s.bonus) order by start_time desc",nativeQuery = true)
+    @Query(value = "select o.* from order_running o join service s on o.service_id=s.service_id and s.check_done=?1 where o.total>=(o.quantity+o.quantity*s.bonus) order by start_time desc",nativeQuery = true)
     public List<OrderRunning> get_Order_Running_Done(Integer check_done);
 
     @Modifying

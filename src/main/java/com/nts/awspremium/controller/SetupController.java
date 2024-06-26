@@ -12,10 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nts.awspremium.controller.GoogleKeyController.*;
@@ -37,6 +35,9 @@ public class SetupController {
     private ProfileRepository profileRepository;
     @Autowired
     private AccountTaskRepository accountTaskRepository;
+
+    @Autowired
+    private LogErrorRepository logErrorRepository;
     @PostMapping(value = "/check_device", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> add_device(@RequestBody JSONObject device_info,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -94,9 +95,23 @@ public class SetupController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
         } catch (Exception e) {
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
@@ -157,14 +172,22 @@ public class SetupController {
             }
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
@@ -213,14 +236,22 @@ public class SetupController {
             }
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
@@ -260,9 +291,23 @@ public class SetupController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
         } catch (Exception e) {
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
@@ -272,16 +317,32 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            List<String> stringList=GoogleApi.getVideoLinks("https://www.youtube.com/channel/UC4WQ4kUYWTqkcetAcD7oYjw/videos");
+            String stringList="f";
+            System.out.println(Integer.parseInt(stringList));
             resp.put("status", true);
             data.put("task", "create_profile");
             data.put("profile_id", stringList);
             resp.put("data", data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
@@ -298,9 +359,24 @@ public class SetupController {
             resp.put("data", data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }

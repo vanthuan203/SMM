@@ -2,6 +2,8 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.DeviceRepository;
+import com.nts.awspremium.repositories.LogErrorRepository;
+import com.nts.awspremium.repositories.UserRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -25,8 +25,13 @@ import java.util.stream.Collectors;
 public class DeviceController {
     @Autowired
     private DeviceRepository deviceRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private LogErrorRepository logErrorRepository;
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> test(@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+    public ResponseEntity<Map<String, Object>> test(@RequestHeader(defaultValue = "") String Authorization,
+                                                    @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                                                     @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
                                                     @RequestParam(name = "sort_type", required = false, defaultValue = "add_time") String sort_type,
                                                     @RequestParam(name = "key", required = false, defaultValue = "") String key,
@@ -34,6 +39,13 @@ public class DeviceController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                data.put("message", "Token expired");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
             Sort sortable = null;
             if (sort.equals("ASC")) {
                 sortable = Sort.by(sort_type).ascending();
@@ -71,14 +83,65 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
 
     }
+
+    @DeleteMapping(value = "delete_Device", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> delete_Order_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        try{
+            String[] device_Arr = device_id.split(",");
+            for (int i=0;i<device_Arr.length;i++) {
+                deviceRepository.delete_Device_By_DeviceId(device_Arr[i].trim());
+            }
+            resp.put("device", "");
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

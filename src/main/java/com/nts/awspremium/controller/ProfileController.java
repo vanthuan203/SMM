@@ -1,10 +1,13 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.model.Device;
+import com.nts.awspremium.model.LogError;
 import com.nts.awspremium.model.Profile;
 import com.nts.awspremium.model.ProfileShow;
 import com.nts.awspremium.repositories.DeviceRepository;
+import com.nts.awspremium.repositories.LogErrorRepository;
 import com.nts.awspremium.repositories.ProfileRepository;
+import com.nts.awspremium.repositories.UserRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -28,14 +29,25 @@ import java.util.stream.Collectors;
 public class ProfileController {
     @Autowired
     private ProfileRepository profileRepository;
+    @Autowired
+    private LogErrorRepository logErrorRepository;
+    @Autowired
+    private UserRepository userRepository;
     @GetMapping(value = "get_List_Profile", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> test(@RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
+    public ResponseEntity<Map<String, Object>> test(@RequestHeader(defaultValue = "") String Authorization,
+                                                    @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
                                                    ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-
-                List<ProfileShow> profiles =profileRepository.get_Profile_By_DeviceId(device_id.toString());
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                data.put("message", "Token expired");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            List<ProfileShow> profiles =profileRepository.get_Profile_By_DeviceId(device_id.toString());
 
             JSONArray jsonArray = new JSONArray();
 
@@ -58,11 +70,21 @@ public class ProfileController {
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
