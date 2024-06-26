@@ -1986,6 +1986,8 @@ public class TaskController {
                     get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                } else if(task.equals("tiktok_view")){
+                    get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
