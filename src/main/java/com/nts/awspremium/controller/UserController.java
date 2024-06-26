@@ -1,12 +1,15 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.GoogleKey;
 import com.nts.awspremium.model.LogError;
 import com.nts.awspremium.model.User;
+import com.nts.awspremium.repositories.BalanceRepository;
 import com.nts.awspremium.repositories.GoogleKeyRepository;
 import com.nts.awspremium.repositories.LogErrorRepository;
 import com.nts.awspremium.repositories.UserRepository;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,8 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private BalanceRepository balanceRepository;
     @PostMapping(path = "login",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> login(@RequestBody User user){
         JSONObject resp=new JSONObject();
@@ -109,7 +114,7 @@ public class UserController {
     ResponseEntity<String> get_List_User(){
         JSONObject resp = new JSONObject();
         try {
-            List<String > all_User=userRepository.get_All_User();
+            List<String > all_User=userRepository.get_All_Username();
             String list_User="";
             for(int i=0;i<all_User.size();i++){
                 if(i==0){
@@ -140,5 +145,116 @@ public class UserController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    @GetMapping(path = "get_List_Users",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_List_Users(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        try{
+            //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+            }
+            JSONArray jsonArray =new JSONArray();
+            List<User> users=userRepository.get_All_User();
+            for(int i=0;i<users.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("username", users.get(i).getUsername());
+                obj.put("role", users.get(i).getRole());
+                obj.put("rate", users.get(i).getRate());
+                obj.put("balance", users.get(i).getBalance());
+                obj.put("discount", users.get(i).getDiscount());
+                obj.put("time_add", users.get(i).getTime_add());
+                obj.put("vip",users.get(i).getVip());
+                obj.put("max_order",users.get(i).getMax_order());
+                obj.put("note",users.get(i).getNote());
+                jsonArray.add(obj);
+            }
+            resp.put("accounts",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @PostMapping(path = "update_User",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_User(@RequestHeader(defaultValue = "") String Authorization,@RequestBody User user_body){
+        JSONObject resp = new JSONObject();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+            }
+            User user=userRepository.find_User_By_Username(user_body.getUsername().trim());
+            Float balance_update=balanceRepository.update_Balance(user_body.getBalance(),user.getUsername().trim());
+            user.setVip(user_body.getVip());
+            user.setMax_order(user_body.getMax_order());
+            user.setDiscount(user_body.getDiscount());
+            user.setBalance(balance_update);
+            user.setRate(user_body.getRate());
+            if(user_body.getBalance()!=0){
+                Balance balance=new Balance();
+                balance.setUser(user_body.getUsername().trim());
+                balance.setAdd_time(System.currentTimeMillis());
+                balance.setTotal_blance(balance_update);
+                balance.setBalance(user_body.getBalance());
+                balance.setNote(user_body.getBalance()>0?"Admin nạp tiền":"Admin trừ tiền");
+                balanceRepository.save(balance);
+            }
+            user.setNote(user_body.getNote());
+            userRepository.save(user);
+            JSONObject obj = new JSONObject();
+            obj.put("username", user.getUsername());
+            obj.put("role",user.getRole());
+            obj.put("balance", user.getBalance());
+            obj.put("discount", user.getDiscount());
+            obj.put("max_order",user.getMax_order());
+            obj.put("vip",user.getVip());
+            obj.put("rate",user.getRate());
+            obj.put("note",user.getNote());
+            obj.put("add_time",user.getTime_add());
+            resp.put("account",obj);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

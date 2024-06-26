@@ -16,6 +16,13 @@ public interface UserRepository extends JpaRepository<User,String> {
     @Query(value = "Select * from user where token=?1 limit 1",nativeQuery = true)
     public User  find_User_By_Token(String Authorization);
 
+    @Query(value = "Select * from user where username=?1 limit 1",nativeQuery = true)
+    public User  find_User_By_Username(String username);
     @Query(value = "Select username from user",nativeQuery = true)
-    public List<String> get_All_User();
+    public List<String> get_All_Username();
+
+    @Query(value = "Select * from user",nativeQuery = true)
+    public List<User> get_All_User();
+
+
 }

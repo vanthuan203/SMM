@@ -154,4 +154,45 @@ public class ServiceController {
         }
 
     }
+
+    @GetMapping(path = "get_Option_Service",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> getOptionService(){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        List<String > task=serviceRepository.get_All_Task();
+        List<String > type=serviceRepository.get_All_Type();
+        List<String > platform=serviceRepository.get_All_Platform();
+        String list_Task="";
+        String list_Type="";
+        String list_Platform="";
+        for(int i=0;i<task.size();i++){
+            if(i==0){
+                list_Task=task.get(0);
+            }else{
+                list_Task=list_Task+","+task.get(i);
+            }
+
+        }
+        resp.put("list_Task",list_Task);
+
+        for(int i=0;i<type.size();i++){
+            if(i==0){
+                list_Type=type.get(0);
+            }else{
+                list_Type=list_Type+","+type.get(i);
+            }
+
+        }
+        resp.put("list_Type",list_Type);
+        for(int i=0;i<platform.size();i++){
+            if(i==0){
+                list_Platform=platform.get(0);
+            }else{
+                list_Platform=list_Platform+","+platform.get(i);
+            }
+
+        }
+        resp.put("list_Platform",list_Platform);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+    }
 }
