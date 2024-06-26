@@ -45,6 +45,7 @@ public class ProfileController {
                 obj.put("profile_id", profiles.get(i).getProfile_id());
                 obj.put("add_time", profiles.get(i).getAdd_time());
                 obj.put("update_time", profiles.get(i).getUpdate_time());
+                obj.put("get_time", profiles.get(i).getGet_time());
                 obj.put("num_account", profiles.get(i).getNum_account());
                 obj.put("state", profiles.get(i).getState());
                 obj.put("platform", profiles.get(i).getPlatform());

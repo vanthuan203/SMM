@@ -187,6 +187,10 @@ public class ApiController {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
+                    resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 if(service.getPlatform().trim().equals("youtube")){
                     if(service.getTask().trim().equals("view")){
                         get_task=youtube_view(data,service,user);
@@ -323,22 +327,6 @@ public class ApiController {
                         resp.put("error", "Video under 10 minutes");
                         return resp;
                     }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 900&&service.getCheck_time()==1&&service.getMax_time()==15) {
-                        resp.put("error", "Video under 15 minutes");
-                        return resp;
-                    }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 1800&&service.getCheck_time()==1&&service.getMax_time()==30) {
-                        resp.put("error", "Video under 30 minutes");
-                        return resp;
-                    }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 3600&&service.getCheck_time()==1&&service.getMax_time()==60) {
-                        resp.put("error", "Video under 60 minutes");
-                        return resp;
-                    }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 7200&&service.getCheck_time()==1&&service.getMax_time()==120) {
-                        resp.put("error", "Video under 120 minutes");
-                        return resp;
-                    }
 
 
                     float priceorder = 0;
@@ -350,26 +338,12 @@ public class ApiController {
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     OrderRunning orderRunning = new OrderRunning();
 
-                    int duration_min=2+(int)(Duration.parse(contentDetails.get("duration").toString()).getSeconds()/60);
-                    int thread_set=50;
-                    if(duration_min<service.getMin_time()){
-                        thread_set= service.getCheck_time()==0?(data.getQuantity() / (60/(duration_min==1?10:duration_min)*2)):(int)(data.getQuantity()/2.6);
-                    }else{
-                        thread_set= service.getCheck_time()==0?(data.getQuantity() / (60/(service.getMax_time()==1?10:service.getMax_time())*2)):(int)(data.getQuantity()/2.6);
-                    }
-                    if (thread_set <= 5000){
-                        orderRunning.setThread_set(thread_set);
-                    }else{
-                        orderRunning.setThread_set(5000);
-                        thread_set=5000;
-                    }
-                    Long scheduledStartTime=0L;
                     if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                         if(service.getCheck_time()==1) {
                             orderRunning.setThread(-1);
                             orderRunning.setStart_time(0L);
                         }else {
-                            orderRunning.setThread((int)(thread_set*0.05<1?2:(thread_set*0.05)));
+                            orderRunning.setThread(service.getThread());
                             orderRunning.setStart_time(System.currentTimeMillis());
                         }
                     }else{

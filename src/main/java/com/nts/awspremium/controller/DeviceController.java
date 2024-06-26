@@ -49,7 +49,6 @@ public class DeviceController {
                 devicePage=deviceRepository.get_List_Device(pageable);
             }
             List<DeviceShow> deviceList=devicePage.getContent();
-            System.out.println(deviceList.get(0).getTask());
             JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < deviceList.size(); i++) {

@@ -153,6 +153,37 @@ public class TaskController {
         }
     }
 
+    Map<String, Object> tiktok_view(String account_id){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","",orderThreadCheck.getValue());
+            if (orderRunning!=null) {
+                Service service=orderRunning.getService();
+                resp.put("status", true);
+                data.put("order_id", orderRunning.getOrder_id());
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", service.getTask());
+                data.put("task_key",orderRunning.getOrder_key());
+                resp.put("data",data);
+                return resp;
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            System.out.println(stackTraceElement.getMethodName());
+            System.out.println(stackTraceElement.getLineNumber());
+            System.out.println(stackTraceElement.getClassName());
+            System.out.println(stackTraceElement.getFileName());
+            System.out.println("Error : " + e.getMessage());
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
     Map<String, Object> youtube_view(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -186,19 +217,16 @@ public class TaskController {
                 }
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
                     } else {
                         data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
                     }
                 }else {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
                     } else {
                         data.put("viewing_time", orderRunning.getDuration());
                     }
-                }
-                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMax_time()==1){
-                    data.put("viewing_time",ran.nextInt(30)+10);
                 }
                 resp.put("data",data);
                 return resp;
@@ -244,21 +272,19 @@ public class TaskController {
                 DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
                 data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("keyword", dataSubscriber.getVideo_title());
+
                 if (service.getMin_time() != service.getMax_time()) {
-                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
+                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
                     } else {
-                        data.put("viewing_time", service.getMin_time() * 60 < dataSubscriber.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(dataSubscriber.getDuration() - service.getMin_time() * 60))) : dataSubscriber.getDuration());
+                        data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
                     }
                 }else {
-                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
+                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
                     } else {
-                        data.put("viewing_time", dataSubscriber.getDuration());
+                        data.put("viewing_time", orderRunning.getDuration());
                     }
-                }
-                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMin_time()==0){
-                    data.put("viewing_time",ran.nextInt(30)+10);
                 }
                 resp.put("data",data);
                 return resp;
@@ -305,19 +331,16 @@ public class TaskController {
                 data.put("channel_title", orderRunning.getChannel_title());
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 45) + (service.getMax_time() >= 10 ? 30 : 0)) : 0));
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
                     } else {
                         data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
                     }
                 }else {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + (service.getMin_time() < service.getMax_time() ? (ran.nextInt((service.getMax_time() - service.getMin_time()) * 60 + service.getMax_time() >= 10 ? 60 : 0)) : 0));
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
                     } else {
                         data.put("viewing_time", orderRunning.getDuration());
                     }
-                }
-                if(((Integer.parseInt(data.get("viewing_time").toString())<10||Integer.parseInt(data.get("viewing_time").toString())>45))&&service.getMin_time()==0){
-                    data.put("viewing_time",ran.nextInt(30)+10);
                 }
                 resp.put("data",data);
                 return resp;
@@ -1104,6 +1127,8 @@ public class TaskController {
                     get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_view")){
+                    get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
