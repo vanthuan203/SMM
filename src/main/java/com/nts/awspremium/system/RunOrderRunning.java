@@ -1,5 +1,6 @@
 package com.nts.awspremium.system;
 
+import com.nts.awspremium.controller.DataConmentController;
 import com.nts.awspremium.controller.OrderRunningController;
 import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.repositories.OrderRunningRepository;
@@ -17,7 +18,7 @@ public class RunOrderRunning {
     @Autowired
     private OrderRunningController orderRunningController;
     @Autowired
-    private OrderThreadCheck orderThreadCheck;
+    private DataConmentController dataConmentController;
     @Autowired
     private Environment env;
     @PostConstruct
@@ -52,6 +53,12 @@ public class RunOrderRunning {
                                 throw new RuntimeException(e);
                             }
                             orderRunningController.update_Current_Total();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            dataConmentController.update_Running_Comment();
                         } catch (Exception e) {
                             continue;
                         }

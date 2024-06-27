@@ -881,7 +881,7 @@ public class ApiController {
             orderRunning.setOrder_key(video_id.trim());
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
-            orderRunning.setStart_time(System.currentTimeMillis());
+            orderRunning.setStart_time(0L);
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setNote("");

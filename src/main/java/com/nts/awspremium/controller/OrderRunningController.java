@@ -39,6 +39,8 @@ public class OrderRunningController {
     private BalanceRepository balanceRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private DataCommentRepository dataCommentRepository;
 
 
     String get_key(){
@@ -686,8 +688,5 @@ public class OrderRunningController {
         }
 
     }
-
-
-
 
 }

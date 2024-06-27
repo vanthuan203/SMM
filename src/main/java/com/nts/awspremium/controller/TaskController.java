@@ -80,6 +80,8 @@ public class TaskController {
     private HistorySumRepository historySumRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private DataCommentRepository dataCommentRepository;
 
     Map<String, Object> tiktok_follower(String account_id){
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -102,6 +104,63 @@ public class TaskController {
                 data.put("task_key",orderRunning.getOrder_key());
                 resp.put("data",data);
                 return resp;
+
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
+    Map<String, Object> tiktok_comment(String account_id){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran = new Random();
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
+            String list_tiktok_video=tikTokCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",list_tiktok_video==null?"":list_tiktok_video,orderThreadCheck.getValue());
+            if (orderRunning!=null) {
+
+                dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
+                Thread.sleep(ran.nextInt(500));
+                String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
+                if(comment!=null){
+                    Service service=orderRunning.getService();
+                    resp.put("status", true);
+                    data.put("order_id", orderRunning.getOrder_id());
+                    data.put("account_id", account_id.trim());
+                    data.put("platform", service.getPlatform().toLowerCase());
+                    data.put("task", service.getTask());
+                    data.put("task_key",orderRunning.getOrder_key());
+                    data.put("comment",comment);
+                    resp.put("data",data);
+                    return resp;
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
+
+
 
             } else {
                 resp.put("status", false);
@@ -1212,6 +1271,8 @@ public class TaskController {
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_view")){
                     get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_comment")){
+                    get_task=tiktok_comment(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -1986,8 +2047,10 @@ public class TaskController {
                     get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
                     get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
-                } else if(task.equals("tiktok_view")){
+                }else if(task.equals("tiktok_view")){
                     get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("tiktok_comment")){
+                    get_task=tiktok_comment(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task.get("status").equals(true)){
                     task_index=task;
@@ -2201,6 +2264,9 @@ public class TaskController {
                             tikTokCommentHistory_New.setList_id(task_key.trim()+"|");
                             tikTokCommentHistoryRepository.save(tikTokCommentHistory_New);
                         }
+                        dataCommentRepository.update_Task_Comment_Done(account_id.trim());
+                    }else {
+                        dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
                     }
                 }
             }
@@ -2216,6 +2282,21 @@ public class TaskController {
                     }
 
                 }catch (Exception e){
+                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                    LogError logError =new LogError();
+                    logError.setMethod_name(stackTraceElement.getMethodName());
+                    logError.setLine_number(stackTraceElement.getLineNumber());
+                    logError.setClass_name(stackTraceElement.getClassName());
+                    logError.setFile_name(stackTraceElement.getFileName());
+                    logError.setMessage(e.getMessage());
+                    logError.setAdd_time(System.currentTimeMillis());
+                    Date date_time = new Date(System.currentTimeMillis());
+                    // Tạo SimpleDateFormat với múi giờ GMT+7
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                    String formattedDate = sdf.format(date_time);
+                    logError.setDate_time(formattedDate);
+                    logErrorRepository.save(logError);
                 }
             }
             resp.put("status", true);

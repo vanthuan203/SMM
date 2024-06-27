@@ -1,5 +1,6 @@
 package com.nts.awspremium.system;
 
+import com.nts.awspremium.controller.DataConmentController;
 import com.nts.awspremium.controller.OrderRunningController;
 import com.nts.awspremium.controller.TaskController;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -14,7 +15,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class RunAccountTask {
     @Autowired
-    private AccountTaskRepository accountTaskRepository;
+    private DataConmentController dataConmentController;
     @Autowired
     private TaskController taskController;
     @Autowired
@@ -28,11 +29,17 @@ public class RunAccountTask {
                     while (true) {
                         try {
                             try {
-                                Thread.sleep(60000);
+                                Thread.sleep(10000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
                             taskController.resetTaskError();
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            dataConmentController.reset_Running_Comment();
                         } catch (Exception e) {
                             continue;
                         }
