@@ -10,6 +10,7 @@ public interface OrderHistoryShow {
     String getNote();
     String getUsername();
     Long getUpdate_time();
+    Long getUpdate_current_time();
     Integer getTotal();
     Integer getCancel();
     Float getCharge();

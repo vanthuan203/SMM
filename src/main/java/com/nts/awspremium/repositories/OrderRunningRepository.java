@@ -26,7 +26,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT count(*) from order_running where order_key=?1",nativeQuery = true)
     public Integer get_Order_By_Order_Key(String order_id);
 
-    @Query(value = "SELECT o from OrderRunning o JOIN FETCH o.service where o.service.service_id in(select o.service.service_id from Service where check_count=1) and o.total>0 and o.start_time>0")
+    @Query(value = "SELECT o from OrderRunning o JOIN FETCH o.service where o.service.service_id in(select o.service.service_id from Service where check_count=1) and o.total>0 and o.start_time>0 and o.update_current_time<o.update_time")
     public List<OrderRunning> get_Order_By_Check_Count();
     @Query(value = "SELECT count(*) from order_running where order_key=?1 and service_id in(select service_id from service where task=?2)",nativeQuery = true)
     public Integer get_Order_By_Order_Key_And_Task(String order_id,String task);
@@ -48,7 +48,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE order_running set total=?1,update_time=?2 where order_id=?3",nativeQuery = true)
+    @Query(value = "UPDATE order_running set update_time=IF(total<?1,?2,update_time),total=?1 where order_id=?3",nativeQuery = true)
     public void update_Total_Buff_By_OrderId(Integer total,Long update_time,Long order_id);
 
     @Modifying
@@ -59,7 +59,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
+            "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time>0 \n" +
@@ -69,7 +69,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,0 as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
+            "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
@@ -78,7 +78,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,0 as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
+            "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
@@ -87,7 +87,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "Select o.order_id,o.order_key,count(running) as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
-            "o.update_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
+            "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
             "left join account_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time>0 \n" +

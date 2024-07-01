@@ -54,6 +54,8 @@ public class OrderHistory implements Serializable {
     private Integer time_total;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long update_current_time;
     @Column(columnDefinition = "float default 0")
     private Float charge;
     @Column(columnDefinition = "integer default 1")

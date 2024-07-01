@@ -85,6 +85,7 @@ public class OrderRunningController {
                 obj.put("insert_time", orderRunnings.get(i).getInsert_time());
                 obj.put("start_time", orderRunnings.get(i).getStart_time());
                 obj.put("update_time", orderRunnings.get(i).getUpdate_time());
+                obj.put("update_current_time", orderRunnings.get(i).getUpdate_current_time());
                 obj.put("start_count", orderRunnings.get(i).getStart_count());
                 obj.put("check_count", orderRunnings.get(i).getCheck_count());
                 obj.put("current_count", orderRunnings.get(i).getCurrent_count());
@@ -248,7 +249,7 @@ public class OrderRunningController {
                             int current_Count=GoogleApi.getCountSubcriberCurrent(orderRunningList.get(i).getOrder_key());
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
-                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("like")){
@@ -256,7 +257,7 @@ public class OrderRunningController {
                             System.out.println(current_Count);
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
-                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }
@@ -266,7 +267,7 @@ public class OrderRunningController {
                             System.out.println(current_Count);
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
-                                orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("like")){
@@ -275,7 +276,7 @@ public class OrderRunningController {
                                 int current_Count=Integer.parseInt(jsonObject.get("likes").toString());
                                 if(current_Count>=0){
                                     orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                     orderRunningRepository.save(orderRunningList.get(i));
                                 }
                             }
@@ -285,7 +286,7 @@ public class OrderRunningController {
                                 int current_Count=Integer.parseInt(jsonObject.get("comments").toString());
                                 if(current_Count>=0){
                                     orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                     orderRunningRepository.save(orderRunningList.get(i));
                                 }
                             }
@@ -295,7 +296,7 @@ public class OrderRunningController {
                                 int current_Count=Integer.parseInt(jsonObject.get("plays").toString());
                                 if(current_Count>=0){
                                     orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_time(System.currentTimeMillis());
+                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                     orderRunningRepository.save(orderRunningList.get(i));
                                 }
                             }
@@ -378,6 +379,7 @@ public class OrderRunningController {
                 orderHistory.setRefund(0);
                 orderHistory.setCancel(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
                 try {
                     orderHistoryRepository.save(orderHistory);
                     orderRunningRepository.delete_Order_Running_By_OrderId(orderRunningList.get(i).getOrder_id());
@@ -457,6 +459,7 @@ public class OrderRunningController {
                 orderHistory.setCurrent_count(orderRunning.getCurrent_count());
                 orderHistory.setRefund(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setUpdate_current_time(orderRunning.getUpdate_current_time());
                 if (cancel == 1) {
                     User user=userRepository.find_User_By_Token(Authorization.trim());
                     int remains = orderRunning.getQuantity() - (orderRunning.getTotal() > orderRunning.getQuantity() ? orderRunning.getQuantity() : orderRunning.getTotal());
@@ -640,6 +643,8 @@ public class OrderRunningController {
                 orderHistory.setRefund(0);
                 orderHistory.setCancel(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
+
                 try {
                     orderHistoryRepository.save(orderHistory);
                     orderRunningRepository.delete_Order_Running_By_OrderId(orderRunningList.get(i).getOrder_id());

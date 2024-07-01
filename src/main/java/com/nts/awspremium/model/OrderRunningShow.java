@@ -10,6 +10,7 @@ public interface OrderRunningShow {
     String getNote();
     String getUsername();
     Long getUpdate_time();
+    Long getUpdate_current_time();
     Integer getTotal();
     Float getCharge();
     Integer getService_id();

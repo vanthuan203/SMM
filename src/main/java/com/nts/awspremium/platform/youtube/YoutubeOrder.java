@@ -121,6 +121,7 @@ public class YoutubeOrder {
                     ////////////////
                     orderRunning.setCharge(priceorder);
                     orderRunning.setUpdate_time(0L);
+                    orderRunning.setUpdate_current_time(0L);
                     orderRunning.setCurrent_count(0);
                     orderRunning.setNote("");
                     orderRunning.setService(service);
@@ -249,6 +250,7 @@ public class YoutubeOrder {
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("likeCount").toString()));
                     ////////////////
                     orderRunning.setUpdate_time(0L);
+                    orderRunning.setUpdate_current_time(0L);
                     orderRunning.setCurrent_count(0);
                     orderRunning.setCharge(priceorder);
                     orderRunning.setNote("");
@@ -358,6 +360,7 @@ public class YoutubeOrder {
             orderRunning.setTotal(0);
             orderRunning.setTime_total(0);
             orderRunning.setUpdate_time(0L);
+            orderRunning.setUpdate_current_time(0L);
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setUser(user);
             orderRunning.setChannel_id(uId);
