@@ -17,6 +17,8 @@ public class DataSubscriber {
     private OrderRunning orderRunning;
     @Column(columnDefinition = "varchar(555) default ''")
     private String video_title;
+    @Column(columnDefinition = "varchar(555) default ''")
+    private String channel_id;
     @Column(columnDefinition = "bigint default 0")
     private Long duration;
     @Column(columnDefinition = "integer default 0")

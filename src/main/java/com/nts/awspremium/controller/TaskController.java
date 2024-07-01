@@ -3,6 +3,8 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.tiktok.TiktokTask;
+import com.nts.awspremium.platform.youtube.YoutubeTask;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,405 +85,11 @@ public class TaskController {
     @Autowired
     private DataCommentRepository dataCommentRepository;
 
-    Map<String, Object> tiktok_follower(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_follower()){
-                resp.put("status", false);
-                return resp;
-            }
-            String list_tiktok_id=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("task_key",orderRunning.getOrder_key());
-                resp.put("data",data);
-                return resp;
+    @Autowired
+    private TiktokTask tiktokTask;
+    @Autowired
+    private YoutubeTask youtubeTask;
 
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-
-    Map<String, Object> tiktok_comment(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            Random ran = new Random();
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            String list_tiktok_video=tikTokCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",list_tiktok_video==null?"":list_tiktok_video,orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-
-                dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
-                Thread.sleep(ran.nextInt(500));
-                String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
-                if(comment!=null){
-                    Service service=orderRunning.getService();
-                    resp.put("status", true);
-                    data.put("order_id", orderRunning.getOrder_id());
-                    data.put("account_id", account_id.trim());
-                    data.put("platform", service.getPlatform().toLowerCase());
-                    data.put("task", service.getTask());
-                    data.put("task_key",orderRunning.getOrder_key());
-                    data.put("comment",comment);
-                    resp.put("data",data);
-                    return resp;
-                }else{
-                    resp.put("status", false);
-                    return resp;
-                }
-
-
-
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-    Map<String, Object> tiktok_like(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_like()){
-                resp.put("status", false);
-                return resp;
-            }
-            String list_videoId=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("task_key",orderRunning.getOrder_key());
-                resp.put("data",data);
-                return resp;
-
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-
-    Map<String, Object> tiktok_view(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","",orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("task_key",orderRunning.getOrder_key());
-                resp.put("data",data);
-                return resp;
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-
-    Map<String, Object> youtube_view(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            String list_video_id=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                Random ran=new Random();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("task_key", orderRunning.getOrder_key());
-                data.put("channel_id", orderRunning.getChannel_id());
-                data.put("channel_title", orderRunning.getChannel_title());
-
-
-                if(service.getService_type().trim().equals("Special")){
-                    String list_key = orderRunning.getKeyword_list();
-                    String key = "";
-                    if (list_key != null && list_key.length() != 0) {
-                        String[] keyArr = list_key.split(",");
-                        key = keyArr[ran.nextInt(keyArr.length)];
-                    }
-                    data.put("keyword", key.length() == 0 ? orderRunning.getVideo_title() : key);
-
-                }else{
-                    data.put("keyword", orderRunning.getVideo_title());
-                }
-                if (service.getMin_time() != service.getMax_time()) {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
-                    } else {
-                        data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
-                    }
-                }else {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
-                    } else {
-                        data.put("viewing_time", orderRunning.getDuration());
-                    }
-                }
-                resp.put("data",data);
-                return resp;
-
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-
-    Map<String, Object> youtube_subscriber(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
-            if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_subscriber()){
-                resp.put("status", false);
-                return resp;
-            }
-            String list_channel_id=youtubeChannelHistoryRepository.get_List_ChannelId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",list_channel_id==null?"":list_channel_id, orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                Random ran=new Random();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                //resp.put("proxy", proxy);
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("channel_id", orderRunning.getChannel_id());
-                data.put("channel_title", orderRunning.getChannel_title());
-                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
-                data.put("task_key", dataSubscriber.getVideo_id());
-                data.put("keyword", dataSubscriber.getVideo_title());
-
-                if (service.getMin_time() != service.getMax_time()) {
-                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
-                    } else {
-                        data.put("viewing_time", service.getMin_time() * 60 < dataSubscriber.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(dataSubscriber.getDuration() - service.getMin_time() * 60))) : dataSubscriber.getDuration());
-                    }
-                }else {
-                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
-                    } else {
-                        data.put("viewing_time", dataSubscriber.getDuration());
-                    }
-                }
-                resp.put("data",data);
-                return resp;
-
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
-
-    Map<String, Object> youtube_like(String account_id){
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try{
-            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
-            if(youtubeLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_like()){
-                resp.put("status", false);
-                return resp;
-            }
-            String list_video_id=youtubeLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",list_video_id==null?"":list_video_id, orderThreadCheck.getValue());
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                Random ran=new Random();
-                resp.put("status", true);
-                data.put("order_id", orderRunning.getOrder_id());
-                //resp.put("proxy", proxy);
-                data.put("account_id", account_id.trim());
-                data.put("platform", service.getPlatform().toLowerCase());
-                data.put("task", service.getTask());
-                data.put("task_key", orderRunning.getOrder_key());
-                data.put("keyword", orderRunning.getVideo_title());
-                data.put("channel_id", orderRunning.getChannel_id());
-                data.put("channel_title", orderRunning.getChannel_title());
-                if (service.getMin_time() != service.getMax_time()) {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
-                    } else {
-                        data.put("viewing_time", service.getMin_time() * 60 < orderRunning.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(orderRunning.getDuration() - service.getMin_time() * 60))) : orderRunning.getDuration());
-                    }
-                }else {
-                    if (orderRunning.getDuration() > service.getMax_time() * 60) {
-                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
-                    } else {
-                        data.put("viewing_time", orderRunning.getDuration());
-                    }
-                }
-                resp.put("data",data);
-                return resp;
-
-            } else {
-                resp.put("status", false);
-                return resp;
-            }
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return resp;
-        }
-    }
     @GetMapping(value = "getTaskDevice", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTaskDevice(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
@@ -629,15 +237,15 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
-                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("task_tiktok_like")){
-                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -987,17 +595,17 @@ public class TaskController {
                 System.out.println(task);
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
-                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_subscriber")){
-                    get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
-                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -1260,21 +868,21 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
-                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_subscriber")){
-                    get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
-                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_view")){
-                    get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_comment")){
-                    get_task=tiktok_comment(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_comment(accountTask.getAccount().getAccount_id().trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -1625,15 +1233,15 @@ public class TaskController {
                 System.out.println(task);
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
-                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
-                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -1842,11 +1450,11 @@ public class TaskController {
                 System.out.println(task);
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(account_id.trim());
+                    get_task=tiktokTask.tiktok_follower(account_id.trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(account_id.trim());
+                    get_task=youtubeTask.youtube_view(account_id.trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -2038,21 +1646,21 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 System.out.println(task);
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task= tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
-                    get_task=youtube_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
-                    get_task=youtube_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_subscriber")){
-                    get_task=youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
+                    get_task=youtubeTask.youtube_subscriber(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_like")){
-                    get_task=tiktok_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_view")){
-                    get_task=tiktok_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_comment")){
-                    get_task=tiktok_comment(accountTask.getAccount().getAccount_id().trim());
+                    get_task=tiktokTask.tiktok_comment(accountTask.getAccount().getAccount_id().trim());
                 }
-                if(get_task.get("status").equals(true)){
+                if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
                     break;
                 }
@@ -2153,7 +1761,6 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             accountTaskRepository.reset_Thread_By_AccountId(account_id.trim());
-            System.out.println(task.trim());
             if(platform.toLowerCase().trim().equals("youtube")){
                 if(task.toLowerCase().trim().equals("view")){
                     if(status==true){
@@ -2172,23 +1779,25 @@ public class TaskController {
                     }
                 }else  if(task.toLowerCase().trim().equals("subscriber")){
                     if(status==true){
-                        String order_Key= dataSubscriberRepository.get_OrderKey_By_VideoId(task_key.trim());
-                        YoutubeSubscriberHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(youtubeChannelHistory!=null){
-                            youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+order_Key.trim()+"|");
-                            youtubeChannelHistory.setUpdate_time(System.currentTimeMillis());
-                            youtubeChannelHistoryRepository.save(youtubeChannelHistory);
-                        }else{
-                            YoutubeSubscriberHistory youtubeChannelHistory_New=new YoutubeSubscriberHistory();
-                            youtubeChannelHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            youtubeChannelHistory_New.setUpdate_time(System.currentTimeMillis());
-                            youtubeChannelHistory_New.setList_id(order_Key.trim()+"|");
-                            youtubeChannelHistoryRepository.save(youtubeChannelHistory_New);
+                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
+                        if(order_Key!=null){
+                            YoutubeSubscriberHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
+                            if(youtubeChannelHistory!=null){
+                                youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+order_Key.trim()+"|");
+                                youtubeChannelHistory.setUpdate_time(System.currentTimeMillis());
+                                youtubeChannelHistoryRepository.save(youtubeChannelHistory);
+                            }else{
+                                YoutubeSubscriberHistory youtubeChannelHistory_New=new YoutubeSubscriberHistory();
+                                youtubeChannelHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                                youtubeChannelHistory_New.setUpdate_time(System.currentTimeMillis());
+                                youtubeChannelHistory_New.setList_id(order_Key.trim()+"|");
+                                youtubeChannelHistoryRepository.save(youtubeChannelHistory_New);
+                            }
+                            YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
+                            youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
+                            youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
+                            youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
                         }
-                        YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
-                        youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
-                        youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
-                        youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
                     }
                 }else  if(task.toLowerCase().trim().equals("like")){
                     if(status==true){
@@ -2272,7 +1881,13 @@ public class TaskController {
             }
             if(status==true){
                 try {
-                    OrderRunning orderRunning=orderRunningRepository.find_Order_By_Order_Key(task_key.trim(),task.trim(),platform.trim());
+                    OrderRunning orderRunning=null;
+                    if(platform.toLowerCase().trim().equals("youtube")&&task.toLowerCase().trim().equals("subscriber")){
+                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
+                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,task.trim(),platform.trim());
+                    }else{
+                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(task_key.trim(),task.trim(),platform.trim());
+                    }
                     if(orderRunning!=null){
                         HistorySum historySum=new HistorySum();
                         historySum.setOrderRunning(orderRunning);
@@ -2280,7 +1895,6 @@ public class TaskController {
                         historySum.setAdd_time(System.currentTimeMillis());
                         historySumRepository.save(historySum);
                     }
-
                 }catch (Exception e){
                     StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
                     LogError logError =new LogError();
