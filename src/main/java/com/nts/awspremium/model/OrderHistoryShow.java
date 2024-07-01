@@ -11,6 +11,7 @@ public interface OrderHistoryShow {
     String getUsername();
     Long getUpdate_time();
     Long getUpdate_current_time();
+    Long getRefund_time();
     Integer getTotal();
     Integer getCancel();
     Float getCharge();
@@ -22,5 +23,6 @@ public interface OrderHistoryShow {
     String getPlatform();
     String getTask();
     Integer getBonus();
+    Integer getRefund();
 
 }

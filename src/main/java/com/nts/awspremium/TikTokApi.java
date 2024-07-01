@@ -87,6 +87,7 @@ public class TikTokApi {
             Response response = client.newCall(request).execute();
 
             String resultJson = response.body().string();
+            response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("sec_uid")==null){
@@ -127,6 +128,7 @@ public class TikTokApi {
                     .build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
+            response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             return jsonObject;
@@ -154,6 +156,7 @@ public class TikTokApi {
                     .build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
+            response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("status").toString().equals("error")){
@@ -182,6 +185,7 @@ public class TikTokApi {
                     .build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
+            response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("status").toString().equals("error")){
@@ -210,6 +214,7 @@ public class TikTokApi {
                     .build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
+            response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("status").toString().equals("error")){

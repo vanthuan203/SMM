@@ -120,6 +120,7 @@ public class GoogleApi {
             Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 String resultJson1 = response.body().string();
+                response.body().close();
                 Object obj1 = new JSONParser().parse(resultJson1);
                 JSONObject jsonObject1 = (JSONObject) obj1;
                 JSONArray items = (JSONArray) jsonObject1.get("items");
@@ -134,6 +135,7 @@ public class GoogleApi {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 return Integer.parseInt(statistics.get("commentCount").toString());
             }else{
+                response.body().close();
                 return -2;
             }
         } catch (IOException | ParseException e) {
@@ -152,6 +154,7 @@ public class GoogleApi {
             Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 String resultJson1 = response.body().string();
+                response.body().close();
                 Object obj1 = new JSONParser().parse(resultJson1);
                 JSONObject jsonObject1 = (JSONObject) obj1;
                 JSONArray items = (JSONArray) jsonObject1.get("items");
@@ -166,6 +169,7 @@ public class GoogleApi {
                 JSONObject statistics = (JSONObject) video.get("statistics");
                 return Integer.parseInt(statistics.get("viewCount").toString());
             }else{
+                response.body().close();
                 return -2;
             }
         } catch (IOException | ParseException e) {
@@ -181,10 +185,12 @@ public class GoogleApi {
             Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 String resultJson1 = response.body().string();
+                response.body().close();
                 Object obj1 = new JSONParser().parse(resultJson1);
                 JSONObject jsonObject1 = (JSONObject) obj1;
                 return Integer.parseInt(jsonObject1.get("est_sub").toString());
             }else{
+                response.body().close();
                 return -2;
             }
         } catch (IOException | ParseException e) {
@@ -200,6 +206,7 @@ public class GoogleApi {
             Response response = client.newCall(request).execute();
             if(response.isSuccessful()){
                 String resultJson = response.body().string();
+                response.body().close();
                 Object obj = new JsonParser().parse(resultJson);
                 JsonObject jsonObject = (JsonObject) obj;
 
@@ -215,6 +222,7 @@ public class GoogleApi {
                 }
                 return -2;
             }else{
+                response.body().close();
                 return -2;
             }
         } catch (Exception e) {

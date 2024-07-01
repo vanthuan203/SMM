@@ -87,6 +87,8 @@ public class OrderHistoryController {
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
+                obj.put("refund", orderHistories.get(i).getRefund());
+                obj.put("refund_time", orderHistories.get(i).getRefund_time());
                 jsonArray.add(obj);
             }
 
@@ -189,6 +191,8 @@ public class OrderHistoryController {
                             int quantity_Refund= count_Sum-current_Count ;
                             if(quantity_Refund<=0){
                                 orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setUpdate_current_time(System.currentTimeMillis());
+                                orderHistoryRepository.save(orderHistory);
                                 status="✘ Đủ "+orderHistory.getService().getTask()+" | "+current_Count+"/"+count_Sum;
                             }else{
                                 if(quantity_Refund>quantity){
@@ -203,6 +207,7 @@ public class OrderHistoryController {
                                 orderHistory.setCharge(Math.round((orderHistory.getCharge()-charge_Refund) * 1000000f) / 1000000f);
                                 orderHistory.setRefund(1);
                                 orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setUpdate_current_time(System.currentTimeMillis());
                                 orderHistory.setRefund_time(System.currentTimeMillis());
                                 orderHistoryRepository.save(orderHistory);
 
@@ -232,11 +237,12 @@ public class OrderHistoryController {
                         }
                         if(current_Count>=0){
                             int quantity=orderHistory.getQuantity()>orderHistory.getTotal()?orderHistory.getTotal():orderHistory.getQuantity();
-                            System.out.println(quantity);
                             int count_Sum=quantity+orderHistory.getStart_count();
                             int quantity_Refund= count_Sum-current_Count ;
                             if(quantity_Refund<=0){
                                 orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setUpdate_current_time(System.currentTimeMillis());
+                                orderHistoryRepository.save(orderHistory);
                                 status="✘ Đủ "+orderHistory.getService().getTask()+" | "+current_Count+"/"+count_Sum;
                             }else{
                                 if(quantity_Refund>quantity){
@@ -251,6 +257,7 @@ public class OrderHistoryController {
                                 orderHistory.setCharge(Math.round((orderHistory.getCharge()-charge_Refund) * 1000000f) / 1000000f);
                                 orderHistory.setRefund(1);
                                 orderHistory.setCurrent_count(current_Count);
+                                orderHistory.setUpdate_current_time(System.currentTimeMillis());
                                 orderHistory.setRefund_time(System.currentTimeMillis());
                                 orderHistoryRepository.save(orderHistory);
 
@@ -291,6 +298,8 @@ public class OrderHistoryController {
                 obj.put("task", orderHistoryShow.getTask());
                 obj.put("platform", orderHistoryShow.getPlatform());
                 obj.put("bouns", orderHistoryShow.getBonus());
+                obj.put("refund", orderHistoryShow.getRefund());
+                obj.put("refund_time", orderHistoryShow.getRefund_time());
                 obj.put("status", status);
                 jsonArray.add(obj);
 
@@ -362,6 +371,8 @@ public class OrderHistoryController {
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
+                obj.put("refund", orderHistories.get(i).getRefund());
+                obj.put("refund_time", orderHistories.get(i).getRefund_time());
                 jsonArray.add(obj);
             }
 
@@ -432,6 +443,8 @@ public class OrderHistoryController {
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
+                obj.put("refund", orderHistories.get(i).getRefund());
+                obj.put("refund_time", orderHistories.get(i).getRefund_time());
                 jsonArray.add(obj);
             }
 
