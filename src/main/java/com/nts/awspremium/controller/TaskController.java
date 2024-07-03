@@ -266,7 +266,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -626,7 +626,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -903,7 +903,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -1262,7 +1262,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -1475,7 +1475,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());
@@ -1680,7 +1680,7 @@ public class TaskController {
                 //--------------------------------------------//
                 accountTask.setGet_time(System.currentTimeMillis());
                 accountTask.setOrder_id(Long.parseLong(dataJson.get("order_id").toString()));
-                accountTask.setRunning(taskPriorityRepository.get_State_Task(task_index));
+                accountTask.setRunning(1);
                 accountTask.setTask(dataJson.get("task").toString());
                 accountTask.setPlatform(dataJson.get("platform").toString());
                 accountTask.setTask_key(dataJson.get("task_key").toString());

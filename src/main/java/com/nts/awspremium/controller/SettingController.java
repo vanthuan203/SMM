@@ -31,6 +31,8 @@ public class SettingController {
     private UserRepository userRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private TaskPriorityRepository taskPriorityRepository;
     @GetMapping(path = "get_Setting_Platform",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get_Setting_Platform(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
@@ -107,6 +109,53 @@ public class SettingController {
             obj.put("update_time", settingSystem.getUpdate_time());
             jsonArray.add(obj);
             resp.put("accounts",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }
+
+    }
+
+    @GetMapping(path = "get_Task_Priority",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Task_Priority(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            JSONArray jsonArray =new JSONArray();
+            List<TaskPriority> taskPriorityList=taskPriorityRepository.get_All_Priority_Task();
+            for(int i=0;i<taskPriorityList.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("task",taskPriorityList.get(i).getTask());
+                obj.put("priority", taskPriorityList.get(i).getPriority());
+                obj.put("state", taskPriorityList.get(i).getState());
+                obj.put("platform", taskPriorityList.get(i).getPlatform());
+                obj.put("update_time", taskPriorityList.get(i).getUpdate_time());
+                jsonArray.add(obj);
+            }
+
+            resp.put("task_priority",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -231,6 +280,53 @@ public class SettingController {
                 resp.put("setting_platform",obj);
             }
 
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }
+
+    }
+    @PostMapping(path = "update_Task_Priority",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_Task_Priority(@RequestHeader(defaultValue = "") String Authorization,
+                                                   @RequestBody TaskPriority taskPriorityBody
+    ){
+        JSONObject resp = new JSONObject();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            TaskPriority taskPriority=taskPriorityRepository.get_Priority_Task_By_Task(taskPriorityBody.getTask().trim());
+            taskPriority.setPriority(taskPriorityBody.getPriority());
+            taskPriority.setState(taskPriorityBody.getState());
+            taskPriority.setUpdate_time(System.currentTimeMillis());
+            taskPriorityRepository.save(taskPriority);
+            JSONObject obj = new JSONObject();
+            obj.put("task",taskPriority.getTask());
+            obj.put("priority",taskPriority.getPriority());
+            obj.put("state",taskPriority.getState());
+            obj.put("platform",taskPriority.getPlatform());
+            obj.put("update_time",taskPriority.getUpdate_time());
+            resp.put("task_priority",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
