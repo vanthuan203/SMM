@@ -20,4 +20,6 @@ public class HistorySum {
     private OrderRunning orderRunning;
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;
+    @Column(columnDefinition = "integer default 0")
+    private Integer viewing_time;
 }

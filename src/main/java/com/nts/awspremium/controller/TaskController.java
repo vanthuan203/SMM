@@ -1724,6 +1724,7 @@ public class TaskController {
                                                    @RequestParam(defaultValue = "") String account_id,@RequestParam  Boolean status,
                                                    @RequestParam(defaultValue = "") String task,
                                                    @RequestParam(defaultValue = "") String task_key,
+                                                   @RequestParam(defaultValue = "0") Integer viewing_time,
                                       @RequestParam(defaultValue = "") String platform) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -1891,6 +1892,7 @@ public class TaskController {
                         HistorySum historySum=new HistorySum();
                         historySum.setOrderRunning(orderRunning);
                         historySum.setAccount_id(account_id.trim());
+                        historySum.setViewing_time(viewing_time);
                         historySum.setAdd_time(System.currentTimeMillis());
                         historySumRepository.save(historySum);
                     }
