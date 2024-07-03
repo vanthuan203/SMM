@@ -52,6 +52,15 @@ public class YoutubeTask {
                 data.put("channel_title", orderRunning.getChannel_title());
 
 
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
                 if(service.getService_type().trim().equals("Special")){
                     String list_key = orderRunning.getKeyword_list();
                     String key = "";
@@ -132,6 +141,15 @@ public class YoutubeTask {
                 data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("keyword", dataSubscriber.getVideo_title());
 
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
                 if (service.getMin_time() != service.getMax_time()) {
                     if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
                         data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
@@ -198,6 +216,16 @@ public class YoutubeTask {
                 data.put("keyword", orderRunning.getVideo_title());
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
+
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
                         data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
