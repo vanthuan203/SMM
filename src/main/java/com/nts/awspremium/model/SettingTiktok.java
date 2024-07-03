@@ -21,6 +21,8 @@ public class SettingTiktok {
     private Integer max_day_activity;
     @Column(columnDefinition = "integer default 0")
     private Integer max_activity_24h;
+    @Column(columnDefinition = "bigint default 0")
+    private Long update_time;
 
     public SettingTiktok() {
     }

@@ -112,7 +112,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device!=null){
                 device.setUpdate_time(System.currentTimeMillis());
@@ -329,7 +329,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             Profile profile =profileRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
             if(device!=null){
@@ -695,7 +695,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             Profile profile=null;
             if(device!=null){
@@ -965,7 +965,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             Profile profile =profileRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
             if(device!=null){
@@ -1331,7 +1331,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device!=null){
                 device.setUpdate_time(System.currentTimeMillis());
@@ -1543,7 +1543,6 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device!=null){
                 device.setUpdate_time(System.currentTimeMillis());

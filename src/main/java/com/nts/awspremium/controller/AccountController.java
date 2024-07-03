@@ -135,7 +135,6 @@ public class AccountController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             //---------------------get_Account------------------//
-            SettingSystem settingSystem=settingSystemRepository.getReferenceById(1L);
             Device device=deviceRepository.check_DeviceId(account.getDevice_id());
             Profile profile =profileRepository.check_ProfileId(account.getDevice_id().trim()+"_"+account.getProfile_id().trim());
             if(device!=null){

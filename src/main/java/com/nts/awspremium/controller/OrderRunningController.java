@@ -241,7 +241,7 @@ public class OrderRunningController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count();
+            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count(System.currentTimeMillis());
             for(int i=0;i<orderRunningList.size();i++){
                 try {
                     if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){

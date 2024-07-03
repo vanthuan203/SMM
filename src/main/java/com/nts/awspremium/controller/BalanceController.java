@@ -31,7 +31,7 @@ public class BalanceController {
     @Autowired
     private LogErrorRepository logErrorRepository;
     @GetMapping(path = "get_List_Balance",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get_List_Service(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
+    ResponseEntity<String> get_List_Balance(@RequestHeader(defaultValue = "") String Authorization,@RequestParam(defaultValue = "") String user){
         JSONObject resp = new JSONObject();
         Integer checktoken = userRepository.check_User_By_Token(Authorization);
         if(checktoken ==0){

@@ -21,6 +21,8 @@ public class SettingSystem {
     private Integer max_profile;
     @Column(columnDefinition = "integer default 0")
     private Integer max_mysql;
+    @Column(columnDefinition = "bigint default 0")
+    private Long update_time;
 
     public SettingSystem() {
     }
