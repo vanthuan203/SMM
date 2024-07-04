@@ -257,4 +257,76 @@ public class UserController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+    @PostMapping(path = "add_User",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> add_User(@RequestHeader(defaultValue = "") String Authorization,@RequestBody User user_body){
+        JSONObject resp = new JSONObject();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                resp.put("message", "Token expired");
+                return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+            }
+            System.out.println(user_body.getUsername());
+            User user=new User();
+            user.setUsername(user_body.getUsername());
+            user.setVip(user_body.getVip());
+            user.setMax_order(user_body.getMax_order());
+            user.setPassword(user_body.getPassword());
+            user.setRole(user_body.getRole());
+            user.setTime_add(System.currentTimeMillis());
+            user.setDiscount(user_body.getDiscount());
+            user.setRate(user_body.getRate());
+            user.setBalance(user_body.getBalance());
+            user.setNote(user_body.getNote());
+            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+            String token="";
+            Random ran=new Random();
+            for(int i=0;i<30;i++){
+                Integer ranver=ran.nextInt(stringrand.length());
+                token=token+stringrand.charAt(ranver);
+            }
+            user.setToken(token);
+            userRepository.save(user);
+            if(user_body.getBalance()!=0){
+                Balance balance=new Balance();
+                balance.setUser(user_body.getUsername().trim());
+                balance.setAdd_time(System.currentTimeMillis());
+                balance.setTotal_blance(user_body.getBalance());
+                balance.setBalance(user_body.getBalance());
+                balance.setNote(user_body.getBalance()>0?"Admin nạp tiền":"Admin trừ tiền");
+                balanceRepository.save(balance);
+            }
+            JSONObject obj = new JSONObject();
+            obj.put("username", user.getUsername());
+            obj.put("role",user.getRole());
+            obj.put("balance", user.getBalance());
+            obj.put("discount", user.getDiscount());
+            obj.put("max_order",user.getMax_order());
+            obj.put("vip",user.getVip());
+            obj.put("rate",user.getRate());
+            obj.put("note",user.getNote());
+            obj.put("add_time",user.getTime_add());
+            resp.put("user",obj);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }
