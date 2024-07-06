@@ -3,6 +3,7 @@ package com.nts.awspremium.model;
 public interface OrderRunningShow {
     Long getOrder_id();
     String getOrder_key();
+    String getOrder_link();
     Integer getTotal_thread();
     Integer getThread();
     Long getInsert_time();

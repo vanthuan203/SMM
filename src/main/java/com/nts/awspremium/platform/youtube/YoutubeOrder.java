@@ -112,6 +112,7 @@ public class YoutubeOrder {
                     orderRunning.setTotal(0);
                     orderRunning.setTime_total(0);
                     orderRunning.setQuantity(data.getQuantity());
+                    orderRunning.setOrder_link(data.getLink());
                     orderRunning.setUser(user);
                     orderRunning.setChannel_id(snippet.get("channelId").toString());
                     orderRunning.setChannel_title(snippet.get("channelTitle").toString());
@@ -123,10 +124,11 @@ public class YoutubeOrder {
                     orderRunning.setUpdate_time(0L);
                     orderRunning.setUpdate_current_time(0L);
                     orderRunning.setCurrent_count(0);
-                    orderRunning.setNote("");
+                    orderRunning.setNote(data.getNote()==null?"":data.getNote());
                     orderRunning.setService(service);
                     orderRunning.setSpeed_up(0);
                     orderRunning.setValid(1);
+                    orderRunning.setOrder_refill(data.getOrder_refill());
 
                     if (service.getService_type().equals("Special")) {
                         orderRunning.setKeyword_list(data.getList());
@@ -242,6 +244,7 @@ public class YoutubeOrder {
                     orderRunning.setTotal(0);
                     orderRunning.setTime_total(0);
                     orderRunning.setQuantity(data.getQuantity());
+                    orderRunning.setOrder_link(data.getLink());
                     orderRunning.setUser(user);
                     orderRunning.setChannel_id(snippet.get("channelId").toString());
                     orderRunning.setChannel_title(snippet.get("channelTitle").toString());
@@ -253,10 +256,11 @@ public class YoutubeOrder {
                     orderRunning.setUpdate_current_time(0L);
                     orderRunning.setCurrent_count(0);
                     orderRunning.setCharge(priceorder);
-                    orderRunning.setNote("");
+                    orderRunning.setNote(data.getNote()==null?"":data.getNote());
                     orderRunning.setService(service);
                     orderRunning.setValid(1);
                     orderRunning.setSpeed_up(0);
+                    orderRunning.setOrder_refill(data.getOrder_refill());
 
                     orderRunningRepository.save(orderRunning);
 
@@ -362,6 +366,7 @@ public class YoutubeOrder {
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
             orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setOrder_link(data.getLink());
             orderRunning.setUser(user);
             orderRunning.setChannel_id(uId);
             orderRunning.setChannel_title(title);
@@ -371,10 +376,12 @@ public class YoutubeOrder {
             orderRunning.setCurrent_count(0);
             ////////////////
             orderRunning.setCharge(priceorder);
-            orderRunning.setNote("");
+            orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setService(service);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
+            orderRunning.setOrder_refill(data.getOrder_refill());
+
             orderRunningRepository.save(orderRunning);
 
             for (int i=0;i<videoList.size();i++){

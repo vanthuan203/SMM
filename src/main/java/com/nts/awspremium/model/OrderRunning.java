@@ -17,6 +17,8 @@ public class OrderRunning implements Serializable {
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")
     private String order_key;
+    @Column(columnDefinition = "varchar(500) default ''")
+    private String order_link;
     @Column(columnDefinition = "varchar(255) default ''")
     private String video_title;
     @Column(columnDefinition = "varchar(255) default ''")
@@ -69,7 +71,8 @@ public class OrderRunning implements Serializable {
     private Integer priority;
     @Column(columnDefinition = "integer default 0")
     private Integer speed_up;
-
+    @Column(columnDefinition = "bigint default 0")
+    private Long order_refill;
     public OrderRunning() {
     }
 

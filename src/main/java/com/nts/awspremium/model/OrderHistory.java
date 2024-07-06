@@ -16,6 +16,8 @@ public class OrderHistory implements Serializable {
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")
     private String order_key;
+    @Column(columnDefinition = "varchar(500) default ''")
+    private String order_link;
     @Column(columnDefinition = "varchar(255) default ''")
     private String video_title;
     @Column(columnDefinition = "varchar(255) default ''")
@@ -58,11 +60,17 @@ public class OrderHistory implements Serializable {
     private Long update_current_time;
     @Column(columnDefinition = "float default 0")
     private Float charge;
-    @Column(columnDefinition = "integer default 1")
+    @Column(columnDefinition = "integer default 0")
     private Integer refund;
+    @Column(columnDefinition = "integer default 0")
+    private Integer refill;
     @Column(columnDefinition = "integer default 0")
     private Integer cancel;
     @Column(columnDefinition = "bigint default 0")
     private Long refund_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long refill_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long order_refill;
 
 }

@@ -1518,6 +1518,7 @@ public class TaskController {
     @GetMapping(value = "getTask001", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTask001(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String account_id,
+                                                   @RequestParam(defaultValue = "") String platform,
                                                    @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -1629,7 +1630,13 @@ public class TaskController {
             //--------------------end_get_Account----------------------//
             AccountTask accountTask = accountTaskRepository.get_Account_By_Account_id(account_id.trim());
 
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task();
+            List<TaskPriority> priorityTasks;
+            if(platform.length()==0){
+              priorityTasks =taskPriorityRepository.get_Priority_Task();
+            }else{
+              priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(platform.trim());
+            }
+
 
             List<String> arrTask = new ArrayList<>();
 

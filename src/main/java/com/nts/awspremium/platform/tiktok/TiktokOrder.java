@@ -60,6 +60,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setOrder_link(data.getLink());
             orderRunning.setStart_count(follower_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(tiktok_id.trim());
@@ -69,12 +70,13 @@ public class TiktokOrder {
             orderRunning.setStart_time(follower_count<0?0:System.currentTimeMillis());
             orderRunning.setThread(follower_count<0?0:service.getThread());
             orderRunning.setThread_set(service.getThread());
-            orderRunning.setNote("");
+            orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setCurrent_count(0);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
+            orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -137,6 +139,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setOrder_link(data.getLink());
             orderRunning.setStart_count(like_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id.trim());
@@ -146,12 +149,13 @@ public class TiktokOrder {
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
-            orderRunning.setNote("");
+            orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
+            orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -214,6 +218,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setOrder_link(data.getLink());
             orderRunning.setComment_list(data.getList());
             orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
@@ -224,11 +229,12 @@ public class TiktokOrder {
             orderRunning.setStart_time(0L);
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
-            orderRunning.setNote("");
+            orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
             orderRunning.setCurrent_count(0);
+            orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -291,6 +297,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
+            orderRunning.setOrder_link(data.getLink());
             orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id.trim());
@@ -300,11 +307,12 @@ public class TiktokOrder {
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
-            orderRunning.setNote("");
+            orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
             orderRunning.setCurrent_count(0);
+            orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());

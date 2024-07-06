@@ -12,6 +12,7 @@ public class DataRequest {
     private String action;
     private int service=-1;
     private Long order=-1L;
+    private Long order_refill=-1L;
     private String orders="";
     private String list="";
     private int thread=0;

@@ -279,4 +279,63 @@ public class ApiController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }
     }
+
+
+    public JSONObject refill(DataRequest data,String username) throws IOException, ParseException {
+        JSONObject resp = new JSONObject();
+        try{
+            User user = userRepository.find_User_By_Username(username.trim());
+            if (user==null) {
+                resp.put("error", "Username not found");
+                return resp;
+            }
+            JSONObject get_task = null;
+            Service service = serviceRepository.get_Service_Web(data.getService());
+            if(service.getPlatform().trim().equals("youtube")){
+                if(service.getTask().trim().equals("view")){
+                    get_task=youtubeOrder.youtube_view(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=youtubeOrder.youtube_like(data,service,user);
+                }else if(service.getTask().trim().equals("subscriber")){
+                    get_task=youtubeOrder.youtube_subscriber(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("tiktok")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=tiktokOrder.tiktok_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=tiktokOrder.tiktok_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=tiktokOrder.tiktok_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=tiktokOrder.tiktok_view(data,service,user);
+                }
+            }
+            if(get_task.get("error")==null){
+                resp.put("order_running", true);
+                resp.put("order_id",get_task.get("order"));
+            }else{
+                resp.put("error", get_task.get("error"));
+            }
+            return resp;
+        }catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("error", "api system error");
+            return resp;
+        }
+    }
 }

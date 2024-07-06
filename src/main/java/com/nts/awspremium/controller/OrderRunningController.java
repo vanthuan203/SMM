@@ -80,6 +80,7 @@ public class OrderRunningController {
                 JSONObject obj = new JSONObject();
                 obj.put("order_id", orderRunnings.get(i).getOrder_id());
                 obj.put("order_key", orderRunnings.get(i).getOrder_key());
+                obj.put("order_link", orderRunnings.get(i).getOrder_link());
                 obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
                 obj.put("thread", orderRunnings.get(i).getThread());
                 obj.put("insert_time", orderRunnings.get(i).getInsert_time());
@@ -151,6 +152,72 @@ public class OrderRunningController {
                 JSONObject obj = new JSONObject();
                 obj.put("order_id", orderRunnings.get(i).getOrder_id());
                 obj.put("order_key", orderRunnings.get(i).getOrder_key());
+                obj.put("order_link", orderRunnings.get(i).getOrder_link());
+                obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
+                obj.put("thread", orderRunnings.get(i).getThread());
+                obj.put("insert_time", orderRunnings.get(i).getInsert_time());
+                obj.put("start_time", orderRunnings.get(i).getStart_time());
+                obj.put("update_time", orderRunnings.get(i).getUpdate_time());
+                obj.put("start_count", orderRunnings.get(i).getStart_count());
+                obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("current_count", orderRunnings.get(i).getCurrent_count());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("quantity", orderRunnings.get(i).getQuantity());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("service_id", orderRunnings.get(i).getService_id());
+                obj.put("username", orderRunnings.get(i).getUsername());
+                obj.put("charge", orderRunnings.get(i).getCharge());
+                obj.put("task", orderRunnings.get(i).getTask());
+                obj.put("platform", orderRunnings.get(i).getPlatform());
+                obj.put("bonus", orderRunnings.get(i).getBonus());
+                jsonArray.add(obj);
+            }
+
+            resp.put("total", orderRunnings.size());
+            resp.put("order_running", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(path = "get_Order_Refill", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Order_Refill(@RequestHeader(defaultValue = "") String Authorization) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            List<OrderRunningShow> orderRunnings;
+            orderRunnings = orderRunningRepository.get_Order_Running("refill@gmail.com");
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderRunnings.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderRunnings.get(i).getOrder_id());
+                obj.put("order_key", orderRunnings.get(i).getOrder_key());
+                obj.put("order_link", orderRunnings.get(i).getOrder_link());
                 obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
                 obj.put("thread", orderRunnings.get(i).getThread());
                 obj.put("insert_time", orderRunnings.get(i).getInsert_time());
@@ -357,6 +424,7 @@ public class OrderRunningController {
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunningList.get(i).getOrder_id());
                 orderHistory.setOrder_key(orderRunningList.get(i).getOrder_key());
+                orderHistory.setOrder_link(orderRunningList.get(i).getOrder_link());
                 orderHistory.setVideo_title(orderRunningList.get(i).getVideo_title());
                 orderHistory.setChannel_id(orderRunningList.get(i).getChannel_id());
                 orderHistory.setComment_list(orderRunningList.get(i).getComment_list());
@@ -379,6 +447,9 @@ public class OrderRunningController {
                 orderHistory.setRefund(0);
                 orderHistory.setCancel(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setRefill_time(0L);
+                orderHistory.setRefill(0);
+                orderHistory.setOrder_refill(orderRunningList.get(i).getOrder_refill());
                 orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
                 try {
                     orderHistoryRepository.save(orderHistory);
@@ -439,6 +510,7 @@ public class OrderRunningController {
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunning.getOrder_id());
                 orderHistory.setOrder_key(orderRunning.getOrder_key());
+                orderHistory.setOrder_link(orderRunning.getOrder_link());
                 orderHistory.setVideo_title(orderRunning.getVideo_title());
                 orderHistory.setChannel_id(orderRunning.getChannel_id());
                 orderHistory.setComment_list(orderRunning.getComment_list());
@@ -459,7 +531,10 @@ public class OrderRunningController {
                 orderHistory.setCurrent_count(orderRunning.getCurrent_count());
                 orderHistory.setRefund(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setRefill_time(0L);
+                orderHistory.setRefill(0);
                 orderHistory.setUpdate_current_time(orderRunning.getUpdate_current_time());
+                orderHistory.setOrder_refill(orderRunning.getOrder_refill());
                 if (cancel == 1) {
                     User user=userRepository.find_User_By_Token(Authorization.trim());
                     int remains = orderRunning.getQuantity() - (orderRunning.getTotal() > orderRunning.getQuantity() ? orderRunning.getQuantity() : orderRunning.getTotal());
@@ -621,6 +696,7 @@ public class OrderRunningController {
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunningList.get(i).getOrder_id());
                 orderHistory.setOrder_key(orderRunningList.get(i).getOrder_key());
+                orderHistory.setOrder_link(orderRunningList.get(i).getOrder_link());
                 orderHistory.setVideo_title(orderRunningList.get(i).getVideo_title());
                 orderHistory.setChannel_id(orderRunningList.get(i).getChannel_id());
                 orderHistory.setComment_list(orderRunningList.get(i).getComment_list());
@@ -643,7 +719,10 @@ public class OrderRunningController {
                 orderHistory.setRefund(0);
                 orderHistory.setCancel(0);
                 orderHistory.setRefund_time(0L);
+                orderHistory.setRefill_time(0L);
+                orderHistory.setRefill(0);
                 orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
+                orderHistory.setOrder_refill(orderRunningList.get(i).getOrder_refill());
 
                 try {
                     orderHistoryRepository.save(orderHistory);

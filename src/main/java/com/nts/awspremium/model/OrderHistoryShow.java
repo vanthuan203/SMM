@@ -3,6 +3,7 @@ package com.nts.awspremium.model;
 public interface OrderHistoryShow {
     Long getOrder_id();
     String getOrder_key();
+    String getOrder_link();
 
     Long getInsert_time();
     Long getStart_time();
@@ -24,5 +25,7 @@ public interface OrderHistoryShow {
     String getTask();
     Integer getBonus();
     Integer getRefund();
+    Integer getRefill();
+    Long getRefill_time();
 
 }
