@@ -89,4 +89,7 @@ public class Service implements Serializable {
     private Integer check_count ;
     @Column(columnDefinition = "varchar(255) default 'all'")
     private String device_type;
+
+    public Service() {
+    }
 }

@@ -1,9 +1,6 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.DataComment;
-import com.nts.awspremium.model.LogError;
-import com.nts.awspremium.model.OrderRunning;
-import com.nts.awspremium.model.ProfileShow;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -23,6 +20,8 @@ public class DataConmentController {
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
@@ -33,6 +32,7 @@ public class DataConmentController {
         try{
             List<OrderRunning> orderCommentList=orderRunningRepository.get_Order_Comment_Pending();
             for(int i=0;i<orderCommentList.size();i++){
+                Service service=serviceRepository.get_Service(orderCommentList.get(i).getService().getService_id());
                 String [] comments=orderCommentList.get(i).getComment_list().split("\n");
                 for (int j=0;j<comments.length;j++){
                     if(comments[j].trim().length()==0){
@@ -48,7 +48,7 @@ public class DataConmentController {
                     dataCommentRepository.save(dataComment);
                 }
                 orderCommentList.get(i).setStart_time(System.currentTimeMillis());
-                orderCommentList.get(i).setThread(orderCommentList.get(i).getService().getThread());
+                orderCommentList.get(i).setThread(service.getThread());
                 orderRunningRepository.save(orderCommentList.get(i));
             }
             resp.put("status",true);
