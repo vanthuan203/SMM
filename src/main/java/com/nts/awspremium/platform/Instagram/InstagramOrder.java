@@ -1,6 +1,5 @@
-package com.nts.awspremium.platform.x;
+package com.nts.awspremium.platform.Instagram;
 
-import com.nts.awspremium.FacebookApi;
 import com.nts.awspremium.XApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.BalanceRepository;
@@ -19,7 +18,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @RestController
-public class XOrder {
+public class InstagramOrder {
     @Autowired
     private BalanceRepository balanceRepository;
     @Autowired

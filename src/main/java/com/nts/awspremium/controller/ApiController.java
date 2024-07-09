@@ -6,6 +6,7 @@ import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.platform.facebook.FacebookOrder;
 import com.nts.awspremium.platform.tiktok.TiktokOrder;
+import com.nts.awspremium.platform.x.XOrder;
 import com.nts.awspremium.platform.youtube.YoutubeOrder;
 import com.nts.awspremium.repositories.*;
 import okhttp3.OkHttpClient;
@@ -47,6 +48,8 @@ public class ApiController {
     private TiktokOrder tiktokOrder;
     @Autowired
     private FacebookOrder facebookOrder;
+    @Autowired
+    private XOrder xOrder;
 
 
     @PostMapping(value = "/ver1", produces = "application/hal+json;charset=utf8")
@@ -168,9 +171,8 @@ public class ApiController {
                     return new ResponseEntity<String>(orderList.toJSONString(), HttpStatus.OK);
                 }
             }
-            JSONObject get_task = null;
             if (data.getAction().equals("add")) {
-
+                JSONObject get_task = null;
                 Service service = serviceRepository.get_Service(data.getService());
                 if (service == null) {
                     resp.put("error", "Invalid service");
@@ -210,9 +212,27 @@ public class ApiController {
                     }else if(service.getTask().trim().equals("member")){
                         get_task=facebookOrder.facebook_member(data,service,user);
                     }
+                }else if(service.getPlatform().trim().equals("x")){
+                    if(service.getTask().trim().equals("follower")){
+                        get_task=xOrder.x_follower(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=xOrder.x_like(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=xOrder.x_comment(data,service,user);
+                    }else if(service.getTask().trim().equals("view")){
+                        get_task=xOrder.x_view(data,service,user);
+                    }else if(service.getTask().trim().equals("repost")){
+                        get_task=xOrder.x_repost(data,service,user);
+                    }
                 }
+                if(get_task==null){
+                    resp.put("error","Can't insert link");
+                    get_task=resp;
+                }
+                return new ResponseEntity<String>(get_task.toJSONString(), HttpStatus.OK);
             }
-            return new ResponseEntity<String>(get_task.toJSONString(), HttpStatus.OK);
+            resp.put("error", "api system error");
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         }catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
@@ -264,6 +284,30 @@ public class ApiController {
                     get_task=tiktokOrder.tiktok_comment(data,service,user);
                 }else if(service.getTask().trim().equals("view")){
                     get_task=tiktokOrder.tiktok_view(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("facebook")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=facebookOrder.facebook_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=facebookOrder.facebook_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=facebookOrder.facebook_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=facebookOrder.facebook_view(data,service,user);
+                }else if(service.getTask().trim().equals("member")){
+                    get_task=facebookOrder.facebook_member(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("x")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=xOrder.x_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=xOrder.x_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=xOrder.x_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=xOrder.x_view(data,service,user);
+                }else if(service.getTask().trim().equals("repost")){
+                    get_task=xOrder.x_repost(data,service,user);
                 }
             }
             if(get_task.get("error")==null){
@@ -323,6 +367,30 @@ public class ApiController {
                     get_task=tiktokOrder.tiktok_comment(data,service,user);
                 }else if(service.getTask().trim().equals("view")){
                     get_task=tiktokOrder.tiktok_view(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("facebook")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=facebookOrder.facebook_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=facebookOrder.facebook_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=facebookOrder.facebook_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=facebookOrder.facebook_view(data,service,user);
+                }else if(service.getTask().trim().equals("member")){
+                    get_task=facebookOrder.facebook_member(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("x")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=xOrder.x_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=xOrder.x_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=xOrder.x_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=xOrder.x_view(data,service,user);
+                }else if(service.getTask().trim().equals("repost")){
+                    get_task=xOrder.x_repost(data,service,user);
                 }
             }
             if(get_task.get("error")==null){

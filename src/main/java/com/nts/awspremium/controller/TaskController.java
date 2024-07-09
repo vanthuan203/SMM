@@ -7,6 +7,7 @@ import com.nts.awspremium.platform.facebook.FacebookTask;
 import com.nts.awspremium.platform.facebook.FacebookUpdate;
 import com.nts.awspremium.platform.tiktok.TiktokTask;
 import com.nts.awspremium.platform.tiktok.TiktokUpdate;
+import com.nts.awspremium.platform.x.XTask;
 import com.nts.awspremium.platform.youtube.YoutubeTask;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
@@ -102,6 +103,8 @@ public class TaskController {
 
     @Autowired
     private FacebookTask facebookTask;
+    @Autowired
+    private XTask xTask;
     @Autowired
     private YoutubeUpdate youtubeUpdate;
     @Autowired
@@ -887,7 +890,7 @@ public class TaskController {
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
                 if(task.equals("tiktok_follower")){
-                    get_task=tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task= tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
                     get_task=youtubeTask.youtube_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_like")){
@@ -900,6 +903,26 @@ public class TaskController {
                     get_task=tiktokTask.tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_comment")){
                     get_task=tiktokTask.tiktok_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_follower")){
+                    get_task=facebookTask.facebook_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_like")){
+                    get_task=facebookTask.facebook_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_view")){
+                    get_task=facebookTask.facebook_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_comment")){
+                    get_task=facebookTask.facebook_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_member")){
+                    get_task=facebookTask.facebook_member(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_follower")){
+                    get_task=xTask.x_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_like")){
+                    get_task=xTask.x_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_view")){
+                    get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_comment")){
+                    get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_repost")){
+                    get_task=xTask.x_repost(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
@@ -1694,6 +1717,16 @@ public class TaskController {
                     get_task=facebookTask.facebook_comment(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("facebook_member")){
                     get_task=facebookTask.facebook_member(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_follower")){
+                    get_task=xTask.x_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_like")){
+                    get_task=xTask.x_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_view")){
+                    get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_comment")){
+                    get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("x_repost")){
+                    get_task=xTask.x_repost(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;

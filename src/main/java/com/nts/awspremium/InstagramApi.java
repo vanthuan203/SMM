@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class XApi {
+public class InstagramApi {
     public static String getUID_1(String link) {
 
         try {
@@ -89,8 +89,8 @@ public class XApi {
     }
 
 
-    public static String getXId(String url) {
-        String regex = "x\\.com/(\\w+)";
+    public static String getInstagramId(String url) {
+        String regex = "instagram\\.com/(\\w+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {
@@ -98,8 +98,8 @@ public class XApi {
         }
         return null;
     }
-    public static String getStatusId(String url) {
-        String regex = "x\\.com/\\w+/status/(\\d+)";
+    public static String getPostId(String url) {
+        String regex = "instagram\\.com/\\w+/p/(\\d+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {

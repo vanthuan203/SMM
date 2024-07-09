@@ -1,4 +1,4 @@
-package com.nts.awspremium.platform.x;
+package com.nts.awspremium.platform.Instagram;
 
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
@@ -12,7 +12,7 @@ import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @RestController
-public class XUpdate {
+public class InstagramUpdate {
 
     @Autowired
     private AccountRepository accountRepository;

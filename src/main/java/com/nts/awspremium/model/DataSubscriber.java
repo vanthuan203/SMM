@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "data_subscriber")
 @Setter
 @Getter
-public class DataSubscriber {
+public class DataSubscriber  {
     @Id
     private String video_id;
     @ManyToOne(fetch = FetchType.LAZY)
