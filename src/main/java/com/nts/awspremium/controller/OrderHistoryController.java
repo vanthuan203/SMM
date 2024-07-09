@@ -200,7 +200,7 @@ public class OrderHistoryController {
                     }else if(orderHistory.getService().getPlatform().equals("tiktok")){
                         JSONObject videoInfo;
                         if(orderHistory.getService().getTask().equals("follower")){
-                            current_Count=TikTokApi.getFollowerCount(orderHistory.getOrder_key().replace("@",""));
+                            current_Count=TikTokApi.getFollowerCount(orderHistory.getOrder_key().replace("@",""),2);
                         }else if(orderHistory.getService().getTask().equals("like")){
                             current_Count=TikTokApi.getCountLike(orderHistory.getOrder_key());
                         }else if(orderHistory.getService().getTask().equals("view")){
@@ -360,7 +360,7 @@ public class OrderHistoryController {
                         }
                     }else if(orderHistory.getService().getPlatform().equals("tiktok")){
                         if(orderHistory.getService().getTask().equals("follower")){
-                            current_Count=TikTokApi.getFollowerCount(orderHistory.getOrder_key().replace("@",""));
+                            current_Count=TikTokApi.getFollowerCount(orderHistory.getOrder_key().replace("@",""),2);
                         }else if(orderHistory.getService().getTask().equals("like")){
                             current_Count=TikTokApi.getCountLike(orderHistory.getOrder_key());
                         }else if(orderHistory.getService().getTask().equals("view")){

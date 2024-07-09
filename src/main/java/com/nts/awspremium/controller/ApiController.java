@@ -4,6 +4,7 @@ import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.facebook.FacebookOrder;
 import com.nts.awspremium.platform.tiktok.TiktokOrder;
 import com.nts.awspremium.platform.youtube.YoutubeOrder;
 import com.nts.awspremium.repositories.*;
@@ -44,6 +45,8 @@ public class ApiController {
     private YoutubeOrder youtubeOrder;
     @Autowired
     private TiktokOrder tiktokOrder;
+    @Autowired
+    private FacebookOrder facebookOrder;
 
 
     @PostMapping(value = "/ver1", produces = "application/hal+json;charset=utf8")
@@ -194,6 +197,18 @@ public class ApiController {
                         get_task=tiktokOrder.tiktok_comment(data,service,user);
                     }else if(service.getTask().trim().equals("view")){
                         get_task=tiktokOrder.tiktok_view(data,service,user);
+                    }
+                }else if(service.getPlatform().trim().equals("facebook")){
+                    if(service.getTask().trim().equals("follower")){
+                        get_task=facebookOrder.facebook_follower(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=facebookOrder.facebook_like(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=facebookOrder.facebook_comment(data,service,user);
+                    }else if(service.getTask().trim().equals("view")){
+                        get_task=facebookOrder.facebook_view(data,service,user);
+                    }else if(service.getTask().trim().equals("member")){
+                        get_task=facebookOrder.facebook_member(data,service,user);
                     }
                 }
             }

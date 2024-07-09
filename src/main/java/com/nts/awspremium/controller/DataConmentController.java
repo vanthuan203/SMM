@@ -48,6 +48,7 @@ public class DataConmentController {
                     dataCommentRepository.save(dataComment);
                 }
                 orderCommentList.get(i).setStart_time(System.currentTimeMillis());
+                orderCommentList.get(i).setThread(orderCommentList.get(i).getService().getThread());
                 orderRunningRepository.save(orderCommentList.get(i));
             }
             resp.put("status",true);

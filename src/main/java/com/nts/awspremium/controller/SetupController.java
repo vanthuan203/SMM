@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.FacebookApi;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
@@ -348,11 +349,11 @@ public class SetupController {
     }
 
     @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test2() {
+    ResponseEntity<Map<String, Object>> test2(@RequestParam String link) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            String stringList=TikTokApi.checkTiktokTrue("https://www.tiktok.com/@constancefgfgfgfgfffffperez19785?lang=vi-VN");
+            boolean stringList= FacebookApi.getGroup(link);
             resp.put("status", true);
             data.put("task", "create_profile");
             data.put("profile_id", stringList);

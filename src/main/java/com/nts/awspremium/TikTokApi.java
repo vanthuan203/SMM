@@ -76,10 +76,12 @@ public class TikTokApi {
             return -3;
         }
     }
-    public static Integer getFollowerCount(String tiktok_id) {
+    public static Integer getFollowerCount(String tiktok_id,Integer index) {
 
         try {
-
+            if(index<=0){
+                return -2;
+            }
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Request request = null;
             request = new Request.Builder().url("https://countik.com/api/exist/" + tiktok_id).get().build();
@@ -91,7 +93,7 @@ public class TikTokApi {
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
             if(jsonObject.get("sec_uid")==null){
-                return getFollowerCount(tiktok_id);
+                return getFollowerCount(tiktok_id,index-1);
             }else{
                 request = new Request.Builder().url("https://countik.com/api/userinfo?sec_user_id=" + jsonObject.get("sec_uid").toString()).get().build();
 
@@ -111,11 +113,13 @@ public class TikTokApi {
         }
     }
 
-    public static JSONObject getInfoVideoTikTok(String video_id) {
-
+    public static JSONObject getInfoVideoTikTok(String link,Integer index) {
         try {
             JSONObject json = new JSONObject();
-            String link="https://www.tiktok.com/video/"+video_id;
+            if(index<=0){
+                json.put("status","error");
+                return json;
+            }
             json.put("url", link);
             // Convert JSON object to RequestBody
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -131,6 +135,10 @@ public class TikTokApi {
             response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
+            if(jsonObject.get("status").equals("error"))
+            {
+                getInfoVideoTikTok(link,index-1);
+            }
             return jsonObject;
         } catch (Exception e) {
             JSONObject resp=new JSONObject();
@@ -168,6 +176,7 @@ public class TikTokApi {
             return -2;
         }
     }
+
     public static Integer getCountView(String video_id) {
 
         try {
@@ -281,6 +290,16 @@ public class TikTokApi {
         } else {
             return null;
         }
+    }
+
+    public static String getIdShare(String url) {
+        String regex = "https://vt.tiktok.com/(\\w+)/";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
 }

@@ -321,51 +321,40 @@ public class OrderRunningController {
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("like")){
                             int current_Count=GoogleApi.getCountLikeCurrent(orderRunningList.get(i).getOrder_key());
-                            System.out.println(current_Count);
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }
-                    }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
-                        if(orderRunningList.get(i).getService().getTask().equals("follower")){
-                            int current_Count=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@",""));
-                            System.out.println(current_Count);
-                            if(current_Count>=0){
+                    }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
+                        if (orderRunningList.get(i).getService().getTask().equals("follower")) {
+                            int current_Count = TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@", ""), 1);
+                            if (current_Count >= 0) {
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
-                        }else if(orderRunningList.get(i).getService().getTask().equals("like")){
-                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
-                            if(jsonObject.get("status").equals("success")){
-                                int current_Count=Integer.parseInt(jsonObject.get("likes").toString());
-                                if(current_Count>=0){
-                                    orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
-                                    orderRunningRepository.save(orderRunningList.get(i));
-                                }
+                        } else if (orderRunningList.get(i).getService().getTask().equals("like")) {
+                            int current_Count = TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
+                            if (current_Count >= 0) {
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
                             }
-                        }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
-                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
-                            if(jsonObject.get("status").equals("success")){
-                                int current_Count=Integer.parseInt(jsonObject.get("comments").toString());
-                                if(current_Count>=0){
-                                    orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
-                                    orderRunningRepository.save(orderRunningList.get(i));
-                                }
+                        } else if (orderRunningList.get(i).getService().getTask().equals("comment")) {
+                            int current_Count = TikTokApi.getCountComment(orderRunningList.get(i).getOrder_key());
+                            if (current_Count >= 0) {
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
                             }
-                        }else if(orderRunningList.get(i).getService().getTask().equals("view")){
-                            JSONObject jsonObject=TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key());
-                            if(jsonObject.get("status").equals("success")){
-                                int current_Count=Integer.parseInt(jsonObject.get("plays").toString());
-                                if(current_Count>=0){
-                                    orderRunningList.get(i).setCurrent_count(current_Count);
-                                    orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
-                                    orderRunningRepository.save(orderRunningList.get(i));
-                                }
+                        } else if (orderRunningList.get(i).getService().getTask().equals("view")) {
+                            int current_Count = TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
+                            if (current_Count >= 0) {
+                                orderRunningList.get(i).setCurrent_count(current_Count);
+                                orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
+                                orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }
                     }
@@ -653,7 +642,7 @@ public class OrderRunningController {
                     }
                 }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){ ///////________TIKTOK_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("follower")){
-                        int count= TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().split("@")[1]);
+                        int count= TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().split("@")[1],1);
                         if(count==-2) {
                             continue;
                         }else if(count>=0){
@@ -662,31 +651,28 @@ public class OrderRunningController {
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("like")){
-                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
-                        if(jsonObject==null) {
+                        int count= TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
+                        if(count==-2) {
                             continue;
-                        }else{
-                            int count=Integer.parseInt(jsonObject.get("likes").toString());
+                        }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
-                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
-                        if(jsonObject==null) {
+                        int count= TikTokApi.getCountComment(orderRunningList.get(i).getOrder_key());
+                        if(count==-2) {
                             continue;
-                        }else{
-                            int count=Integer.parseInt(jsonObject.get("comments").toString());
+                        }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
-                        JSONObject jsonObject= TikTokApi.getInfoVideoTikTok(orderRunningList.get(i).getOrder_key().split("@")[1]);
-                        if(jsonObject==null) {
+                        int count= TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
+                        if(count==-2) {
                             continue;
-                        }else{
-                            int count=Integer.parseInt(jsonObject.get("plays").toString());
+                        }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }

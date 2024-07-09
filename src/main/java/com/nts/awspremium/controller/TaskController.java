@@ -3,8 +3,12 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.facebook.FacebookTask;
+import com.nts.awspremium.platform.facebook.FacebookUpdate;
 import com.nts.awspremium.platform.tiktok.TiktokTask;
+import com.nts.awspremium.platform.tiktok.TiktokUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeTask;
+import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,10 +71,16 @@ public class TaskController {
     private TikTokFollower24hRepository tikTokFollower24hRepository;
 
     @Autowired
+    private FacebookFollower24hRepository facebookFollower24hRepository;
+
+    @Autowired
     private TikTokLike24hRepository tikTokLike24hRepository;
 
     @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
+
+    @Autowired
+    private FacebookFollowerHistoryRepository facebookFollowerHistoryRepository;
 
     @Autowired
     private TikTokLikeHistoryRepository tikTokLikeHistoryRepository;
@@ -89,6 +99,15 @@ public class TaskController {
     private TiktokTask tiktokTask;
     @Autowired
     private YoutubeTask youtubeTask;
+
+    @Autowired
+    private FacebookTask facebookTask;
+    @Autowired
+    private YoutubeUpdate youtubeUpdate;
+    @Autowired
+    private TiktokUpdate tiktokUpdate;
+    @Autowired
+    private FacebookUpdate facebookUpdate;
 
     @GetMapping(value = "getTaskDevice", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTaskDevice(@RequestHeader(defaultValue = "") String Authorization,
@@ -1665,6 +1684,16 @@ public class TaskController {
                     get_task=tiktokTask.tiktok_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("tiktok_comment")){
                     get_task=tiktokTask.tiktok_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_follower")){
+                    get_task=facebookTask.facebook_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_like")){
+                    get_task=facebookTask.facebook_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_view")){
+                    get_task=facebookTask.facebook_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_comment")){
+                    get_task=facebookTask.facebook_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("facebook_member")){
+                    get_task=facebookTask.facebook_member(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
@@ -1768,128 +1797,38 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             accountTaskRepository.reset_Thread_By_AccountId(account_id.trim());
-            if(platform.toLowerCase().trim().equals("youtube")){
-                if(task.toLowerCase().trim().equals("view")){
-                    if(status==true){
-                        YoutubeViewHistory youtubeVideoHistory=youtubeVideoHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(youtubeVideoHistory!=null){
-                            youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id()+task_key.trim()+"|");
-                            youtubeVideoHistory.setUpdate_time(System.currentTimeMillis());
-                            youtubeVideoHistoryRepository.save(youtubeVideoHistory);
-                        }else{
-                            YoutubeViewHistory youtubeVideoHistory_New=new YoutubeViewHistory();
-                            youtubeVideoHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            youtubeVideoHistory_New.setUpdate_time(System.currentTimeMillis());
-                            youtubeVideoHistory_New.setList_id(task_key.trim()+"|");
-                            youtubeVideoHistoryRepository.save(youtubeVideoHistory_New);
-                        }
-                    }
-                }else  if(task.toLowerCase().trim().equals("subscriber")){
-                    if(status==true){
-                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
-                        if(order_Key!=null){
-                            YoutubeSubscriberHistory youtubeChannelHistory=youtubeChannelHistoryRepository.get_By_AccountId(account_id.trim());
-                            if(youtubeChannelHistory!=null){
-                                youtubeChannelHistory.setList_id(youtubeChannelHistory.getList_id()+order_Key.trim()+"|");
-                                youtubeChannelHistory.setUpdate_time(System.currentTimeMillis());
-                                youtubeChannelHistoryRepository.save(youtubeChannelHistory);
-                            }else{
-                                YoutubeSubscriberHistory youtubeChannelHistory_New=new YoutubeSubscriberHistory();
-                                youtubeChannelHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                                youtubeChannelHistory_New.setUpdate_time(System.currentTimeMillis());
-                                youtubeChannelHistory_New.setList_id(order_Key.trim()+"|");
-                                youtubeChannelHistoryRepository.save(youtubeChannelHistory_New);
-                            }
-                            YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
-                            youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
-                            youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
-                            youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
-                        }
-                    }
-                }else  if(task.toLowerCase().trim().equals("like")){
-                    if(status==true){
-                        YoutubeLikeHistory youtubeLikeHistory=youtubeLikeHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(youtubeLikeHistory!=null){
-                            youtubeLikeHistory.setList_id(youtubeLikeHistory.getList_id()+task_key.trim()+"|");
-                            youtubeLikeHistory.setUpdate_time(System.currentTimeMillis());
-                            youtubeLikeHistoryRepository.save(youtubeLikeHistory);
-                        }else{
-                            YoutubeLikeHistory youtubeLikeHistory_New=new YoutubeLikeHistory();
-                            youtubeLikeHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            youtubeLikeHistory_New.setUpdate_time(System.currentTimeMillis());
-                            youtubeLikeHistory_New.setList_id(task_key.trim()+"|");
-                            youtubeLikeHistoryRepository.save(youtubeLikeHistory_New);
-                        }
-                        YoutubeLike24h youtubeLike24h =new YoutubeLike24h();
-                        youtubeLike24h.setId(account_id.trim()+task_key.trim());
-                        youtubeLike24h.setUpdate_time(System.currentTimeMillis());
-                        youtubeLike24hRepository.save(youtubeLike24h);
-                    }
+            String platform_Check = platform.toLowerCase().trim();
+            if(platform_Check.equals("youtube")){
+                if(task.toLowerCase().trim().equals("view")&&status==true){
+                    youtubeUpdate.youtube_view(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("subscriber")&&status==true){
+                    youtubeUpdate.youtube_subscriber(account_id.trim(),task_key.trim());
+                } else  if(task.toLowerCase().trim().equals("like")&&status==true){
+                    youtubeUpdate.youtube_like(account_id.trim(),task_key.trim());
                 }
-
-            }else if(platform.toLowerCase().trim().equals("tiktok")){
-                if(task.toLowerCase().trim().equals("follower")){
-                    if(status==true){
-                        TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(tikTokAccountHistory!=null){
-                            tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
-                            tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
-                            tikTokAccountHistoryRepository.save(tikTokAccountHistory);
-                        }else{
-                            TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
-                            tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
-                            tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
-                            tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
-                        }
-                        TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
-                        tiktokFollower24h.setId(account_id.trim()+task_key.trim());
-                        tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
-                        tikTokFollower24hRepository.save(tiktokFollower24h);
-                    }
-                }else  if(task.toLowerCase().trim().equals("like")){
-                    if(status==true){
-                        TikTokLikeHistory tikTokLikeHistory=tikTokLikeHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(tikTokLikeHistory!=null){
-                            tikTokLikeHistory.setList_id(tikTokLikeHistory.getList_id()+task_key.trim()+"|");
-                            tikTokLikeHistory.setUpdate_time(System.currentTimeMillis());
-                            tikTokLikeHistoryRepository.save(tikTokLikeHistory);
-                        }else{
-                            TikTokLikeHistory tikTokLikeHistory_New=new TikTokLikeHistory();
-                            tikTokLikeHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            tikTokLikeHistory_New.setUpdate_time(System.currentTimeMillis());
-                            tikTokLikeHistory_New.setList_id(task_key.trim()+"|");
-                            tikTokLikeHistoryRepository.save(tikTokLikeHistory_New);
-                        }
-                        TiktokLike24h tiktokLike24h =new TiktokLike24h();
-                        tiktokLike24h.setId(account_id.trim()+task_key.trim());
-                        tiktokLike24h.setUpdate_time(System.currentTimeMillis());
-                        tikTokLike24hRepository.save(tiktokLike24h);
-                    }
+            }else if(platform_Check.equals("tiktok")){
+                if(task.toLowerCase().trim().equals("follower")&&status==true){
+                   tiktokUpdate.tiktok_follower(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
+                    tiktokUpdate.tiktok_like(account_id.trim(),task_key.trim());
                 }else  if(task.toLowerCase().trim().equals("comment")){
-                    if(status==true){
-                        TikTokCommentHistory tikTokCommentHistory=tikTokCommentHistoryRepository.get_By_AccountId(account_id.trim());
-                        if(tikTokCommentHistory!=null){
-                            tikTokCommentHistory.setList_id(tikTokCommentHistory.getList_id()+task_key.trim()+"|");
-                            tikTokCommentHistory.setUpdate_time(System.currentTimeMillis());
-                            tikTokCommentHistoryRepository.save(tikTokCommentHistory);
-                        }else{
-                            TikTokCommentHistory tikTokCommentHistory_New=new TikTokCommentHistory();
-                            tikTokCommentHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                            tikTokCommentHistory_New.setUpdate_time(System.currentTimeMillis());
-                            tikTokCommentHistory_New.setList_id(task_key.trim()+"|");
-                            tikTokCommentHistoryRepository.save(tikTokCommentHistory_New);
-                        }
-                        dataCommentRepository.update_Task_Comment_Done(account_id.trim());
-                    }else {
-                        dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
-                    }
+                    tiktokUpdate.tiktok_comment(account_id.trim(),task_key.trim(),status);
+                }
+            }else if(platform_Check.equals("facebook")){
+                if(task.toLowerCase().trim().equals("follower")&&status==true){
+                  facebookUpdate.facebook_follower(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
+                    facebookUpdate.facebook_like(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("comment")) {
+                    facebookUpdate.facebook_comment(account_id.trim(), task_key.trim(), status);
+                }else  if(task.toLowerCase().trim().equals("member")&&status==true) {
+                    facebookUpdate.facebook_member(account_id.trim(), task_key.trim());
                 }
             }
             if(status==true){
                 try {
                     OrderRunning orderRunning=null;
-                    if(platform.toLowerCase().trim().equals("youtube")&&task.toLowerCase().trim().equals("subscriber")){
+                    if(platform_Check.equals("youtube")&&task.toLowerCase().trim().equals("subscriber")){
                         String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
                         orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,task.trim(),platform.trim());
                     }else{

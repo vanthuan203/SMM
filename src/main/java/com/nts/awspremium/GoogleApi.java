@@ -265,6 +265,47 @@ public class GoogleApi {
         }
     }
 
+    public static String getFacebook(String link) {
+        try {
+            // Kết nối tới trang YouTube và lấy nội dung trang
+            Document doc = Jsoup.connect(link)
+                    .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
+                    .timeout(10000)
+                    .get();
+            Elements posts = doc.select(".post");
+            System.out.println(posts);
+            // Tìm tất cả các thẻ <script> chứa đoạn JSON
+            Elements scriptElements = doc.selectXpath("script");
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                if (scriptContent.contains("responseContext")) {
+                    // Lấy phần JSON trong nội dung của thẻ script
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    System.out.println(jsonString);
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
+                    System.out.println(jsonElement11);
+                    String id = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("title").toString().replace("\"","");
+                    String chann = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("externalId").toString().replace("\"","");
+                    return id+","+chann;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+            return null;
+        }
+    }
+
     public static List<String> getVideoLinks(String channelUrl) {
         List<String> videoList = new ArrayList<>();
 
