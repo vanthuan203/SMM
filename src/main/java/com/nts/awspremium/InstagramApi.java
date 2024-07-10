@@ -107,6 +107,15 @@ public class InstagramApi {
         }
         return null;
     }
+    public static String getReelId(String url) {
+        String regex = "instagram\\.com/reels/(\\w+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
 
 
 }

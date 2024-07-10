@@ -32,8 +32,11 @@ public class InstagramOrder {
         try{
             String x_Id= InstagramApi.getPostId(data.getLink());
             if(x_Id==null){
-                resp.put("error", "Invalid link");
-                return resp;
+                x_Id= InstagramApi.getReelId(data.getLink());
+                if(x_Id==null){
+                    resp.put("error", "Invalid link");
+                    return resp;
+                }
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(x_Id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
@@ -106,8 +109,11 @@ public class InstagramOrder {
         try{
             String x_Id= InstagramApi.getPostId(data.getLink());
             if(x_Id==null){
-                resp.put("error", "Invalid link");
-                return resp;
+                x_Id= InstagramApi.getReelId(data.getLink());
+                if(x_Id==null){
+                    resp.put("error", "Invalid link");
+                    return resp;
+                }
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(x_Id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
@@ -254,8 +260,11 @@ public class InstagramOrder {
         try{
             String x_Id= InstagramApi.getPostId(data.getLink());
             if(x_Id==null){
-                resp.put("error", "Invalid link");
-                return resp;
+                x_Id= InstagramApi.getReelId(data.getLink());
+                if(x_Id==null){
+                    resp.put("error", "Invalid link");
+                    return resp;
+                }
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(x_Id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
