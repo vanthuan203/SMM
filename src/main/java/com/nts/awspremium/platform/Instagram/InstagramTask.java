@@ -53,6 +53,7 @@ public class InstagramTask {
                     data.put("platform", service.getPlatform().toLowerCase());
                     data.put("task", service.getTask());
                     data.put("task_key",orderRunning.getOrder_key());
+                    data.put("task_link",orderRunning.getOrder_link());
                     data.put("comment",comment);
                     resp.put("data",data);
                     return resp;
