@@ -3,6 +3,7 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.Instagram.InstagramTask;
 import com.nts.awspremium.platform.Instagram.InstagramUpdate;
 import com.nts.awspremium.platform.facebook.FacebookTask;
 import com.nts.awspremium.platform.facebook.FacebookUpdate;
@@ -109,6 +110,8 @@ public class TaskController {
     private FacebookTask facebookTask;
     @Autowired
     private XTask xTask;
+    @Autowired
+    private InstagramTask instagramTask;
     @Autowired
     private ThreadsTask threadsTask;
     @Autowired
@@ -936,13 +939,13 @@ public class TaskController {
                 }else if(task.equals("x_repost")){
                     get_task=xTask.x_repost(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_follower")){
-                    get_task=xTask.x_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_like")){
-                    get_task=xTask.x_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_view")){
-                    get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_comment")){
-                    get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_comment(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("threads_follower")){
                     get_task=threadsTask.threads_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("threads_like")){
@@ -1758,13 +1761,13 @@ public class TaskController {
                 }else if(task.equals("x_repost")){
                     get_task=xTask.x_repost(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_follower")){
-                    get_task=xTask.x_follower(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_like")){
-                    get_task=xTask.x_like(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_like(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_view")){
-                    get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_comment")){
-                    get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                    get_task=instagramTask.instagram_comment(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("threads_follower")){
                     get_task=threadsTask.threads_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("threads_like")){
