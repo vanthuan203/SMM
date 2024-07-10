@@ -6,6 +6,7 @@ import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.platform.Instagram.InstagramOrder;
 import com.nts.awspremium.platform.facebook.FacebookOrder;
+import com.nts.awspremium.platform.threads.ThreadsOrder;
 import com.nts.awspremium.platform.tiktok.TiktokOrder;
 import com.nts.awspremium.platform.x.XOrder;
 import com.nts.awspremium.platform.youtube.YoutubeOrder;
@@ -51,6 +52,8 @@ public class ApiController {
     private FacebookOrder facebookOrder;
     @Autowired
     private XOrder xOrder;
+    @Autowired
+    private ThreadsOrder threadsOrder;
     @Autowired
     private InstagramOrder instagramOrder;
 
@@ -237,6 +240,18 @@ public class ApiController {
                     }else if(service.getTask().trim().equals("view")){
                         get_task=instagramOrder.instagram_view(data,service,user);
                     }
+                }else if(service.getPlatform().trim().equals("threads")){
+                    if(service.getTask().trim().equals("follower")){
+                        get_task=threadsOrder.threads_follower(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=threadsOrder.threads_like(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=threadsOrder.threads_comment(data,service,user);
+                    }else if(service.getTask().trim().equals("view")){
+                        get_task=threadsOrder.threads_view(data,service,user);
+                    }else if(service.getTask().trim().equals("repost")){
+                        get_task=threadsOrder.threads_repost(data,service,user);
+                    }
                 }
                 if(get_task==null){
                     resp.put("error","Can't insert link");
@@ -332,6 +347,18 @@ public class ApiController {
                 }else if(service.getTask().trim().equals("view")){
                     get_task=instagramOrder.instagram_view(data,service,user);
                 }
+            }else if(service.getPlatform().trim().equals("threads")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=threadsOrder.threads_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=threadsOrder.threads_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=threadsOrder.threads_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=threadsOrder.threads_view(data,service,user);
+                }else if(service.getTask().trim().equals("repost")){
+                    get_task=threadsOrder.threads_repost(data,service,user);
+                }
             }
             if(get_task.get("error")==null){
                 resp.put("order_running", true);
@@ -424,6 +451,18 @@ public class ApiController {
                     get_task=instagramOrder.instagram_comment(data,service,user);
                 }else if(service.getTask().trim().equals("view")){
                     get_task=instagramOrder.instagram_view(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("threads")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=threadsOrder.threads_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=threadsOrder.threads_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=threadsOrder.threads_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=threadsOrder.threads_view(data,service,user);
+                }else if(service.getTask().trim().equals("repost")){
+                    get_task=threadsOrder.threads_repost(data,service,user);
                 }
             }
             if(get_task.get("error")==null){

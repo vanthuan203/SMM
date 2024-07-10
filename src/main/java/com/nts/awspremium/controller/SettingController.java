@@ -28,6 +28,14 @@ public class SettingController {
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
     @Autowired
+    private SettingFacebookRepository settingFacebookRepository;
+    @Autowired
+    private SettingXRepository settingXRepository;
+    @Autowired
+    private SettingInstagramRepository settingInstagramRepository;
+    @Autowired
+    private SettingThreadsRepository settingThreadsRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -64,6 +72,47 @@ public class SettingController {
             obj1.put("max_activity_24h", settingTiktok.getMax_activity_24h());
             obj1.put("update_time", settingTiktok.getUpdate_time());
             jsonArray.add(obj1);
+            resp.put("setting_platform",jsonArray);
+            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
+            JSONObject obj2 = new JSONObject();
+            obj2.put("id","facebook");
+            obj2.put("platform","facebook");
+            obj2.put("max_follower", settingFacebook.getMax_follower());
+            obj2.put("max_like", settingFacebook.getMax_like());
+            obj2.put("max_day_activity", settingFacebook.getMax_day_activity());
+            obj2.put("max_activity_24h", settingFacebook.getMax_activity_24h());
+            obj2.put("update_time", settingFacebook.getUpdate_time());
+            jsonArray.add(obj2);
+            SettingX settingX=settingXRepository.get_Setting();
+            JSONObject obj3 = new JSONObject();
+            obj3.put("id","x");
+            obj3.put("platform","x");
+            obj3.put("max_follower", settingX.getMax_follower());
+            obj3.put("max_like", settingX.getMax_like());
+            obj3.put("max_day_activity", settingX.getMax_day_activity());
+            obj3.put("max_activity_24h", settingX.getMax_activity_24h());
+            obj3.put("update_time", settingX.getUpdate_time());
+            jsonArray.add(obj3);
+            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
+            JSONObject obj4 = new JSONObject();
+            obj4.put("id","instagram");
+            obj4.put("platform","instagram");
+            obj4.put("max_follower", settingInstagram.getMax_follower());
+            obj4.put("max_like", settingInstagram.getMax_like());
+            obj4.put("max_day_activity", settingInstagram.getMax_day_activity());
+            obj4.put("max_activity_24h", settingInstagram.getMax_activity_24h());
+            obj4.put("update_time", settingInstagram.getUpdate_time());
+            jsonArray.add(obj4);
+            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
+            JSONObject obj5 = new JSONObject();
+            obj5.put("id","threads");
+            obj5.put("platform","threads");
+            obj5.put("max_follower", settingThreads.getMax_follower());
+            obj5.put("max_like", settingThreads.getMax_like());
+            obj5.put("max_day_activity", settingThreads.getMax_day_activity());
+            obj5.put("max_activity_24h", settingThreads.getMax_activity_24h());
+            obj5.put("update_time", settingThreads.getUpdate_time());
+            jsonArray.add(obj5);
             resp.put("setting_platform",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
@@ -277,6 +326,74 @@ public class SettingController {
                 obj.put("max_day_activity", settingTiktok.getMax_day_activity());
                 obj.put("max_activity_24h", settingTiktok.getMax_activity_24h());
                 obj.put("update_time", settingTiktok.getUpdate_time());
+                resp.put("setting_platform",obj);
+            }else if(jsonObject.get("platform").toString().equals("facebook")){
+                SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
+                settingFacebook.setMax_follower(Integer.parseInt(jsonObject.get("max_follower").toString()));
+                settingFacebook.setMax_like(Integer.parseInt(jsonObject.get("max_like").toString()));
+                settingFacebook.setMax_activity_24h(Integer.parseInt(jsonObject.get("max_activity_24h").toString()));
+                settingFacebook.setMax_day_activity(Integer.parseInt(jsonObject.get("max_day_activity").toString()));
+                settingFacebook.setUpdate_time(System.currentTimeMillis());
+                settingFacebookRepository.save(settingFacebook);
+                JSONObject obj = new JSONObject();
+                obj.put("id","facebook");
+                obj.put("platform","facebook");
+                obj.put("max_follower", settingFacebook.getMax_follower());
+                obj.put("max_like", settingFacebook.getMax_like());
+                obj.put("max_day_activity", settingFacebook.getMax_day_activity());
+                obj.put("max_activity_24h", settingFacebook.getMax_activity_24h());
+                obj.put("update_time", settingFacebook.getUpdate_time());
+                resp.put("setting_platform",obj);
+            }else if(jsonObject.get("platform").toString().equals("x")){
+                SettingX settingX=settingXRepository.get_Setting();
+                settingX.setMax_follower(Integer.parseInt(jsonObject.get("max_follower").toString()));
+                settingX.setMax_like(Integer.parseInt(jsonObject.get("max_like").toString()));
+                settingX.setMax_activity_24h(Integer.parseInt(jsonObject.get("max_activity_24h").toString()));
+                settingX.setMax_day_activity(Integer.parseInt(jsonObject.get("max_day_activity").toString()));
+                settingX.setUpdate_time(System.currentTimeMillis());
+                settingXRepository.save(settingX);
+                JSONObject obj = new JSONObject();
+                obj.put("id","x");
+                obj.put("platform","x");
+                obj.put("max_follower", settingX.getMax_follower());
+                obj.put("max_like", settingX.getMax_like());
+                obj.put("max_day_activity", settingX.getMax_day_activity());
+                obj.put("max_activity_24h", settingX.getMax_activity_24h());
+                obj.put("update_time", settingX.getUpdate_time());
+                resp.put("setting_platform",obj);
+            }else if(jsonObject.get("platform").toString().equals("instagram")){
+                SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
+                settingInstagram.setMax_follower(Integer.parseInt(jsonObject.get("max_follower").toString()));
+                settingInstagram.setMax_like(Integer.parseInt(jsonObject.get("max_like").toString()));
+                settingInstagram.setMax_activity_24h(Integer.parseInt(jsonObject.get("max_activity_24h").toString()));
+                settingInstagram.setMax_day_activity(Integer.parseInt(jsonObject.get("max_day_activity").toString()));
+                settingInstagram.setUpdate_time(System.currentTimeMillis());
+                settingInstagramRepository.save(settingInstagram);
+                JSONObject obj = new JSONObject();
+                obj.put("id","instagram");
+                obj.put("platform","instagram");
+                obj.put("max_follower", settingInstagram.getMax_follower());
+                obj.put("max_like", settingInstagram.getMax_like());
+                obj.put("max_day_activity", settingInstagram.getMax_day_activity());
+                obj.put("max_activity_24h", settingInstagram.getMax_activity_24h());
+                obj.put("update_time", settingInstagram.getUpdate_time());
+                resp.put("setting_platform",obj);
+            }else if(jsonObject.get("platform").toString().equals("threads")){
+                SettingThreads settingThreads=settingThreadsRepository.get_Setting();
+                settingThreads.setMax_follower(Integer.parseInt(jsonObject.get("max_follower").toString()));
+                settingThreads.setMax_like(Integer.parseInt(jsonObject.get("max_like").toString()));
+                settingThreads.setMax_activity_24h(Integer.parseInt(jsonObject.get("max_activity_24h").toString()));
+                settingThreads.setMax_day_activity(Integer.parseInt(jsonObject.get("max_day_activity").toString()));
+                settingThreads.setUpdate_time(System.currentTimeMillis());
+                settingThreadsRepository.save(settingThreads);
+                JSONObject obj = new JSONObject();
+                obj.put("id","threads");
+                obj.put("platform","threads");
+                obj.put("max_follower", settingThreads.getMax_follower());
+                obj.put("max_like", settingThreads.getMax_like());
+                obj.put("max_day_activity", settingThreads.getMax_day_activity());
+                obj.put("max_activity_24h", settingThreads.getMax_activity_24h());
+                obj.put("update_time", settingThreads.getUpdate_time());
                 resp.put("setting_platform",obj);
             }
 

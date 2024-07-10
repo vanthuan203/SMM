@@ -6,6 +6,8 @@ import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.platform.Instagram.InstagramUpdate;
 import com.nts.awspremium.platform.facebook.FacebookTask;
 import com.nts.awspremium.platform.facebook.FacebookUpdate;
+import com.nts.awspremium.platform.threads.ThreadsTask;
+import com.nts.awspremium.platform.threads.ThreadsUpdate;
 import com.nts.awspremium.platform.tiktok.TiktokTask;
 import com.nts.awspremium.platform.tiktok.TiktokUpdate;
 import com.nts.awspremium.platform.x.XTask;
@@ -108,6 +110,8 @@ public class TaskController {
     @Autowired
     private XTask xTask;
     @Autowired
+    private ThreadsTask threadsTask;
+    @Autowired
     private YoutubeUpdate youtubeUpdate;
     @Autowired
     private TiktokUpdate tiktokUpdate;
@@ -115,6 +119,8 @@ public class TaskController {
     private FacebookUpdate facebookUpdate;
     @Autowired
     private XUpdate xUpdate;
+    @Autowired
+    private ThreadsUpdate threadsUpdate;
     @Autowired
     private InstagramUpdate instagramUpdate;
 
@@ -937,6 +943,16 @@ public class TaskController {
                     get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_comment")){
                     get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_follower")){
+                    get_task=threadsTask.threads_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_like")){
+                    get_task=threadsTask.threads_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_view")){
+                    get_task=threadsTask.threads_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_comment")){
+                    get_task=threadsTask.threads_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_repost")){
+                    get_task=threadsTask.threads_repost(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
@@ -1749,6 +1765,16 @@ public class TaskController {
                     get_task=xTask.x_view(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("instagram_comment")){
                     get_task=xTask.x_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_follower")){
+                    get_task=threadsTask.threads_follower(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_like")){
+                    get_task=threadsTask.threads_like(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_view")){
+                    get_task=threadsTask.threads_view(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_comment")){
+                    get_task=threadsTask.threads_comment(accountTask.getAccount().getAccount_id().trim());
+                }else if(task.equals("threads_repost")){
+                    get_task=threadsTask.threads_repost(accountTask.getAccount().getAccount_id().trim());
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
                     task_index=task;
@@ -1902,6 +1928,18 @@ public class TaskController {
                     instagramUpdate.instagram_comment(account_id.trim(), task_key.trim(), status);
                 }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
                     instagramUpdate.instagram_view(account_id.trim(), task_key.trim());
+                }
+            }else if(platform_Check.equals("threads")){
+                if(task.toLowerCase().trim().equals("follower")&&status==true){
+                    threadsUpdate.threads_follower(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
+                    threadsUpdate.threads_like(account_id.trim(),task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("comment")) {
+                    threadsUpdate.threads_comment(account_id.trim(), task_key.trim(), status);
+                }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
+                    threadsUpdate.threads_view(account_id.trim(), task_key.trim());
+                }else  if(task.toLowerCase().trim().equals("repost")&&status==true) {
+                    threadsUpdate.threads_repost(account_id.trim(), task_key.trim());
                 }
             }
             if(status==true){
