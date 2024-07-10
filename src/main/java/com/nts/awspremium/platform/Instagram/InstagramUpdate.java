@@ -17,47 +17,40 @@ public class InstagramUpdate {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private XLike24hRepository xLike24hRepository;
+    private InstagramFollower24hRepository instagramFollower24hRepository;
     @Autowired
-    private XFollowerHistoryRepository xFollowerHistoryRepository;
-
+    private InstagramLike24hRepository instagramLike24hRepository;
     @Autowired
-    private XLikeHistoryRepository xLikeHistoryRepository;
-
+    private InstagramFollowerHistoryRepository instagramFollowerHistoryRepository;
     @Autowired
-    private XCommentHistoryRepository xCommentHistoryRepository;
-
+    private InstagramLikeHistoryRepository instagramLikeHistoryRepository;
     @Autowired
-    private XViewHistoryRepository xViewHistoryRepository;
-
+    private InstagramCommentHistoryRepository instagramCommentHistoryRepository;
     @Autowired
-    private XRepostHistoryRepository xRepostHistoryRepository;
-
-    @Autowired
-    private XFollower24hRepository xFollower24hRepository;
+    private InstagramViewHistoryRepository instagramViewHistoryRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
 
-    public Boolean x_follower(String account_id,String task_key){
+    public Boolean instagram_follower(String account_id,String task_key){
         try{
-            XFollowerHistory xFollowerHistory=xFollowerHistoryRepository.get_By_AccountId(account_id.trim());
-            if(xFollowerHistory!=null){
-                xFollowerHistory.setList_id(xFollowerHistory.getList_id()+task_key.trim()+"|");
-                xFollowerHistory.setUpdate_time(System.currentTimeMillis());
-                xFollowerHistoryRepository.save(xFollowerHistory);
+            InstagramFollowerHistory instagramFollowerHistory=instagramFollowerHistoryRepository.get_By_AccountId(account_id.trim());
+            if(instagramFollowerHistory!=null){
+                instagramFollowerHistory.setList_id(instagramFollowerHistory.getList_id()+task_key.trim()+"|");
+                instagramFollowerHistory.setUpdate_time(System.currentTimeMillis());
+                instagramFollowerHistoryRepository.save(instagramFollowerHistory);
             }else{
-                XFollowerHistory xFollowerHistory_new=new XFollowerHistory();
-                xFollowerHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                xFollowerHistory_new.setUpdate_time(System.currentTimeMillis());
-                xFollowerHistory_new.setList_id(task_key.trim()+"|");
-                xFollowerHistoryRepository.save(xFollowerHistory_new);
+                InstagramFollowerHistory instagramFollowerHistory_new=new InstagramFollowerHistory();
+                instagramFollowerHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                instagramFollowerHistory_new.setUpdate_time(System.currentTimeMillis());
+                instagramFollowerHistory_new.setList_id(task_key.trim()+"|");
+                instagramFollowerHistoryRepository.save(instagramFollowerHistory_new);
             }
-            XFollower24h xFollower24h =new XFollower24h();
-            xFollower24h.setId(account_id.trim()+task_key.trim());
-            xFollower24h.setUpdate_time(System.currentTimeMillis());
-            xFollower24hRepository.save(xFollower24h);
+            InstagramFollower24h instagramFollower24h =new InstagramFollower24h();
+            instagramFollower24h.setId(account_id.trim()+task_key.trim());
+            instagramFollower24h.setUpdate_time(System.currentTimeMillis());
+            instagramFollower24hRepository.save(instagramFollower24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -78,24 +71,24 @@ public class InstagramUpdate {
             return false;
         }
     }
-    public Boolean x_like(String account_id,String task_key){
+    public Boolean instagram_like(String account_id,String task_key){
         try{
-            XLikeHistory xLikeHistory=xLikeHistoryRepository.get_By_AccountId(account_id.trim());
-            if(xLikeHistory!=null){
-                xLikeHistory.setList_id(xLikeHistory.getList_id()+task_key.trim()+"|");
-                xLikeHistory.setUpdate_time(System.currentTimeMillis());
-                xLikeHistoryRepository.save(xLikeHistory);
+            InstagramLikeHistory instagramLikeHistory=instagramLikeHistoryRepository.get_By_AccountId(account_id.trim());
+            if(instagramLikeHistory!=null){
+                instagramLikeHistory.setList_id(instagramLikeHistory.getList_id()+task_key.trim()+"|");
+                instagramLikeHistory.setUpdate_time(System.currentTimeMillis());
+                instagramLikeHistoryRepository.save(instagramLikeHistory);
             }else{
-                XLikeHistory xLikeHistory_new=new XLikeHistory();
-                xLikeHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                xLikeHistory_new.setUpdate_time(System.currentTimeMillis());
-                xLikeHistory_new.setList_id(task_key.trim()+"|");
-                xLikeHistoryRepository.save(xLikeHistory_new);
+                InstagramLikeHistory instagramLikeHistory_new=new InstagramLikeHistory();
+                instagramLikeHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                instagramLikeHistory_new.setUpdate_time(System.currentTimeMillis());
+                instagramLikeHistory_new.setList_id(task_key.trim()+"|");
+                instagramLikeHistoryRepository.save(instagramLikeHistory_new);
             }
-            XLike24h xLike24h =new XLike24h();
-            xLike24h.setId(account_id.trim()+task_key.trim());
-            xLike24h.setUpdate_time(System.currentTimeMillis());
-            xLike24hRepository.save(xLike24h);
+            InstagramLike24h instagramLike24h =new InstagramLike24h();
+            instagramLike24h.setId(account_id.trim()+task_key.trim());
+            instagramLike24h.setUpdate_time(System.currentTimeMillis());
+            instagramLike24hRepository.save(instagramLike24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -116,19 +109,19 @@ public class InstagramUpdate {
             return false;
         }
     }
-    public Boolean x_view(String account_id,String task_key){
+    public Boolean instagram_view(String account_id,String task_key){
         try{
-            XViewHistory xViewHistory=xViewHistoryRepository.get_By_AccountId(account_id.trim());
-            if(xViewHistory!=null){
-                xViewHistory.setList_id(xViewHistory.getList_id()+task_key.trim()+"|");
-                xViewHistory.setUpdate_time(System.currentTimeMillis());
-                xViewHistoryRepository.save(xViewHistory);
+            InstagramViewHistory instagramViewHistory=instagramViewHistoryRepository.get_By_AccountId(account_id.trim());
+            if(instagramViewHistory!=null){
+                instagramViewHistory.setList_id(instagramViewHistory.getList_id()+task_key.trim()+"|");
+                instagramViewHistory.setUpdate_time(System.currentTimeMillis());
+                instagramViewHistoryRepository.save(instagramViewHistory);
             }else{
-                XViewHistory xViewHistory_new=new XViewHistory();
-                xViewHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                xViewHistory_new.setUpdate_time(System.currentTimeMillis());
-                xViewHistory_new.setList_id(task_key.trim()+"|");
-                xViewHistoryRepository.save(xViewHistory_new);
+                InstagramViewHistory instagramViewHistory_new=new InstagramViewHistory();
+                instagramViewHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                instagramViewHistory_new.setUpdate_time(System.currentTimeMillis());
+                instagramViewHistory_new.setList_id(task_key.trim()+"|");
+                instagramViewHistoryRepository.save(instagramViewHistory_new);
             }
             return true;
         }catch (Exception e){
@@ -151,54 +144,20 @@ public class InstagramUpdate {
         }
     }
 
-    public Boolean x_repost(String account_id,String task_key){
-        try{
-            XRepostHistory xRepostHistory=xRepostHistoryRepository.get_By_AccountId(account_id.trim());
-            if(xRepostHistory!=null){
-                xRepostHistory.setList_id(xRepostHistory.getList_id()+task_key.trim()+"|");
-                xRepostHistory.setUpdate_time(System.currentTimeMillis());
-                xRepostHistoryRepository.save(xRepostHistory);
-            }else{
-                XRepostHistory xRepostHistory_new=new XRepostHistory();
-                xRepostHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                xRepostHistory_new.setUpdate_time(System.currentTimeMillis());
-                xRepostHistory_new.setList_id(task_key.trim()+"|");
-                xRepostHistoryRepository.save(xRepostHistory_new);
-            }
-            return true;
-        }catch (Exception e){
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-            return false;
-        }
-    }
-    public Boolean x_comment(String account_id,String task_key,Boolean status){
+    public Boolean instagram_comment(String account_id,String task_key,Boolean status){
         try{
             if(status==true){
-                XCommentHistory xCommentHistory=xCommentHistoryRepository.get_By_AccountId(account_id.trim());
-                if(xCommentHistory!=null){
-                    xCommentHistory.setList_id(xCommentHistory.getList_id()+task_key.trim()+"|");
-                    xCommentHistory.setUpdate_time(System.currentTimeMillis());
-                    xCommentHistoryRepository.save(xCommentHistory);
+                InstagramCommentHistory instagramCommentHistory=instagramCommentHistoryRepository.get_By_AccountId(account_id.trim());
+                if(instagramCommentHistory!=null){
+                    instagramCommentHistory.setList_id(instagramCommentHistory.getList_id()+task_key.trim()+"|");
+                    instagramCommentHistory.setUpdate_time(System.currentTimeMillis());
+                    instagramCommentHistoryRepository.save(instagramCommentHistory);
                 }else{
-                    XCommentHistory xCommentHistory_new=new XCommentHistory();
-                    xCommentHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                    xCommentHistory_new.setUpdate_time(System.currentTimeMillis());
-                    xCommentHistory_new.setList_id(task_key.trim()+"|");
-                    xCommentHistoryRepository.save(xCommentHistory_new);
+                    InstagramCommentHistory instagramCommentHistory_new=new InstagramCommentHistory();
+                    instagramCommentHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                    instagramCommentHistory_new.setUpdate_time(System.currentTimeMillis());
+                    instagramCommentHistory_new.setList_id(task_key.trim()+"|");
+                    instagramCommentHistoryRepository.save(instagramCommentHistory_new);
                 }
                 dataCommentRepository.update_Task_Comment_Done(account_id.trim());
             }else {

@@ -99,7 +99,7 @@ public class InstagramApi {
         return null;
     }
     public static String getPostId(String url) {
-        String regex = "instagram\\.com/\\w+/p/(\\d+)";
+        String regex = "instagram\\.com/p/(\\w+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {

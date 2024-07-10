@@ -4,6 +4,7 @@ import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.Instagram.InstagramOrder;
 import com.nts.awspremium.platform.facebook.FacebookOrder;
 import com.nts.awspremium.platform.tiktok.TiktokOrder;
 import com.nts.awspremium.platform.x.XOrder;
@@ -50,6 +51,8 @@ public class ApiController {
     private FacebookOrder facebookOrder;
     @Autowired
     private XOrder xOrder;
+    @Autowired
+    private InstagramOrder instagramOrder;
 
 
     @PostMapping(value = "/ver1", produces = "application/hal+json;charset=utf8")
@@ -224,6 +227,16 @@ public class ApiController {
                     }else if(service.getTask().trim().equals("repost")){
                         get_task=xOrder.x_repost(data,service,user);
                     }
+                }else if(service.getPlatform().trim().equals("instagram")){
+                    if(service.getTask().trim().equals("follower")){
+                        get_task=instagramOrder.instagram_follower(data,service,user);
+                    }else if(service.getTask().trim().equals("like")){
+                        get_task=instagramOrder.instagram_like(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=instagramOrder.instagram_comment(data,service,user);
+                    }else if(service.getTask().trim().equals("view")){
+                        get_task=instagramOrder.instagram_view(data,service,user);
+                    }
                 }
                 if(get_task==null){
                     resp.put("error","Can't insert link");
@@ -309,6 +322,16 @@ public class ApiController {
                 }else if(service.getTask().trim().equals("repost")){
                     get_task=xOrder.x_repost(data,service,user);
                 }
+            }else if(service.getPlatform().trim().equals("instagram")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=instagramOrder.instagram_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=instagramOrder.instagram_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=instagramOrder.instagram_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=instagramOrder.instagram_view(data,service,user);
+                }
             }
             if(get_task.get("error")==null){
                 resp.put("order_running", true);
@@ -391,6 +414,16 @@ public class ApiController {
                     get_task=xOrder.x_view(data,service,user);
                 }else if(service.getTask().trim().equals("repost")){
                     get_task=xOrder.x_repost(data,service,user);
+                }
+            }else if(service.getPlatform().trim().equals("instagram")){
+                if(service.getTask().trim().equals("follower")){
+                    get_task=instagramOrder.instagram_follower(data,service,user);
+                }else if(service.getTask().trim().equals("like")){
+                    get_task=instagramOrder.instagram_like(data,service,user);
+                }else if(service.getTask().trim().equals("comment")){
+                    get_task=instagramOrder.instagram_comment(data,service,user);
+                }else if(service.getTask().trim().equals("view")){
+                    get_task=instagramOrder.instagram_view(data,service,user);
                 }
             }
             if(get_task.get("error")==null){

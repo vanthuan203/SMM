@@ -34,7 +34,7 @@ public class TiktokOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(tiktok_id.trim(),service.getTask()) > 0) {
-                resp.put("error", "This Tiktok_Id in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             Integer follower_count=-2;
@@ -102,7 +102,7 @@ public class TiktokOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -121,7 +121,7 @@ public class TiktokOrder {
                 }
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                    resp.put("error", "This video in process");
+                    resp.put("error", "This ID in process");
                     return resp;
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
@@ -134,7 +134,7 @@ public class TiktokOrder {
             video_id=infoVideoTikTok.get("id").toString();
             Integer like_count=Integer.parseInt(infoVideoTikTok.get("likes").toString());
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -195,7 +195,7 @@ public class TiktokOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -214,7 +214,7 @@ public class TiktokOrder {
                 }
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                    resp.put("error", "This video in process");
+                    resp.put("error", "This ID in process");
                     return resp;
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
@@ -227,7 +227,7 @@ public class TiktokOrder {
             video_id=infoVideoTikTok.get("id").toString();
             Integer comment_count=Integer.parseInt(infoVideoTikTok.get("comments").toString());
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -288,7 +288,7 @@ public class TiktokOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -307,7 +307,7 @@ public class TiktokOrder {
                 }
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                    resp.put("error", "This video in process");
+                    resp.put("error", "This ID in process");
                     return resp;
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
@@ -320,7 +320,7 @@ public class TiktokOrder {
             video_id=infoVideoTikTok.get("id").toString();
             Integer view_count=Integer.parseInt(infoVideoTikTok.get("plays").toString());
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -380,7 +380,7 @@ public class TiktokOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }

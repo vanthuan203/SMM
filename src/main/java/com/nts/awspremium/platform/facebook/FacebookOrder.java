@@ -40,7 +40,7 @@ public class FacebookOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uid.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -101,7 +101,7 @@ public class FacebookOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert UID");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -118,7 +118,7 @@ public class FacebookOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uid.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -179,7 +179,7 @@ public class FacebookOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert UID");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -196,7 +196,7 @@ public class FacebookOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uid.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -257,7 +257,7 @@ public class FacebookOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert UID");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -275,7 +275,7 @@ public class FacebookOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uid.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -336,7 +336,7 @@ public class FacebookOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert UID");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -353,7 +353,7 @@ public class FacebookOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uid.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             float priceorder = 0;
@@ -414,7 +414,7 @@ public class FacebookOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert UID");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }

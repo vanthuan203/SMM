@@ -41,7 +41,7 @@ public class YoutubeOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(videoId.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -158,7 +158,7 @@ public class YoutubeOrder {
                     System.out.println(stackTraceElement.getClassName());
                     System.out.println(stackTraceElement.getFileName());
                     System.out.println("Error : " + e.getMessage());
-                    resp.put("error", "Cant insert video");
+                    resp.put("error", "Cant insert link");
                     return resp;
                 }
             }
@@ -180,7 +180,7 @@ public class YoutubeOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -193,7 +193,7 @@ public class YoutubeOrder {
                 return resp;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(videoId.trim(),service.getTask()) > 0) {
-                resp.put("error", "This video in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
@@ -293,7 +293,7 @@ public class YoutubeOrder {
                     logError.setDate_time(formattedDate);
                     logErrorRepository.save(logError);
 
-                    resp.put("error", "Cant insert video");
+                    resp.put("error", "Cant insert link");
                     return resp;
                 }
             }
@@ -315,7 +315,7 @@ public class YoutubeOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
@@ -331,7 +331,7 @@ public class YoutubeOrder {
             String title=channelId.split(",")[0];
             String uId=channelId.split(",")[1];
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uId.trim(),service.getTask()) > 0) {
-                resp.put("error", "This channel in process");
+                resp.put("error", "This ID in process");
                 return resp;
             }
             List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
@@ -425,7 +425,7 @@ public class YoutubeOrder {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("error", "Cant insert video");
+            resp.put("error", "Cant insert link");
             return resp;
         }
     }
