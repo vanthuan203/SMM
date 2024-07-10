@@ -288,7 +288,7 @@ public class FacebookOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link("https://www.facebook.com/profile.php?id="+uid);
             orderRunning.setStart_count(0);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(uid);

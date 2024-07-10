@@ -231,7 +231,7 @@ public class XTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             String list_videoId=xRepostHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","member",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
