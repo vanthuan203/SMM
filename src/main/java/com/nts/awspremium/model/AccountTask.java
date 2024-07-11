@@ -23,6 +23,8 @@ public class AccountTask implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String task;
     @Column(columnDefinition = "varchar(255) default ''")
+    private String task_list;
+    @Column(columnDefinition = "varchar(255) default ''")
     private String task_key;
     @Column(columnDefinition = "integer default 0")
     private Integer account_level;

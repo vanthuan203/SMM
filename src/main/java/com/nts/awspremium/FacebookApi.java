@@ -63,7 +63,12 @@ public class FacebookApi {
             if(jsonObject.get("id")==null){
                     return getUID_1(link);
             }else{
-                return jsonObject.get("id").toString();
+                try{
+                    Long.parseLong(jsonObject.get("id").toString());
+                    return jsonObject.get("id").toString();
+                }catch (Exception e){
+                    return getUID_1(link);
+                }
             }
 
         } catch (Exception e) {
