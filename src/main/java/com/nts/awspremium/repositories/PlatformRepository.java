@@ -8,7 +8,10 @@ import java.util.List;
 
 public interface PlatformRepository extends JpaRepository<Platform,String> {
     @Query(value = "SELECT GROUP_CONCAT(platform SEPARATOR ',') AS concatenated_rows from platform  where priority>0 and state=1 order by rand()",nativeQuery = true)
-    public String get_All_Paltform();
+    public String get_All_Platform();
+
+    @Query(value = "SELECT platform from platform  where priority>0 and state=1 order by rand()",nativeQuery = true)
+    public List<String> get_All_Platform_True();
     @Query(value = "SELECT priority FROM platform where platform=?1 limit 1",nativeQuery = true)
     public Integer get_Priority_By_Platform(String platform);
 

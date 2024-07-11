@@ -270,31 +270,33 @@ public class TaskController {
                             accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
                         }
                     }else{
-                        String task_list="";
+                        String task_List="";
                         if(platform.length()==0){
-                            task_list=accountTask.getTask_list();
+                            task_List=accountTask.getTask_list();
                         }else{
-                            task_list=platform;
+                            task_List=platform;
                         }
-                        Integer index_Off=task_list.indexOf(',')<0?task_list.length():task_list.indexOf(',');
-                        accountTask.setTask_list(task_list.indexOf(',')<0?"":task_list.substring(index_Off+1));
+                        Integer index_Off=task_List.indexOf(',')<0?task_List.length():task_List.indexOf(',');
+                        accountTask.setTask_list(task_List.indexOf(',')<0?"":task_List.substring(index_Off+1));
                         accountTask.setTask_index(0);
-                        accountTask.setPlatform(task_list.indexOf(',')<0?task_list:task_list.substring(0,index_Off));
+                        accountTask.setPlatform(task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off));
                     }
                 }
             }else{
                 profile.setUpdate_time(System.currentTimeMillis());
                 profileRepository.save(profile);
                 accountTask = accountTaskRepository.get_Account_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
-                String task_list="";
+                String task_List="";
                 if(platform.length()==0){
-                    task_list=platformRepository.get_All_Paltform();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    task_List=String.join(",", string_Task_List);
                 }else{
-                    task_list=platform;
+                    task_List=platform;
                 }
-                Integer index_Off=task_list.indexOf(',')<0?task_list.length():task_list.indexOf(',');
-                accountTask.setTask_list(task_list.indexOf(',')<0?"":task_list.substring(index_Off+1));
-                accountTask.setPlatform(task_list.indexOf(',')<0?task_list:task_list.substring(0,index_Off));
+                System.out.println(task_List);
+                Integer index_Off=task_List.indexOf(',')<0?task_List.length():task_List.indexOf(',');
+                accountTask.setTask_list(task_List.indexOf(',')<0?"":task_List.substring(index_Off+1));
+                accountTask.setPlatform(task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off));
             }
             if(accountTask==null){
                 accountTaskRepository.reset_Thread_Index_By_ProfileId(profile_id.trim());
@@ -303,7 +305,7 @@ public class TaskController {
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
-                    data.put("profile_id", profile.getProfile_id().split(device_id.trim()+"_")[1]);
+                    data.put("profile_id", Integer.parseInt(profile.getProfile_id().split(device_id.trim()+"_")[1]));
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }else if(device.getNum_profile()==1){
@@ -322,7 +324,6 @@ public class TaskController {
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
-                System.out.println(priorityTasks.get(i).getTask());
                 for (int j = 0; j < priorityTasks.get(i).getPriority(); j++) {
                     arrTask.add(priorityTasks.get(i).getTask());
                 }
