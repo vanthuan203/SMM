@@ -248,7 +248,6 @@ public class GoogleApi {
                     JsonElement jsonElement = JsonParser.parseReader(reader);
                     JsonObject jsonObject =  jsonElement.getAsJsonObject();
                     JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
-                    System.out.println(jsonElement11);
                     String id = jsonObject.getAsJsonObject("metadata")
                             .getAsJsonObject("channelMetadataRenderer")
                             .get("title").toString().replace("\"","");
@@ -260,7 +259,6 @@ public class GoogleApi {
             }
             return null;
         } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage());
             return null;
         }
     }
@@ -273,7 +271,6 @@ public class GoogleApi {
                     .timeout(10000)
                     .get();
             Elements posts = doc.select(".post");
-            System.out.println(posts);
             // Tìm tất cả các thẻ <script> chứa đoạn JSON
             Elements scriptElements = doc.selectXpath("script");
             for (Element scriptElement : scriptElements) {
@@ -283,13 +280,11 @@ public class GoogleApi {
                     int startIndex = scriptContent.indexOf("{");
                     int endIndex = scriptContent.lastIndexOf("}") + 1;
                     String jsonString = scriptContent.substring(startIndex, endIndex);
-                    System.out.println(jsonString);
                     JsonReader reader = new JsonReader(new StringReader(jsonString));
                     reader.setLenient(true);
                     JsonElement jsonElement = JsonParser.parseReader(reader);
                     JsonObject jsonObject =  jsonElement.getAsJsonObject();
                     JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
-                    System.out.println(jsonElement11);
                     String id = jsonObject.getAsJsonObject("metadata")
                             .getAsJsonObject("channelMetadataRenderer")
                             .get("title").toString().replace("\"","");
@@ -301,7 +296,6 @@ public class GoogleApi {
             }
             return null;
         } catch (Exception e) {
-            System.out.println("Error : " + e.getMessage());
             return null;
         }
     }
@@ -374,7 +368,7 @@ public class GoogleApi {
                                     break;
                                 }
                             }catch (Exception e){
-                                System.out.println(e.getMessage());
+
                             }
 
                         }

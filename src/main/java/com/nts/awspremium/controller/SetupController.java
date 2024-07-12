@@ -240,7 +240,6 @@ public class SetupController {
         Map<String, Object> data = new LinkedHashMap<>();
         try {
             String stringList="f";
-            System.out.println(Integer.parseInt(stringList));
             resp.put("status", true);
             data.put("task", "create_profile");
             data.put("profile_id", stringList);

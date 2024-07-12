@@ -267,7 +267,6 @@ public class UserController {
                 resp.put("message", "Token expired");
                 return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
             }
-            System.out.println(user_body.getUsername());
             User user=new User();
             user.setUsername(user_body.getUsername());
             user.setVip(user_body.getVip());

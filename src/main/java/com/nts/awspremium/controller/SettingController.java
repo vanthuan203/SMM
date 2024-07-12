@@ -292,7 +292,6 @@ public class SettingController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            System.out.println(jsonObject);
             if(jsonObject.get("platform").toString().equals("youtube")){
                 SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
                 settingYoutube.setMax_subscriber(Integer.parseInt(jsonObject.get("max_follower").toString()));

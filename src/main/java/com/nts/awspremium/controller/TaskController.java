@@ -286,7 +286,6 @@ public class TaskController {
                                     mail=mail+stringrand.charAt(ranver);
                                 }
                                 mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
-                                System.out.println(mail);
                                 success=MailApi.createMail(mail);
                             }
                             if(success){
@@ -1325,7 +1324,6 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 while(arrTask.remove(task)) {}
-                System.out.println(task);
                 if(task.equals("tiktok_follower")){
                     get_task= tiktokTask.tiktok_follower(accountTask.getAccount().getAccount_id().trim());
                 }else if(task.equals("youtube_view")){
@@ -1394,7 +1392,6 @@ public class TaskController {
             Map<String, Object> dataJson=new LinkedHashMap<>();
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
-                System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
                 //--------------------------------------------//

@@ -123,7 +123,6 @@ public class FacebookUpdate {
     public Boolean facebook_view(String account_id,String task_key){
         try{
             FacebookViewHistory facebookViewHistory=facebookViewHistoryRepository.get_By_AccountId(account_id.trim());
-            System.out.println("facebookViewHistory");
             if(facebookViewHistory!=null){
                 facebookViewHistory.setList_id(facebookViewHistory.getList_id()+task_key.trim()+"|");
                 facebookViewHistory.setUpdate_time(System.currentTimeMillis());

@@ -211,7 +211,6 @@ public class OrderHistoryController {
                     }
                     if(current_Count>=0){
                         int quantity=orderHistory.getQuantity()>orderHistory.getTotal()?orderHistory.getTotal():orderHistory.getQuantity();
-                        System.out.println(quantity);
                         int count_Sum=quantity+orderHistory.getStart_count();
                         int quantity_Refund= count_Sum-current_Count ;
                         if(quantity_Refund<=0){
@@ -391,7 +390,6 @@ public class OrderHistoryController {
 
                             JSONObject checkTrue=apiController.refill(dataRequest,"refill@gmail.com");
                             if(checkTrue.get("error")==null){
-                                System.out.println(checkTrue);
                                 status="✔ BH "+quantity_Refund+" "+orderHistory.getService().getTask();
                                 orderHistory.setRefill(orderHistory.getRefill()+1);
                                 orderHistory.setCurrent_count(current_Count);

@@ -34,26 +34,5 @@ public class GoogleKeyController {
            return null;
         }
     }
-    @GetMapping(value = "/getCountLike", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getCountLike(@RequestParam(defaultValue = "") String video_id
-    ) {
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try {
-            String key = get_key();
-            resp.put("like", GoogleApi.getCountLikeCurrent(video_id.trim()));
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            System.out.println(stackTraceElement.getMethodName());
-            System.out.println(stackTraceElement.getLineNumber());
-            System.out.println(stackTraceElement.getClassName());
-            System.out.println(stackTraceElement.getFileName());
-            System.out.println("Error : " + e.getMessage());
-            resp.put("status", "fail");
-            data.put("message", e.getMessage());
-            resp.put("data", data);
-            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-        }
-    }
+
 }

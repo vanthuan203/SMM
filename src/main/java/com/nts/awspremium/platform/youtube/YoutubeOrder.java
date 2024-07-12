@@ -153,11 +153,21 @@ public class YoutubeOrder {
 
                 }catch (Exception e) {
                     StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-                    System.out.println(stackTraceElement.getMethodName());
-                    System.out.println(stackTraceElement.getLineNumber());
-                    System.out.println(stackTraceElement.getClassName());
-                    System.out.println(stackTraceElement.getFileName());
-                    System.out.println("Error : " + e.getMessage());
+                    LogError logError =new LogError();
+                    logError.setMethod_name(stackTraceElement.getMethodName());
+                    logError.setLine_number(stackTraceElement.getLineNumber());
+                    logError.setClass_name(stackTraceElement.getClassName());
+                    logError.setFile_name(stackTraceElement.getFileName());
+                    logError.setMessage(e.getMessage());
+                    logError.setAdd_time(System.currentTimeMillis());
+                    Date date_time = new Date(System.currentTimeMillis());
+                    // Tạo SimpleDateFormat với múi giờ GMT+7
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                    String formattedDate = sdf.format(date_time);
+                    logError.setDate_time(formattedDate);
+                    logErrorRepository.save(logError);
+
                     resp.put("error", "Cant insert link");
                     return resp;
                 }
@@ -323,7 +333,6 @@ public class YoutubeOrder {
         JSONObject resp = new JSONObject();
         try{
             String channelId = GoogleApi.getChannelId(data.getLink());
-            System.out.println(channelId);
             if (channelId == null) {
                 resp.put("error", "Cant filter channel from link");
                 return resp;
