@@ -17,9 +17,6 @@ public class Device implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     private String device_id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "box_id",referencedColumnName = "box_id",updatable = true,insertable = true)
-    private Box box;
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;
     @Column(columnDefinition = "bigint default 0")

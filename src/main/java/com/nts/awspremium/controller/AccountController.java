@@ -208,7 +208,6 @@ public class AccountController {
                 device_new.setDevice_id(account.getDevice_id());
                 device_new.setAdd_time(System.currentTimeMillis());
                 device_new.setState(1);
-                device_new.setBox(null);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 deviceRepository.save(device_new);
