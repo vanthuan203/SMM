@@ -29,11 +29,16 @@ public class AccountProfile implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer running;
 
+    @Column(columnDefinition = "integer default 0")
+    private Integer changed;
+
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;
 
     @Column(columnDefinition = "bigint default 0")
-    private Long get_time;
+    private Long update_time;
+
+
 
     @Column(columnDefinition = "varchar(255) default ''")
     private String auth_2fa="";

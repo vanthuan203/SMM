@@ -6,6 +6,7 @@ import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.controller.*;
 import com.nts.awspremium.repositories.*;
+import com.nts.awspremium.system.MailApi;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -273,9 +274,9 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            boolean stringList= FacebookApi.getGroup(link);
+            JSONArray stringList= MailApi.getDomains();
             resp.put("status", true);
-            data.put("task", "create_profile");
+            data.put("task", link);
             data.put("profile_id", stringList);
             resp.put("data", data);
             return new ResponseEntity<>(resp, HttpStatus.OK);

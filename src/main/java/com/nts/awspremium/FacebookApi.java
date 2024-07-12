@@ -107,26 +107,24 @@ public class FacebookApi {
     }
 
     public static boolean getPost(String url) {
-        String pattern = "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/videos/\\d+";
+        String pattern = "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/videos/\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/watch/\\?v=\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/posts/.*|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/watch/\\?v=\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/reel/\\d+";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(url);
-        String pattern1 = "https://www\\.facebook\\.com/watch\\?v=\\d+";
-        Pattern r1 = Pattern.compile(pattern1);
-        Matcher matcher1 = r1.matcher(url);
-        String pattern2 = "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/posts/.*";
-        Pattern r2 = Pattern.compile(pattern2);
-        Matcher matcher2 = r2.matcher(url);
-        return (matcher.matches()||matcher1.matches()||matcher2.matches());
+        return (matcher.matches());
     }
 
     public static boolean getVideo(String url) {
-        String pattern = "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/videos/\\d+";
+        String pattern = "(https://www\\.|https://|www\\.|)facebook\\.com/(?!groups)[^/]+/videos/\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/watch\\?v=\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/watch/\\?v=\\d+|" +
+                "(https://www\\.|https://|www\\.|)facebook\\.com/reel/\\d+";
         Pattern r = Pattern.compile(pattern);
         Matcher matcher = r.matcher(url);
-        String pattern1 = "https://www\\.facebook\\.com/watch\\?v=\\d+";
-        Pattern r1 = Pattern.compile(pattern1);
-        Matcher matcher1 = r1.matcher(url);
-        return (matcher.matches()||matcher1.matches());
+        return (matcher.matches());
     }
     public static boolean getGroup(String url) {
         String pattern = "(https://www\\.|https://|www\\.|)facebook\\.com/groups/[^/]+/?$";

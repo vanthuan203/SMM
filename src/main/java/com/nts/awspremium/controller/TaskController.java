@@ -16,6 +16,8 @@ import com.nts.awspremium.platform.x.XUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeTask;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
+import com.nts.awspremium.system.MailApi;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,6 +139,7 @@ public class TaskController {
                                                    @RequestParam(defaultValue = "") String device_id,
                                                    @RequestParam(defaultValue = "") String profile_id,
                                                    @RequestParam(defaultValue = "") String platform) throws InterruptedException {
+
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -209,7 +212,16 @@ public class TaskController {
                     profileTask_New.setUpdate_time(0L);
                     profileTaskRepository.save(profileTask_New);
                 }
-                profileTask=profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            }
+            profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            if(profileTask==null){
+                resp.put("status", false);
+                data.put("message", "profile không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            //Check profile isLogin Google
+            if(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==null){
                 Account account_get=null;
                 if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                     String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -222,25 +234,37 @@ public class TaskController {
                 }
                 if(account_get!=null){
                     AccountProfile accountProfile=new AccountProfile();
-                    accountProfile.setAccount_id(account_get.getAccount_id()+"|"+"google");
+                    accountProfile.setAccount_id(account_get.getAccount_id()+"|"+"youtube");
                     accountProfile.setPassword(account_get.getPassword());
                     accountProfile.setRecover(account_get.getRecover_mail());
-                    accountProfile.setPlatform(account_get.getPlatform());
+                    accountProfile.setPlatform("youtube");
                     accountProfile.setLive(1);
+                    accountProfile.setChanged(0);
                     accountProfile.setAuth_2fa(account_get.getAuth_2fa());
                     accountProfile.setProfileTask(profileTask);
                     accountProfile.setAdd_time(System.currentTimeMillis());
-                    accountProfile.setGet_time(System.currentTimeMillis());
+                    accountProfile.setUpdate_time(0L);
                     accountProfileRepository.save(accountProfile);
+
+                    resp.put("status", true);
+                    data.put("platform", "youtube");
+                    data.put("task", "login");
+                    data.put("task_key", account_get.getAccount_id());
+                    data.put("account_id", account_get.getAccount_id());
+                    data.put("password", account_get.getPassword().trim());
+                    data.put("recover_mail", account_get.getRecover_mail().trim());
+                    data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }
             //--------------------end_get_Account----------------------//
-            profileTask = profileTaskRepository.check_ProfileId_Running(device_id.trim()+"_"+profile_id);
-            //Check số lần get nhiệm vụ của 1 account
+            profileTask = profileTaskRepository.check_ProfileId_Running(device_id.trim()+"_"+profile_id);//Check số lần get nhiệm vụ của 1 account
             if(profileTask!=null){
+
                 if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform())){
                     if(profileTask.getTask_list().trim().length()==0){
-                        profileTaskRepository.reset_Task_By_ProfileId(profileTask.getProfile_id());
+                        profileTaskRepository.reset_Thread_Index_By_ProfileId(profileTask.getProfile_id());
                         profileTask=null;
                     }else{
                         String task_List="";
@@ -250,9 +274,57 @@ public class TaskController {
                             task_List=platform;
                         }
                         Integer index_Off=task_List.indexOf(',')<0?task_List.length():task_List.indexOf(',');
+                        String platform_index=task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off);
+                        if(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),platform_index)==null){
+                            JSONArray domains= MailApi.getDomains();
+                            String stringrand="abcdefhijkprstuvwx0123456789";
+                            String mail="";
+                            Boolean success=false;
+                            while (!success){
+                                for(int i=0;i<20;i++){
+                                    Integer ranver=ran.nextInt(stringrand.length());
+                                    mail=mail+stringrand.charAt(ranver);
+                                }
+                                mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
+                                System.out.println(mail);
+                                success=MailApi.createMail(mail);
+                            }
+                            if(success){
+                                String password="Cmc#";
+                                String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                                for(int i=0;i<15;i++){
+                                    Integer ranver=ran.nextInt(passrand.length());
+                                    password=password+passrand.charAt(ranver);
+                                }
+                                AccountProfile accountProfile=new AccountProfile();
+                                accountProfile.setAccount_id(mail+"|"+platform_index);
+                                accountProfile.setPassword(password);
+                                accountProfile.setRecover(mail);
+                                accountProfile.setPlatform(platform_index);
+                                accountProfile.setLive(1);
+                                accountProfile.setChanged(0);
+                                accountProfile.setAuth_2fa("");
+                                accountProfile.setProfileTask(profileTask);
+                                accountProfile.setAdd_time(System.currentTimeMillis());
+                                accountProfile.setUpdate_time(0L);
+                                accountProfileRepository.save(accountProfile);
+
+                                resp.put("status", true);
+                                data.put("platform", platform_index);
+                                data.put("task", "register");
+                                data.put("task_key", mail);
+                                data.put("account_id", mail);
+                                data.put("password", password);
+                                data.put("recover_mail", mail);
+                                data.put("auth_2fa", "");
+                                resp.put("data",data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }
+                        }
                         profileTask.setTask_list(task_List.indexOf(',')<0?"":task_List.substring(index_Off+1));
                         profileTask.setTask_index(0);
                         profileTask.setPlatform(task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off));
+                        profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),platform_index));
                     }
                 }
             }else{
@@ -266,12 +338,60 @@ public class TaskController {
                     task_List=platform;
                 }
                 Integer index_Off=task_List.indexOf(',')<0?task_List.length():task_List.indexOf(',');
+                String platform_index=task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off);
+                if(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),platform_index)==null){
+                    JSONArray domains= MailApi.getDomains();
+                    String stringrand="abcdefhijkprstuvwx0123456789";
+                    String mail="";
+                    Boolean success=false;
+                    while (!success){
+                        for(int i=0;i<20;i++){
+                            Integer ranver=ran.nextInt(stringrand.length());
+                            mail=mail+stringrand.charAt(ranver);
+                        }
+                        mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
+                        success=MailApi.createMail(mail);
+                    }
+                    if(success){
+                        String password="Cmc#";
+                        String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                        for(int i=0;i<15;i++){
+                            Integer ranver=ran.nextInt(passrand.length());
+                            password=password+passrand.charAt(ranver);
+                        }
+                        AccountProfile accountProfile=new AccountProfile();
+                        accountProfile.setAccount_id(mail+"|"+platform_index);
+                        accountProfile.setPassword(password);
+                        accountProfile.setRecover(mail);
+                        accountProfile.setPlatform(platform_index);
+                        accountProfile.setLive(1);
+                        accountProfile.setChanged(0);
+                        accountProfile.setAuth_2fa("");
+                        accountProfile.setProfileTask(profileTask);
+                        accountProfile.setAdd_time(System.currentTimeMillis());
+                        accountProfile.setUpdate_time(0L);
+                        accountProfileRepository.save(accountProfile);
+
+                        resp.put("status", true);
+                        data.put("platform", platform_index);
+                        data.put("task", "register");
+                        data.put("task_key", mail);
+                        data.put("account_id", mail);
+                        data.put("password", password);
+                        data.put("recover_mail", mail);
+                        data.put("auth_2fa", "");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
+                }
                 profileTask.setTask_list(task_List.indexOf(',')<0?"":task_List.substring(index_Off+1));
                 profileTask.setPlatform(task_List.indexOf(',')<0?task_List:task_List.substring(0,index_Off));
+                profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),platform_index));
+
             }
             if(profileTask==null){
                 profileTaskRepository.reset_Thread_Index_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
-                profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
+                profileTask = profileTaskRepository.get_Profile_Get_Task(device_id.trim());
                 if(device.getNum_profile()>1){
                     resp.put("status", true);
                     data.put("platform", "system");
@@ -1325,6 +1445,7 @@ public class TaskController {
                                                    @RequestParam(defaultValue = "") String task,
                                                    @RequestParam(defaultValue = "") String task_key,
                                                    @RequestParam(defaultValue = "0") Integer viewing_time,
+                                                   @RequestParam(defaultValue = "-1") Integer islogin,
                                       @RequestParam(defaultValue = "") String platform) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -1460,10 +1581,26 @@ public class TaskController {
                     logErrorRepository.save(logError);
                 }
             }
+            if(islogin==0){
+                AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
+                accountProfile.setLive(0);
+                resp.put("status", true);
+                data.put("message", "Update thành công!");
+                data.put("account_id", accountProfile.getAccount_id());
+                data.put("password", accountProfile.getPassword());
+                data.put("recover", accountProfile.getRecover());
+                data.put("2fa", accountProfile.getAuth_2fa());
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(islogin==2){
+                AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
+                accountProfileRepository.delete(accountProfile);
+            }
             resp.put("status", true);
             data.put("message", "Update thành công!");
             resp.put("data", data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
+
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();

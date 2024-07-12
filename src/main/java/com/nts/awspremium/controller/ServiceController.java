@@ -32,14 +32,14 @@ public class ServiceController {
     @Autowired
     private LogErrorRepository logErrorRepository;
     @GetMapping(path = "get_List_Service",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get_List_Service(@RequestParam(defaultValue = "") String role){
+    ResponseEntity<String> get_List_Service(@RequestParam(defaultValue = "") String role,@RequestParam(defaultValue = "") String platform){
         JSONObject resp = new JSONObject();
         try {
             List<String > list_Service;
             if(role.equals("ROLE_ADMIN")){
-                list_Service=serviceRepository.get_All_Service_Web();
+                list_Service=serviceRepository.get_All_Service_Web(platform);
             }else{
-                list_Service=serviceRepository.get_All_Service_Enabled_Web();
+                list_Service=serviceRepository.get_All_Service_Enabled_Web(platform);
             }
             String arr_Service="";
             for(int i=0;i<list_Service.size();i++){
