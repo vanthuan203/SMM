@@ -584,6 +584,24 @@ public class TaskController {
             if(device!=null){
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
+
+                if(device.getNum_profile()==0){
+                    for(int i=0;i<settingSystem.getMax_profile();i++){
+                        Profile profile_new=new Profile();
+                        if(i==0){
+                            profile_new.setProfile_id(device_id.trim()+"_"+i);
+                        }else{
+                            profile_new.setProfile_id(device_id.trim()+"_"+(i+9));
+                        }
+                        profile_new.setAdd_time(System.currentTimeMillis());
+                        profile_new.setDevice(device);
+                        profile_new.setNum_account(0);
+                        profile_new.setUpdate_time(0L);
+                        profile_new.setState(1);
+                        profileRepository.save(profile_new);
+                    }
+                }
+
                 profile =profileRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
                 if(profile==null){
                     resp.put("status", false);
@@ -1265,6 +1283,7 @@ public class TaskController {
                 device_new.setState(1);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
+                device_new.setNum_profile(0);
                 deviceRepository.save(device_new);
                 device=device_new;
                 if(accountTaskRepository.find_AccountTask_By_AccountId(account_id.trim())==0)
