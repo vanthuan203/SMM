@@ -18,6 +18,8 @@ public class InstagramTask {
     @Autowired
     private SettingInstagramRepository settingInstagramRepository;
     @Autowired
+    private SettingSystemRepository settingSystemRepository;
+    @Autowired
     private InstagramFollower24hRepository instagramFollower24hRepository;
     @Autowired
     private InstagramLike24hRepository instagramLike24hRepository;
@@ -38,8 +40,17 @@ public class InstagramTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             Random ran = new Random();
-            String list_tiktok_video=instagramCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","comment",list_tiktok_video==null?"":list_tiktok_video,orderThreadCheck.getValue());
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=instagramCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("instagram","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
 
                 dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
@@ -96,8 +107,18 @@ public class InstagramTask {
                 resp.put("status", false);
                 return resp;
             }
-            String list_tiktok_id=instagramFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=instagramFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("instagram","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -143,8 +164,18 @@ public class InstagramTask {
                 resp.put("status", false);
                 return resp;
             }
-            String list_videoId=instagramLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","like",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=instagramLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("instagram","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -186,8 +217,18 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            String list_videoId=instagramViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","view",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=instagramViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("instagram","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("instagram","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);

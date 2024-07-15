@@ -69,6 +69,7 @@ public class InstagramOrder {
             orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
+            orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -146,6 +147,7 @@ public class InstagramOrder {
             orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
+            orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -220,6 +222,7 @@ public class InstagramOrder {
             orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
+            orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -297,6 +300,7 @@ public class InstagramOrder {
             orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
+            orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());

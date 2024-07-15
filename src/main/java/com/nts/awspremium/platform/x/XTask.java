@@ -18,6 +18,8 @@ public class XTask {
     @Autowired
     private SettingXRepository settingXRepository;
     @Autowired
+    private SettingSystemRepository settingSystemRepository;
+    @Autowired
     private XFollower24hRepository xFollower24hRepository;
     @Autowired
     private XLike24hRepository xLike24hRepository;
@@ -40,8 +42,17 @@ public class XTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             Random ran = new Random();
-            String list_tiktok_video=xCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",list_tiktok_video==null?"":list_tiktok_video,orderThreadCheck.getValue());
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=xCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
 
                 dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
@@ -98,8 +109,18 @@ public class XTask {
                 resp.put("status", false);
                 return resp;
             }
-            String list_tiktok_id=xFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=xFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -145,8 +166,18 @@ public class XTask {
                 resp.put("status", false);
                 return resp;
             }
-            String list_videoId=xLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=xLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -188,8 +219,18 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            String list_videoId=xViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=xViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
@@ -230,8 +271,18 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            String list_videoId=xRepostHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_videoId==null?"":list_videoId,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=xRepostHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);

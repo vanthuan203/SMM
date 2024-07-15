@@ -129,6 +129,7 @@ public class YoutubeOrder {
                     orderRunning.setSpeed_up(0);
                     orderRunning.setValid(1);
                     orderRunning.setOrder_refill(data.getOrder_refill());
+                    orderRunning.setPriority(0);
 
                     if (service.getService_type().equals("Special")) {
                         orderRunning.setKeyword_list(data.getList());
@@ -271,6 +272,7 @@ public class YoutubeOrder {
                     orderRunning.setValid(1);
                     orderRunning.setSpeed_up(0);
                     orderRunning.setOrder_refill(data.getOrder_refill());
+                    orderRunning.setPriority(0);
 
                     orderRunningRepository.save(orderRunning);
 
@@ -390,6 +392,7 @@ public class YoutubeOrder {
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
+            orderRunning.setPriority(0);
 
             orderRunningRepository.save(orderRunning);
 

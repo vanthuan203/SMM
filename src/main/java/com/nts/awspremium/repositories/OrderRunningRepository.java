@@ -63,7 +63,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     public void delete_Order_Running_By_OrderId(Long order_id);
 
     @Query(value = "Select o.order_id,o.order_key,o.order_link,count(running) as total_thread\n" +
-            ",o.thread,o.insert_time,o.start_time,o.note,\n" +
+            ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
@@ -71,6 +71,16 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             "left join service s on o.service_id=s.service_id where o.username!='refill@gmail.com' and  o.start_time>0 \n" +
             "group by o.order_id order by o.start_time desc",nativeQuery = true)
     public List<OrderRunningShow> get_Order_Running();
+
+    @Query(value = "Select o.order_id,o.order_key,o.order_link,count(running) as total_thread\n" +
+            ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
+            "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
+            "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
+            "s.task from order_running o \n" +
+            "left join account_task a on a.order_id=o.order_id and running=1 \n" +
+            "left join service s on o.service_id=s.service_id where o.order_id=?1 and o.start_time>0 \n" +
+            "group by o.order_id order by o.start_time desc",nativeQuery = true)
+    public OrderRunningShow get_Order_Running_By_OrderId(Long order_id);
 
     @Query(value = "Select o.order_id,o.order_key,o.order_link,0 as total_thread\n" +
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
@@ -91,7 +101,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     public List<OrderRunningShow> get_Order_Pending(String username);
 
     @Query(value = "Select o.order_id,o.order_key,o.order_link,count(running) as total_thread\n" +
-            ",o.thread,o.insert_time,o.start_time,o.note,\n" +
+            ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task from order_running o \n" +
