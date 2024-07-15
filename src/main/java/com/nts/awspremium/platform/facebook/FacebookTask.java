@@ -109,8 +109,18 @@ public class FacebookTask {
                 resp.put("status", false);
                 return resp;
             }
-            String list_tiktok_id=facebookFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",list_tiktok_id==null?"":list_tiktok_id,orderThreadCheck.getValue());
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=facebookFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
