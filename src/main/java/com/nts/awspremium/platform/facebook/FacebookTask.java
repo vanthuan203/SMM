@@ -18,6 +18,8 @@ public class FacebookTask {
     @Autowired
     private SettingFacebookRepository settingFacebookRepository;
     @Autowired
+    private SettingSystemRepository settingSystemRepository;
+    @Autowired
     private FacebookFollower24hRepository facebookFollower24hRepository;
     @Autowired
     private FacebookLike24hRepository facebookLike24hRepository;
@@ -40,8 +42,17 @@ public class FacebookTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             Random ran = new Random();
-            String list_tiktok_video=facebookCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
-            OrderRunning orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",list_tiktok_video==null?"":list_tiktok_video,orderThreadCheck.getValue());
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            String list_History=facebookCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
             if (orderRunning!=null) {
 
                 dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
