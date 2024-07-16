@@ -212,7 +212,7 @@ public class OrderRunningController {
         }
         try {
             JSONArray jsonArray = new JSONArray();
-            String[] order_Arr = orderRunning_Body.getOrder_key().split(",");
+            String[] order_Arr = orderRunning_Body.getOrder_key().split("\n");
             for(int i=0;i<order_Arr.length;i++){
                 OrderRunning orderRunning=orderRunningRepository.get_Order_By_Id(Long.parseLong(order_Arr[i]));
                 if(orderRunning==null){
