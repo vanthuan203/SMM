@@ -1597,20 +1597,25 @@ public class TaskController {
                     logErrorRepository.save(logError);
                 }
             }
-            if(islogin==0){
-                AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
-                accountProfile.setLive(0);
-                resp.put("status", true);
-                data.put("message", "Update thành công!");
-                data.put("account_id", accountProfile.getAccount_id());
-                data.put("password", accountProfile.getPassword());
-                data.put("recover", accountProfile.getRecover());
-                data.put("2fa", accountProfile.getAuth_2fa());
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else if(islogin==2){
-                AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
-                accountProfileRepository.delete(accountProfile);
+            try{
+                if(islogin==0){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
+                    accountProfile.setLive(0);
+                    accountProfileRepository.save(accountProfile);
+                    resp.put("status", true);
+                    data.put("message", "Update thành công!");
+                    data.put("account_id", accountProfile.getAccount_id());
+                    data.put("password", accountProfile.getPassword());
+                    data.put("recover", accountProfile.getRecover());
+                    data.put("2fa", accountProfile.getAuth_2fa());
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(islogin==2){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
+                    accountProfileRepository.delete(accountProfile);
+                }
+            }catch (Exception e){
+
             }
             resp.put("status", true);
             data.put("message", "Update thành công!");
