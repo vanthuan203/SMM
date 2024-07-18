@@ -2,12 +2,14 @@ package com.nts.awspremium.repositories;
 
 import com.nts.awspremium.model.AccountTask;
 import com.nts.awspremium.model.Profile;
+import com.nts.awspremium.model.ProfileShow;
 import com.nts.awspremium.model.ProfileTask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String> {
 
@@ -19,7 +21,8 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "Select * from profile_task where profile_id=?1 and task_index>0 limit 1",nativeQuery = true)
     public ProfileTask check_ProfileId_Running(String profile_id);
 
-
+    @Query(value = "SELECT * FROM profile_task where device_id=?1",nativeQuery = true)
+    public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='' where profile_id=?1",nativeQuery = true)
@@ -42,8 +45,13 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='' where account_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='' where profile_id in(select profile_id from account_profile where account_id like ?1)",nativeQuery = true)
     public Integer reset_Thread_By_AccountId(String account_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task SET task_index=(select priority from platform where platform=?1 limit 1) where profile_id in(select profile_id from account_profile where account_id like ?2)",nativeQuery = true)
+    public Integer update_Than_Task_Index_By_AccountId(String platform,String account_id);
 
     @Modifying
     @Transactional

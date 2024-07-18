@@ -4,10 +4,7 @@ import com.nts.awspremium.model.Device;
 import com.nts.awspremium.model.LogError;
 import com.nts.awspremium.model.Profile;
 import com.nts.awspremium.model.ProfileShow;
-import com.nts.awspremium.repositories.DeviceRepository;
-import com.nts.awspremium.repositories.LogErrorRepository;
-import com.nts.awspremium.repositories.ProfileRepository;
-import com.nts.awspremium.repositories.UserRepository;
+import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,11 +27,13 @@ public class ProfileController {
     @Autowired
     private ProfileRepository profileRepository;
     @Autowired
+    private ProfileTaskRepository profileTaskRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private UserRepository userRepository;
     @GetMapping(value = "get_List_Profile", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> test(@RequestHeader(defaultValue = "") String Authorization,
+    public ResponseEntity<Map<String, Object>> get_List_Profile(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
                                                    ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -47,7 +46,7 @@ public class ProfileController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            List<ProfileShow> profiles =profileRepository.get_Profile_By_DeviceId(device_id.toString());
+            List<ProfileShow> profiles =profileTaskRepository.get_Profile_By_DeviceId(device_id.toString());
 
             JSONArray jsonArray = new JSONArray();
 

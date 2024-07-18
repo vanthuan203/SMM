@@ -17,6 +17,8 @@ public class ProfileTask implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String account_id;
     @Column(columnDefinition = "bigint default 0")
+    private Long add_time;
+    @Column(columnDefinition = "bigint default 0")
     private Long get_time;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;

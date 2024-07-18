@@ -24,6 +24,9 @@ public class YoutubeUpdate {
     private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountProfileRepository accountProfileRepository;
     @Autowired
     private YoutubeLike24hRepository youtubeLike24hRepository;
     @Autowired
