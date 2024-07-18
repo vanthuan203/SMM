@@ -503,6 +503,7 @@ public class TaskController {
             Map<String, Object> dataJson=new LinkedHashMap<>();
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
+                dataJson.put("task_index",profileTask.getTask_index());
                 //System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
