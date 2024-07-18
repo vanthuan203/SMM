@@ -20,10 +20,10 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query(value = "delete from device where device_id=?1",nativeQuery = true)
     public void delete_Device_By_DeviceId(String device_id);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.state,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile.profile_id,a.platform,a.task) FROM Device d left join AccountTask  a on a.device.device_id=d.device_id and a.running=1 group by d.device_id")
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.state,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 group by d.device_id")
     Page<DeviceShow> get_List_Device(Pageable pageable);
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.state,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile.profile_id,a.platform,a.task) " +
-            "FROM Device d left join AccountTask  a on a.device.device_id=d.device_id where d.device_id=?1 group by d.device_id")
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.state,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile_id,a.platform,a.task) " +
+            "FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id where d.device_id=?1 group by d.device_id")
     Page<DeviceShow> get_List_Device(Pageable pageable, String device_id);
 
 

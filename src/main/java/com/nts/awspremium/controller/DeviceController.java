@@ -30,7 +30,7 @@ public class DeviceController {
     @Autowired
     private LogErrorRepository logErrorRepository;
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> test(@RequestHeader(defaultValue = "") String Authorization,
+    public ResponseEntity<Map<String, Object>> get_List_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
                                                     @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
                                                     @RequestParam(name = "sort_type", required = false, defaultValue = "add_time") String sort_type,
