@@ -18,6 +18,10 @@ public class SettingFacebook {
     @Column(columnDefinition = "integer default 0")
     private Integer max_like;
     @Column(columnDefinition = "integer default 0")
+    private Integer max_view;
+    @Column(columnDefinition = "integer default 0")
+    private Integer max_comment;
+    @Column(columnDefinition = "integer default 0")
     private Integer max_day_activity;
     @Column(columnDefinition = "integer default 0")
     private Integer max_activity_24h;

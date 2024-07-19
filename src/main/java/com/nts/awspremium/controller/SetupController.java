@@ -1,9 +1,11 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -266,7 +268,7 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            JSONArray stringList= MailApi.getDomains();
+            JSONObject stringList= TikTokApi.getInfoVideoTikTok(link,2);
             resp.put("status", true);
             data.put("task", link);
             data.put("profile_id", stringList);

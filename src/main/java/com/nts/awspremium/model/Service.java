@@ -87,6 +87,8 @@ public class Service implements Serializable {
     private Integer check_done ;
     @Column(columnDefinition = "integer default 0")
     private Integer check_count ;
+    @Column(columnDefinition = "integer default 0")
+    private Integer check_start=0 ;
     @Column(columnDefinition = "varchar(255) default 'all'")
     private String device_type;
 

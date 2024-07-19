@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -135,14 +136,13 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            String deCode = java.net.URLDecoder.decode(profile_list, StandardCharsets.UTF_8.name());
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.split(",")));
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
-            System.out.println(profileId);
-            System.out.println(profile);
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device==null){
                 Device device_new=new Device();
