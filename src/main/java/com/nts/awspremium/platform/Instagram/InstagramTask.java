@@ -24,6 +24,10 @@ public class InstagramTask {
     @Autowired
     private InstagramLike24hRepository instagramLike24hRepository;
     @Autowired
+    private InstagramComment24hRepository instagramComment24hRepository;
+    @Autowired
+    private InstagramView24hRepository instagramView24hRepository;
+    @Autowired
     private InstagramFollowerHistoryRepository instagramFollowerHistoryRepository;
     @Autowired
     private InstagramLikeHistoryRepository instagramLikeHistoryRepository;
@@ -39,6 +43,11 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
+            if(instagramComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_comment()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -217,6 +226,11 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
+            if(instagramView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

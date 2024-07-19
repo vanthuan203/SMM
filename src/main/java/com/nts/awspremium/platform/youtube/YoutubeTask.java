@@ -32,6 +32,8 @@ public class YoutubeTask {
     @Autowired
     private YoutubeLike24hRepository youtubeLike24hRepository;
     @Autowired
+    private YoutubeView24hRepository youtubeView24hRepository;
+    @Autowired
     private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -39,6 +41,11 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
+            if(youtubeView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

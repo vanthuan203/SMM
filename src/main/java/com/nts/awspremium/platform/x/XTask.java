@@ -24,6 +24,12 @@ public class XTask {
     @Autowired
     private XLike24hRepository xLike24hRepository;
     @Autowired
+    private XComment24hRepository xComment24hRepository;
+    @Autowired
+    private XRepost24hRepository xRepost24hRepository;
+    @Autowired
+    private XView24hRepository xView24hRepository;
+    @Autowired
     private XFollowerHistoryRepository xFollowerHistoryRepository;
     @Autowired
     private XLikeHistoryRepository xLikeHistoryRepository;
@@ -41,6 +47,11 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingX settingX=settingXRepository.get_Setting();
+            if(xComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_comment()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -219,6 +230,11 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingX settingX=settingXRepository.get_Setting();
+            if(xView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -271,6 +287,13 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+
+            SettingX settingX=settingXRepository.get_Setting();
+            if(xRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_repost()){
+                resp.put("status", false);
+                return resp;
+            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

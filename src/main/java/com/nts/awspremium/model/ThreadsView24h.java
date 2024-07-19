@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Entity
-@Table(name = "threads_vìew_24h")
+@Table(name = "threads_view_24h")
 public class ThreadsView24h {
     @Id
     private String id;

@@ -22,6 +22,12 @@ public class ThreadsTask {
     @Autowired
     private ThreadsFollower24hRepository threadsFollower24hRepository;
     @Autowired
+    private ThreadsComment24hRepository threadsComment24hRepository;
+    @Autowired
+    private ThreadsView24hRepository threadsView24hRepository;
+    @Autowired
+    private ThreadsRepost24hRepository threadsRepost24hRepository;
+    @Autowired
     private ThreadsLike24hRepository threadsLike24hRepository;
     @Autowired
     private ThreadsFollowerHistoryRepository threadsFollowerHistoryRepository;
@@ -41,6 +47,11 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
+            if(threadsComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_comment()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -219,6 +230,11 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
+            if(threadsView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -271,6 +287,11 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
+            if(threadsRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_repost()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

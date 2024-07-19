@@ -22,6 +22,12 @@ public class FacebookTask {
     @Autowired
     private FacebookFollower24hRepository facebookFollower24hRepository;
     @Autowired
+    private FacebookComment24hRepository facebookComment24hRepository;
+    @Autowired
+    private FacebookView24hRepository facebookView24hRepository;
+    @Autowired
+    private FacebookMember24hRepository facebookMember24hRepository;
+    @Autowired
     private FacebookLike24hRepository facebookLike24hRepository;
     @Autowired
     private FacebookFollowerHistoryRepository facebookFollowerHistoryRepository;
@@ -41,6 +47,11 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
+            if(facebookComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_comment()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -220,6 +231,11 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
+            if(facebookView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -272,6 +288,11 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
+            if(facebookMember24hRepository.count_Member_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_member()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

@@ -25,6 +25,10 @@ public class TiktokTask {
     @Autowired
     private TikTokLike24hRepository tikTokLike24hRepository;
     @Autowired
+    private TikTokView24hRepository tikTokView24hRepository;
+    @Autowired
+    private TikTokComment24hRepository tikTokComment24hRepository;
+    @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
     @Autowired
     private TikTokLikeHistoryRepository tikTokLikeHistoryRepository;
@@ -38,6 +42,11 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
+            if(tikTokComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_comment()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -217,6 +226,12 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            System.out.println(account_id);
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
+            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_view()){
+                resp.put("status", false);
+                return resp;
+            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
