@@ -124,27 +124,25 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if(device_id.length() ==0){
+            if(device_id.trim().length() ==0){
                 resp.put("status",false);
                 data.put("message", "device_id không để trống");
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if(device_id.length() ==0){
+            if(profile_list.trim().length() ==0){
                 resp.put("status",false);
                 data.put("profile_list", "profile_list không để trống");
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             List<String> profileId = new ArrayList<>();
-            profileId.addAll(Arrays.asList(profile_list.split(",")));
+            profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
-            System.out.println(profile);
             Device device=deviceRepository.check_DeviceId(device_id.trim());
-            System.out.println(device);
             if(device==null){
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
@@ -161,7 +159,6 @@ public class DeviceController {
                 if(profileId.get(i).toString().trim().equals("0")){
                     continue;
                 }
-                System.out.println(profile);
                 ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
                 if(profileTask==null){
                     ProfileTask profileTask_new=new ProfileTask();
