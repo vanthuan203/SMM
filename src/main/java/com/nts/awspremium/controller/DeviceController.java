@@ -136,14 +136,15 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            String deCode = java.net.URLDecoder.decode(profile_list, StandardCharsets.UTF_8.name());
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.split(",")));
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
+            System.out.println(profile);
             Device device=deviceRepository.check_DeviceId(device_id.trim());
+            System.out.println(device);
             if(device==null){
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
@@ -154,32 +155,32 @@ public class DeviceController {
                 device_new.setNum_profile(profile.size());
                 deviceRepository.save(device_new);
                 device=device_new;
-            }else{
-                profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
-                for (int i=0;i<profile.size();i++){
-                    if(profileId.get(i).toString().trim().equals("0")){
-                        continue;
-                    }
-                    ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
-                    if(profileTask==null){
-                        ProfileTask profileTask_new=new ProfileTask();
-                        profileTask_new.setProfile_id(device_id.trim()+"_"+profileId.get(i).trim());
-                        profileTask_new.setAccount_id("");
-                        profileTask_new.setAdd_time(System.currentTimeMillis());
-                        profileTask_new.setDevice(device);
-                        profileTask_new.setAccount_level(0);
-                        profileTask_new.setGet_time(0L);
-                        profileTask_new.setOrder_id(0L);
-                        profileTask_new.setRunning(0);
-                        profileTask_new.setState(1);
-                        profileTask_new.setTask("");
-                        profileTask_new.setPlatform("");
-                        profileTask_new.setTask_key("");
-                        profileTask_new.setTask_list("");
-                        profileTask_new.setTask_index(0);
-                        profileTask_new.setUpdate_time(0L);
-                        profileTaskRepository.save(profileTask_new);
-                    }
+            }
+            profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
+            for (int i=0;i<profile.size();i++){
+                if(profileId.get(i).toString().trim().equals("0")){
+                    continue;
+                }
+                System.out.println(profile);
+                ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
+                if(profileTask==null){
+                    ProfileTask profileTask_new=new ProfileTask();
+                    profileTask_new.setProfile_id(device_id.trim()+"_"+profileId.get(i).trim());
+                    profileTask_new.setAccount_id("");
+                    profileTask_new.setAdd_time(System.currentTimeMillis());
+                    profileTask_new.setDevice(device);
+                    profileTask_new.setAccount_level(0);
+                    profileTask_new.setGet_time(0L);
+                    profileTask_new.setOrder_id(0L);
+                    profileTask_new.setRunning(0);
+                    profileTask_new.setState(1);
+                    profileTask_new.setTask("");
+                    profileTask_new.setPlatform("");
+                    profileTask_new.setTask_key("");
+                    profileTask_new.setTask_list("");
+                    profileTask_new.setTask_index(0);
+                    profileTask_new.setUpdate_time(0L);
+                    profileTaskRepository.save(profileTask_new);
                 }
             }
             resp.put("status",true);

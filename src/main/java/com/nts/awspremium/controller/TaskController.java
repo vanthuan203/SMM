@@ -168,60 +168,46 @@ public class TaskController {
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             ProfileTask profileTask=null;
-            if(device!=null){
-                device.setUpdate_time(System.currentTimeMillis());
-                deviceRepository.save(device);
-                profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
-                if(profileTask==null){
-                    resp.put("status", false);
-                    data.put("message", "profile không tồn tại");
-                    resp.put("data", data);
-                    return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-                }
-            }else
-            {
-                Device device_new=new Device();
-                device_new.setDevice_id(device_id.trim());
-                device_new.setAdd_time(System.currentTimeMillis());
-                device_new.setState(1);
-                device_new.setUpdate_time(System.currentTimeMillis());
-                device_new.setNum_account(0);
-                device_new.setNum_profile(settingSystem.getMax_profile());
-                deviceRepository.save(device_new);
-                device=device_new;
-
-                for(int i=0;i<settingSystem.getMax_profile();i++){
-                    ProfileTask profileTask_New=new ProfileTask();
-                    if(i==0){
-                        profileTask_New.setProfile_id(device_id.trim()+"_"+i);
-                    }else{
-                        profileTask_New.setProfile_id(device_id.trim()+"_"+(i+9));
-                    }
-                    profileTask_New.setAccount_id("");
-
-                    profileTask_New.setDevice(device);
-                    profileTask_New.setAccount_level(0);
-                    profileTask_New.setAdd_time(System.currentTimeMillis());
-                    profileTask_New.setGet_time(0L);
-                    profileTask_New.setOrder_id(0L);
-                    profileTask_New.setRunning(0);
-                    profileTask_New.setState(1);
-                    profileTask_New.setTask("");
-                    profileTask_New.setPlatform("");
-                    profileTask_New.setTask_key("");
-                    profileTask_New.setTask_list("");
-                    profileTask_New.setTask_index(0);
-                    profileTask_New.setUpdate_time(0L);
-                    profileTaskRepository.save(profileTask_New);
-                }
-            }
-            profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
-            if(profileTask==null){
+            if(device==null){
                 resp.put("status", false);
-                data.put("message", "profile không tồn tại");
+                data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            device.setUpdate_time(System.currentTimeMillis());
+            deviceRepository.save(device);
+            profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            if(profileTask==null&&!profile_id.trim().equals("0")){
+                resp.put("status", false);
+                data.put("message", "profile_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else if(profile_id.trim().equals("0")){
+                profileTask = profileTaskRepository.get_Profile_Get_Task(device_id.trim());
+                if(device.getNum_profile()>1){
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "profile_changer");
+                    data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim()+"_")[1]));
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(device.getNum_profile()==1){
+                    profileTask.setUpdate_time(System.currentTimeMillis());
+                    profileTaskRepository.save(profileTask);
+                    profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
+                }else{
+                    resp.put("status", false);
+                    data.put("message", "Không có account_id để chạy");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }else if(profileTask==null){
+                resp.put("status", false);
+                data.put("message", "profile_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+
             //Check profile isLogin Google
             if(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==null){
                 Account account_get=null;
@@ -2037,7 +2023,7 @@ public class TaskController {
             }
             try{
                 if(islogin==0){
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
                     accountProfile.setLive(0);
                     accountProfileRepository.save(accountProfile);
                     resp.put("status", true);
@@ -2048,9 +2034,9 @@ public class TaskController {
                     data.put("2fa", accountProfile.getAuth_2fa());
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(islogin==2){
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account_id.trim()+"%");
-                    accountProfile.setLive(2);
+                }else if(islogin>1){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
+                    accountProfile.setLive(islogin);
                     accountProfileRepository.save(accountProfile);
                 }
             }catch (Exception e){
@@ -2224,10 +2210,9 @@ public class TaskController {
             try{
                 if(updateTaskRequest.getIsLogin()==0){
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"%");
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
                     accountProfile.setLive(0);
                     accountProfileRepository.save(accountProfile);
-                    /*
                     resp.put("status", true);
                     data.put("message", "Update thành công!");
                     data.put("account_id", accountProfile.getAccount_id());
@@ -2236,12 +2221,10 @@ public class TaskController {
                     data.put("2fa", accountProfile.getAuth_2fa());
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-
-                     */
-                }else if(updateTaskRequest.getIsLogin()==2){
+                }else if(updateTaskRequest.getIsLogin()>1){
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"%");
-                    accountProfile.setLive(2);
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
+                    accountProfile.setLive(updateTaskRequest.getIsLogin());
                     accountProfileRepository.save(accountProfile);
                 }
             }catch (Exception e){
