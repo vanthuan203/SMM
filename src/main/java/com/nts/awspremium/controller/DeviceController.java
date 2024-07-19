@@ -160,7 +160,6 @@ public class DeviceController {
                     if(profileId.get(i).toString().trim().equals("0")){
                         continue;
                     }
-                    System.out.println(profile);
                     ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
                     if(profileTask==null){
                         ProfileTask profileTask_new=new ProfileTask();
