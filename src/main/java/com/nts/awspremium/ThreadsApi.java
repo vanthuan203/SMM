@@ -1,4 +1,4 @@
-package com.nts.awspremium.system;
+package com.nts.awspremium;
 
 import okhttp3.*;
 import org.json.simple.JSONObject;

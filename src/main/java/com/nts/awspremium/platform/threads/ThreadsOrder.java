@@ -1,11 +1,10 @@
 package com.nts.awspremium.platform.threads;
 
-import com.nts.awspremium.XApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.BalanceRepository;
 import com.nts.awspremium.repositories.LogErrorRepository;
 import com.nts.awspremium.repositories.OrderRunningRepository;
-import com.nts.awspremium.system.ThreadsApi;
+import com.nts.awspremium.ThreadsApi;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;

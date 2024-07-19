@@ -28,6 +28,11 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='' where profile_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_ProfileId(String profile_id);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE  FROM profile_task  where profile_id not in(?1) and device_id=?2",nativeQuery = true)
+    public Integer delete_Profile_Not_In(List<String>  list_profile, String device_id);
+
 
     @Query(value = "SELECT * FROM profile_task where get_time<=update_time and device_id=?1  order by update_time asc limit 1",nativeQuery = true)
     public ProfileTask get_ProfileId_Can_Running_By_DeviceId(String device_id);
@@ -66,17 +71,17 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>30",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>30",nativeQuery = true)
     public Integer reset_Task_Error();
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0 where profile_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where profile_id=?1",nativeQuery = true)
     public Integer reset_Task_By_ProfileId(String profile_id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0 where device_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where device_id=?1",nativeQuery = true)
     public Integer reset_Task_By_DeviceId(String device_id);
 
     @Modifying

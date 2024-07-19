@@ -1,14 +1,9 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.FacebookApi;
-import com.nts.awspremium.GoogleApi;
-import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
-import com.nts.awspremium.controller.*;
 import com.nts.awspremium.repositories.*;
-import com.nts.awspremium.system.MailApi;
+import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.nts.awspremium.controller.GoogleKeyController.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

@@ -16,7 +16,7 @@ import com.nts.awspremium.platform.x.XUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeTask;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
-import com.nts.awspremium.system.MailApi;
+import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -552,7 +552,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "getTask002", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getTask004(@RequestHeader(defaultValue = "") String Authorization,
+    ResponseEntity<Map<String, Object>> getTask002(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String device_id,
                                                    @RequestParam(defaultValue = "") String profile_id,
                                                    @RequestParam(defaultValue = "") String platform) throws InterruptedException {
@@ -633,10 +633,28 @@ public class TaskController {
             }
             profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
             if(profileTask==null){
-                resp.put("status", false);
-                data.put("message", "profile không tồn tại");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+                try{
+                    ProfileTask profileTask_New=new ProfileTask();
+
+                    profileTask_New.setProfile_id(device_id.trim()+"_"+profile_id.trim());
+                    profileTask_New.setAccount_id("");
+                    profileTask_New.setAdd_time(System.currentTimeMillis());
+                    profileTask_New.setDevice(device);
+                    profileTask_New.setAccount_level(0);
+                    profileTask_New.setGet_time(0L);
+                    profileTask_New.setOrder_id(0L);
+                    profileTask_New.setRunning(0);
+                    profileTask_New.setState(1);
+                    profileTask_New.setTask("");
+                    profileTask_New.setPlatform("");
+                    profileTask_New.setTask_key("");
+                    profileTask_New.setTask_list("");
+                    profileTask_New.setTask_index(0);
+                    profileTask_New.setUpdate_time(0L);
+                    profileTaskRepository.save(profileTask_New);
+                }catch (Exception e){
+
+                }
             }
             //Check profile isLogin Google
             if(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==null){
@@ -969,7 +987,7 @@ public class TaskController {
     }
 
     @GetMapping(value = "getTask002OFF", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getTask002(@RequestHeader(defaultValue = "") String Authorization,
+    ResponseEntity<Map<String, Object>> getTask002OFF(@RequestHeader(defaultValue = "") String Authorization,
                                                 @RequestParam(defaultValue = "") String device_id,
                                                 @RequestParam(defaultValue = "") String profile_id,
                                                  @RequestParam(defaultValue = "") String platform) throws InterruptedException {
@@ -2261,7 +2279,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            accountTaskRepository.reset_Task_Error();
+            profileTaskRepository.reset_Task_Error();
             resp.put("status",true);
             data.put("message", "reset thành công");
             resp.put("data",data);
@@ -2294,7 +2312,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            accountTaskRepository.reset_Task_By_DeviceId(device_id.trim());
+            profileTaskRepository.reset_Task_By_DeviceId(device_id.trim());
             resp.put("status",true);
             data.put("message", "reset thành công");
             resp.put("data",data);
@@ -2328,7 +2346,7 @@ public class TaskController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            accountTaskRepository.reset_Task_By_ProfileId(device_id.trim()+"_"+profile_id);
+            profileTaskRepository.reset_Task_By_ProfileId(device_id.trim()+"_"+profile_id);
             resp.put("status",true);
             data.put("message", "reset thành công");
             resp.put("data",data);

@@ -1,4 +1,4 @@
-package com.nts.awspremium.system;
+package com.nts.awspremium;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

@@ -3,6 +3,7 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.DeviceRepository;
 import com.nts.awspremium.repositories.LogErrorRepository;
+import com.nts.awspremium.repositories.ProfileTaskRepository;
 import com.nts.awspremium.repositories.UserRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,6 +26,9 @@ import java.util.stream.Collectors;
 public class DeviceController {
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -80,6 +84,108 @@ public class DeviceController {
             }
             resp.put("device", jsonArray);
             resp.put("page",devicePage.getTotalPages());
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @GetMapping(value = "check_Device", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> check_Device(@RequestHeader(defaultValue = "") String Authorization,
+                                                               @RequestParam(defaultValue = "") String device_id,
+                                                               @RequestParam(defaultValue = "") String profile_list
+                                                              ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                data.put("message", "Token expired");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(device_id.length() ==0){
+                resp.put("status",false);
+                data.put("message", "device_id không để trống");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(device_id.length() ==0){
+                resp.put("status",false);
+                data.put("profile_list", "profile_list không để trống");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            List<String> profileId = new ArrayList<>();
+            profileId.addAll(Arrays.asList(profile_list.split(",")));
+            List<String> profile =new ArrayList<>();
+            for (int i=0;i<profileId.size();i++ ) {
+                profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
+            }
+            System.out.println(profileId);
+            System.out.println(profile);
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            if(device==null){
+                Device device_new=new Device();
+                device_new.setDevice_id(device_id.trim());
+                device_new.setAdd_time(System.currentTimeMillis());
+                device_new.setState(1);
+                device_new.setUpdate_time(System.currentTimeMillis());
+                device_new.setNum_account(0);
+                device_new.setNum_profile(profile.size());
+                deviceRepository.save(device_new);
+                device=device_new;
+            }else{
+                profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
+                for (int i=0;i<profile.size();i++){
+                    if(profileId.get(i).toString().trim().equals("0")){
+                        continue;
+                    }
+                    System.out.println(profile);
+                    ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
+                    if(profileTask==null){
+                        ProfileTask profileTask_new=new ProfileTask();
+                        profileTask_new.setProfile_id(device_id.trim()+"_"+profileId.get(i).trim());
+                        profileTask_new.setAccount_id("");
+                        profileTask_new.setAdd_time(System.currentTimeMillis());
+                        profileTask_new.setDevice(device);
+                        profileTask_new.setAccount_level(0);
+                        profileTask_new.setGet_time(0L);
+                        profileTask_new.setOrder_id(0L);
+                        profileTask_new.setRunning(0);
+                        profileTask_new.setState(1);
+                        profileTask_new.setTask("");
+                        profileTask_new.setPlatform("");
+                        profileTask_new.setTask_key("");
+                        profileTask_new.setTask_list("");
+                        profileTask_new.setTask_index(0);
+                        profileTask_new.setUpdate_time(0L);
+                        profileTaskRepository.save(profileTask_new);
+                    }
+                }
+            }
+            resp.put("status",true);
+            data.put("message", "Check hoàn tất");
+            resp.put("data",data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
