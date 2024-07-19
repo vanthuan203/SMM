@@ -23,11 +23,17 @@ public class TiktokUpdate {
     @Autowired
     private TikTokLike24hRepository tikTokLike24hRepository;
     @Autowired
+    private TikTokView24hRepository tikTokView24hRepository;
+    @Autowired
+    private TikTokComment24hRepository tikTokComment24hRepository;
+    @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
     @Autowired
     private TikTokLikeHistoryRepository tikTokLikeHistoryRepository;
     @Autowired
     private TikTokCommentHistoryRepository tikTokCommentHistoryRepository;
+    @Autowired
+    private TikTokViewHistoryRepository tikTokViewHistoryRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
@@ -129,6 +135,49 @@ public class TiktokUpdate {
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
+            TiktokComment24h tiktokComment24h =new TiktokComment24h();
+            tiktokComment24h.setId(account_id.trim()+task_key.trim());
+            tiktokComment24h.setUpdate_time(System.currentTimeMillis());
+            tikTokComment24hRepository.save(tiktokComment24h);
+            return true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            return false;
+        }
+    }
+
+    public Boolean tiktok_view(String account_id,String task_key){
+        try{
+            TikTokViewHistory tikTokViewHistory=tikTokViewHistoryRepository.get_By_AccountId(account_id.trim());
+            if(tikTokViewHistory!=null){
+                tikTokViewHistory.setList_id(tikTokViewHistory.getList_id()+task_key.trim()+"|");
+                tikTokViewHistory.setUpdate_time(System.currentTimeMillis());
+                tikTokViewHistoryRepository.save(tikTokViewHistory);
+            }else{
+                TikTokViewHistory tikTokViewHistory_new=new TikTokViewHistory();
+                tikTokViewHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                tikTokViewHistory_new.setUpdate_time(System.currentTimeMillis());
+                tikTokViewHistory_new.setList_id(task_key.trim()+"|");
+                tikTokViewHistoryRepository.save(tikTokViewHistory_new);
+            }
+            TiktokView24h tiktokView24h =new TiktokView24h();
+            tiktokView24h.setId(account_id.trim()+task_key.trim());
+            tiktokView24h.setUpdate_time(System.currentTimeMillis());
+            tikTokView24hRepository.save(tiktokView24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

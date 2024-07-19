@@ -19,6 +19,12 @@ public class ThreadsUpdate {
     @Autowired
     private ThreadsLike24hRepository threadsLike24hRepository;
     @Autowired
+    private ThreadsComment24hRepository threadsComment24hRepository;
+    @Autowired
+    private ThreadsView24hRepository threadsView24hRepository;
+    @Autowired
+    private ThreadsRepost24hRepository threadsRepost24hRepository;
+    @Autowired
     private ThreadsFollowerHistoryRepository threadsFollowerHistoryRepository;
 
     @Autowired
@@ -130,6 +136,10 @@ public class ThreadsUpdate {
                 threadsViewHistory_new.setList_id(task_key.trim()+"|");
                 threadsViewHistoryRepository.save(threadsViewHistory_new);
             }
+            ThreadsView24h threadsView24h =new ThreadsView24h();
+            threadsView24h.setId(account_id.trim()+task_key.trim());
+            threadsView24h.setUpdate_time(System.currentTimeMillis());
+            threadsView24hRepository.save(threadsView24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -165,6 +175,10 @@ public class ThreadsUpdate {
                 threadsRepostHistory_new.setList_id(task_key.trim()+"|");
                 threadsRepostHistoryRepository.save(threadsRepostHistory_new);
             }
+            ThreadsRepost24h threadsRepost24h =new ThreadsRepost24h();
+            threadsRepost24h.setId(account_id.trim()+task_key.trim());
+            threadsRepost24h.setUpdate_time(System.currentTimeMillis());
+            threadsRepost24hRepository.save(threadsRepost24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -204,6 +218,10 @@ public class ThreadsUpdate {
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
+            ThreadsComment24h threadsComment24h =new ThreadsComment24h();
+            threadsComment24h.setId(account_id.trim()+task_key.trim());
+            threadsComment24h.setUpdate_time(System.currentTimeMillis());
+            threadsComment24hRepository.save(threadsComment24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

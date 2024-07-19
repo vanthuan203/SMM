@@ -295,6 +295,21 @@ public class TaskController {
                                 accountProfile.setAdd_time(System.currentTimeMillis());
                                 accountProfile.setUpdate_time(0L);
                                 accountProfileRepository.save(accountProfile);
+                                try{
+                                    Account account=new Account();
+                                    account.setAccount_id(mail);
+                                    account.setPassword(password);
+                                    account.setRecover_mail(mail);
+                                    account.setPlatform(platform_index);
+                                    account.setLive(1);
+                                    account.setRunning(1);
+                                    account.setAuth_2fa("");
+                                    account.setProfile_id(profileTask.getProfile_id());
+                                    account.setDevice_id(profileTask.getDevice().getDevice_id());
+                                    account.setAdd_time(System.currentTimeMillis());
+                                    accountRepository.save(account);
+                                }catch (Exception e){
+                                }
 
                                 resp.put("status", true);
                                 data.put("platform", platform_index);
@@ -358,6 +373,21 @@ public class TaskController {
                         accountProfile.setAdd_time(System.currentTimeMillis());
                         accountProfile.setUpdate_time(0L);
                         accountProfileRepository.save(accountProfile);
+                        try{
+                            Account account=new Account();
+                            account.setAccount_id(mail);
+                            account.setPassword(password);
+                            account.setRecover_mail(mail);
+                            account.setPlatform(platform_index);
+                            account.setLive(1);
+                            account.setRunning(1);
+                            account.setAuth_2fa("");
+                            account.setProfile_id(profileTask.getProfile_id());
+                            account.setDevice_id(profileTask.getDevice().getDevice_id());
+                            account.setAdd_time(System.currentTimeMillis());
+                            accountRepository.save(account);
+                        }catch (Exception e){
+                        }
 
                         resp.put("status", true);
                         data.put("platform", platform_index);
@@ -701,7 +731,6 @@ public class TaskController {
                                     account.setAdd_time(System.currentTimeMillis());
                                     accountRepository.save(account);
                                 }catch (Exception e){
-
                                 }
                             }
                         }
@@ -755,7 +784,6 @@ public class TaskController {
                         accountProfile.setAdd_time(System.currentTimeMillis());
                         accountProfile.setUpdate_time(0L);
                         accountProfileRepository.save(accountProfile);
-
                         try{
                             Account account=new Account();
                             account.setAccount_id(mail);
@@ -770,7 +798,6 @@ public class TaskController {
                             account.setAdd_time(System.currentTimeMillis());
                             accountRepository.save(account);
                         }catch (Exception e){
-
                         }
                     }
                 }
@@ -2308,6 +2335,8 @@ public class TaskController {
                     tiktokUpdate.tiktok_like(account_id.trim(),task_key.trim());
                 }else  if(task.toLowerCase().trim().equals("comment")){
                     tiktokUpdate.tiktok_comment(account_id.trim(),task_key.trim(),status);
+                }else  if(task.toLowerCase().trim().equals("view")&&status==true){
+                    tiktokUpdate.tiktok_view(account_id.trim(),task_key.trim());
                 }
             }else if(platform_Check.equals("facebook")){
                 if(task.toLowerCase().trim().equals("follower")&&status==true){
@@ -2494,6 +2523,8 @@ public class TaskController {
                     tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
                 }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
                     tiktokUpdate.tiktok_comment(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                    tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
                 }
             }else if(platform_Check.equals("facebook")){
                 if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){

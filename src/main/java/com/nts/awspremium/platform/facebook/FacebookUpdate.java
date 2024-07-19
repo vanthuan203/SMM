@@ -40,6 +40,12 @@ public class FacebookUpdate {
     @Autowired
     private FacebookFollower24hRepository facebookFollower24hRepository;
     @Autowired
+    private FacebookComment24hRepository facebookComment24hRepository;
+    @Autowired
+    private FacebookView24hRepository facebookView24hRepository;
+    @Autowired
+    private FacebookMember24hRepository facebookMember24hRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
@@ -134,6 +140,10 @@ public class FacebookUpdate {
                 facebookViewHistory_new.setList_id(task_key.trim()+"|");
                 facebookViewHistoryRepository.save(facebookViewHistory_new);
             }
+            FacebookView24h facebookView24h =new FacebookView24h();
+            facebookView24h.setId(account_id.trim()+task_key.trim());
+            facebookView24h.setUpdate_time(System.currentTimeMillis());
+            facebookView24hRepository.save(facebookView24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -169,6 +179,10 @@ public class FacebookUpdate {
                 facebookMemberHistory_new.setList_id(task_key.trim()+"|");
                 facebookMemberHistoryRepository.save(facebookMemberHistory_new);
             }
+            FacebookMember24h facebookMember24h =new FacebookMember24h();
+            facebookMember24h.setId(account_id.trim()+task_key.trim());
+            facebookMember24h.setUpdate_time(System.currentTimeMillis());
+            facebookMember24hRepository.save(facebookMember24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -208,6 +222,10 @@ public class FacebookUpdate {
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
+            FacebookComment24h facebookComment24h =new FacebookComment24h();
+            facebookComment24h.setId(account_id.trim()+task_key.trim());
+            facebookComment24h.setUpdate_time(System.currentTimeMillis());
+            facebookComment24hRepository.save(facebookComment24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

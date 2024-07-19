@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RestController
 public class YoutubeUpdate {
     @Autowired
-    private YoutubeViewHistoryRepository youtubeVideoHistoryRepository;
+    private YoutubeViewHistoryRepository youtubeViewHistoryRepository;
     @Autowired
     private YoutubeSubscriberHistoryRepository youtubeChannelHistoryRepository;
     @Autowired
@@ -30,23 +30,29 @@ public class YoutubeUpdate {
     @Autowired
     private YoutubeLike24hRepository youtubeLike24hRepository;
     @Autowired
+    private YoutubeView24hRepository youtubeView24hRepository;
+    @Autowired
     private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
     public Boolean youtube_view(String account_id,String task_key){
         try{
-            YoutubeViewHistory youtubeVideoHistory=youtubeVideoHistoryRepository.get_By_AccountId(account_id.trim());
+            YoutubeViewHistory youtubeVideoHistory=youtubeViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeVideoHistory!=null){
                 youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id()+task_key.trim()+"|");
                 youtubeVideoHistory.setUpdate_time(System.currentTimeMillis());
-                youtubeVideoHistoryRepository.save(youtubeVideoHistory);
+                youtubeViewHistoryRepository.save(youtubeVideoHistory);
             }else{
                 YoutubeViewHistory youtubeVideoHistory_New=new YoutubeViewHistory();
                 youtubeVideoHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                 youtubeVideoHistory_New.setUpdate_time(System.currentTimeMillis());
                 youtubeVideoHistory_New.setList_id(task_key.trim()+"|");
-                youtubeVideoHistoryRepository.save(youtubeVideoHistory_New);
+                youtubeViewHistoryRepository.save(youtubeVideoHistory_New);
             }
+            YoutubeView24h youtubeView24h =new YoutubeView24h();
+            youtubeView24h.setId(account_id.trim()+task_key.trim());
+            youtubeView24h.setUpdate_time(System.currentTimeMillis());
+            youtubeView24hRepository.save(youtubeView24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

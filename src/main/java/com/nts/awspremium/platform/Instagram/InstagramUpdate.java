@@ -21,6 +21,10 @@ public class InstagramUpdate {
     @Autowired
     private InstagramLike24hRepository instagramLike24hRepository;
     @Autowired
+    private InstagramComment24hRepository instagramComment24hRepository;
+    @Autowired
+    private InstagramView24hRepository instagramView24hRepository;
+    @Autowired
     private InstagramFollowerHistoryRepository instagramFollowerHistoryRepository;
     @Autowired
     private InstagramLikeHistoryRepository instagramLikeHistoryRepository;
@@ -123,6 +127,10 @@ public class InstagramUpdate {
                 instagramViewHistory_new.setList_id(task_key.trim()+"|");
                 instagramViewHistoryRepository.save(instagramViewHistory_new);
             }
+            InstagramView24h instagramView24h =new InstagramView24h();
+            instagramView24h.setId(account_id.trim()+task_key.trim());
+            instagramView24h.setUpdate_time(System.currentTimeMillis());
+            instagramView24hRepository.save(instagramView24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -163,6 +171,10 @@ public class InstagramUpdate {
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
+            InstagramComment24h instagramComment24h =new InstagramComment24h();
+            instagramComment24h.setId(account_id.trim()+task_key.trim());
+            instagramComment24h.setUpdate_time(System.currentTimeMillis());
+            instagramComment24hRepository.save(instagramComment24h);
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
