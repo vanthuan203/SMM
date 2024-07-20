@@ -36,6 +36,8 @@ public class ProfileTask implements Serializable {
     private Integer state;
     @Column(columnDefinition = "integer default 0")
     private Integer task_index;
+    @Column(columnDefinition = "integer default 0")
+    private Integer request_index=0;
     @Column(columnDefinition = "bigint default 0")
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")

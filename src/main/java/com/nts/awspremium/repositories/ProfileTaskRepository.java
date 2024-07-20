@@ -25,8 +25,13 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='' where profile_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0 where profile_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0 where device_id=?1",nativeQuery = true)
+    public Integer reset_Thread_Index_By_DeviceId(String device_id);
 
     @Modifying
     @Transactional
@@ -60,14 +65,14 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='' where account_id=?1",nativeQuery = true)
-    public Integer reset_Thread_Index_By_AccountId(String account_id);
-
+    @Query(value = "UPDATE profile_task SET task_index=(select priority from platform where platform=?1 limit 1) where profile_id=?1",nativeQuery = true)
+    public Integer update_Than_Task_Index_By_ProofileId(String platform,String profile_id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0 where device_id=?1",nativeQuery = true)
-    public Integer reset_Thread_Index_By_DeviceId(String device_id);
+    @Query(value = "UPDATE account_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='' where account_id=?1",nativeQuery = true)
+    public Integer reset_Thread_Index_By_AccountId(String account_id);
+
 
     @Modifying
     @Transactional
