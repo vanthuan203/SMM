@@ -132,7 +132,7 @@ public class DeviceController {
             }
             if(profile_list.trim().length() ==0){
                 resp.put("status",false);
-                data.put("profile_list", "profile_list không để trống");
+                data.put("message", "profile_list không để trống");
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }

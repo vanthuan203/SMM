@@ -325,7 +325,7 @@ public class TaskController {
                         System.out.println(arrPlatform);
                         while (arrPlatform.size()>0){
                             System.out.println("index 1 "+arrPlatform.get(0));
-                            if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0||arrPlatform.get(0).equals("youtube")){
+                            if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0&&!arrPlatform.get(0).equals("youtube")){
                                 AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), arrPlatform.get(0));
                                 if(accountProfile_Check_Platform==null || (accountProfile_Check_Platform!=null?accountProfile_Check_Platform.getLive()>1:false)  ){
                                     JSONArray domains= MailApi.getDomains();
@@ -400,10 +400,31 @@ public class TaskController {
                                         profileTask=null;
                                         break;
                                     }else {
+                                        profileTask.setRequest_index(0);
+                                        profileTaskRepository.save(profileTask);
                                         arrPlatform.remove(0);
                                         continue;
                                     }
                                 } else if(accountProfile_Check_Platform.getLive()==0){
+                                    profileTask.setPlatform(arrPlatform.get(0));
+                                    List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                                    task_List=String.join(",", subPlatform);
+                                    profileTask.setTask_list(task_List);
+                                    profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
+                                    profileTask.setRequest_index(profileTask.getRequest_index()+1);
+                                    profileTaskRepository.save(profileTask);
+                                    resp.put("status", true);
+                                    data.put("platform",arrPlatform.get(0));
+                                    data.put("task", "register");
+                                    data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
+                                    data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
+                                    data.put("password", accountProfile_Check_Platform.getPassword().trim());
+                                    data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
+                                    data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
+                                    resp.put("data",data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }
+                                else if(accountProfile_Check_Platform.getLive()==-1){
                                     profileTask.setPlatform(arrPlatform.get(0));
                                     List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
                                     task_List=String.join(",", subPlatform);
@@ -455,7 +476,7 @@ public class TaskController {
                 System.out.println(arrPlatform);
                 while (arrPlatform.size()>0){
                     System.out.println("index 2 "+arrPlatform.get(0));
-                    if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0||arrPlatform.get(0).equals("youtube")){
+                    if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0&&!arrPlatform.get(0).equals("youtube")){
                         AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), arrPlatform.get(0));
                         if(accountProfile_Check_Platform==null || (accountProfile_Check_Platform!=null?accountProfile_Check_Platform.getLive()>1:false)  ){
                             JSONArray domains= MailApi.getDomains();
@@ -525,13 +546,13 @@ public class TaskController {
                         }else if((accountProfile_Check_Platform.getLive()==-1 && profileTask.getRequest_index()>=1) ||
                                 (accountProfile_Check_Platform.getLive()==0 && profileTask.getRequest_index()>=2)
                         ){
-                            System.out.println("OKEEEE");
                             if(arrPlatform.size()==1){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 profileTask=null;
                                 break;
                             }else {
-                                System.out.println("OKEEEE");
+                                profileTask.setRequest_index(0);
+                                profileTaskRepository.save(profileTask);
                                 arrPlatform.remove(0);
                                 continue;
                             }
@@ -544,6 +565,24 @@ public class TaskController {
                             profileTask.setRequest_index(profileTask.getRequest_index()+1);
                             profileTaskRepository.save(profileTask);
 
+                            resp.put("status", true);
+                            data.put("platform",arrPlatform.get(0));
+                            data.put("task", "register");
+                            data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
+                            data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
+                            data.put("password", accountProfile_Check_Platform.getPassword().trim());
+                            data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
+                            data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
+                            resp.put("data",data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }else if(accountProfile_Check_Platform.getLive()==-1){
+                            profileTask.setPlatform(arrPlatform.get(0));
+                            List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                            task_List=String.join(",", subPlatform);
+                            profileTask.setTask_list(task_List);
+                            profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
+                            profileTask.setRequest_index(profileTask.getRequest_index()+1);
+                            profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform",arrPlatform.get(0));
                             data.put("task", "register");
@@ -2592,6 +2631,7 @@ public class TaskController {
                 if(islogin==0){
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
                     accountProfile.setLive(0);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile);
                     resp.put("status", true);
                     data.put("message", "Update thành công!");
@@ -2601,9 +2641,15 @@ public class TaskController {
                     data.put("2fa", accountProfile.getAuth_2fa());
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(islogin>1){
+                }else if(islogin==1){
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
-                    accountProfile.setLive(islogin);
+                    accountProfile.setLive(1);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile);
+                }else{
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
+                    accountProfile.setLive(1);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile);
                 }
             }catch (Exception e){
