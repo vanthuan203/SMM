@@ -729,6 +729,8 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
+                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
@@ -1129,6 +1131,8 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
+                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);

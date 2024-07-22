@@ -18,6 +18,8 @@ public class Platform {
     @Column(columnDefinition = "integer default 0")
     private Integer priority;
     @Column(columnDefinition = "integer default 0")
+    private Integer activity;
+    @Column(columnDefinition = "integer default 0")
     private Integer state;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
