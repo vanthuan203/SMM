@@ -463,6 +463,7 @@ public class TaskController {
                     }
                 }
             }else{
+                profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                 profileTask = profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id);
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
@@ -883,7 +884,7 @@ public class TaskController {
 
                 if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform())){
                     if(profileTask.getTask_list().trim().length()==0){
-                        profileTaskRepository.reset_Thread_Index_By_ProfileId(profileTask.getProfile_id());
+                        profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                         profileTask=null;
                     }else{
                         String task_List="";
@@ -950,6 +951,7 @@ public class TaskController {
                     }
                 }
             }else{
+                profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                 profileTask = profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id);
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
