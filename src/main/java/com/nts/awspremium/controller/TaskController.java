@@ -2846,12 +2846,21 @@ public class TaskController {
                     accountProfile.setLive(1);
                     accountProfile.setUpdate_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile);
-                }else{
+                }else if(updateTaskRequest.getIsLogin()==-1){
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
-                    accountProfile.setLive(updateTaskRequest.getIsLogin());
+                    accountProfile.setLive(-1);
                     accountProfile.setUpdate_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile);
+                }else if(updateTaskRequest.getIsLogin()>1){
+                    System.out.println("Like "+updateTaskRequest.getIsLogin());
+                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
+                    accountProfileRepository.delete(accountProfile);
+                    Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim());
+                    account.setRunning(0);
+                    account.setLive(updateTaskRequest.getIsLogin());
+                    accountRepository.save(account);
                 }
             }catch (Exception e){
 
