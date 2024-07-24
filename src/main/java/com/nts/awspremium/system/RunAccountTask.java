@@ -4,6 +4,12 @@ import com.nts.awspremium.controller.DataConmentController;
 import com.nts.awspremium.controller.OrderRunningController;
 import com.nts.awspremium.controller.TaskController;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.platform.Instagram.InstagramUpdate;
+import com.nts.awspremium.platform.facebook.FacebookUpdate;
+import com.nts.awspremium.platform.threads.ThreadsUpdate;
+import com.nts.awspremium.platform.tiktok.TiktokUpdate;
+import com.nts.awspremium.platform.x.XUpdate;
+import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.AccountTaskRepository;
 import com.nts.awspremium.repositories.OrderRunningRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +26,18 @@ public class RunAccountTask {
     private TaskController taskController;
     @Autowired
     private Environment env;
+    @Autowired
+    private XUpdate xUpdate;
+    @Autowired
+    private YoutubeUpdate youtubeUpdate;
+    @Autowired
+    private TiktokUpdate tiktokUpdate;
+    @Autowired
+    private InstagramUpdate instagramUpdate;
+    @Autowired
+    private FacebookUpdate facebookUpdate;
+    @Autowired
+    private ThreadsUpdate threadsUpdate;
     @PostConstruct
     public void init() throws InterruptedException {
         try{
@@ -40,6 +58,17 @@ public class RunAccountTask {
                                 throw new RuntimeException(e);
                             }
                             dataConmentController.reset_Running_Comment();
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            youtubeUpdate.youtube_delete_task_24h();
+                            tiktokUpdate.tiktok_delete_task_24h();
+                            instagramUpdate.instagram_delete_task_24h();
+                            facebookUpdate.facebook_delete_task_24h();
+                            threadsUpdate.threads_delete_task_24h();
+                            xUpdate.x_delete_task_24h();
                         } catch (Exception e) {
                             continue;
                         }

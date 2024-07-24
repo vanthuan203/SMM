@@ -168,13 +168,41 @@ public class InstagramUpdate {
                     instagramCommentHistoryRepository.save(instagramCommentHistory_new);
                 }
                 dataCommentRepository.update_Task_Comment_Done(account_id.trim());
+
+                InstagramComment24h instagramComment24h =new InstagramComment24h();
+                instagramComment24h.setId(account_id.trim()+task_key.trim());
+                instagramComment24h.setUpdate_time(System.currentTimeMillis());
+                instagramComment24hRepository.save(instagramComment24h);
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
-            InstagramComment24h instagramComment24h =new InstagramComment24h();
-            instagramComment24h.setId(account_id.trim()+task_key.trim());
-            instagramComment24h.setUpdate_time(System.currentTimeMillis());
-            instagramComment24hRepository.save(instagramComment24h);
+            return true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            return false;
+        }
+    }
+
+    public Boolean instagram_delete_task_24h(){
+        try{
+            instagramComment24hRepository.deleteAllByThan24h();
+            instagramView24hRepository.deleteAllByThan24h();
+            instagramLike24hRepository.deleteAllByThan24h();
+            instagramFollower24hRepository.deleteAllByThan24h();
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

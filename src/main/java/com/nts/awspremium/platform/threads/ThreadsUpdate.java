@@ -215,13 +215,43 @@ public class ThreadsUpdate {
                     threadsCommentHistoryRepository.save(threadsCommentHistory_new);
                 }
                 dataCommentRepository.update_Task_Comment_Done(account_id.trim());
+
+                ThreadsComment24h threadsComment24h =new ThreadsComment24h();
+                threadsComment24h.setId(account_id.trim()+task_key.trim());
+                threadsComment24h.setUpdate_time(System.currentTimeMillis());
+                threadsComment24hRepository.save(threadsComment24h);
+
             }else {
                 dataCommentRepository.update_Task_Comment_Fail(account_id.trim());
             }
-            ThreadsComment24h threadsComment24h =new ThreadsComment24h();
-            threadsComment24h.setId(account_id.trim()+task_key.trim());
-            threadsComment24h.setUpdate_time(System.currentTimeMillis());
-            threadsComment24hRepository.save(threadsComment24h);
+            return true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            return false;
+        }
+    }
+
+    public Boolean threads_delete_task_24h(){
+        try{
+            threadsComment24hRepository.deleteAllByThan24h();
+            threadsView24hRepository.deleteAllByThan24h();
+            threadsLike24hRepository.deleteAllByThan24h();
+            threadsFollower24hRepository.deleteAllByThan24h();
+            threadsRepost24hRepository.deleteAllByThan24h();
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

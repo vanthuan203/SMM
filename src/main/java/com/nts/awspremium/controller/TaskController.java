@@ -314,7 +314,7 @@ public class TaskController {
             }
             //////////////////////////
 
-            if(profileTask.getState()==0){
+            if(profileTask.getState()==0 || profileTask.getPlatform().length()==0){
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
