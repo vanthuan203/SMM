@@ -33,7 +33,7 @@ public class ProfileTask implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer running;
     @Column(columnDefinition = "integer default -1")
-    private Integer state;
+    private Integer state=0;
     @Column(columnDefinition = "integer default 0")
     private Integer task_index;
     @Column(columnDefinition = "integer default 0")

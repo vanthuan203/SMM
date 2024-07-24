@@ -174,7 +174,7 @@ public class DeviceController {
                     profileTask_new.setGet_time(0L);
                     profileTask_new.setOrder_id(0L);
                     profileTask_new.setRunning(0);
-                    profileTask_new.setState(1);
+                    profileTask_new.setState(0);
                     profileTask_new.setTask("");
                     profileTask_new.setPlatform("");
                     profileTask_new.setTask_key("");
