@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 public interface XRepost24hRepository extends JpaRepository<XRepost24h,String> {
     @Modifying
     @Transactional
-    @Query(value = "delete from x_repost_24h where round((UNIX_TIMESTAMP()-time/1000)/60/60)>24;",nativeQuery = true)
+    @Query(value = "delete from x_repost_24h where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from x_repost_24h where id like ?1",nativeQuery = true)
     public Integer count_Repost_24h_By_Username(String username);

@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 public interface FacebookView24hRepository extends JpaRepository<FacebookView24h,String> {
     @Modifying
     @Transactional
-    @Query(value = "delete from facebook_view_24h where round((UNIX_TIMESTAMP()-time/1000)/60/60)>24;",nativeQuery = true)
+    @Query(value = "delete from facebook_view_24h where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from facebook_view_24h where id like ?1",nativeQuery = true)
     public Integer count_View_24h_By_Username(String username);

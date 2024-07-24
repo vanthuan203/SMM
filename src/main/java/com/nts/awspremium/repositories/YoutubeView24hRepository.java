@@ -11,7 +11,7 @@ import javax.transaction.Transactional;
 public interface YoutubeView24hRepository extends JpaRepository<YoutubeView24h,String> {
     @Modifying
     @Transactional
-    @Query(value = "delete from youtube_view_24h where round((UNIX_TIMESTAMP()-time/1000)/60/60)>24;",nativeQuery = true)
+    @Query(value = "delete from youtube_view_24h where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from youtube_view_24h where id like ?1",nativeQuery = true)
     public Integer count_View_24h_By_Username(String username);
