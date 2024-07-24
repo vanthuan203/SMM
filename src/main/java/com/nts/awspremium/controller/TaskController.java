@@ -191,13 +191,9 @@ public class TaskController {
                     data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim()+"_")[1]));
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(device.getNum_profile()==1){
-                    profileTask.setUpdate_time(System.currentTimeMillis());
-                    profileTaskRepository.save(profileTask);
-                    profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                 }else{
                     resp.put("status", false);
-                    data.put("message", "Không có account_id để chạy");
+                    data.put("message", "Không có profile để chạy");
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
@@ -214,7 +210,7 @@ public class TaskController {
             //Check profile isLogin Google True
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
-                if(accountProfile_Check==null || (accountProfile_Check!=null?accountProfile_Check.getLive()>1:false)  ){ // If account null or not live then get new acc
+                if(accountProfile_Check==null){ // If account null or not live then get new acc
                     Account account_get=null;
                     if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                         String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -284,7 +280,6 @@ public class TaskController {
                     }else if(device.getNum_profile()==1){
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         profileTaskRepository.save(profileTask);
-                        profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                     }else{
                         resp.put("status", false);
                         data.put("message", "Không có account_id để chạy");
@@ -413,6 +408,7 @@ public class TaskController {
                                     profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
                                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                                     profileTaskRepository.save(profileTask);
+                                    System.out.println("Request: #####"+profileTask.getRequest_index());
                                     resp.put("status", true);
                                     data.put("platform",arrPlatform.get(0));
                                     data.put("task", "register");
@@ -432,6 +428,7 @@ public class TaskController {
                                     profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
                                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                                     profileTaskRepository.save(profileTask);
+                                    System.out.println("Request: #####"+profileTask.getRequest_index());
                                     resp.put("status", true);
                                     data.put("platform",arrPlatform.get(0));
                                     data.put("task", "register");
@@ -468,8 +465,13 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
-                    task_List=String.join(",", string_Task_List);
+                    if(profileTask.getTask_list().length()>0){
+                        task_List=profileTask.getTask_list();
+                    }else{
+                        List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                        task_List=String.join(",", string_Task_List);
+                    }
+
                 }else{
                     task_List=platform;
                 }
@@ -565,7 +567,7 @@ public class TaskController {
                             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
                             profileTask.setRequest_index(profileTask.getRequest_index()+1);
                             profileTaskRepository.save(profileTask);
-
+                            System.out.println("Request: #####"+profileTask.getRequest_index());
                             resp.put("status", true);
                             data.put("platform",arrPlatform.get(0));
                             data.put("task", "register");
@@ -584,6 +586,7 @@ public class TaskController {
                             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0)));
                             profileTask.setRequest_index(profileTask.getRequest_index()+1);
                             profileTaskRepository.save(profileTask);
+                            System.out.println("Request: #####"+profileTask.getRequest_index());
                             resp.put("status", true);
                             data.put("platform",arrPlatform.get(0));
                             data.put("task", "register");

@@ -138,6 +138,7 @@ public class DeviceController {
             }
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
+            profileId.remove("0");
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
@@ -150,9 +151,12 @@ public class DeviceController {
                 device_new.setState(1);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
-                device_new.setNum_profile(profile.size());
+                device_new.setNum_profile(profileId.size());
                 deviceRepository.save(device_new);
                 device=device_new;
+            }else{
+                device.setNum_profile(profileId.size());
+                deviceRepository.save(device);
             }
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             for (int i=0;i<profile.size();i++){
