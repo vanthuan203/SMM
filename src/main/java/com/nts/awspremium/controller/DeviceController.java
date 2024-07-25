@@ -136,9 +136,14 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
-            profileId.remove("0");
+            if(profileId.size()==1&&profileId.contains("0")){
+                owner_Running=true;
+            }else{
+                profileId.remove("0");
+            }
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
@@ -160,7 +165,7 @@ public class DeviceController {
             }
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             for (int i=0;i<profile.size();i++){
-                if(profileId.get(i).toString().trim().equals("0")){
+                if(profileId.get(i).toString().trim().equals("0")&&!owner_Running){
                     continue;
                 }
                 ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
