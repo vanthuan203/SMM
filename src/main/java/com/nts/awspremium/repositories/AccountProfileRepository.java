@@ -3,7 +3,10 @@ package com.nts.awspremium.repositories;
 import com.nts.awspremium.model.Account;
 import com.nts.awspremium.model.AccountProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+
+import javax.transaction.Transactional;
 
 public interface AccountProfileRepository extends JpaRepository<AccountProfile,String> {
     @Query(value = "SELECT SUBSTRING_INDEX(account_id, '|', 1) as account_id FROM account_profile where profile_id=?1 and platform=?2 and live=1 limit 1",nativeQuery = true)

@@ -33,12 +33,7 @@ public class AccountController {
     private YoutubeSubscriberHistoryRepository youtubeChannelHistoryRepository;
 
     @Autowired
-    private ProfileRepository profileRepository;
-
-    @Autowired
     private DeviceRepository deviceRepository;
-    @Autowired
-    private AccountTaskRepository accountTaskRepository;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -53,7 +48,7 @@ public class AccountController {
 
     @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
-
+/*
     @GetMapping(value = "updateLive", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> updateLive(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String account_id,
@@ -274,5 +269,7 @@ public class AccountController {
 
     }
 
+
+ */
 
 }

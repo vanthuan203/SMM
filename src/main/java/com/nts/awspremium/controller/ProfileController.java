@@ -1,17 +1,11 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Device;
 import com.nts.awspremium.model.LogError;
-import com.nts.awspremium.model.Profile;
 import com.nts.awspremium.model.ProfileShow;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +18,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/profile")
 public class ProfileController {
-    @Autowired
-    private ProfileRepository profileRepository;
     @Autowired
     private ProfileTaskRepository profileTaskRepository;
     @Autowired

@@ -24,14 +24,10 @@ public class SetupController {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
-    private AccountTaskRepository accountTaskRepository;
 
     @Autowired
     private LogErrorRepository logErrorRepository;
-
+/*
     @GetMapping(value = "/check_task", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> check_task(@RequestParam(defaultValue = "") String device_id,@RequestHeader(defaultValue = "") String Authorization) {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -297,5 +293,7 @@ public class SetupController {
         }
     }
 
+
+ */
 
 }

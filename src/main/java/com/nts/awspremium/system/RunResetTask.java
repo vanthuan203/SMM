@@ -1,17 +1,13 @@
 package com.nts.awspremium.system;
 
 import com.nts.awspremium.controller.DataConmentController;
-import com.nts.awspremium.controller.OrderRunningController;
 import com.nts.awspremium.controller.TaskController;
-import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.platform.Instagram.InstagramUpdate;
 import com.nts.awspremium.platform.facebook.FacebookUpdate;
 import com.nts.awspremium.platform.threads.ThreadsUpdate;
 import com.nts.awspremium.platform.tiktok.TiktokUpdate;
 import com.nts.awspremium.platform.x.XUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
-import com.nts.awspremium.repositories.AccountTaskRepository;
-import com.nts.awspremium.repositories.OrderRunningRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -19,7 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class RunAccountTask {
+public class RunResetTask {
     @Autowired
     private DataConmentController dataConmentController;
     @Autowired
