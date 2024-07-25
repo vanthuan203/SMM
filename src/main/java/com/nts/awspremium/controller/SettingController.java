@@ -24,6 +24,8 @@ public class SettingController {
     @Autowired
     private SettingSystemRepository settingSystemRepository;
     @Autowired
+    private PlatformRepository platformRepository;
+    @Autowired
     private SettingYoutubeRepository settingYoutubeRepository;
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
@@ -158,6 +160,53 @@ public class SettingController {
             obj.put("update_time", settingSystem.getUpdate_time());
             jsonArray.add(obj);
             resp.put("accounts",jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }
+
+    }
+
+    @GetMapping(path = "get_List_Platform",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_List_Platform(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            JSONArray jsonArray =new JSONArray();
+            List<Platform> platforms=platformRepository.get_List_Platform();
+            for(int i=0;i<platforms.size();i++){
+                JSONObject obj = new JSONObject();
+                obj.put("platform",platforms.get(i).getPlatform());
+                obj.put("priority", platforms.get(i).getPriority());
+                obj.put("state", platforms.get(i).getState());
+                obj.put("activity", platforms.get(i).getActivity());
+                obj.put("update_time", platforms.get(i).getUpdate_time());
+                jsonArray.add(obj);
+            }
+
+            resp.put("platform",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -443,6 +492,55 @@ public class SettingController {
             obj.put("platform",taskPriority.getPlatform());
             obj.put("update_time",taskPriority.getUpdate_time());
             resp.put("task_priority",obj);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }
+
+    }
+
+    @PostMapping(path = "update_Platform",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_Platform(@RequestHeader(defaultValue = "") String Authorization,
+                                                @RequestBody Platform platformBody
+    ){
+        JSONObject resp = new JSONObject();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            Platform platform=platformRepository.get_Platform_By_PlatformId(platformBody.getPlatform().trim());
+            platform.setPriority(platformBody.getPriority());
+            platform.setState(platformBody.getState());
+            platform.setActivity(platformBody.getActivity());
+            platform.setUpdate_time(System.currentTimeMillis());
+            platformRepository.save(platform);
+            JSONObject obj = new JSONObject();
+            obj.put("platform",platform.getPlatform());
+            obj.put("priority",platform.getPriority());
+            obj.put("state",platform.getState());
+            obj.put("activity",platform.getActivity());
+            obj.put("update_time",platform.getUpdate_time());
+            resp.put("platform",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

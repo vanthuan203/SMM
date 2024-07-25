@@ -24,9 +24,9 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
     public Integer get_Activity_Platform(String platform);
 
 
-    @Query(value = "SELECT * FROM task_priority where priority>0 and platform=?1 and state=1",nativeQuery = true)
-    public List<TaskPriority> get_Priority_Task_By_Platform(String platform);
+    @Query(value = "SELECT * FROM platform ",nativeQuery = true)
+    public List<Platform> get_List_Platform();
+    @Query(value = "SELECT * FROM platform where platform=?1 ",nativeQuery = true)
+    public Platform get_Platform_By_PlatformId(String platform);
 
-    @Query(value = "SELECT state FROM task_priority where task=?1 limit 1",nativeQuery = true)
-    public Integer get_State_Task(String task);
 }
