@@ -58,6 +58,11 @@ public class Account implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String note="";
     @Column(columnDefinition = "varchar(255) default ''")
+    private String dependent="";
+    @Column(columnDefinition = "varchar(555) default ''")
+    private String password_dependent="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String die_dependent="";
+    @Column(columnDefinition = "varchar(255) default ''")
     private String code="";
-
 }

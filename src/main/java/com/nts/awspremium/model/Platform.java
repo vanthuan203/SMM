@@ -23,6 +23,8 @@ public class Platform {
     private Integer state;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String dependent;
     public Platform() {
     }
 

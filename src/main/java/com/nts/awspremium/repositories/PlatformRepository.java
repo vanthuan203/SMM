@@ -17,6 +17,9 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
             ",'',(SELECT GROUP_CONCAT(platform ) AS platform FROM Data.account_profile where live!=1 and profile_id=?1))\n" +
             ",platform)=0 order by rand()",nativeQuery = true)
     public List<String> get_All_Platform_True_By_ProfileId(String profile_id);
+    @Query(value = "SELECT dependent FROM platform where platform=?1 limit 1",nativeQuery = true)
+    public String get_Dependent_By_Platform(String platform);
+
     @Query(value = "SELECT priority FROM platform where platform=?1 limit 1",nativeQuery = true)
     public Integer get_Priority_By_Platform(String platform);
 
