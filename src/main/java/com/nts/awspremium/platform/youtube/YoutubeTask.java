@@ -180,6 +180,9 @@ public class YoutubeTask {
                 for (int i = 0; i < service.getYoutube_search(); i++) {
                     arrSource.add("search");
                 }
+                for (int i = 0; i < service.getYoutube_direct(); i++) {
+                    arrSource.add("direct");
+                }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
 
                 if (service.getMin_time() != service.getMax_time()) {
@@ -264,6 +267,9 @@ public class YoutubeTask {
                 }
                 for (int i = 0; i < service.getYoutube_search(); i++) {
                     arrSource.add("search");
+                }
+                for (int i = 0; i < service.getYoutube_direct(); i++) {
+                    arrSource.add("direct");
                 }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
 
