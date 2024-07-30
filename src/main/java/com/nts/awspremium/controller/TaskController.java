@@ -3965,11 +3965,8 @@ public class TaskController {
                     accountProfile.setUpdate_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile);
                 }else if(updateTaskRequest.getIsLogin()>1){
-                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
-                    accountProfileRepository.delete(accountProfile);
-
                     Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim());
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
                     if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
                         if(account.getDependent().contains(updateTaskRequest.getPlatform())){
                             List<String> arrPlatform =new ArrayList<>(Arrays.asList(account.getDependent().split(",")));
@@ -3981,19 +3978,28 @@ public class TaskController {
                             arrPassword.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
                             account.setPassword_dependent(String.join(",", arrPassword));
                              */
-                            if(!account.getDie_dependent().contains(updateTaskRequest.getPlatform())){
-                                if(account.getDie_dependent().length()==0){
-                                    account.setDie_dependent(updateTaskRequest.getPlatform());
-                                }else{
-                                    account.setDie_dependent(account.getDie_dependent()+","+updateTaskRequest.getPlatform());
-                                }
-                            }
-                            accountRepository.save(account);
                         }
+                        if(!account.getDie_dependent().contains(updateTaskRequest.getPlatform())){
+                            if(account.getDie_dependent().length()==0){
+                                account.setDie_dependent(updateTaskRequest.getPlatform());
+                            }else{
+                                account.setDie_dependent(account.getDie_dependent()+","+updateTaskRequest.getPlatform());
+                            }
+                        }
+                        if(!account.getPassword_dependent().contains(updateTaskRequest.getPlatform())){
+                            if(account.getPassword_dependent().length()==0){
+                                account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                            }else{
+                                account.setPassword_dependent(account.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                            }
+                        }
+                        accountRepository.save(account);
                     }else{
                         account.setLive(updateTaskRequest.getIsLogin());
                         accountRepository.save(account);
                     }
+                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
+                    accountProfileRepository.delete(accountProfile);
                 }
             }catch (Exception e){
 
