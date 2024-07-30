@@ -3986,7 +3986,7 @@ public class TaskController {
                                 account.setDie_dependent(account.getDie_dependent()+","+updateTaskRequest.getPlatform());
                             }
                         }
-                        if(!account.getPassword_dependent().contains(updateTaskRequest.getPlatform())){
+                        if(!account.getPassword_dependent().contains(updateTaskRequest.getPlatform()) && accountProfile!=null){
                             if(account.getPassword_dependent().length()==0){
                                 account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
                             }else{
@@ -3995,11 +3995,14 @@ public class TaskController {
                         }
                         accountRepository.save(account);
                     }else{
+                        account.setRunning(0);
                         account.setLive(updateTaskRequest.getIsLogin());
                         accountRepository.save(account);
                     }
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
-                    accountProfileRepository.delete(accountProfile);
+                    if(accountProfile!=null){
+                        accountProfileRepository.delete(accountProfile);
+                    }
                 }
             }catch (Exception e){
 
