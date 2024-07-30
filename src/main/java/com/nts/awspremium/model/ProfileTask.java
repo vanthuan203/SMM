@@ -22,6 +22,8 @@ public class ProfileTask implements Serializable {
     private Long get_time;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long enabled_time;
     @Column(columnDefinition = "varchar(255) default ''")
     private String task;
     @Column(columnDefinition = "varchar(255) default ''")
@@ -30,6 +32,8 @@ public class ProfileTask implements Serializable {
     private String task_key;
     @Column(columnDefinition = "integer default 0")
     private Integer account_level;
+    @Column(columnDefinition = "integer default 0")
+    private Integer enabled=0;
     @Column(columnDefinition = "integer default 0")
     private Integer running;
     @Column(columnDefinition = "integer default -1")

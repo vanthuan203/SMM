@@ -164,6 +164,11 @@ public class DeviceController {
                 deviceRepository.save(device);
             }
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
+            String enabled="";
+            Random ran=new Random();
+            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0){
+                enabled=profileId.get(ran.nextInt(profileId.size()));
+            }
             for (int i=0;i<profile.size();i++){
                 if(profileId.get(i).toString().trim().equals("0")&&!owner_Running){
                     continue;
@@ -188,6 +193,9 @@ public class DeviceController {
                     profileTask_new.setUpdate_time(0L);
                     profileTaskRepository.save(profileTask_new);
                 }
+            }
+            if(enabled.length()!=0){
+                profileTaskRepository.update_Enabled_Profile_By_ProfileId(device_id+"_"+enabled,System.currentTimeMillis());
             }
             resp.put("status",true);
             data.put("message", "Check hoàn tất");

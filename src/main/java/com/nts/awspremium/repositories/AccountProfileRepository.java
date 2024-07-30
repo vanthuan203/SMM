@@ -13,6 +13,7 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     public String get_AccountId_Like_By_AccountId_And_Platform(String profile_id,String platform);
     @Query(value = "SELECT SUBSTRING_INDEX(account_id, '|', 1) as account_id FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public String get_AccountId_By_AccountId_And_Platform(String profile_id,String platform);
+
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2 and live=1 limit 1",nativeQuery = true)
     public Integer check_AccountLive_By_ProfileId_And_Platform(String profile_id,String platform);
 

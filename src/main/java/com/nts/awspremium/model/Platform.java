@@ -21,6 +21,8 @@ public class Platform {
     private Integer activity;
     @Column(columnDefinition = "integer default 0")
     private Integer state;
+    @Column(columnDefinition = "integer default 0")
+    private Integer registration_limit=0;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "varchar(255) default ''")
