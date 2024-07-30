@@ -136,7 +136,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(profile_id.trim().equals("0")){
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
+                if(profileTask!=null){
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
