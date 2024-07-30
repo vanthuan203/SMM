@@ -26,6 +26,8 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
     @Query(value = "SELECT activity FROM platform where platform=?1 limit 1",nativeQuery = true)
     public Integer get_Activity_Platform(String platform);
 
+    @Query(value = "SELECT connection_account FROM platform where platform=?1 limit 1",nativeQuery = true)
+    public Integer get_Connection_Account_Platform(String platform);
 
     @Query(value = "SELECT * FROM platform ",nativeQuery = true)
     public List<Platform> get_List_Platform();

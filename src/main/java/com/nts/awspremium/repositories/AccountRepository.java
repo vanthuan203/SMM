@@ -27,6 +27,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "Select count(*) from account where device_id=?1",nativeQuery = true)
     public Integer check_Count_By_DeviceId(String device_id);
 
+    @Query(value = "Select count(*) from account where account_id=?1",nativeQuery = true)
+    public Integer check_Count_By_AccountId(String account_id);
+
     @Modifying
     @Transactional
     @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and account_id not in(select SUBSTRING_INDEX(account_id, '|', 1) from account_profile)",nativeQuery = true)
