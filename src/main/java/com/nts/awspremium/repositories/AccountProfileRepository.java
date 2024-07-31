@@ -34,6 +34,6 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "call update_running_account(?1,?2,?3,?4)",nativeQuery = true)
     public Account get_Account_By_ProfileId(String profile_id,String device_id,Long time_check,String code);
 
-    @Query(value = "Select * from account_profile where account_id like ?1 and platform=?2 limit 1",nativeQuery = true)
+    @Query(value = "Select * from account_profile where account_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id_And_Platform(String account_id,String platform);
 }
