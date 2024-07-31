@@ -24,6 +24,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "call update_running_account_gmail(?1,?2,?3,?4)",nativeQuery = true)
     public Account get_Account_Gmail_By_ProfileId(String profile_id,String device_id,Long time_check,String code);
 
+    @Query(value = "call update_running_account_platform(?1,?2,?3,?4,?5)",nativeQuery = true)
+    public Account get_Account_Platform_By_ProfileId(String profile_id,String device_id,Long time_check,String code,String platform);
+
     @Query(value = "Select count(*) from account where device_id=?1",nativeQuery = true)
     public Integer check_Count_By_DeviceId(String device_id);
 
@@ -32,6 +35,6 @@ public interface AccountRepository extends JpaRepository<Account,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and account_id not in(select SUBSTRING_INDEX(account_id, '|', 1) from account_profile)",nativeQuery = true)
+    @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and account_id not in(select account_id from account_profile)",nativeQuery = true)
     public Integer reset_Account_Error();
 }
