@@ -27,6 +27,8 @@ public class Platform {
     private Long update_time;
     @Column(columnDefinition = "varchar(255) default ''")
     private String dependent;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String mode="dev";
     public Platform() {
     }
 

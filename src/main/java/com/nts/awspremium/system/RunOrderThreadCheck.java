@@ -15,8 +15,6 @@ public class RunOrderThreadCheck {
     private OrderRunningRepository orderRunningRepository;
     @Autowired
     private OrderThreadCheck orderThreadCheck;
-    @Autowired
-    private Environment env;
     @PostConstruct
     public void init() throws InterruptedException {
         try{

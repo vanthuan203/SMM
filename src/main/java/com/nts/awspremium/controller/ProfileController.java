@@ -1,7 +1,9 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.model.Device;
 import com.nts.awspremium.model.LogError;
 import com.nts.awspremium.model.ProfileShow;
+import com.nts.awspremium.model.ProfileTask;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,11 +23,13 @@ public class ProfileController {
     @Autowired
     private ProfileTaskRepository profileTaskRepository;
     @Autowired
+    private DeviceRepository deviceRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private UserRepository userRepository;
     @GetMapping(value = "get_List_Profile", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> get_List_Profile(@RequestHeader(defaultValue = "") String Authorization,
+    private ResponseEntity<Map<String, Object>> get_List_Profile(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
                                                    ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -87,4 +91,41 @@ public class ProfileController {
         }
 
     }
+
+    public Boolean update_Enabled_Profile(
+    ){
+        try{
+            List<Device> devices =deviceRepository.get_All_Device_Enable0();
+            for (Device device:devices) {
+                ProfileTask profileTask =profileTaskRepository.get_Profile_Rand_Enable0(device.getDevice_id().trim());
+                if (profileTask !=null){
+                    profileTask.setEnabled(1);
+                    profileTask.setEnabled_time(System.currentTimeMillis());
+                    profileTaskRepository.save(profileTask);
+                }
+            }
+            return  true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            return false;
+        }
+
+    }
+
+
 }

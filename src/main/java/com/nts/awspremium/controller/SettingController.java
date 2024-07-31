@@ -40,6 +40,8 @@ public class SettingController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private TaskPriorityRepository taskPriorityRepository;
@@ -328,7 +330,32 @@ public class SettingController {
         }
 
     }
+    public Boolean  update_State_Platform() {
+        try {
+            List<String> platforms = serviceRepository.get_Platform_In_OrderRunning();
+            platformRepository.update_State_1_Platform(platforms);
+            platformRepository.update_State_0_Platform(platforms);
+            return true;
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError = new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
 
+            return false;
+        }
+    }
     @PostMapping(path = "update_Setting_Platform",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update_Setting_Platform(@RequestHeader(defaultValue = "") String Authorization,
                                                  @RequestBody JSONObject jsonObject

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface DeviceRepository extends JpaRepository<Device,String> {
 
@@ -15,6 +16,9 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     public Device check_DeviceId(String device_id);
     @Query(value = "select count(*) from device where device_id=?1",nativeQuery = true)
     public Integer find_Device(String device_id);
+
+    @Query(value = "select d.* from device d join profile_task p on d.device_id=p.device_id and p.enabled=0 group by  d.device_id",nativeQuery = true)
+    public List<Device> get_All_Device_Enable0();
     @Modifying
     @Transactional
     @Query(value = "delete from device where device_id=?1",nativeQuery = true)

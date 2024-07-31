@@ -23,7 +23,8 @@ public interface ServiceRepository extends JpaRepository<Service,Integer> {
     @Query(value = "Select CONCAT_WS(' | ',service_id,service_name,platform,task,concat(service_rate,'$')) from service where platform=?1",nativeQuery = true)
     public List<String> get_All_Service_Web(String platform);
 
-
+    @Query(value = "SELECT s.platform FROM Data.service s join order_running o on s.service_id=o.service_id group by s.platform",nativeQuery = true)
+    public List<String> get_Platform_In_OrderRunning();
 
     @Query(value = "Select CONCAT_WS(' | ',service_id,service_name,platform,task,concat(service_rate,'$')) from service where enabled=1 and platform=?1",nativeQuery = true)
     public List<String> get_All_Service_Enabled_Web(String platform);

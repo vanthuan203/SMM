@@ -21,8 +21,6 @@ public class RunAccountCheck {
     private AccountRepository accountRepository;
     @Autowired
     private Environment env;
-    @Autowired
-
     @PostConstruct
     public void init() throws InterruptedException {
         try{

@@ -1,46 +1,42 @@
 package com.nts.awspremium.system;
 
-import com.nts.awspremium.model_system.MySQLCheck;
-import com.nts.awspremium.model_system.OrderThreadCheck;
-import com.nts.awspremium.repositories.OrderRunningRepository;
-import com.nts.awspremium.repositories.SettingSystemRepository;
+import com.nts.awspremium.controller.ProfileController;
+import com.nts.awspremium.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Random;
 
 @Component
-public class RunMySQLCheck {
+public class RunProfile {
     @Autowired
-    private SettingSystemRepository settingSystemRepository;
+    private ProfileController profileController;
     @Autowired
-    private MySQLCheck mySQLCheck;
+    private Environment env;
     @PostConstruct
     public void init() throws InterruptedException {
         try{
+            if(Integer.parseInt(env.getProperty("server.port"))==8000){
                 new Thread(() -> {
-                    Random rand =new Random();
+                    //Random rand =new Random();
                     while (true) {
                         try {
-                            mySQLCheck.setValue(settingSystemRepository.check_MySQL());
                             try {
-                                Thread.sleep(1000+rand.nextInt(250));
+                                Thread.sleep(30000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-
+                            profileController.update_Enabled_Profile();
                         } catch (Exception e) {
                             continue;
                         }
                     }
                 }).start();
+            }
         }catch (Exception e){
 
         }
-
-
 
     }
 }
