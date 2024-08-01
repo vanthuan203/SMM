@@ -76,7 +76,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET task_index=(select priority from platform where platform=?1 limit 1) where profile_id in(select profile_id from account_profile where account_id like ?2)",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET task_index=(select priority from platform where platform=?1 limit 1) where profile_id in(select profile_id from account_profile where account_id=?2)",nativeQuery = true)
     public Integer update_Than_Task_Index_By_AccountId(String platform,String account_id);
 
     @Modifying

@@ -192,7 +192,7 @@ public class TaskController {
                     }
                     if(account_get!=null){
                         AccountProfile accountProfile=new AccountProfile();
-                        accountProfile.setAccount_id(account_get.getAccount_id()+"|"+"youtube");
+                        accountProfile.setAccount_id(account_get.getAccount_id());
                         accountProfile.setPassword(account_get.getPassword());
                         accountProfile.setRecover(account_get.getRecover_mail());
                         accountProfile.setPlatform("youtube");
@@ -207,8 +207,8 @@ public class TaskController {
                         resp.put("status", true);
                         data.put("platform", "youtube");
                         data.put("task", "login");
-                        data.put("task_key", account_get.getAccount_id());
-                        data.put("account_id", account_get.getAccount_id());
+                        data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
+                        data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
                         data.put("password", account_get.getPassword().trim());
                         data.put("recover_mail", account_get.getRecover_mail().trim());
                         data.put("auth_2fa", account_get.getAuth_2fa().trim());
@@ -379,8 +379,8 @@ public class TaskController {
                         AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
                         Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
                         Integer connection_account=platformRepository.get_Connection_Account_Platform(profileTask.getPlatform().trim());
-                        if(accountProfile_Check_Dependent==null ||
-                                (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))){
+                        if((accountProfile_Check_Dependent==null ||  (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))) &&
+                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()))){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 entityManager.clear();
@@ -401,96 +401,141 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            String password="Cmc#";
-                            String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                            for(int i=0;i<15;i++){
-                                Integer ranver=ran.nextInt(passrand.length());
-                                password=password+passrand.charAt(ranver);
-                            }
-
-                            if(connection_account>0){
-
-                                AccountProfile accountProfile=new AccountProfile();
-                                accountProfile.setAccount_id(accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|"))+"|"+profileTask.getPlatform());
-                                accountProfile.setPassword(password);
-                                accountProfile.setRecover(accountProfile_Check_Dependent.getRecover());
-                                accountProfile.setPlatform(profileTask.getPlatform());
-                                accountProfile.setLive(0);
-                                accountProfile.setChanged(0);
-                                accountProfile.setAuth_2fa("");
-                                accountProfile.setProfileTask(profileTask);
-                                accountProfile.setAdd_time(System.currentTimeMillis());
-                                accountProfile.setUpdate_time(0L);
-                                accountProfileRepository.save(accountProfile);
-
-
-                                profileTask.setRequest_index(1);
-                                profileTaskRepository.save(profileTask);
-                                resp.put("status", true);
-                                data.put("platform", profileTask.getPlatform());
-                                data.put("task", "register");
-                                data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
-                                data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
-                                data.put("password", password);
-                                data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
-                                data.put("auth_2fa", "");
-                                resp.put("data",data);
-                                return new ResponseEntity<>(resp, HttpStatus.OK);
-
-                            }else{
-                                JSONArray domains= MailApi.getDomains();
-                                String stringrand="abcdefhijkprstuvwx0123456789";
-                                String mail="";
-                                Boolean success=false;
-                                while (!success&&accountRepository.check_Count_By_AccountId(mail)==0){
-                                    for(int i=0;i<20;i++){
+                            if(platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==0){
+                                Account account_get=null;
+                                if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
+                                    String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                                    String code="";
+                                    for(int i=0;i<50;i++){
                                         Integer ranver=ran.nextInt(stringrand.length());
-                                        mail=mail+stringrand.charAt(ranver);
+                                        code=code+stringrand.charAt(ranver);
                                     }
-                                    mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
-                                    success=MailApi.createMail(mail);
-
+                                    account_get= accountRepository.get_Account_Platform_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,profileTask.getPlatform().trim());
                                 }
-                                if(success){
+                                if(account_get!=null){
                                     AccountProfile accountProfile=new AccountProfile();
-                                    accountProfile.setAccount_id(mail+"|"+profileTask.getPlatform());
-                                    accountProfile.setPassword(password);
-                                    accountProfile.setRecover(mail);
-                                    accountProfile.setPlatform(profileTask.getPlatform());
+                                    accountProfile.setAccount_id(account_get.getAccount_id());
+                                    accountProfile.setPassword(account_get.getPassword());
+                                    accountProfile.setRecover(account_get.getRecover_mail());
+                                    accountProfile.setPlatform(profileTask.getPlatform().trim());
                                     accountProfile.setLive(0);
+                                    accountProfile.setChanged(0);
+                                    accountProfile.setAuth_2fa(account_get.getAuth_2fa());
+                                    accountProfile.setProfileTask(profileTask);
+                                    accountProfile.setAdd_time(System.currentTimeMillis());
+                                    accountProfile.setUpdate_time(0L);
+                                    accountProfileRepository.save(accountProfile);
+
+                                    resp.put("status", true);
+                                    data.put("platform", profileTask.getPlatform().trim());
+                                    data.put("task", "login");
+                                    data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
+                                    data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
+                                    data.put("password", account_get.getPassword().trim());
+                                    data.put("recover_mail", account_get.getRecover_mail().trim());
+                                    data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                                    resp.put("data",data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }else{
+                                    resp.put("status", false);
+                                    data.put("message", "Không có account_id để chạy");
+                                    resp.put("data", data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }
+                            }else{
+                                if(connection_account>0){
+
+                                    AccountProfile accountProfile=new AccountProfile();
+                                    accountProfile.setAccount_id(accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|"))+"|"+profileTask.getPlatform());
+                                    accountProfile.setPassword(accountProfile_Check_Dependent.getPassword().trim());
+                                    accountProfile.setRecover(accountProfile_Check_Dependent.getRecover());
+                                    accountProfile.setPlatform(profileTask.getPlatform());
+                                    accountProfile.setLive(-1);
                                     accountProfile.setChanged(0);
                                     accountProfile.setAuth_2fa("");
                                     accountProfile.setProfileTask(profileTask);
                                     accountProfile.setAdd_time(System.currentTimeMillis());
                                     accountProfile.setUpdate_time(0L);
                                     accountProfileRepository.save(accountProfile);
-                                    try{
-                                        Account account=new Account();
-                                        account.setAccount_id(mail);
-                                        account.setPassword(password);
-                                        account.setRecover_mail(mail);
-                                        account.setPlatform(profileTask.getPlatform());
-                                        account.setLive(1);
-                                        account.setRunning(1);
-                                        account.setAuth_2fa("");
-                                        account.setProfile_id(profileTask.getProfile_id());
-                                        account.setDevice_id(profileTask.getDevice().getDevice_id());
-                                        account.setAdd_time(System.currentTimeMillis());
-                                        accountRepository.save(account);
-                                    }catch (Exception e){
-                                    }
+
+
                                     profileTask.setRequest_index(1);
                                     profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
                                     data.put("platform", profileTask.getPlatform());
                                     data.put("task", "register");
-                                    data.put("task_key", mail);
-                                    data.put("account_id", mail);
-                                    data.put("password", password);
-                                    data.put("recover_mail", mail);
+                                    data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
+                                    data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
+                                    data.put("password", accountProfile_Check_Dependent.getPassword().trim());
+                                    data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
                                     data.put("auth_2fa", "");
                                     resp.put("data",data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
+
+                                }else{
+                                    String password="Cmc#";
+                                    String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                                    for(int i=0;i<15;i++){
+                                        Integer ranver=ran.nextInt(passrand.length());
+                                        password=password+passrand.charAt(ranver);
+                                    }
+                                    JSONArray domains= MailApi.getDomains();
+                                    String stringrand="abcdefhijkprstuvwx0123456789";
+                                    String mail="";
+                                    Boolean success=false;
+                                    while (!success&&accountRepository.check_Count_By_AccountId(mail)==0){
+                                        for(int i=0;i<20;i++){
+                                            Integer ranver=ran.nextInt(stringrand.length());
+                                            mail=mail+stringrand.charAt(ranver);
+                                        }
+                                        mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
+                                        success=MailApi.createMail(mail);
+
+                                    }
+                                    if(success){
+                                        AccountProfile accountProfile=new AccountProfile();
+                                        accountProfile.setAccount_id(mail+"|"+profileTask.getPlatform());
+                                        accountProfile.setPassword(password);
+                                        accountProfile.setRecover(mail);
+                                        accountProfile.setPlatform(profileTask.getPlatform());
+                                        accountProfile.setLive(-1);
+                                        accountProfile.setChanged(0);
+                                        accountProfile.setAuth_2fa("");
+                                        accountProfile.setProfileTask(profileTask);
+                                        accountProfile.setAdd_time(System.currentTimeMillis());
+                                        accountProfile.setUpdate_time(0L);
+                                        accountProfileRepository.save(accountProfile);
+                                        /*
+                                        try{
+                                            Account account=new Account();
+                                            account.setAccount_id(mail+"|"+profileTask.getPlatform());
+                                            account.setPassword(password);
+                                            account.setRecover_mail(mail);
+                                            account.setPlatform(profileTask.getPlatform());
+                                            account.setLive(1);
+                                            account.setRunning(1);
+                                            account.setAuth_2fa("");
+                                            account.setProfile_id(profileTask.getProfile_id());
+                                            account.setDevice_id(profileTask.getDevice().getDevice_id());
+                                            account.setAdd_time(System.currentTimeMillis());
+                                            accountRepository.save(account);
+                                        }catch (Exception e){
+                                        }
+
+                                         */
+                                        profileTask.setRequest_index(1);
+                                        profileTaskRepository.save(profileTask);
+                                        resp.put("status", true);
+                                        data.put("platform", profileTask.getPlatform());
+                                        data.put("task", "register");
+                                        data.put("task_key", mail);
+                                        data.put("account_id", mail);
+                                        data.put("password", password);
+                                        data.put("recover_mail", mail);
+                                        data.put("auth_2fa", "");
+                                        resp.put("data",data);
+                                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                                    }
                                 }
                             }
                         }
@@ -501,7 +546,11 @@ public class TaskController {
 
                         resp.put("status", true);
                         data.put("platform",profileTask.getPlatform());
-                        data.put("task", "register");
+                        if(accountProfile_Check_Platform.getLive()==-1){
+                            data.put("task", "register");
+                        }else{
+                            data.put("task", "login");
+                        }
                         data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
                         data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
                         data.put("password", accountProfile_Check_Platform.getPassword().trim());
@@ -626,6 +675,7 @@ public class TaskController {
             Map<String, Object> dataJson=new LinkedHashMap<>();
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
+                dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
                 Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
                 dataJson.put("activity",platform_task==0?false:true);
@@ -4065,6 +4115,308 @@ public class TaskController {
                 }
             }catch (Exception e){
 
+            }
+            resp.put("status", true);
+            data.put("message", "Update thành công!");
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(value = "/updateTaskTEST", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> updateTaskTEST(@RequestHeader(defaultValue = "") String Authorization,
+                                                   @RequestBody UpdateTaskRequest updateTaskRequest) {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (updateTaskRequest.getAccount_id().length() == 0) {
+                resp.put("status", false);
+                data.put("message", "account_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (updateTaskRequest.getTask().length() == 0) {
+                resp.put("status", false);
+                data.put("message", "task không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (updateTaskRequest.getPlatform().length() == 0) {
+                resp.put("status", false);
+                data.put("message", "platform không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (updateTaskRequest.getStatus() == null) {
+                resp.put("status", false);
+                data.put("message", "status không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (updateTaskRequest.getTask_key().length()==0&&!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")) {
+                resp.put("status", false);
+                data.put("message", "task_key không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"%");
+            String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
+            if(platform_Check.equals("youtube")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                    youtubeUpdate.youtube_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")&&updateTaskRequest.getStatus()==true){
+                    youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }
+            }else if(platform_Check.equals("tiktok")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
+                    tiktokUpdate.tiktok_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                    tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }
+            }else if(platform_Check.equals("facebook")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                    facebookUpdate.facebook_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    facebookUpdate.facebook_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                    facebookUpdate.facebook_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("member")&&updateTaskRequest.getStatus()==true) {
+                    facebookUpdate.facebook_member(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                    facebookUpdate.facebook_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }
+            }else if(platform_Check.equals("x")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                    xUpdate.x_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    xUpdate.x_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                    xUpdate.x_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                    xUpdate.x_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
+                    xUpdate.x_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }
+            }else if(platform_Check.equals("instagram")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                    instagramUpdate.instagram_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    instagramUpdate.instagram_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                    instagramUpdate.instagram_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                    instagramUpdate.instagram_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }
+            }else if(platform_Check.equals("threads")){
+                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                    threadsUpdate.threads_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                    threadsUpdate.threads_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                    threadsUpdate.threads_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                    threadsUpdate.threads_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
+                    threadsUpdate.threads_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                }
+            }
+            if(updateTaskRequest.getStatus()==true){
+                try {
+                    OrderRunning orderRunning=null;
+                    if(platform_Check.equals("youtube")&&updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")){
+                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(updateTaskRequest.getTask_key().trim());
+                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
+                    }else{
+                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(updateTaskRequest.getTask_key().trim(),updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
+                    }
+                    if(orderRunning!=null){
+                        HistorySum historySum=new HistorySum();
+                        historySum.setOrderRunning(orderRunning);
+                        historySum.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                        historySum.setViewing_time(updateTaskRequest.getViewing_time());
+                        historySum.setAdd_time(System.currentTimeMillis());
+                        historySumRepository.save(historySum);
+                    }
+                }catch (Exception e){
+                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                    LogError logError =new LogError();
+                    logError.setMethod_name(stackTraceElement.getMethodName());
+                    logError.setLine_number(stackTraceElement.getLineNumber());
+                    logError.setClass_name(stackTraceElement.getClassName());
+                    logError.setFile_name(stackTraceElement.getFileName());
+                    logError.setMessage(e.getMessage());
+                    logError.setAdd_time(System.currentTimeMillis());
+                    Date date_time = new Date(System.currentTimeMillis());
+                    // Tạo SimpleDateFormat với múi giờ GMT+7
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                    String formattedDate = sdf.format(date_time);
+                    logError.setDate_time(formattedDate);
+                    logErrorRepository.save(logError);
+                }
+            }
+            try{
+                if(updateTaskRequest.getIsLogin()==0){
+                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                    accountProfile.setLive(0);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile);
+                }else if(updateTaskRequest.getIsLogin()==1){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+
+                    if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
+                        accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+accountProfile.getPlatform());
+                        accountProfile.setLive(1);
+                        accountProfile.setUpdate_time(System.currentTimeMillis());
+                        accountProfileRepository.save(accountProfile);
+
+                        Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                        if(account==null){
+                            account=new Account();
+                            account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            account.setPassword(accountProfile.getPassword());
+                            account.setRecover_mail(accountProfile.getRecover());
+                            account.setPlatform(accountProfile.getPlatform());
+                            account.setLive(1);
+                            account.setRunning(1);
+                            account.setAuth_2fa("");
+                            account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                            account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
+                            account.setAdd_time(System.currentTimeMillis());
+                            account.setGet_time(System.currentTimeMillis());
+                            accountRepository.save(account);
+                        }
+                    }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
+                        accountProfile.setLive(0);
+                        accountProfile.setUpdate_time(System.currentTimeMillis());
+                        accountProfileRepository.save(accountProfile);
+                    }else{
+                        accountProfile.setLive(1);
+                        accountProfile.setUpdate_time(System.currentTimeMillis());
+                        accountProfileRepository.save(accountProfile);
+                    }
+                    Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                    if(account!=null){
+                        if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
+                            if(!account.getDependent().contains(updateTaskRequest.getPlatform())){
+                                if(account.getDependent().length()==0){
+                                    account.setDependent(updateTaskRequest.getPlatform());
+                                }else{
+                                    account.setDependent(account.getDependent()+","+updateTaskRequest.getPlatform());
+                                }
+                                if(account.getPassword_dependent().length()==0){
+                                    account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                }else{
+                                    account.setPassword_dependent(account.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                }
+                                List<String> arrDie=new ArrayList<>(Arrays.asList(account.getDie_dependent().split(",")));
+                                arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
+                                account.setDie_dependent(String.join(",", arrDie));
+
+                                accountRepository.save(account);
+                            }
+                        }else{
+                            account.setLive(updateTaskRequest.getIsLogin());
+                            accountRepository.save(account);
+                        }
+                    }
+
+                }else if(updateTaskRequest.getIsLogin()==-1){
+                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                    accountProfile.setLive(-1);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile);
+                }else if(updateTaskRequest.getIsLogin()>1){
+                    Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
+                    if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
+                        if(account.getDependent().contains(updateTaskRequest.getPlatform())){
+                            List<String> arrPlatform =new ArrayList<>(Arrays.asList(account.getDependent().split(",")));
+                            arrPlatform.remove(updateTaskRequest.getPlatform());
+                            account.setDependent(String.join(",", arrPlatform));
+
+                            /*
+                            List<String> arrPassword =new ArrayList<>(Arrays.asList(account.getPassword_dependent().split(",")));
+                            arrPassword.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
+                            account.setPassword_dependent(String.join(",", arrPassword));
+                             */
+                        }
+                        if(!account.getDie_dependent().contains(updateTaskRequest.getPlatform())){
+                            if(account.getDie_dependent().length()==0){
+                                account.setDie_dependent(updateTaskRequest.getPlatform());
+                            }else{
+                                account.setDie_dependent(account.getDie_dependent()+","+updateTaskRequest.getPlatform());
+                            }
+                        }
+                        if(!account.getPassword_dependent().contains(updateTaskRequest.getPlatform()) && accountProfile!=null){
+                            if(account.getPassword_dependent().length()==0){
+                                account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                            }else{
+                                account.setPassword_dependent(account.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                            }
+                        }
+                        accountRepository.save(account);
+                    }else{
+                        account.setRunning(0);
+                        account.setLive(updateTaskRequest.getIsLogin());
+                        accountRepository.save(account);
+                    }
+                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
+                    if(accountProfile!=null){
+                        accountProfileRepository.delete(accountProfile);
+                    }
+                }
+            }catch (Exception e){
+                StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                LogError logError =new LogError();
+                logError.setMethod_name(stackTraceElement.getMethodName());
+                logError.setLine_number(stackTraceElement.getLineNumber());
+                logError.setClass_name(stackTraceElement.getClassName());
+                logError.setFile_name(stackTraceElement.getFileName());
+                logError.setMessage(e.getMessage());
+                logError.setAdd_time(System.currentTimeMillis());
+                Date date_time = new Date(System.currentTimeMillis());
+                // Tạo SimpleDateFormat với múi giờ GMT+7
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                String formattedDate = sdf.format(date_time);
+                logError.setDate_time(formattedDate);
+                logErrorRepository.save(logError);
             }
             resp.put("status", true);
             data.put("message", "Update thành công!");

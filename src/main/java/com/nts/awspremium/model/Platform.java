@@ -23,6 +23,8 @@ public class Platform {
     private Integer state;
     @Column(columnDefinition = "integer default 0")
     private Integer connection_account=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer register_account=0;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "varchar(255) default ''")
