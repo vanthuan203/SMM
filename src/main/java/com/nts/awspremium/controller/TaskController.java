@@ -3891,8 +3891,8 @@ public class TaskController {
         }
     }
 
-    @PostMapping(value = "/updateTask", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> updateTask(@RequestHeader(defaultValue = "") String Authorization,
+    @PostMapping(value = "/updateTaskOFFNEW", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> updateTaskOFFNEW(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestBody UpdateTaskRequest updateTaskRequest) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -4143,8 +4143,8 @@ public class TaskController {
         }
     }
 
-    @PostMapping(value = "/updateTaskTEST", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> updateTaskTEST(@RequestHeader(defaultValue = "") String Authorization,
+    @PostMapping(value = "/updateTask", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>> updateTask(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestBody UpdateTaskRequest updateTaskRequest) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
