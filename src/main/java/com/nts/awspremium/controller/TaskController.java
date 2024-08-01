@@ -4363,7 +4363,7 @@ public class TaskController {
                     accountProfileRepository.save(accountProfile);
                 }else if(updateTaskRequest.getIsLogin()>1){
                     Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"%",updateTaskRequest.getPlatform().trim());
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
                         if(account.getDependent().contains(updateTaskRequest.getPlatform())){
                             List<String> arrPlatform =new ArrayList<>(Arrays.asList(account.getDependent().split(",")));
