@@ -17,9 +17,16 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "select count(*) from profile_task where enabled=0 and  device_id=?1",nativeQuery = true)
     public Integer count_Profile_Not_Enable(String device_id);
 
+    @Query(value = "select count(*) from profile_task where device_id=?1",nativeQuery = true)
+    public Integer count_Profile(String device_id);
+
     @Query(value = "Select * from profile_task where  device_id=?1 and round((UNIX_TIMESTAMP()-(select max(enabled_time) from profile_task where  device_id=?1)/1000)/60/60)>24\n" +
             "  and enabled=0 order by rand() limit 1",nativeQuery = true)
     public ProfileTask get_Profile_Rand_Enable0(String device_id);
+
+    @Query(value = "Select * from profile_task where profile_id!=?1 and device_id=?2 and round((UNIX_TIMESTAMP()-(select max(enabled_time) from profile_task where  device_id=?2)/1000)/60/60)>24\n" +
+            "  and enabled=0 order by rand() limit 1",nativeQuery = true)
+    public ProfileTask get_Profile_Rand_Enable0_And_NotIn(String profile_id,String device_id);
 
     @Query(value = "Select * from profile_task where  device_id=?1 order by update_time asc limit 1",nativeQuery = true)
     public ProfileTask get_Profile_Get_Task(String device_id);

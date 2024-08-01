@@ -33,6 +33,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "Select count(*) from account where account_id=?1",nativeQuery = true)
     public Integer check_Count_By_AccountId(String account_id);
 
+    @Query(value = "SELECT count(*) FROM Data.account where profile_id=?1 and round((UNIX_TIMESTAMP()-get_time/1000)/60/60)<24 and live>1",nativeQuery = true)
+    public Integer check_Count_AccountDie24H_By_ProfileId(String profile_id);
+
     @Modifying
     @Transactional
     @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and account_id not in(select account_id from account_profile)",nativeQuery = true)
