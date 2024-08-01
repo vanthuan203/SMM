@@ -466,7 +466,7 @@ public class TaskController {
                                     data.put("task", "register");
                                     data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
                                     data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
-                                    data.put("password", accountProfile_Check_Dependent.getPassword().trim());
+                                    data.put("password",accountProfile_Check_Dependent.getPassword().trim());
                                     data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
                                     data.put("auth_2fa", "");
                                     resp.put("data",data);
@@ -479,24 +479,52 @@ public class TaskController {
                                         Integer ranver=ran.nextInt(passrand.length());
                                         password=password+passrand.charAt(ranver);
                                     }
-                                    JSONArray domains= MailApi.getDomains();
-                                    String stringrand="abcdefhijkprstuvwx0123456789";
-                                    String mail="";
-                                    Boolean success=false;
-                                    while (!success&&accountRepository.check_Count_By_AccountId(mail)==0){
-                                        for(int i=0;i<20;i++){
-                                            Integer ranver=ran.nextInt(stringrand.length());
-                                            mail=mail+stringrand.charAt(ranver);
-                                        }
-                                        mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
-                                        success=MailApi.createMail(mail);
+                                    if(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()).length()==0){
+                                        JSONArray domains= MailApi.getDomains();
+                                        String stringrand="abcdefhijkprstuvwx0123456789";
+                                        String mail="";
+                                        Boolean success=false;
+                                        while (!success&&accountRepository.check_Count_By_AccountId(mail)==0){
+                                            for(int i=0;i<20;i++){
+                                                Integer ranver=ran.nextInt(stringrand.length());
+                                                mail=mail+stringrand.charAt(ranver);
+                                            }
+                                            mail=mail+"@"+domains.get(ran.nextInt(domains.size()));
+                                            success=MailApi.createMail(mail);
 
-                                    }
-                                    if(success){
+                                        }
+                                        if(success){
+                                            AccountProfile accountProfile=new AccountProfile();
+                                            accountProfile.setAccount_id(mail+"|"+profileTask.getPlatform());
+                                            accountProfile.setPassword(password);
+                                            accountProfile.setRecover(mail);
+                                            accountProfile.setPlatform(profileTask.getPlatform());
+                                            accountProfile.setLive(-1);
+                                            accountProfile.setChanged(0);
+                                            accountProfile.setAuth_2fa("");
+                                            accountProfile.setProfileTask(profileTask);
+                                            accountProfile.setAdd_time(System.currentTimeMillis());
+                                            accountProfile.setUpdate_time(0L);
+                                            accountProfileRepository.save(accountProfile);
+
+                                            profileTask.setRequest_index(1);
+                                            profileTaskRepository.save(profileTask);
+                                            resp.put("status", true);
+                                            data.put("platform", profileTask.getPlatform());
+                                            data.put("task", "register");
+                                            data.put("task_key", mail);
+                                            data.put("account_id", mail);
+                                            data.put("password", password);
+                                            data.put("recover_mail", mail);
+                                            data.put("auth_2fa", "");
+                                            resp.put("data",data);
+                                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                                        }
+                                    }else{
                                         AccountProfile accountProfile=new AccountProfile();
-                                        accountProfile.setAccount_id(mail+"|"+profileTask.getPlatform());
+                                        accountProfile.setAccount_id(account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|"))+"|"+profileTask.getPlatform());
                                         accountProfile.setPassword(password);
-                                        accountProfile.setRecover(mail);
+                                        accountProfile.setRecover(account_Check.getRecover_mail().trim());
                                         accountProfile.setPlatform(profileTask.getPlatform());
                                         accountProfile.setLive(-1);
                                         accountProfile.setChanged(0);
@@ -505,33 +533,16 @@ public class TaskController {
                                         accountProfile.setAdd_time(System.currentTimeMillis());
                                         accountProfile.setUpdate_time(0L);
                                         accountProfileRepository.save(accountProfile);
-                                        /*
-                                        try{
-                                            Account account=new Account();
-                                            account.setAccount_id(mail+"|"+profileTask.getPlatform());
-                                            account.setPassword(password);
-                                            account.setRecover_mail(mail);
-                                            account.setPlatform(profileTask.getPlatform());
-                                            account.setLive(1);
-                                            account.setRunning(1);
-                                            account.setAuth_2fa("");
-                                            account.setProfile_id(profileTask.getProfile_id());
-                                            account.setDevice_id(profileTask.getDevice().getDevice_id());
-                                            account.setAdd_time(System.currentTimeMillis());
-                                            accountRepository.save(account);
-                                        }catch (Exception e){
-                                        }
 
-                                         */
                                         profileTask.setRequest_index(1);
                                         profileTaskRepository.save(profileTask);
                                         resp.put("status", true);
                                         data.put("platform", profileTask.getPlatform());
                                         data.put("task", "register");
-                                        data.put("task_key", mail);
-                                        data.put("account_id", mail);
+                                        data.put("task_key",  account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
+                                        data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
                                         data.put("password", password);
-                                        data.put("recover_mail", mail);
+                                        data.put("recover_mail",account_Check.getRecover_mail().trim());
                                         data.put("auth_2fa", "");
                                         resp.put("data",data);
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
