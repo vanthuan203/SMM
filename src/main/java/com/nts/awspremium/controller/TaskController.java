@@ -875,7 +875,7 @@ public class TaskController {
                         data.put("auth_2fa", "");
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
-                    }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim())<3&&
+                    }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
                     platformRepository.get_Login_Account_Platform("youtube")==1){
                         Account account_get=null;
                         if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
@@ -959,7 +959,7 @@ public class TaskController {
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }else{
                                     resp.put("status", false);
-                                    data.put("message", "Không có account để chạy");
+                                    data.put("message", "Không có account_id để chạy");
                                     resp.put("data", data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }
@@ -967,7 +967,7 @@ public class TaskController {
 
                         }else{
                             resp.put("status", false);
-                            data.put("message", "Không có account để chạy");
+                            data.put("message", "Không có account_id để chạy");
                             resp.put("data", data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
@@ -1268,7 +1268,8 @@ public class TaskController {
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
                                     }
                                 }
-                            }else if(platformRepository.get_Login_Account_Platform(profileTask.getPlatform().trim())==1){
+                            }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())<3&&
+                                    platformRepository.get_Login_Account_Platform(profileTask.getPlatform().trim())==1){
                                 Account account_get=null;
                                 if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                                     String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -1304,10 +1305,45 @@ public class TaskController {
                                     resp.put("data",data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }else{
-                                    resp.put("status", false);
-                                    data.put("message", "Không có account_id để chạy");
-                                    resp.put("data", data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                    if(profileTask.getTask_list().trim().length()==0){
+                                        profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
+                                        entityManager.clear();
+                                        profileTask=null;
+                                    }else{
+                                        String task_List = "";
+                                        if (platform.length() == 0) {
+                                            task_List = profileTask.getTask_list();
+                                        } else {
+                                            task_List = platform;
+                                        }
+                                        List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
+                                        profileTask.setPlatform(arrPlatform.get(0));
+                                        List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                                        task_List = String.join(",", subPlatform);
+                                        profileTask.setTask_list(task_List);
+                                        profileTask.setRequest_index(0);
+                                        profileTaskRepository.save(profileTask);
+                                    }
+                                }
+                            }else{
+                                if(profileTask.getTask_list().trim().length()==0){
+                                    profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
+                                    entityManager.clear();
+                                    profileTask=null;
+                                }else{
+                                    String task_List = "";
+                                    if (platform.length() == 0) {
+                                        task_List = profileTask.getTask_list();
+                                    } else {
+                                        task_List = platform;
+                                    }
+                                    List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
+                                    profileTask.setPlatform(arrPlatform.get(0));
+                                    List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                                    task_List = String.join(",", subPlatform);
+                                    profileTask.setTask_list(task_List);
+                                    profileTask.setRequest_index(0);
+                                    profileTaskRepository.save(profileTask);
                                 }
                             }
                         }
@@ -1347,7 +1383,7 @@ public class TaskController {
                     profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                 }else{
                     resp.put("status", false);
-                    data.put("message", "Không có account để chạy");
+                    data.put("message", "Không có account_id để chạy");
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }

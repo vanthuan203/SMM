@@ -49,17 +49,29 @@ public class ProfileController {
             for (int i = 0; i < profiles.size(); i++) {
                 JSONObject obj = new JSONObject();
                 Integer num_account=0;
+                Integer num_account_die=0;
                 String acc_live=profileTaskRepository.get_AccountLive_By_ProfileId(profiles.get(i).getProfile_id());
+                String acc_die=profileTaskRepository.get_AccountDie_By_ProfileId(profiles.get(i).getProfile_id());
                 if(acc_live!=null){
                     num_account=acc_live.split(",").length;
+                }
+                if(acc_die!=null){
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                    num_account_die=acc_die.split(",").length;
                 }
                 obj.put("device_id", profiles.get(i).getDevice_id());
                 obj.put("profile_id", profiles.get(i).getProfile_id());
                 obj.put("add_time", profiles.get(i).getAdd_time());
                 obj.put("update_time", profiles.get(i).getUpdate_time());
+                obj.put("enabled_time", profiles.get(i).getEnabled_time());
+                obj.put("enabled", profiles.get(i).getEnabled());
                 obj.put("get_time", profiles.get(i).getGet_time());
                 obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("state", profiles.get(i).getState());
                 obj.put("platform", profiles.get(i).getPlatform());
                 obj.put("task", profiles.get(i).getTask());

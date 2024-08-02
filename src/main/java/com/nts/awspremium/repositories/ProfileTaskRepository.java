@@ -53,6 +53,8 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account_profile where live=1 and profile_id=?1",nativeQuery = true)
     public String get_AccountLive_By_ProfileId(String profile_id);
+    @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and profile_id=?1",nativeQuery = true)
+    public String get_AccountDie_By_ProfileId(String profile_id);
     @Modifying
     @Transactional
     @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,account_id='',platform='' where profile_id=?1",nativeQuery = true)
