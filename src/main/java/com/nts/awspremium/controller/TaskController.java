@@ -439,10 +439,25 @@ public class TaskController {
                                     resp.put("data",data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }else{
-                                    resp.put("status", false);
-                                    data.put("message", "Không có account_id để chạy");
-                                    resp.put("data", data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                    if(profileTask.getTask_list().trim().length()==0){
+                                        profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
+                                        entityManager.clear();
+                                        profileTask=null;
+                                    }else{
+                                        String task_List = "";
+                                        if (platform.length() == 0) {
+                                            task_List = profileTask.getTask_list();
+                                        } else {
+                                            task_List = platform;
+                                        }
+                                        List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
+                                        profileTask.setPlatform(arrPlatform.get(0));
+                                        List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                                        task_List = String.join(",", subPlatform);
+                                        profileTask.setTask_list(task_List);
+                                        profileTask.setRequest_index(0);
+                                        profileTaskRepository.save(profileTask);
+                                    }
                                 }
                             }else{
                                 if(connection_account>0){
