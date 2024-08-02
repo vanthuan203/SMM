@@ -76,9 +76,10 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "SELECT * FROM profile_task where get_time<=update_time and device_id=?1 and enabled=1 order by update_time asc limit 1",nativeQuery = true)
     public ProfileTask get_ProfileId_Can_Running_By_DeviceId(String device_id);
 
+
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='' where profile_id in(select profile_id from account_profile where account_id like ?1)",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='' where profile_id in (select profile_id from account_profile where account_id=?1)",nativeQuery = true)
     public Integer reset_Thread_By_AccountId(String account_id);
 
     @Modifying

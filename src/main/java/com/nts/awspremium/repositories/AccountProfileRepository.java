@@ -16,7 +16,8 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2 and live=1 limit 1",nativeQuery = true)
     public Integer check_AccountLive_By_ProfileId_And_Platform(String profile_id,String platform);
-
+    @Query(value = "SELECT count(*) FROM account_profile where account_id=?1 limit 1",nativeQuery = true)
+    public Integer check_Account_By_AccountId(String account_id);
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_ProfileId_And_Platform(String profile_id,String platform);
 

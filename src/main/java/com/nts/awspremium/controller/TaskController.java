@@ -4464,204 +4464,6 @@ public class TaskController {
 
     }
 
-    @GetMapping(value = "/updateTask", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> updateTask(@RequestHeader(defaultValue = "") String Authorization,
-                                                   @RequestParam(defaultValue = "") String account_id,@RequestParam  Boolean status,
-                                                   @RequestParam(defaultValue = "") String task,
-                                                   @RequestParam(defaultValue = "") String task_key,
-                                                   @RequestParam(defaultValue = "0") Integer viewing_time,
-                                                   @RequestParam(defaultValue = "-1") Integer islogin,
-                                      @RequestParam(defaultValue = "") String platform) {
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
-        try {
-            Integer checktoken = userRepository.check_User_By_Token(Authorization);
-            if (checktoken ==0) {
-                resp.put("status", false);
-                data.put("message", "Token expired");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
-            if (account_id.length() == 0) {
-                resp.put("status", false);
-                data.put("message", "username không để trống");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
-            if (task.length() == 0) {
-                resp.put("status", false);
-                data.put("message", "task không để trống");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
-            if (platform.length() == 0) {
-                resp.put("status", false);
-                data.put("message", "platform không để trống");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
-            if (status == null) {
-                resp.put("status", false);
-                data.put("message", "status không để trống");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
-            profileTaskRepository.reset_Thread_By_AccountId(account_id.trim()+"%");
-            String platform_Check = platform.toLowerCase().trim();
-            if(platform_Check.equals("youtube")){
-                if(task.toLowerCase().trim().equals("view")&&status==true){
-                    youtubeUpdate.youtube_view(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("subscriber")&&status==true){
-                    youtubeUpdate.youtube_subscriber(account_id.trim(),task_key.trim());
-                } else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    youtubeUpdate.youtube_like(account_id.trim(),task_key.trim());
-                }
-            }else if(platform_Check.equals("tiktok")){
-                if(task.toLowerCase().trim().equals("follower")&&status==true){
-                   tiktokUpdate.tiktok_follower(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    tiktokUpdate.tiktok_like(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("comment")){
-                    tiktokUpdate.tiktok_comment(account_id.trim(),task_key.trim(),status);
-                }else  if(task.toLowerCase().trim().equals("view")&&status==true){
-                    tiktokUpdate.tiktok_view(account_id.trim(),task_key.trim());
-                }
-            }else if(platform_Check.equals("facebook")){
-                if(task.toLowerCase().trim().equals("follower")&&status==true){
-                  facebookUpdate.facebook_follower(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    facebookUpdate.facebook_like(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("comment")) {
-                    facebookUpdate.facebook_comment(account_id.trim(), task_key.trim(), status);
-                }else  if(task.toLowerCase().trim().equals("member")&&status==true) {
-                    facebookUpdate.facebook_member(account_id.trim(), task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
-                    facebookUpdate.facebook_view(account_id.trim(), task_key.trim());
-                }
-            }else if(platform_Check.equals("x")){
-                if(task.toLowerCase().trim().equals("follower")&&status==true){
-                    xUpdate.x_follower(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    xUpdate.x_like(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("comment")) {
-                    xUpdate.x_comment(account_id.trim(), task_key.trim(), status);
-                }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
-                    xUpdate.x_view(account_id.trim(), task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("repost")&&status==true) {
-                    xUpdate.x_repost(account_id.trim(), task_key.trim());
-                }
-            }else if(platform_Check.equals("instagram")){
-                if(task.toLowerCase().trim().equals("follower")&&status==true){
-                    instagramUpdate.instagram_follower(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    instagramUpdate.instagram_like(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("comment")) {
-                    instagramUpdate.instagram_comment(account_id.trim(), task_key.trim(), status);
-                }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
-                    instagramUpdate.instagram_view(account_id.trim(), task_key.trim());
-                }
-            }else if(platform_Check.equals("threads")){
-                if(task.toLowerCase().trim().equals("follower")&&status==true){
-                    threadsUpdate.threads_follower(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("like")&&status==true){
-                    threadsUpdate.threads_like(account_id.trim(),task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("comment")) {
-                    threadsUpdate.threads_comment(account_id.trim(), task_key.trim(), status);
-                }else  if(task.toLowerCase().trim().equals("view")&&status==true) {
-                    threadsUpdate.threads_view(account_id.trim(), task_key.trim());
-                }else  if(task.toLowerCase().trim().equals("repost")&&status==true) {
-                    threadsUpdate.threads_repost(account_id.trim(), task_key.trim());
-                }
-            }
-            if(status==true){
-                try {
-                    OrderRunning orderRunning=null;
-                    if(platform_Check.equals("youtube")&&task.toLowerCase().trim().equals("subscriber")){
-                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
-                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,task.trim(),platform.trim());
-                    }else{
-                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(task_key.trim(),task.trim(),platform.trim());
-                    }
-                    if(orderRunning!=null){
-                        HistorySum historySum=new HistorySum();
-                        historySum.setOrderRunning(orderRunning);
-                        historySum.setAccount_id(account_id.trim());
-                        historySum.setViewing_time(viewing_time);
-                        historySum.setAdd_time(System.currentTimeMillis());
-                        historySumRepository.save(historySum);
-                    }
-                }catch (Exception e){
-                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-                    LogError logError =new LogError();
-                    logError.setMethod_name(stackTraceElement.getMethodName());
-                    logError.setLine_number(stackTraceElement.getLineNumber());
-                    logError.setClass_name(stackTraceElement.getClassName());
-                    logError.setFile_name(stackTraceElement.getFileName());
-                    logError.setMessage(e.getMessage());
-                    logError.setAdd_time(System.currentTimeMillis());
-                    Date date_time = new Date(System.currentTimeMillis());
-                    // Tạo SimpleDateFormat với múi giờ GMT+7
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-                    String formattedDate = sdf.format(date_time);
-                    logError.setDate_time(formattedDate);
-                    logErrorRepository.save(logError);
-                }
-            }
-            try{
-                if(islogin==0){
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
-                    accountProfile.setLive(0);
-                    accountProfile.setUpdate_time(System.currentTimeMillis());
-                    accountProfileRepository.save(accountProfile);
-                    resp.put("status", true);
-                    data.put("message", "Update thành công!");
-                    data.put("account_id", accountProfile.getAccount_id());
-                    data.put("password", accountProfile.getPassword());
-                    data.put("recover", accountProfile.getRecover());
-                    data.put("2fa", accountProfile.getAuth_2fa());
-                    resp.put("data", data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(islogin==1){
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
-                    accountProfile.setLive(1);
-                    accountProfile.setUpdate_time(System.currentTimeMillis());
-                    accountProfileRepository.save(accountProfile);
-                }else{
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"%",platform.trim());
-                    accountProfile.setLive(1);
-                    accountProfile.setUpdate_time(System.currentTimeMillis());
-                    accountProfileRepository.save(accountProfile);
-                }
-            }catch (Exception e){
-
-            }
-            resp.put("status", true);
-            data.put("message", "Update thành công!");
-            resp.put("data", data);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-
-        } catch (Exception e) {
-            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-            LogError logError =new LogError();
-            logError.setMethod_name(stackTraceElement.getMethodName());
-            logError.setLine_number(stackTraceElement.getLineNumber());
-            logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
-            logError.setMessage(e.getMessage());
-            logError.setAdd_time(System.currentTimeMillis());
-            Date date_time = new Date(System.currentTimeMillis());
-            // Tạo SimpleDateFormat với múi giờ GMT+7
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-            String formattedDate = sdf.format(date_time);
-            logError.setDate_time(formattedDate);
-            logErrorRepository.save(logError);
-
-            resp.put("status", false);
-            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-        }
-    }
 
     @PostMapping(value = "/updateTaskOFFNEW", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> updateTaskOFFNEW(@RequestHeader(defaultValue = "") String Authorization,
@@ -4700,7 +4502,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"%");
+            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
             String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
             if(platform_Check.equals("youtube")){
                 if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
@@ -4958,106 +4760,114 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"%");
-            String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
-            if(platform_Check.equals("youtube")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
-                    youtubeUpdate.youtube_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")&&updateTaskRequest.getStatus()==true){
-                    youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }
-            }else if(platform_Check.equals("tiktok")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
-                    tiktokUpdate.tiktok_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
-                    tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }
-            }else if(platform_Check.equals("facebook")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    facebookUpdate.facebook_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    facebookUpdate.facebook_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
-                    facebookUpdate.facebook_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("member")&&updateTaskRequest.getStatus()==true) {
-                    facebookUpdate.facebook_member(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
-                    facebookUpdate.facebook_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }
-            }else if(platform_Check.equals("x")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    xUpdate.x_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    xUpdate.x_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
-                    xUpdate.x_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
-                    xUpdate.x_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
-                    xUpdate.x_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }
-            }else if(platform_Check.equals("instagram")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    instagramUpdate.instagram_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    instagramUpdate.instagram_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
-                    instagramUpdate.instagram_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
-                    instagramUpdate.instagram_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }
-            }else if(platform_Check.equals("threads")){
-                if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    threadsUpdate.threads_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                    threadsUpdate.threads_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
-                    threadsUpdate.threads_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
-                    threadsUpdate.threads_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
-                    threadsUpdate.threads_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
-                }
+            if (accountProfileRepository.check_Account_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim())==0) {
+                resp.put("status", false);
+                data.put("message", "account_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if(updateTaskRequest.getStatus()==true){
-                try {
-                    OrderRunning orderRunning=null;
-                    if(platform_Check.equals("youtube")&&updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")){
-                        String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(updateTaskRequest.getTask_key().trim());
-                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
-                    }else{
-                        orderRunning=orderRunningRepository.find_Order_By_Order_Key(updateTaskRequest.getTask_key().trim(),updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
+            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+            if(!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")){
+                String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
+                if(platform_Check.equals("youtube")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                        youtubeUpdate.youtube_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")&&updateTaskRequest.getStatus()==true){
+                        youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }
-                    if(orderRunning!=null){
-                        HistorySum historySum=new HistorySum();
-                        historySum.setOrderRunning(orderRunning);
-                        historySum.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                        historySum.setViewing_time(updateTaskRequest.getViewing_time());
-                        historySum.setAdd_time(System.currentTimeMillis());
-                        historySumRepository.save(historySum);
+                }else if(platform_Check.equals("tiktok")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                        tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
+                        tiktokUpdate.tiktok_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                        tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }
-                }catch (Exception e){
-                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
-                    LogError logError =new LogError();
-                    logError.setMethod_name(stackTraceElement.getMethodName());
-                    logError.setLine_number(stackTraceElement.getLineNumber());
-                    logError.setClass_name(stackTraceElement.getClassName());
-                    logError.setFile_name(stackTraceElement.getFileName());
-                    logError.setMessage(e.getMessage());
-                    logError.setAdd_time(System.currentTimeMillis());
-                    Date date_time = new Date(System.currentTimeMillis());
-                    // Tạo SimpleDateFormat với múi giờ GMT+7
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-                    String formattedDate = sdf.format(date_time);
-                    logError.setDate_time(formattedDate);
-                    logErrorRepository.save(logError);
+                }else if(platform_Check.equals("facebook")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                        facebookUpdate.facebook_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        facebookUpdate.facebook_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                        facebookUpdate.facebook_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("member")&&updateTaskRequest.getStatus()==true) {
+                        facebookUpdate.facebook_member(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                        facebookUpdate.facebook_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }
+                }else if(platform_Check.equals("x")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                        xUpdate.x_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        xUpdate.x_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                        xUpdate.x_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                        xUpdate.x_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
+                        xUpdate.x_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }
+                }else if(platform_Check.equals("instagram")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                        instagramUpdate.instagram_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        instagramUpdate.instagram_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                        instagramUpdate.instagram_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                        instagramUpdate.instagram_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }
+                }else if(platform_Check.equals("threads")){
+                    if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
+                        threadsUpdate.threads_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
+                        threadsUpdate.threads_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")) {
+                        threadsUpdate.threads_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim(), updateTaskRequest.getStatus());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true) {
+                        threadsUpdate.threads_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("repost")&&updateTaskRequest.getStatus()==true) {
+                        threadsUpdate.threads_repost(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(), updateTaskRequest.getTask_key().trim());
+                    }
+                }
+                if(updateTaskRequest.getStatus()==true){
+                    try {
+                        OrderRunning orderRunning=null;
+                        if(platform_Check.equals("youtube")&&updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")){
+                            String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(updateTaskRequest.getTask_key().trim());
+                            orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
+                        }else{
+                            orderRunning=orderRunningRepository.find_Order_By_Order_Key(updateTaskRequest.getTask_key().trim(),updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
+                        }
+                        if(orderRunning!=null){
+                            HistorySum historySum=new HistorySum();
+                            historySum.setOrderRunning(orderRunning);
+                            historySum.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            historySum.setViewing_time(updateTaskRequest.getViewing_time());
+                            historySum.setAdd_time(System.currentTimeMillis());
+                            historySumRepository.save(historySum);
+                        }
+                    }catch (Exception e){
+                        StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                        LogError logError =new LogError();
+                        logError.setMethod_name(stackTraceElement.getMethodName());
+                        logError.setLine_number(stackTraceElement.getLineNumber());
+                        logError.setClass_name(stackTraceElement.getClassName());
+                        logError.setFile_name(stackTraceElement.getFileName());
+                        logError.setMessage(e.getMessage());
+                        logError.setAdd_time(System.currentTimeMillis());
+                        Date date_time = new Date(System.currentTimeMillis());
+                        // Tạo SimpleDateFormat với múi giờ GMT+7
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                        String formattedDate = sdf.format(date_time);
+                        logError.setDate_time(formattedDate);
+                        logErrorRepository.save(logError);
+                    }
                 }
             }
             try{
@@ -5075,79 +4885,80 @@ public class TaskController {
                     }
                 }else if(updateTaskRequest.getIsLogin()==1){
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                    if(accountProfile!=null){
+                        if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
+                            accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+accountProfile.getPlatform());
+                            accountProfile.setLive(1);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
 
-                    if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
-                        accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+accountProfile.getPlatform());
-                        accountProfile.setLive(1);
-                        accountProfile.setUpdate_time(System.currentTimeMillis());
-                        accountProfileRepository.save(accountProfile);
-
-                        Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                        if(account==null){
-                            account=new Account();
-                            account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                            account.setPassword(accountProfile.getPassword());
-                            account.setRecover_mail(accountProfile.getRecover());
-                            account.setPlatform(accountProfile.getPlatform());
-                            account.setLive(1);
-                            account.setRunning(1);
-                            account.setAuth_2fa("");
-                            account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
-                            account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
-                            account.setAdd_time(System.currentTimeMillis());
-                            account.setGet_time(System.currentTimeMillis());
-                            accountRepository.save(account);
-                        }
-                    }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
-                        accountProfile.setLive(0);
-                        accountProfile.setUpdate_time(System.currentTimeMillis());
-                        accountProfileRepository.save(accountProfile);
-                    }else{
-                        if(accountRepository.check_Count_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim())==0){
-                            Account account=new Account();
-                            account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                            account.setPassword(accountProfile.getPassword());
-                            account.setRecover_mail(accountProfile.getRecover());
-                            account.setPlatform(accountProfile.getPlatform());
-                            account.setLive(1);
-                            account.setRunning(1);
-                            account.setAuth_2fa("");
-                            account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
-                            account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
-                            account.setAdd_time(System.currentTimeMillis());
-                            account.setGet_time(System.currentTimeMillis());
-                            accountRepository.save(account);
-                        }
-
-                        accountProfile.setLive(1);
-                        accountProfile.setUpdate_time(System.currentTimeMillis());
-                        accountProfileRepository.save(accountProfile);
-                    }
-                    Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                    if(account!=null){
-                        if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
-                            if(!account.getDependent().contains(updateTaskRequest.getPlatform())){
-                                if(account.getDependent().length()==0){
-                                    account.setDependent(updateTaskRequest.getPlatform());
-                                }else{
-                                    account.setDependent(account.getDependent()+","+updateTaskRequest.getPlatform());
-                                }
-                                if(account.getPassword_dependent().length()==0){
-                                    account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                }else{
-                                    account.setPassword_dependent(account.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                }
-                                List<String> arrDie=new ArrayList<>(Arrays.asList(account.getDie_dependent().split(",")));
-                                arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
-                                account.setDie_dependent(String.join(",", arrDie));
-
+                            Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            if(account==null){
+                                account=new Account();
+                                account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                account.setPassword(accountProfile.getPassword());
+                                account.setRecover_mail(accountProfile.getRecover());
+                                account.setPlatform(accountProfile.getPlatform());
+                                account.setLive(1);
+                                account.setRunning(1);
+                                account.setAuth_2fa("");
+                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
+                                account.setAdd_time(System.currentTimeMillis());
+                                account.setGet_time(System.currentTimeMillis());
                                 accountRepository.save(account);
                             }
+                        }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
+                            accountProfile.setLive(0);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
                         }else{
-                            account.setLive(updateTaskRequest.getIsLogin());
-                            accountRepository.save(account);
+                            if(accountRepository.check_Count_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim())==0){
+                                Account account=new Account();
+                                account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                account.setPassword(accountProfile.getPassword());
+                                account.setRecover_mail(accountProfile.getRecover());
+                                account.setPlatform(accountProfile.getPlatform());
+                                account.setLive(1);
+                                account.setRunning(1);
+                                account.setAuth_2fa("");
+                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
+                                account.setAdd_time(System.currentTimeMillis());
+                                account.setGet_time(System.currentTimeMillis());
+                                accountRepository.save(account);
+                            }
+
+                            accountProfile.setLive(1);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
                         }
-                    }
+                        Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                        if(account!=null){
+                            if(!account.getPlatform().equals(updateTaskRequest.getPlatform())){
+                                if(!account.getDependent().contains(updateTaskRequest.getPlatform())){
+                                    if(account.getDependent().length()==0){
+                                        account.setDependent(updateTaskRequest.getPlatform());
+                                    }else{
+                                        account.setDependent(account.getDependent()+","+updateTaskRequest.getPlatform());
+                                    }
+                                    if(account.getPassword_dependent().length()==0){
+                                        account.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                    }else{
+                                        account.setPassword_dependent(account.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                    }
+                                    List<String> arrDie=new ArrayList<>(Arrays.asList(account.getDie_dependent().split(",")));
+                                    arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
+                                    account.setDie_dependent(String.join(",", arrDie));
+
+                                    accountRepository.save(account);
+                                }
+                            }else{
+                                account.setLive(updateTaskRequest.getIsLogin());
+                                accountRepository.save(account);
+                            }
+                        }
+                    }////
 
                 }else if(updateTaskRequest.getIsLogin()>1){
                     Account account =accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
@@ -5272,7 +5083,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"%");
+            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
             String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
             if(platform_Check.equals("youtube")){
                 if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
