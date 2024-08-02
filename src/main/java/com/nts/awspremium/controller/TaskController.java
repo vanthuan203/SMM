@@ -5105,7 +5105,7 @@ public class TaskController {
                     }else{
                         if(accountRepository.check_Count_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim())==0){
                             Account account=new Account();
-                            account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
                             account.setPassword(accountProfile.getPassword());
                             account.setRecover_mail(accountProfile.getRecover());
                             account.setPlatform(accountProfile.getPlatform());
