@@ -13,6 +13,10 @@ public interface AccountRepository extends JpaRepository<Account,String> {
 
     @Query(value = "SELECT * FROM account where profile_id=?1 and running=1 and platform=?2  limit 1",nativeQuery = true)
     public Account get_Account_By_ProfileId_And_Platfrom(String profile_id,String platform);
+
+    @Query(value = "SELECT * FROM account where profile_id=?1 and platform=?2  limit 1",nativeQuery = true)
+    public Account get_Account_Ddependent_By_ProfileId_And_Platfrom(String profile_id,String platform);
+
     @Query(value = "Select count(*) from account where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account where live=1 and device_id=?1)",nativeQuery = true)
     public Integer Check_Get_Account_By_DeviceId(String device_id);
 
