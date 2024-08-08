@@ -40,6 +40,7 @@ public class DeviceController {
                                                     @RequestParam(name = "size", required = false, defaultValue = "5") Integer size,
                                                     @RequestParam(name = "sort_type", required = false, defaultValue = "add_time") String sort_type,
                                                     @RequestParam(name = "key", required = false, defaultValue = "") String key,
+                                                    @RequestParam(name = "state", required = false, defaultValue = "-1") Integer state,
                                                     @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -60,11 +61,20 @@ public class DeviceController {
             }
             Pageable pageable = PageRequest.of(page, size, sortable);
             Page<DeviceShow> devicePage;
-            if(key.length()>0){
-                devicePage=deviceRepository.get_List_Device(pageable,key.trim());
+            if(state==-1){
+                if(key.length()>0){
+                    devicePage=deviceRepository.get_List_Device(pageable,key.trim());
+                }else{
+                    devicePage=deviceRepository.get_List_Device(pageable);
+                }
             }else{
-                devicePage=deviceRepository.get_List_Device(pageable);
+                if(key.length()>0){
+                    devicePage=deviceRepository.get_List_Device_By_State(pageable,key.trim(),state);
+                }else{
+                    devicePage=deviceRepository.get_List_Device_By_State(pageable,state);
+                }
             }
+
             List<DeviceShow> deviceList=devicePage.getContent();
             JSONArray jsonArray = new JSONArray();
 
@@ -153,7 +163,7 @@ public class DeviceController {
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
                 device_new.setAdd_time(System.currentTimeMillis());
-                device_new.setState(1);
+                device_new.setState(0);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setNum_profile(profileId.size());
@@ -241,6 +251,63 @@ public class DeviceController {
                 deviceRepository.delete_Device_By_DeviceId(device_Arr[i].trim());
             }
             resp.put("device", "");
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "update_State", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> update_State(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id,
+                                                            @RequestParam(defaultValue = "1") Integer state) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.update_State_By_DeviceId(state,arrPlatform);
+            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < deviceList.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("device_id", deviceList.get(i).getDevice_id());
+                obj.put("add_time", deviceList.get(i).getAdd_time());
+                obj.put("running", deviceList.get(i).getRunning());
+                obj.put("update_time", deviceList.get(i).getUpdate_time());
+                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("platform", deviceList.get(i).getPlatform());
+                obj.put("task", deviceList.get(i).getTask());
+                obj.put("state", deviceList.get(i).getState());
+                jsonArray.add(obj);
+            }
+            resp.put("device", jsonArray);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

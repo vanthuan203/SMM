@@ -1592,6 +1592,11 @@ public class TaskController {
                 data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else if(device.getState()==0){
+                resp.put("status", false);
+                data.put("message", "device_id không làm nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             device.setUpdate_time(System.currentTimeMillis());
             deviceRepository.save(device);
@@ -1653,7 +1658,9 @@ public class TaskController {
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
                     if(platformRepository.get_Register_Account_Platform("youtube")==1&&
-                            historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0){
+                            historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
+                        accountRepository.check_Count_Account_VeryPhone_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")==0
+                    ){
 
                         String password="Cmc#";
                         String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -1985,7 +1992,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform())){
+                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform())){
                                 if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
@@ -2234,8 +2241,6 @@ public class TaskController {
                         data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim()+"_")[1]));
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
-                    }else if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())==1){
-                        profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                     }else{
                         resp.put("status", false);
                         data.put("message", "Không có account_id để chạy");
@@ -5815,6 +5820,7 @@ public class TaskController {
                                     account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
                                     account.setAdd_time(System.currentTimeMillis());
                                     account.setGet_time(System.currentTimeMillis());
+                                    account.setUpdate_time(System.currentTimeMillis());
                                     accountRepository.save(account);
                                 }
                             } else if(!account.getAccount_id().equals(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())){
@@ -5914,6 +5920,7 @@ public class TaskController {
                     Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
                     if(accountPlatform!=null){
                         accountPlatform.setRunning(0);
+                        accountPlatform.setUpdate_time(System.currentTimeMillis());
                         accountPlatform.setLive(updateTaskRequest.getIsLogin());
                         accountRepository.save(accountPlatform);
                     }
