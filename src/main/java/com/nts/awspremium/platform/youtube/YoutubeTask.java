@@ -81,6 +81,12 @@ public class YoutubeTask {
                 for (int i = 0; i < service.getYoutube_direct(); i++) {
                     arrSource.add("direct");
                 }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("suggest");
+                }
+                for (int i = 0; i < service.getYoutube_dtn(); i++) {
+                    arrSource.add("dtn");
+                }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
 
                 if(service.getService_type().trim().equals("Special")){
@@ -183,6 +189,12 @@ public class YoutubeTask {
                 for (int i = 0; i < service.getYoutube_direct(); i++) {
                     arrSource.add("direct");
                 }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("suggest");
+                }
+                for (int i = 0; i < service.getYoutube_dtn(); i++) {
+                    arrSource.add("dtn");
+                }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
 
                 if (service.getMin_time() != service.getMax_time()) {
@@ -270,6 +282,12 @@ public class YoutubeTask {
                 }
                 for (int i = 0; i < service.getYoutube_direct(); i++) {
                     arrSource.add("direct");
+                }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("suggest");
+                }
+                for (int i = 0; i < service.getYoutube_dtn(); i++) {
+                    arrSource.add("dtn");
                 }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
 

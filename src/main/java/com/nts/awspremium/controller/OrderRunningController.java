@@ -837,7 +837,7 @@ public class OrderRunningController {
                             }
                         }
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
-                        int count=GoogleApi.getCountLike(orderRunningList.get(i).getOrder_key(),key.trim());
+                        int count=GoogleApi.getCountView(orderRunningList.get(i).getOrder_key(),key.trim());
                         if(count==-2)
                         {
                             continue;
