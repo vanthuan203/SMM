@@ -5827,8 +5827,6 @@ public class TaskController {
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountRepository.save(account);
                             }
-
-
                         }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
                             accountProfile.setLive(0);
                             accountProfile.setUpdate_time(System.currentTimeMillis());
