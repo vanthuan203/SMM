@@ -1657,7 +1657,7 @@ public class TaskController {
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
-                    if(platformRepository.get_Register_Account_Platform("youtube")==1&&
+                    if((platformRepository.get_Register_Account_Platform("youtube")==1 || platform.length()!=0)&&
                             historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
                         accountRepository.check_Count_Account_VeryPhone_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")==0
                     ){
