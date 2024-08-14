@@ -90,7 +90,7 @@ public class XApi {
 
 
     public static String getXId(String url) {
-        String regex = "x\\.com/(\\w+)";
+        String regex = "x\\.com/([^/]+)(?:/status/.*)?";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(url);
         if (matcher.find()) {

@@ -1,5 +1,6 @@
 package com.nts.awspremium.platform.x;
 
+import com.nts.awspremium.XApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.repositories.*;
@@ -79,6 +80,7 @@ public class XTask {
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
                     data.put("comment",comment);
+                    data.put("channel_id", XApi.getXId(orderRunning.getOrder_link()));
                     resp.put("data",data);
                     return resp;
                 }else{
@@ -141,6 +143,7 @@ public class XTask {
                 data.put("task", service.getTask());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("channel_id", XApi.getXId(orderRunning.getOrder_link()));
                 resp.put("data",data);
                 return resp;
             } else {
@@ -198,6 +201,7 @@ public class XTask {
                 data.put("task", service.getTask());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("channel_id", XApi.getXId(orderRunning.getOrder_link()));
                 resp.put("data",data);
                 return resp;
 
@@ -256,6 +260,7 @@ public class XTask {
                 data.put("task", service.getTask());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("channel_id", XApi.getXId(orderRunning.getOrder_link()));
                 resp.put("data",data);
                 return resp;
             } else {
@@ -315,6 +320,7 @@ public class XTask {
                 data.put("task", service.getTask());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("channel_id", XApi.getXId(orderRunning.getOrder_link()));
                 resp.put("data",data);
                 return resp;
             } else {

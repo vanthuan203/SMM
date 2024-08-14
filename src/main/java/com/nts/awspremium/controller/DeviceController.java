@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,6 +35,8 @@ public class DeviceController {
     private UserRepository userRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private HttpServletRequest request;
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> get_List_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -146,6 +149,11 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            String clientIp = request.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty()) {
+                clientIp = request.getRemoteAddr();
+            }
+
             Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
@@ -167,9 +175,13 @@ public class DeviceController {
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setNum_profile(profileId.size());
+                device_new.setIp_address(clientIp);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
+                if(!device.getIp_address().equals(clientIp)){
+                    device.setIp_address(clientIp);
+                }
                 device.setNum_profile(profileId.size());
                 deviceRepository.save(device);
             }

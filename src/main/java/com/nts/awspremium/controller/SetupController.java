@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,7 +25,8 @@ public class SetupController {
     @Autowired
     private DeviceRepository deviceRepository;
 
-
+    @Autowired
+    private HttpServletRequest request;
     @Autowired
     private LogErrorRepository logErrorRepository;
 /*
@@ -259,15 +261,20 @@ public class SetupController {
         }
     }
 
+
+ */
     @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test2(@RequestParam String link) {
+    ResponseEntity<Map<String, Object>> test2() {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            JSONObject stringList= TikTokApi.getInfoVideoTikTok(link,2);
+            String clientIp = request.getHeader("X-Forwarded-For");
+            if (clientIp == null || clientIp.isEmpty()) {
+                clientIp = request.getRemoteAddr();
+            }
             resp.put("status", true);
-            data.put("task", link);
-            data.put("profile_id", stringList);
+            data.put("profile_id",request.getRemoteAddr());
+            data.put("profile_id2",clientIp);
             resp.put("data", data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
@@ -293,7 +300,5 @@ public class SetupController {
         }
     }
 
-
- */
 
 }

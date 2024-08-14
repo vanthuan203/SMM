@@ -27,4 +27,6 @@ public class Device implements Serializable {
     private Integer num_account;
     @Column(columnDefinition = "integer default 1")
     private Integer state;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String ip_address="";
 }
