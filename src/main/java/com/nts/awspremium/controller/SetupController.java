@@ -26,8 +26,6 @@ public class SetupController {
     private DeviceRepository deviceRepository;
 
     @Autowired
-    private HttpServletRequest request;
-    @Autowired
     private LogErrorRepository logErrorRepository;
 /*
     @GetMapping(value = "/check_task", produces = "application/json;charset=utf8")
@@ -264,14 +262,24 @@ public class SetupController {
 
  */
     @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test2() {
+    ResponseEntity<Map<String, Object>> test2(HttpServletRequest request) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
+            System.out.println(request.getRemoteAddr());
             String clientIp = request.getHeader("X-Forwarded-For");
             if (clientIp == null || clientIp.isEmpty()) {
                 clientIp = request.getRemoteAddr();
+            } else {
+                // Nếu header có chứa nhiều địa chỉ IP, lấy địa chỉ đầu tiên
+                clientIp = clientIp.split(",")[0].trim();
             }
+
+            if ("0:0:0:0:0:0:0:1".equals(clientIp) || "127.0.0.1".equals(clientIp)) {
+                clientIp = "IP địa chỉ khác nếu cần"; // Đổi về localhost cho IPv4
+            }
+
+            System.out.println("Client IP: " + clientIp);
             resp.put("status", true);
             data.put("profile_id",request.getRemoteAddr());
             data.put("profile_id2",clientIp);
