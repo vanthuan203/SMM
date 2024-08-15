@@ -2002,7 +2002,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform())){
+                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
                                 if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
