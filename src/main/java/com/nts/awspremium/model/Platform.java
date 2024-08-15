@@ -31,10 +31,14 @@ public class Platform {
     private Integer register_time=0;
     @Column(columnDefinition = "integer default 0")
     private Integer login_time=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer changer_time=0;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
     private Long version_app;
+    @Column(columnDefinition = "bigint default 0")
+    private Long change_info;
     @Column(columnDefinition = "varchar(255) default ''")
     private String dependent;
     @Column(columnDefinition = "varchar(255) default ''")

@@ -5836,6 +5836,7 @@ public class TaskController {
                                     account.setRecover_mail(accountProfile.getRecover());
                                     account.setPlatform(accountProfile.getPlatform());
                                     account.setLive(1);
+                                    account.setMode(updateTaskRequest.getTask());
                                     account.setRunning(1);
                                     account.setAuth_2fa("");
                                     account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
@@ -5854,8 +5855,9 @@ public class TaskController {
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }else{
-                            if(accountRepository.check_Count_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim())==0){
-                                Account account=new Account();
+                            Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            if(account==null){
+                                account=new Account();
                                 account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setPassword(accountProfile.getPassword());
                                 account.setRecover_mail(accountProfile.getRecover());
@@ -5867,6 +5869,11 @@ public class TaskController {
                                 account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
                                 account.setAdd_time(System.currentTimeMillis());
                                 account.setGet_time(System.currentTimeMillis());
+                                accountRepository.save(account);
+                            }else if(account.getRunning()!=1){
+                                account.setRunning(1);
+                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
                                 accountRepository.save(account);
                             }
 
@@ -5941,6 +5948,7 @@ public class TaskController {
                     if(accountPlatform!=null){
                         accountPlatform.setRunning(0);
                         accountPlatform.setUpdate_time(System.currentTimeMillis());
+                        accountPlatform.setDie_time(System.currentTimeMillis());
                         accountPlatform.setLive(updateTaskRequest.getIsLogin());
                         accountRepository.save(accountPlatform);
                     }

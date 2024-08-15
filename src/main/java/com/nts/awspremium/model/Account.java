@@ -40,6 +40,18 @@ public class Account implements Serializable {
     @Column(columnDefinition = "bigint default 0")
     private Long update_time=0L;
 
+    @Column(columnDefinition = "bigint default 0")
+    private Long changed_time=0L;
+
+    @Column(columnDefinition = "bigint default 0")
+    private Long die_time=0L;
+
+    @Column(columnDefinition = "integer default 0")
+    private Integer changed=0;
+
+    @Column(columnDefinition = "varchar(255) default 'login'")
+    private String mode;
+
     @Column(columnDefinition = "varchar(255) default ''")
     private String auth_2fa="";
 
