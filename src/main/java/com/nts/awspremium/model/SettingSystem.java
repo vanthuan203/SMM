@@ -25,6 +25,8 @@ public class SettingSystem {
     private Integer max_priority;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "integer default 60")
+    private Integer time_profile;
 
     public SettingSystem() {
     }

@@ -21,6 +21,8 @@ public class ProfileTask implements Serializable {
     @Column(columnDefinition = "bigint default 0")
     private Long get_time;
     @Column(columnDefinition = "bigint default 0")
+    private Long online_time=0L;
+    @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
     private Long enabled_time;
