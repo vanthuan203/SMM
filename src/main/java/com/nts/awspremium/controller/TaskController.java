@@ -1670,7 +1670,7 @@ public class TaskController {
 
                         String password="Cmc#";
                         String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        for(int i=0;i<15;i++){
+                        for(int i=0;i<6;i++){
                             Integer ranver=ran.nextInt(passrand.length());
                             password=password+passrand.charAt(ranver);
                         }
@@ -2045,7 +2045,7 @@ public class TaskController {
 
                                         String password="Cmc#";
                                         String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                                        for(int i=0;i<15;i++){
+                                        for(int i=0;i<6;i++){
                                             Integer ranver=ran.nextInt(passrand.length());
                                             password=password+passrand.charAt(ranver);
                                         }
