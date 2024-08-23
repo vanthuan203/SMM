@@ -261,29 +261,16 @@ public class SetupController {
 
 
  */
-    @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test2(HttpServletRequest request) {
+    @PostMapping(value = "/test2", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> test2(@RequestBody JSONObject list_tiktok) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            System.out.println(request.getRemoteAddr());
-            String clientIp = request.getHeader("X-Forwarded-For");
-            if (clientIp == null || clientIp.isEmpty()) {
-                clientIp = request.getRemoteAddr();
-            } else {
-                // Nếu header có chứa nhiều địa chỉ IP, lấy địa chỉ đầu tiên
-                clientIp = clientIp.split(",")[0].trim();
+            String[] list=list_tiktok.get("list").toString().split(",");
+            for(int i=0;i<list.length;i++){
+                System.out.println(TikTokApi.checkAccountTiktok(list[i].trim()));
             }
-
-            if ("0:0:0:0:0:0:0:1".equals(clientIp) || "127.0.0.1".equals(clientIp)) {
-                clientIp = "IP địa chỉ khác nếu cần"; // Đổi về localhost cho IPv4
-            }
-
-            System.out.println("Client IP: " + clientIp);
-            resp.put("status", true);
-            data.put("profile_id",request.getRemoteAddr());
-            data.put("profile_id2",clientIp);
-            resp.put("data", data);
+            resp.put("data", true);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

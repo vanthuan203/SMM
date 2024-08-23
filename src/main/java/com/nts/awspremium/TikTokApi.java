@@ -237,6 +237,25 @@ public class TikTokApi {
         }
     }
 
+    public static JSONObject checkAccountTiktok(String link) {
+
+        try {
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Request request = null;
+            request = new Request.Builder().url("https://api.like3s.vn/api/extension/find-uid?link=" + link).get().build();
+
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            return jsonObject;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String getIdShare(String url) {
         String regex = "https://vt.tiktok.com/(\\w+)/";
         Pattern pattern = Pattern.compile(regex);

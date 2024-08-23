@@ -26,7 +26,7 @@ public class YoutubeUpdate {
     private AccountRepository accountRepository;
 
     @Autowired
-    private AccountProfileRepository accountProfileRepository;
+    private OrderRunningRepository orderRunningRepository;
     @Autowired
     private YoutubeLike24hRepository youtubeLike24hRepository;
     @Autowired
@@ -37,6 +37,9 @@ public class YoutubeUpdate {
     private LogErrorRepository logErrorRepository;
     public Boolean youtube_view(String account_id,String task_key){
         try{
+            if(orderRunningRepository.get_ServiceId_By_TaskKey(task_key.trim())==33){
+                return true;
+            }
             YoutubeViewHistory youtubeVideoHistory=youtubeViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeVideoHistory!=null){
                 youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id()+task_key.trim()+"|");
