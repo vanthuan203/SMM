@@ -23,7 +23,7 @@ public class SetupController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private DeviceRepository deviceRepository;
+    private YoutubeViewHistoryRepository youtubeViewHistoryRepository;
 
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -270,6 +270,36 @@ public class SetupController {
             for(int i=0;i<list.length;i++){
                 System.out.println(TikTokApi.checkAccountTiktok(list[i].trim()));
             }
+            resp.put("data", true);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping(value = "/reset_HistoryView", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> reset_HistoryView() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            youtubeViewHistoryRepository.reset_HistoryView();
             resp.put("data", true);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
