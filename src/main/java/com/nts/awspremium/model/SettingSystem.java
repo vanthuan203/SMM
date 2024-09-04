@@ -27,6 +27,8 @@ public class SettingSystem {
     private Long update_time;
     @Column(columnDefinition = "integer default 60")
     private Integer time_profile;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String rom_version;
 
     public SettingSystem() {
     }

@@ -27,6 +27,10 @@ public class Device implements Serializable {
     private Integer num_account;
     @Column(columnDefinition = "integer default 1")
     private Integer state;
+    @Column(columnDefinition = "integer default 0")
+    private Integer reboot;
     @Column(columnDefinition = "varchar(255) default ''")
     private String ip_address="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String rom_version;
 }
