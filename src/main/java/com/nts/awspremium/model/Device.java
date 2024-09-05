@@ -32,5 +32,7 @@ public class Device implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String ip_address="";
     @Column(columnDefinition = "varchar(255) default ''")
+    private String box_id;
+    @Column(columnDefinition = "varchar(255) default ''")
     private String rom_version;
 }

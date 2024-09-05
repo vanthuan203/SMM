@@ -94,6 +94,7 @@ public class DeviceController {
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
+                obj.put("box_id", deviceList.get(i).getBox_id());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -317,6 +318,7 @@ public class DeviceController {
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
+                obj.put("box_id", deviceList.get(i).getBox_id());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -340,6 +342,65 @@ public class DeviceController {
 
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping(path = "update",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Device device_body){
+        JSONObject resp = new JSONObject();
+        JSONObject data = new JSONObject();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try{
+            Device device=deviceRepository.check_DeviceId(device_body.getDevice_id().trim());
+            List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
+            device.setState(device_body.getState());
+            device.setBox_id(device_body.getBox_id());
+            deviceRepository.save(device);
+            JSONArray jsonArray = new JSONArray();
+            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            for (int i = 0; i < deviceList.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("device_id", deviceList.get(i).getDevice_id());
+                obj.put("add_time", deviceList.get(i).getAdd_time());
+                obj.put("running", deviceList.get(i).getRunning());
+                obj.put("update_time", deviceList.get(i).getUpdate_time());
+                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("platform", deviceList.get(i).getPlatform());
+                obj.put("task", deviceList.get(i).getTask());
+                obj.put("state", deviceList.get(i).getState());
+                obj.put("box_id", deviceList.get(i).getBox_id());
+                jsonArray.add(obj);
+            }
+            resp.put("device", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
     }
 

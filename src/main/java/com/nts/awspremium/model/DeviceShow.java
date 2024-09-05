@@ -15,9 +15,11 @@ public class DeviceShow {
     String profile_id;
     String platform;
     String task;
+    String box_id;
 
-    public DeviceShow(String device_id, Integer state, Integer running, Long add_time, Long update_time, Long get_time, Integer num_account, Integer num_profile, String profile_id, String platform, String task) {
+    public DeviceShow(String device_id,String box_id, Integer state, Integer running, Long add_time, Long update_time, Long get_time, Integer num_account, Integer num_profile, String profile_id, String platform, String task) {
         this.device_id = device_id;
+        this.box_id = box_id;
         this.state = state;
         this.running = running;
         this.add_time = add_time;
