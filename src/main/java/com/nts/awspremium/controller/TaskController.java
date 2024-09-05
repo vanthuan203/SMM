@@ -1593,6 +1593,8 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(device.getState()==0){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
                 resp.put("status", false);
                 data.put("message", "device_id không làm nhiệm vụ");
                 resp.put("data", data);
@@ -2476,6 +2478,8 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(device.getState()==0){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
                 resp.put("status", false);
                 data.put("message", "device_id không làm nhiệm vụ");
                 resp.put("data", data);
