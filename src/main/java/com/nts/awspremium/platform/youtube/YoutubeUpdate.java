@@ -6,11 +6,14 @@ import com.nts.awspremium.model_system.OrderThreadCheck;
 import com.nts.awspremium.platform.tiktok.TiktokTask;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RestController
 public class YoutubeUpdate {
@@ -42,7 +45,18 @@ public class YoutubeUpdate {
             }
             YoutubeViewHistory youtubeVideoHistory=youtubeViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeVideoHistory!=null){
-                youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id()+task_key.trim()+"|");
+                char target = '|';
+                long count = youtubeVideoHistory.getList_id().trim().chars().filter(ch -> ch == target).count();
+                if(count>=15){
+                    int occurrence = (int)count-9;  // Lần xuất hiện thứ n cần tìm
+                    OptionalInt position = IntStream.range(0, youtubeVideoHistory.getList_id().trim().length())
+                            .filter(i -> youtubeVideoHistory.getList_id().trim().charAt(i) == target)
+                            .skip(occurrence - 1)
+                            .findFirst();
+                    youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id().trim().substring(position.getAsInt()+1)+task_key.trim()+"|");
+                }else{
+                    youtubeVideoHistory.setList_id(youtubeVideoHistory.getList_id()+task_key.trim()+"|");
+                }
                 youtubeVideoHistory.setUpdate_time(System.currentTimeMillis());
                 youtubeViewHistoryRepository.save(youtubeVideoHistory);
             }else{

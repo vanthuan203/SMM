@@ -175,6 +175,8 @@ public class DeviceController {
                 device_new.setState(0);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
+                device_new.setReboot(0);
+                device_new.setRom_version("");
                 device_new.setNum_profile(profileId.size());
                 device_new.setIp_address(clientIp);
                 deviceRepository.save(device_new);

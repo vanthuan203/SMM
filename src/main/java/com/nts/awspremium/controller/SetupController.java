@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -294,6 +295,57 @@ public class SetupController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(value = "/test3", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> test3() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            String input = "x1NZ3dLCbFk|Uc_rhrZwubQ|zhXCfQtYbUI|f7w50zV4xi8|MAACJNxax6Q|MAACJNxax6Q|yh1X4ySJRBY|yh1X4ySJRBY|eYlQHRzxVLE|z1OjZtyCmx0|z1OjZtyCmx0|64q0LZRp0Ws|4g4ApDe0PkE|4g4ApDe0PkE|i67AfE7vyaU|4tv1u-MzyK8|Q8w_OXW7yug|HDKpyTN2I5E|HRsCWNNkuw8|8q5ghKvCSZs|SwybEuuxOqc|AMl5q_2LjJY|t4UewMXw1R0|t4UewMXw1R0|ZXY4KPTqwKw|pSf9e3_nlVM|pSf9e3_nlVM|jLuk7Gb5gWA|xboHtrD5FBo|xboHtrD5FBo|67Eg1YomoDI|67Eg1YomoDI|lzvfSFTP6w0|CyCG6k2gzE0|OfLCgPqyb_4|ow-u_sHm7C4|Z-gC4cynesY|Z-gC4cynesY|_jHojJmVuYY|_jHojJmVuYY|fmYiPiGadUU|fmYiPiGadUU|GKCd6Vt-I1I|GKCd6Vt-I1I|7tfHiC1loGQ|_5F-cZ7WSTc|MnhcYFhkKUQ|MnhcYFhkKUQ|gJ91mCZgdTE|V8RQSUgHe3w|V8RQSUgHe3w|cZ5VbzM-GKY|csOptD9dxFE|IqYXOfzwVAY|IqYXOfzwVAY|IqYXOfzwVAY|IqYXOfzwVAY|";
+
+            char target = '|';
+
+            // Sử dụng phương thức chars() và filter
+            long count = input.chars().filter(ch -> ch == target).count();
+
+
+            // Sử dụng IntStream để tìm vị trí xuất hiện thứ 3
+            if(count>=15){
+                int occurrence = (int)count-9;  // Lần xuất hiện thứ n cần tìm
+                OptionalInt position = IntStream.range(0, input.length())
+                        .filter(i -> input.charAt(i) == target)
+                        .skip(occurrence - 1) // Bỏ qua n-1 lần đầu
+                        .findFirst(); // Lấy lần tiếp theo
+                resp.put("data", count+"|"+position.getAsInt());
+                resp.put("data new", input.substring(position.getAsInt()+1));
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            resp.put("data", count);
+            resp.put("data new","");
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/reset_HistoryView", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> reset_HistoryView() {
         Map<String, Object> resp = new LinkedHashMap<>();
