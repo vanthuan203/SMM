@@ -4,8 +4,12 @@ import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -302,6 +307,72 @@ public class OrderHistoryController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "checkCount", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> checkCount() {
+        JSONObject resp = new JSONObject();
+        try {
+            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount("youtube","view");
+            if(list_Order_Key==null){
+                resp.put("status", true);
+                return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+            }
+            List<String> notValid = Arrays.asList(list_Order_Key.split(","));
+            OkHttpClient client1 = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+
+            Request request1 = null;
+            GoogleKey key = googleKeyRepository.get_Google_Key();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key=" + key.getKey_id().trim() + "&fields=items(id,statistics(viewCount))&part=statistics&id=" + list_Order_Key).get().build();
+            key.setGet_count(key.getGet_count() + 1);
+            googleKeyRepository.save(key);
+            Response response1 = client1.newCall(request1).execute();
+
+            String resultJson1 = response1.body().string();
+
+            Object obj1 = new JSONParser().parse(resultJson1);
+
+            JSONObject jsonObject1 = (JSONObject) obj1;
+            JSONArray items = (JSONArray) jsonObject1.get("items");
+            JSONArray jsonArray = new JSONArray();
+            Iterator k = items.iterator();
+
+            while (k.hasNext()) {
+                try {
+                    JSONObject video = (JSONObject) k.next();
+                    JSONObject obj = new JSONObject();
+                    JSONObject statistics = (JSONObject) video.get("statistics");
+                    orderHistoryRepository.update_Order_CheckCount(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString(),"youtube","view");
+                    notValid.remove(video.get("id").toString());
+                } catch (Exception e) {
+                    continue;
+                }
+
+            }
+            orderHistoryRepository.update_Order_NotValid(System.currentTimeMillis(),notValid,"youtube","view");
+            resp.put("status", true);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @GetMapping(path = "refill", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> refill(@RequestHeader(defaultValue = "") String Authorization,

@@ -5,8 +5,10 @@ import com.nts.awspremium.model.OrderHistoryShow;
 import com.nts.awspremium.model.OrderRunning;
 import com.nts.awspremium.model.OrderRunningShow;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long> {
@@ -32,8 +34,21 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
 
     @Query(value = "SELECT * from order_history where order_id in (?1)",nativeQuery = true)
     public List<OrderHistory> get_Order_By_ListId(List<String> list_orderid);
+    @Query(value = "SELECT GROUP_CONCAT(order_key) from (SELECT order_key FROM Data.order_history where service_id in(select service_id from service where platform=?1 and task=?2) \n" +
+            "and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=12 and\n" +
+            " round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24*7 and\n" +
+            " round((UNIX_TIMESTAMP()-update_current_time/1000)/60/60)>2 and cancel=0 and valid!=0 order by update_current_time asc limit 10) as oh",nativeQuery = true)
+    public String get_List_OrderKey_CheckCount(String platform,String task);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update order_history set current_count=?1,update_current_time=?2 where order_key=?3 and service_id in(select service_id from service where platform=?4 and task=?5) and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=12 and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24*7",nativeQuery = true)
+    public void update_Order_CheckCount(Integer current_count,Long update_current_time,String order_key,String platform,String task);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update order_history set valid=0,update_time=?1 where order_key in (?2) and service_id in(select service_id from service where platform=?3 and task=?4)",nativeQuery = true)
+    public void update_Order_NotValid(Long update_time, List<String> order_key,String platform,String task);
     @Query(value = "Select o.order_id,o.order_key,o.order_link,o.insert_time,o.start_time,o.end_time,o.cancel,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.refund,o.refund_time,o.refill,o.refill_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +

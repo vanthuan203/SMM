@@ -72,5 +72,7 @@ public class OrderHistory implements Serializable {
     private Long refill_time;
     @Column(columnDefinition = "bigint default 0")
     private Long order_refill;
+    @Column(columnDefinition = "integer default 1")
+    private Integer valid=1;
 
 }
