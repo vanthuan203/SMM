@@ -150,11 +150,6 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            String clientIp = request.getHeader("X-Forwarded-For");
-            if (clientIp == null || clientIp.isEmpty()) {
-                clientIp = request.getRemoteAddr();
-            }
-
             Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
@@ -177,14 +172,12 @@ public class DeviceController {
                 device_new.setNum_account(0);
                 device_new.setReboot(0);
                 device_new.setRom_version("");
+                device_new.setBox_id("");
                 device_new.setNum_profile(profileId.size());
-                device_new.setIp_address(clientIp);
+                device_new.setIp_address("");
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
-                if(!device.getIp_address().equals(clientIp)){
-                    device.setIp_address(clientIp);
-                }
                 device.setNum_profile(profileId.size());
                 deviceRepository.save(device);
             }
@@ -250,7 +243,7 @@ public class DeviceController {
     }
 
     @DeleteMapping(value = "delete_Device", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> delete_Order_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
+    public ResponseEntity<Map<String, Object>> delete_Device(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         Integer checktoken = userRepository.check_User_By_Token(Authorization);

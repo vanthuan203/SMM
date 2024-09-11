@@ -37,7 +37,7 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
     @Query(value = "SELECT GROUP_CONCAT(order_key) from (SELECT order_key FROM Data.order_history where service_id in(select service_id from service where platform=?1 and task=?2) \n" +
             "and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=12 and\n" +
             " round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24*7 and\n" +
-            " round((UNIX_TIMESTAMP()-update_current_time/1000)/60/60)>2 and cancel=0 and valid!=0 order by update_current_time asc limit 10) as oh",nativeQuery = true)
+            " round((UNIX_TIMESTAMP()-update_current_time/1000)/60)>=5 and cancel=0  order by update_current_time asc limit 10) as oh",nativeQuery = true)
     public String get_List_OrderKey_CheckCount(String platform,String task);
 
     @Modifying
