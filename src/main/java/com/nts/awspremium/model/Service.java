@@ -91,6 +91,8 @@ public class Service implements Serializable {
     private Integer check_start=0 ;
     @Column(columnDefinition = "varchar(255) default 'all'")
     private String device_type;
+    @Column(columnDefinition = "varchar(255) default 'auto'")
+    private String mode="auto";
 
     public Service() {
     }

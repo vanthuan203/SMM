@@ -95,6 +95,8 @@ public class DeviceController {
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
+                obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("mode", deviceList.get(i).getMode());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -126,7 +128,8 @@ public class DeviceController {
     @GetMapping(value = "check_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> check_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                                @RequestParam(defaultValue = "") String device_id,
-                                                               @RequestParam(defaultValue = "") String profile_list
+                                                               @RequestParam(defaultValue = "") String profile_list,
+                                                               @RequestParam(defaultValue = "") String rom_version
                                                               ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -171,13 +174,15 @@ public class DeviceController {
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setReboot(0);
-                device_new.setRom_version("");
+                device_new.setRom_version(rom_version);
                 device_new.setBox_id("");
+                device_new.setMode("");
                 device_new.setNum_profile(profileId.size());
                 device_new.setIp_address("");
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
+                device.setRom_version(rom_version);
                 device.setNum_profile(profileId.size());
                 deviceRepository.save(device);
             }
@@ -314,6 +319,68 @@ public class DeviceController {
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
+                obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("mode", deviceList.get(i).getMode());
+                jsonArray.add(obj);
+            }
+            resp.put("device", jsonArray);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "update_Mode", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> update_Mode(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id,
+                                                            @RequestParam(defaultValue = "") String mode) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.update_Mode_By_DeviceId(mode,arrPlatform);
+            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < deviceList.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("device_id", deviceList.get(i).getDevice_id());
+                obj.put("add_time", deviceList.get(i).getAdd_time());
+                obj.put("running", deviceList.get(i).getRunning());
+                obj.put("update_time", deviceList.get(i).getUpdate_time());
+                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("platform", deviceList.get(i).getPlatform());
+                obj.put("task", deviceList.get(i).getTask());
+                obj.put("state", deviceList.get(i).getState());
+                obj.put("box_id", deviceList.get(i).getBox_id());
+                obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("mode", deviceList.get(i).getMode());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -356,6 +423,7 @@ public class DeviceController {
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
             device.setState(device_body.getState());
             device.setBox_id(device_body.getBox_id());
+            device.setMode(device_body.getMode());
             deviceRepository.save(device);
             JSONArray jsonArray = new JSONArray();
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
@@ -373,6 +441,8 @@ public class DeviceController {
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
+                obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("mode", deviceList.get(i).getMode());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);

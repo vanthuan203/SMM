@@ -625,67 +625,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -1427,67 +1427,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -2303,67 +2303,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -3199,67 +3199,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -3711,67 +3711,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -4229,67 +4229,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -4728,67 +4728,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -5365,67 +5365,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -5768,67 +5768,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){
@@ -6172,67 +6172,67 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_like")){
-                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
-                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id());
+                        get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("youtube_view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("youtube_subscriber")){
-                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("facebook_follower")){
-                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_like")){
-                        get_task=facebookTask.facebook_like(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_view")){
-                        get_task=facebookTask.facebook_view(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_comment")){
-                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("facebook_member")){
-                        get_task=facebookTask.facebook_member(profileTask.getAccount_id());
+                        get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
                     if(task.equals("x_follower")){
-                        get_task=xTask.x_follower(profileTask.getAccount_id());
+                        get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_like")){
-                        get_task=xTask.x_like(profileTask.getAccount_id());
+                        get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_view")){
-                        get_task=xTask.x_view(profileTask.getAccount_id());
+                        get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_comment")){
-                        get_task=xTask.x_comment(profileTask.getAccount_id());
+                        get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("x_repost")){
-                        get_task=xTask.x_repost(profileTask.getAccount_id());
+                        get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
-                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_like")){
-                        get_task=instagramTask.instagram_like(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_view")){
-                        get_task=instagramTask.instagram_view(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("instagram_comment")){
-                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id());
+                        get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
                     if(task.equals("threads_follower")){
-                        get_task=threadsTask.threads_follower(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_like")){
-                        get_task=threadsTask.threads_like(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_view")){
-                        get_task=threadsTask.threads_view(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_comment")){
-                        get_task=threadsTask.threads_comment(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("threads_repost")){
-                        get_task=threadsTask.threads_repost(profileTask.getAccount_id());
+                        get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
                 if(get_task!=null?get_task.get("status").equals(true):false){

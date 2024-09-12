@@ -38,7 +38,7 @@ public class TiktokTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
-    public Map<String, Object> tiktok_comment(String account_id){
+    public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -52,12 +52,12 @@ public class TiktokTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
 
@@ -106,7 +106,7 @@ public class TiktokTask {
             return resp;
         }
     }
-    public Map<String, Object> tiktok_follower(String account_id){
+    public Map<String, Object> tiktok_follower(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -120,12 +120,12 @@ public class TiktokTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -164,7 +164,7 @@ public class TiktokTask {
             return resp;
         }
     }
-    public Map<String, Object> tiktok_like(String account_id){
+    public Map<String, Object> tiktok_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -178,12 +178,12 @@ public class TiktokTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -222,7 +222,7 @@ public class TiktokTask {
             return resp;
         }
     }
-    public Map<String, Object> tiktok_view(String account_id){
+    public Map<String, Object> tiktok_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -236,12 +236,12 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view","",orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","",orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","",orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();

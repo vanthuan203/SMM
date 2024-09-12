@@ -12,11 +12,11 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long> {
-    @Query(value = "SELECT * FROM order_running where service_id in(select service_id from service where platform=?1 and task=?2) and INSTR(?3,CONCAT(order_key,'|'))=0 and order_id in (?4) order by rand() limit 1",nativeQuery = true)
-    public OrderRunning get_Order_Running_By_Task(String platform,String task,String list_tiktok_id, List<String> order_id);
+    @Query(value = "SELECT * FROM order_running where service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_By_Task(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
-    @Query(value = "SELECT * FROM order_running where service_id in(select service_id from service where platform=?1 and task=?2) and INSTR(?3,CONCAT(order_key,'|'))=0 and order_id in (?4) and priority>0 order by rand() limit 1",nativeQuery = true)
-    public OrderRunning get_Order_Running_Priority_By_Task(String platform,String task,String list_tiktok_id, List<String> order_id);
+    @Query(value = "SELECT * FROM order_running where service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and priority>0 order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_Priority_By_Task(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
 
     @Query(value = "select order_id from (select order_running.order_id,count(running) as total,thread\n" +

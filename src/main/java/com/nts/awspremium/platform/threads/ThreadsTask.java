@@ -43,7 +43,7 @@ public class ThreadsTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
-    public Map<String, Object> threads_comment(String account_id){
+    public Map<String, Object> threads_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -57,12 +57,12 @@ public class ThreadsTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=threadsCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
 
@@ -110,7 +110,7 @@ public class ThreadsTask {
             return resp;
         }
     }
-    public Map<String, Object> threads_follower(String account_id){
+    public Map<String, Object> threads_follower(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -125,12 +125,12 @@ public class ThreadsTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=threadsFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -168,7 +168,7 @@ public class ThreadsTask {
             return resp;
         }
     }
-    public Map<String, Object> threads_like(String account_id){
+    public Map<String, Object> threads_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -182,12 +182,12 @@ public class ThreadsTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=threadsLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -226,7 +226,7 @@ public class ThreadsTask {
             return resp;
         }
     }
-    public Map<String, Object> threads_view(String account_id){
+    public Map<String, Object> threads_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -240,12 +240,12 @@ public class ThreadsTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=threadsViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -283,7 +283,7 @@ public class ThreadsTask {
             return resp;
         }
     }
-    public Map<String, Object> threads_repost(String account_id){
+    public Map<String, Object> threads_repost(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -297,12 +297,12 @@ public class ThreadsTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=threadsRepostHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("threads","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("threads","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();

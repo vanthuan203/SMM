@@ -43,7 +43,7 @@ public class FacebookTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
-    public Map<String, Object> facebook_comment(String account_id){
+    public Map<String, Object> facebook_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -57,12 +57,12 @@ public class FacebookTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=facebookCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
 
@@ -111,7 +111,7 @@ public class FacebookTask {
             return resp;
         }
     }
-    public Map<String, Object> facebook_follower(String account_id){
+    public Map<String, Object> facebook_follower(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -125,12 +125,12 @@ public class FacebookTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=facebookFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -169,7 +169,7 @@ public class FacebookTask {
             return resp;
         }
     }
-    public Map<String, Object> facebook_like(String account_id){
+    public Map<String, Object> facebook_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -183,12 +183,12 @@ public class FacebookTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=facebookLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -227,7 +227,7 @@ public class FacebookTask {
             return resp;
         }
     }
-    public Map<String, Object> facebook_view(String account_id){
+    public Map<String, Object> facebook_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -241,12 +241,12 @@ public class FacebookTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=facebookViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -284,7 +284,7 @@ public class FacebookTask {
             return resp;
         }
     }
-    public Map<String, Object> facebook_member(String account_id){
+    public Map<String, Object> facebook_member(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -298,12 +298,12 @@ public class FacebookTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=facebookMemberHistoryRepository.get_List_GroupId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","member",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("facebook","member",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","member",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","member",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","member",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("facebook","member",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();

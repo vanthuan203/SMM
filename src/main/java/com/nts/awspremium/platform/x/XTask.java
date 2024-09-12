@@ -44,7 +44,7 @@ public class XTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
-    public Map<String, Object> x_comment(String account_id){
+    public Map<String, Object> x_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -58,12 +58,12 @@ public class XTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=xCommentHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
 
@@ -113,7 +113,7 @@ public class XTask {
             return resp;
         }
     }
-    public Map<String, Object> x_follower(String account_id){
+    public Map<String, Object> x_follower(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -127,12 +127,12 @@ public class XTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=xFollowerHistoryRepository.get_List_Id_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -171,7 +171,7 @@ public class XTask {
             return resp;
         }
     }
-    public Map<String, Object> x_like(String account_id){
+    public Map<String, Object> x_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -185,12 +185,12 @@ public class XTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=xLikeHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -230,7 +230,7 @@ public class XTask {
             return resp;
         }
     }
-    public Map<String, Object> x_view(String account_id){
+    public Map<String, Object> x_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -244,12 +244,12 @@ public class XTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=xViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -288,7 +288,7 @@ public class XTask {
             return resp;
         }
     }
-    public Map<String, Object> x_repost(String account_id){
+    public Map<String, Object> x_repost(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -304,12 +304,12 @@ public class XTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=xRepostHistoryRepository.get_List_PostId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("x","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("x","repost",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();

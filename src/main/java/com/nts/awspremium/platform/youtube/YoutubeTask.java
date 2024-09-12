@@ -37,7 +37,7 @@ public class YoutubeTask {
     private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
-    public Map<String, Object> youtube_view(String account_id){
+    public Map<String, Object> youtube_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -51,12 +51,12 @@ public class YoutubeTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -146,7 +146,7 @@ public class YoutubeTask {
         }
     }
 
-    public Map<String, Object> youtube_subscriber(String account_id){
+    public Map<String, Object> youtube_subscriber(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -160,12 +160,12 @@ public class YoutubeTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=youtubeChannelHistoryRepository.get_List_ChannelId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","subscriber",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
@@ -245,7 +245,7 @@ public class YoutubeTask {
         }
     }
 
-    public Map<String, Object> youtube_like(String account_id){
+    public Map<String, Object> youtube_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -259,12 +259,12 @@ public class YoutubeTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=youtubeLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }              if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 resp.put("status", true);
