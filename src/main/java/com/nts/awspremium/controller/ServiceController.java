@@ -44,9 +44,9 @@ public class ServiceController {
             String arr_Service="";
             for(int i=0;i<list_Service.size();i++){
                 if(i==0){
-                    arr_Service=list_Service.get(0);
+                    arr_Service=list_Service.get(0).toUpperCase();
                 }else{
-                    arr_Service=arr_Service+","+list_Service.get(i);
+                    arr_Service=arr_Service+","+list_Service.get(i).toUpperCase();
                 }
 
             }
