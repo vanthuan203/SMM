@@ -95,6 +95,7 @@ public class OrderHistoryController {
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
+                obj.put("mode", orderHistories.get(i).getMode());
                 obj.put("refund", orderHistories.get(i).getRefund());
                 obj.put("refund_time", orderHistories.get(i).getRefund_time());
                 obj.put("refill", orderHistories.get(i).getRefill());
@@ -275,7 +276,8 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistoryShow.getCharge());
                 obj.put("task", orderHistoryShow.getTask());
                 obj.put("platform", orderHistoryShow.getPlatform());
-                obj.put("bouns", orderHistoryShow.getBonus());
+                obj.put("bonus", orderHistoryShow.getBonus());
+                obj.put("mode", orderHistoryShow.getMode());
                 obj.put("refund", orderHistoryShow.getRefund());
                 obj.put("refund_time", orderHistoryShow.getRefund_time());
                 obj.put("refill", orderHistoryShow.getRefill());
@@ -497,7 +499,8 @@ public class OrderHistoryController {
                 obj.put("charge", orderHistoryShow.getCharge());
                 obj.put("task", orderHistoryShow.getTask());
                 obj.put("platform", orderHistoryShow.getPlatform());
-                obj.put("bouns", orderHistoryShow.getBonus());
+                obj.put("bonus", orderHistoryShow.getBonus());
+                obj.put("mode", orderHistoryShow.getMode());
                 obj.put("refund", orderHistoryShow.getRefund());
                 obj.put("refund_time", orderHistoryShow.getRefund_time());
                 obj.put("refill", orderHistoryShow.getRefill());
@@ -573,6 +576,7 @@ public class OrderHistoryController {
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
+                obj.put("mode", orderHistories.get(i).getMode());
                 obj.put("refund", orderHistories.get(i).getRefund());
                 obj.put("refund_time", orderHistories.get(i).getRefund_time());
                 obj.put("refill", orderHistories.get(i).getRefill());

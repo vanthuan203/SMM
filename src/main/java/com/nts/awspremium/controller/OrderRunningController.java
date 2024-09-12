@@ -99,6 +99,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
+                obj.put("mode", orderRunnings.get(i).getMode());
                 obj.put("priority", orderRunnings.get(i).getPriority());
                 jsonArray.add(obj);
             }
@@ -172,6 +173,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunningShow.getTask());
                 obj.put("platform", orderRunningShow.getPlatform());
                 obj.put("bonus",orderRunningShow.getBonus());
+                obj.put("mode",orderRunningShow.getMode());
                 obj.put("priority", orderRunningShow.getPriority());
                 jsonArray.add(obj);
             }
@@ -244,6 +246,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunningShow.getTask());
                 obj.put("platform", orderRunningShow.getPlatform());
                 obj.put("bonus",orderRunningShow.getBonus());
+                obj.put("mode",orderRunningShow.getMode());
                 obj.put("priority", orderRunningShow.getPriority());
                 jsonArray.add(obj);
             }
@@ -316,6 +319,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunningShow.getTask());
                 obj.put("platform", orderRunningShow.getPlatform());
                 obj.put("bonus",orderRunningShow.getBonus());
+                obj.put("mode",orderRunningShow.getMode());
                 obj.put("priority", orderRunningShow.getPriority());
                 jsonArray.add(obj);
             }
@@ -386,6 +390,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
+                obj.put("mode", orderRunnings.get(i).getMode());
                 jsonArray.add(obj);
             }
 
@@ -451,6 +456,7 @@ public class OrderRunningController {
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
+                obj.put("mode", orderRunnings.get(i).getMode());
                 obj.put("priority", orderRunnings.get(i).getPriority());
                 jsonArray.add(obj);
             }

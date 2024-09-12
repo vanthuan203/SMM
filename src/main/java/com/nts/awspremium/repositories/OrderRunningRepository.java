@@ -70,7 +70,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
-            "s.task from order_running o \n" +
+            "s.task,s.mode from order_running o \n" +
             "left join profile_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where o.username!='refill@gmail.com' and  o.start_time>0 \n" +
             "group by o.order_id order by o.start_time desc",nativeQuery = true)
@@ -80,7 +80,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
-            "s.task from order_running o \n" +
+            "s.task,s.mode from order_running o \n" +
             "left join profile_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where o.order_id=?1 and o.start_time>0 \n" +
             "group by o.order_id order by o.start_time desc",nativeQuery = true)
@@ -90,7 +90,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
-            "s.task from order_running o \n" +
+            "s.task,s.mode from order_running o \n" +
             "left join service s on o.service_id=s.service_id where  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
     public List<OrderRunningShow> get_Order_Pending();
@@ -99,7 +99,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             ",o.thread,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
-            "s.task from order_running o \n" +
+            "s.task,s.mode from order_running o \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time=0 \n" +
             "group by o.order_id order by o.insert_time desc",nativeQuery = true)
     public List<OrderRunningShow> get_Order_Pending(String username);
@@ -108,7 +108,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
-            "s.task from order_running o \n" +
+            "s.task,s.mode from order_running o \n" +
             "left join profile_task a on a.order_id=o.order_id and running=1 \n" +
             "left join service s on o.service_id=s.service_id where o.username=?1 and  o.start_time>0 \n" +
             "group by o.order_id order by o.start_time desc",nativeQuery = true)

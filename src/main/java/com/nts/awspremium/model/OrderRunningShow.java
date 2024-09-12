@@ -21,6 +21,7 @@ public interface OrderRunningShow {
     Integer getCurrent_count();
     String getPlatform();
     String getTask();
+    String getMode();
     Integer getBonus();
     Integer getPriority();
 

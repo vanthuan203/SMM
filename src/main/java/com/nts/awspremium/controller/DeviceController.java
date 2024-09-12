@@ -361,7 +361,7 @@ public class DeviceController {
         }
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
-            deviceRepository.update_Mode_By_DeviceId(mode,arrPlatform);
+            deviceRepository.update_Mode_By_DeviceId(mode.trim().toLowerCase(),arrPlatform);
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
 
@@ -423,7 +423,7 @@ public class DeviceController {
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
             device.setState(device_body.getState());
             device.setBox_id(device_body.getBox_id());
-            device.setMode(device_body.getMode());
+            device.setMode(device_body.getMode().trim().toLowerCase());
             deviceRepository.save(device);
             JSONArray jsonArray = new JSONArray();
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);

@@ -218,6 +218,7 @@ public class ServiceController {
             service.setMax_time(service_body.getMax_time());
             service.setBonus(service_body.getBonus());
             service.setRefund(service_body.getRefund());
+            service.setMode(service_body.getMode().trim().toLowerCase());
             service.setRefund_time(service_body.getRefund_time());
             service.setCheck_time(service_body.getCheck_time());
             service.setService_rate(service_body.getService_rate());

@@ -23,6 +23,7 @@ public interface OrderHistoryShow {
     Integer getCurrent_count();
     String getPlatform();
     String getTask();
+    String getMode();
     Integer getBonus();
     Integer getRefund();
     Integer getRefill();
