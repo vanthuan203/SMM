@@ -316,6 +316,7 @@ public class GoogleApi {
                     int startIndex = scriptContent.indexOf("{");
                     int endIndex = scriptContent.lastIndexOf("}") + 1;
                     String jsonString = scriptContent.substring(startIndex, endIndex);
+                    System.out.println(jsonString);
                     // Phân tích cú pháp JSON và trích xuất videoId
                     JsonReader reader = new JsonReader(new StringReader(jsonString));
                     reader.setLenient(true);
@@ -326,7 +327,7 @@ public class GoogleApi {
                             .getAsJsonObject("twoColumnBrowseResultsRenderer")
                             .getAsJsonArray("tabs");
 
-                    JsonArray item_video=items.get(1).getAsJsonObject().
+                    JsonArray item_video=items.get(0).getAsJsonObject().
                             getAsJsonObject("tabRenderer")
                             .getAsJsonObject("content")
                             .getAsJsonObject("richGridRenderer")

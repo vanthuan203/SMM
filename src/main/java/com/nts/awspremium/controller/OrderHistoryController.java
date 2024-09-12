@@ -314,7 +314,7 @@ public class OrderHistoryController {
     ResponseEntity<String> checkCount() {
         JSONObject resp = new JSONObject();
         try {
-            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount("youtube","view");
+            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount12h("youtube","view");
             if(list_Order_Key==null){
                 resp.put("status", true);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);

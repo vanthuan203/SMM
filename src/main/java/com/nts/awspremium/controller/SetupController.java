@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
@@ -262,16 +263,13 @@ public class SetupController {
 
 
  */
-    @PostMapping(value = "/test2", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test2(@RequestBody JSONObject list_tiktok) {
+    @GetMapping(value = "/test2", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> test2(@RequestParam String link) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            String[] list=list_tiktok.get("list").toString().split(",");
-            for(int i=0;i<list.length;i++){
-                System.out.println(TikTokApi.checkAccountTiktok(list[i].trim()));
-            }
-            resp.put("data", true);
+            List<String> lisst= GoogleApi.getVideoLinks(link);
+            resp.put("data", lisst);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
