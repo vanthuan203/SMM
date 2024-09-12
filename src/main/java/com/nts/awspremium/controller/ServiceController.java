@@ -129,6 +129,7 @@ public class ServiceController {
                 obj.put("bonus", services.get(i).getBonus());
                 obj.put("check_done", services.get(i).getCheck_done());
                 obj.put("check_count", services.get(i).getCheck_count());
+                obj.put("mode", services.get(i).getMode());
                 jsonArray.add(obj);
             }
             resp.put("services",jsonArray);
@@ -221,6 +222,15 @@ public class ServiceController {
             service.setCheck_time(service_body.getCheck_time());
             service.setService_rate(service_body.getService_rate());
             service.setEnabled(service_body.getEnabled());
+
+            if(service_body.getPlatform().trim().equals("youtube")){
+                service.setYoutube_embed(service_body.getYoutube_embed());
+                service.setYoutube_direct(service_body.getYoutube_direct());
+                service.setYoutube_external(service_body.getYoutube_external());
+                service.setYoutube_dtn(service_body.getYoutube_dtn());
+                service.setYoutube_search(service_body.getYoutube_search());
+                service.setYoutube_suggest(service_body.getYoutube_suggest());
+            }
             serviceRepository.save(service);
             JSONObject obj = new JSONObject();
             obj.put("service_id", service.getService_id());
@@ -259,6 +269,7 @@ public class ServiceController {
             obj.put("bonus", service.getBonus());
             obj.put("check_done", service.getCheck_done());
             obj.put("check_count", service.getCheck_count());
+            obj.put("mode", service.getMode());
             resp.put("service",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
