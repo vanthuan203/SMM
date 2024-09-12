@@ -838,7 +838,7 @@ public class OrderRunningController {
                         {
                             continue;
                         }else if(count>=0) {
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -848,7 +848,7 @@ public class OrderRunningController {
                         {
                             continue;
                         }else if(count>=0) {
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -858,7 +858,7 @@ public class OrderRunningController {
                         {
                             continue;
                         }else if(count>=0) {
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -869,7 +869,7 @@ public class OrderRunningController {
                         if(count==-2) {
                             continue;
                         }else if(count>=0){
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -878,7 +878,7 @@ public class OrderRunningController {
                         if(count==-2) {
                             continue;
                         }else if(count>=0){
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -887,7 +887,7 @@ public class OrderRunningController {
                         if(count==-2) {
                             continue;
                         }else if(count>=0){
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
@@ -896,7 +896,7 @@ public class OrderRunningController {
                         if(count==-2) {
                             continue;
                         }else if(count>=0){
-                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+orderRunningList.get(i).getService().getBonus()*orderRunningList.get(i).getQuantity()){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100)*orderRunningList.get(i).getQuantity()){
                                 continue;
                             }
                         }
