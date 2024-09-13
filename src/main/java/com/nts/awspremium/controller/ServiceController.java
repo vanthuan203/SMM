@@ -32,14 +32,14 @@ public class ServiceController {
     @Autowired
     private LogErrorRepository logErrorRepository;
     @GetMapping(path = "get_List_Service",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> get_List_Service(@RequestParam(defaultValue = "") String role,@RequestParam(defaultValue = "") String platform){
+    ResponseEntity<String> get_List_Service(@RequestParam(defaultValue = "") String role,@RequestParam(defaultValue = "") String platform,@RequestParam(defaultValue = "") String mode){
         JSONObject resp = new JSONObject();
         try {
             List<String > list_Service;
             if(role.equals("ROLE_ADMIN")){
-                list_Service=serviceRepository.get_All_Service_Web(platform);
+                list_Service=serviceRepository.get_All_Service_Web(platform,mode);
             }else{
-                list_Service=serviceRepository.get_All_Service_Enabled_Web(platform);
+                list_Service=serviceRepository.get_All_Service_Enabled_Web(platform,mode);
             }
             String arr_Service="";
             for(int i=0;i<list_Service.size();i++){
@@ -164,9 +164,11 @@ public class ServiceController {
         List<String > task=serviceRepository.get_All_Task();
         List<String > type=serviceRepository.get_All_Type();
         List<String > platform=serviceRepository.get_All_Platform();
+        List<String > mode=serviceRepository.get_All_Mode();
         String list_Task="";
         String list_Type="";
         String list_Platform="";
+        String list_Mode="";
         for(int i=0;i<task.size();i++){
             if(i==0){
                 list_Task=task.get(0);
@@ -195,6 +197,15 @@ public class ServiceController {
 
         }
         resp.put("list_Platform",list_Platform);
+        for(int i=0;i<mode.size();i++){
+            if(i==0){
+                list_Mode=mode.get(0);
+            }else{
+                list_Mode=list_Mode+","+mode.get(i);
+            }
+
+        }
+        resp.put("list_Mode",list_Mode);
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
     }
 
