@@ -326,12 +326,22 @@ public class GoogleApi {
                     JsonArray items = jsonObject.getAsJsonObject("contents")
                             .getAsJsonObject("twoColumnBrowseResultsRenderer")
                             .getAsJsonArray("tabs");
+                    int index=0;
+                    JsonArray item_video=null;
+                    while(index<2){
+                        try{
+                            index=index+1;
+                            item_video=items.get(index-1).getAsJsonObject().
+                                    getAsJsonObject("tabRenderer")
+                                    .getAsJsonObject("content")
+                                    .getAsJsonObject("richGridRenderer")
+                                    .getAsJsonArray("contents");
+                            break;
+                        }catch (Exception e){
+                            continue;
+                        }
+                    }
 
-                    JsonArray item_video=items.get(0).getAsJsonObject().
-                            getAsJsonObject("tabRenderer")
-                            .getAsJsonObject("content")
-                            .getAsJsonObject("richGridRenderer")
-                            .getAsJsonArray("contents");
                     if(item_video.size()>0){
                         for (int i=0;i<item_video.size();i++){
                             try{
