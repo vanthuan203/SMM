@@ -35,10 +35,10 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
     @Query(value = "SELECT * from order_history where order_id in (?1)",nativeQuery = true)
     public List<OrderHistory> get_Order_By_ListId(List<String> list_orderid);
     @Query(value = "SELECT GROUP_CONCAT(order_key) from (SELECT order_key FROM Data.order_history where service_id in(select service_id from service where platform=?1 and task=?2) \n" +
-            "and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=?3 and\n" +
+            "and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=8 and\n" +
             " round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24 and\n" +
             " update_current_time=0 and valid=1 and cancel!=1  order by end_time asc limit 35) as oh",nativeQuery = true)
-    public String get_List_OrderKey_CheckCountByTime(String platform,String task,Integer hour);
+    public String get_List_OrderKey_CheckCount12h(String platform,String task);
 
     @Modifying
     @Transactional
