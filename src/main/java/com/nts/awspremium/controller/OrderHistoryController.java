@@ -311,10 +311,10 @@ public class OrderHistoryController {
     }
 
     @GetMapping(path = "checkCount", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> checkCount() {
+    ResponseEntity<String> checkCount(@RequestParam Integer hour) {
         JSONObject resp = new JSONObject();
         try {
-            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount12h("youtube","view");
+            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCountByTime("youtube","view",hour);
             if(list_Order_Key==null){
                 resp.put("status", true);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
