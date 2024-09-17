@@ -74,5 +74,7 @@ public class OrderHistory implements Serializable {
     private Long order_refill;
     @Column(columnDefinition = "integer default 1")
     private Integer valid=1;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String mode_check="";
 
 }

@@ -37,13 +37,13 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
     @Query(value = "SELECT GROUP_CONCAT(order_key) from (SELECT order_key FROM Data.order_history where service_id in(select service_id from service where platform=?1 and task=?2) \n" +
             "and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=8 and\n" +
             " round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24 and\n" +
-            " update_current_time=0 and valid=1 and cancel!=1  order by end_time asc limit 35) as oh",nativeQuery = true)
-    public String get_List_OrderKey_CheckCount12h(String platform,String task);
+            " update_current_time=0 and valid!=0 and cancel!=1  order by end_time asc limit 35) as oh",nativeQuery = true)
+    public String get_List_OrderKey_CheckCount8h(String platform,String task);
 
     @Modifying
     @Transactional
-    @Query(value = "update order_history set current_count=?1,update_current_time=?2 where order_key=?3 and service_id in(select service_id from service where platform=?4 and task=?5) and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=12 and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24*7",nativeQuery = true)
-    public void update_Order_CheckCount(Integer current_count,Long update_current_time,String order_key,String platform,String task);
+    @Query(value = "update order_history set current_count=?1,update_current_time=?2,mode_check=?3 where order_key=?4 and service_id in(select service_id from service where platform=?5 and task=?6) and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)>=8 and round((UNIX_TIMESTAMP()-end_time/1000)/60/60)<24",nativeQuery = true)
+    public void update_Order_CheckCount(Integer current_count,Long update_current_time,String mode_check,String order_key,String platform,String task);
 
     @Modifying
     @Transactional

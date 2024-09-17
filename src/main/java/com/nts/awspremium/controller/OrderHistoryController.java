@@ -314,7 +314,7 @@ public class OrderHistoryController {
     ResponseEntity<String> checkCount() {
         JSONObject resp = new JSONObject();
         try {
-            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount12h("youtube","view");
+            String list_Order_Key=orderHistoryRepository.get_List_OrderKey_CheckCount8h("youtube","view");
             if(list_Order_Key==null){
                 resp.put("status", true);
                 return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -343,7 +343,7 @@ public class OrderHistoryController {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject obj = new JSONObject();
                     JSONObject statistics = (JSONObject) video.get("statistics");
-                    orderHistoryRepository.update_Order_CheckCount(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(), video.get("id").toString(),"youtube","view");
+                    orderHistoryRepository.update_Order_CheckCount(Integer.parseInt(statistics.get("viewCount").toString()),System.currentTimeMillis(),"8h", video.get("id").toString(),"youtube","view");
                     notValid.remove(video.get("id").toString());
                 } catch (Exception e) {
                     continue;
