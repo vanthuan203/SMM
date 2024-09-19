@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "SELECT * FROM account where account_id=?1 limit 1",nativeQuery = true)
@@ -23,8 +24,8 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "call update_running_account(?1,?2,?3)",nativeQuery = true)
     public Account get_Account_By_DeviceId(String device_id,Long time_check,String code);
 
-    @Query(value = "call update_running_account_youtube(?1,?2,?3,?4)",nativeQuery = true)
-    public Account get_Account_Youtube_By_ProfileId(String profile_id,String device_id,Long time_check,String code);
+    @Query(value = "call update_running_account_youtube(?1,?2,?3,?4,?5)",nativeQuery = true)
+    public Account get_Account_Youtube_By_ProfileId(String profile_id,String device_id,Long time_check,String code,String mode);
     @Query(value = "call update_running_account_gmail(?1,?2,?3,?4)",nativeQuery = true)
     public Account get_Account_Gmail_By_ProfileId(String profile_id,String device_id,Long time_check,String code);
 
@@ -47,4 +48,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Transactional
     @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and account_id not in(select account_id from account_profile)",nativeQuery = true)
     public Integer reset_Account_Error();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and device_id in(?1)",nativeQuery = true)
+    public Integer reset_Account_By_ListDevice(List<String> device_id);
 }

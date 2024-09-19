@@ -75,6 +75,11 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
+    @Query(value = "DELETE  FROM profile_task  where  device_id in (?1)",nativeQuery = true)
+    public Integer delete_Profile_By_List_Device(List<String> device_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE profile_task set enabled=1, enabled_time=?2 where profile_id=?1",nativeQuery = true)
     public Integer update_Enabled_Profile_By_ProfileId(String profile_id,Long enabled_time);
 

@@ -64,6 +64,9 @@ public class Account implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String device_id="";
 
+    @Column(columnDefinition = "varchar(255) default 'auto'")
+    private String device_mode="";
+
     @Column(columnDefinition = "varchar(255) default ''")
     private String computer_id="";
 

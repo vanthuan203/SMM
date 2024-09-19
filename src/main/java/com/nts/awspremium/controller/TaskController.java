@@ -190,7 +190,7 @@ public class TaskController {
                             Integer ranver=ran.nextInt(stringrand.length());
                             code=code+stringrand.charAt(ranver);
                         }
-                        account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                        account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                     }
                     if(account_get!=null){
                         AccountProfile accountProfile=new AccountProfile();
@@ -900,7 +900,7 @@ public class TaskController {
                                 Integer ranver=ran.nextInt(stringrand.length());
                                 code=code+stringrand.charAt(ranver);
                             }
-                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                         }
                         if(account_get!=null){
                             AccountProfile accountProfile=new AccountProfile();
@@ -1720,7 +1720,7 @@ public class TaskController {
                                 Integer ranver=ran.nextInt(stringrand.length());
                                 code=code+stringrand.charAt(ranver);
                             }
-                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                         }
                         if(account_get!=null){
                             AccountProfile accountProfile=new AccountProfile();
@@ -2616,7 +2616,7 @@ public class TaskController {
                                 Integer ranver=ran.nextInt(stringrand.length());
                                 code=code+stringrand.charAt(ranver);
                             }
-                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                            account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                         }
                         if(account_get!=null){
                             AccountProfile accountProfile=new AccountProfile();
@@ -5574,7 +5574,7 @@ public class TaskController {
                         Integer ranver=ran.nextInt(stringrand.length());
                         code=code+stringrand.charAt(ranver);
                     }
-                    account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                    account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                 }
                 if(account_get!=null){
                     AccountProfile accountProfile=new AccountProfile();
@@ -5976,7 +5976,7 @@ public class TaskController {
                         Integer ranver=ran.nextInt(stringrand.length());
                         code=code+stringrand.charAt(ranver);
                     }
-                    account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code);
+                    account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                 }
                 if(account_get!=null){
                     AccountProfile accountProfile=new AccountProfile();
