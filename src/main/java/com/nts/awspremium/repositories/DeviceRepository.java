@@ -26,6 +26,11 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
 
     @Modifying
     @Transactional
+    @Query(value = "delete from device where device_id in(?1)",nativeQuery = true)
+    public void delete_Device_By_List_Device(List<String> device_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "update device set state=?1  where device_id in(?2)",nativeQuery = true)
     public void update_State_By_DeviceId(Integer state,List<String> device_id);
 

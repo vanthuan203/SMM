@@ -259,10 +259,9 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
         try{
-            String[] device_Arr = device_id.split(",");
-            for (int i=0;i<device_Arr.length;i++) {
-                deviceRepository.delete_Device_By_DeviceId(device_Arr[i].trim());
-            }
+            List<String> arrDevice=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.delete_Device_By_List_Device(arrDevice);
+            accountRepository.reset_Account_By_ListDevice(arrDevice);
             resp.put("device", "");
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
