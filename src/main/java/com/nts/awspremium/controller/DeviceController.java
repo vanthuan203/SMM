@@ -185,6 +185,7 @@ public class DeviceController {
                 device=device_new;
             }else{
                 device.setRom_version(rom_version);
+                device.setIp_address(ip);
                 device.setNum_profile(profileId.size());
                 deviceRepository.save(device);
             }
