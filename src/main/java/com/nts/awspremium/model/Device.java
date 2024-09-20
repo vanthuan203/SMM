@@ -24,6 +24,8 @@ public class Device implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer num_profile;
     @Column(columnDefinition = "integer default 0")
+    private Integer num_profile_set=0;
+    @Column(columnDefinition = "integer default 0")
     private Integer num_account;
     @Column(columnDefinition = "integer default 1")
     private Integer state;

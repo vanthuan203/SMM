@@ -1592,12 +1592,36 @@ public class TaskController {
                 data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else if(device.getReboot()==1){
+                device.setReboot(0);
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "reboot");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getState()==0){
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
                 resp.put("status", false);
                 data.put("message", "device_id không làm nhiệm vụ");
                 resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(device.getMode().trim().length()==0){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                resp.put("status", false);
+                data.put("message", "mode hiện tại trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            if(device.getNum_profile()<device.getNum_profile_set()&&!profile_id.trim().equals("0")){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "profile_changer");
+                data.put("profile_id",0);
+                resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             device.setUpdate_time(System.currentTimeMillis());
@@ -1609,6 +1633,13 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(profile_id.trim().equals("0")){
+                if(device.getNum_profile()<device.getNum_profile_set()){
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "create_profile");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                 if(profileTask!=null){
                     resp.put("status", true);
@@ -1762,6 +1793,10 @@ public class TaskController {
                                     profileTask.setUpdate_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask);
                                     profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
+                                    resp.put("status", false);
+                                    data.put("message", "Không có account_id để chạy");
+                                    resp.put("data", data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }else{
                                     resp.put("status", false);
                                     data.put("message", "Không có account_id để chạy");

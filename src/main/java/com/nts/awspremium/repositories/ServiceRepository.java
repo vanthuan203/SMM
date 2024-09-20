@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ServiceRepository extends JpaRepository<Service,Integer> {
-    @Query(value = "SELECT * FROM service where enabled=1",nativeQuery = true)
+    @Query(value = "SELECT * FROM service where enabled=1 and mode='auto'",nativeQuery = true)
     public List<Service> get_All_Service_Enabled();
     @Query(value = "SELECT * FROM service where enabled=1",nativeQuery = true)
     public List<Service> get_All_Service();
