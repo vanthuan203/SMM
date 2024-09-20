@@ -54,6 +54,12 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Query(value = "SELECT * FROM profile_task where device_id=?1",nativeQuery = true)
     public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
+
+    @Query(value = "SELECT count(*) FROM profile_task where valid=0 and device_id=?1",nativeQuery = true)
+    public Integer get_Count_Profile_Valid_0_By_DeviceId(String device_id);
+    @Query(value = "SELECT profile_id FROM profile_task where valid=0 and device_id=?1 limit 1",nativeQuery = true)
+    public String get_ProfileId_Valid_0_By_DeviceId(String device_id);
+
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account_profile where live=1 and profile_id=?1",nativeQuery = true)
     public String get_AccountLive_By_ProfileId(String profile_id);
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and profile_id=?1",nativeQuery = true)
@@ -82,6 +88,11 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Transactional
     @Query(value = "UPDATE profile_task set enabled=1, enabled_time=?2 where profile_id=?1",nativeQuery = true)
     public Integer update_Enabled_Profile_By_ProfileId(String profile_id,Long enabled_time);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task set valid=?1 where profile_id=?2",nativeQuery = true)
+    public Integer update_Valid_Profile_By_ProfileId(Integer valid,String profile_id);
 
     @Query(value = "SELECT * FROM profile_task where get_time<=update_time and device_id=?1 and enabled=1 order by update_time asc limit 1",nativeQuery = true)
     public ProfileTask get_ProfileId_Can_Running_By_DeviceId(String device_id);

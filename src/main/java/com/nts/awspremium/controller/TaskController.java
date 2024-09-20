@@ -1616,7 +1616,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            if(device.getNum_profile()<device.getNum_profile_set()&&!profile_id.trim().equals("0")){
+            if((device.getNum_profile()<device.getNum_profile_set() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");
@@ -1633,6 +1633,15 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(profile_id.trim().equals("0")){
+                if(profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0){
+                    String profile_remove=profileTaskRepository.get_ProfileId_Valid_0_By_DeviceId(device_id.trim());
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "remove_profile");
+                    data.put("profile_id",Integer.parseInt(profile_remove.split(device_id.trim()+"_")[1]));
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 if(device.getNum_profile()<device.getNum_profile_set()){
                     resp.put("status", true);
                     data.put("platform", "system");

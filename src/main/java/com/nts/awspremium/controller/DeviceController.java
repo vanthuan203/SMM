@@ -129,6 +129,8 @@ public class DeviceController {
     public ResponseEntity<Map<String, Object>> check_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                                @RequestParam(defaultValue = "") String device_id,
                                                                @RequestParam(defaultValue = "") String profile_list,
+                                                               @RequestParam(defaultValue = "") String profile_remove,
+                                                               @RequestParam(defaultValue = "") String ip,
                                                                @RequestParam(defaultValue = "") String rom_version
                                                               ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -178,7 +180,7 @@ public class DeviceController {
                 device_new.setBox_id("");
                 device_new.setMode("");
                 device_new.setNum_profile(profileId.size());
-                device_new.setIp_address("");
+                device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
@@ -213,12 +215,16 @@ public class DeviceController {
                     profileTask_new.setTask_key("");
                     profileTask_new.setTask_list("");
                     profileTask_new.setTask_index(0);
-                    profileTask_new.setUpdate_time(0L);
+                    profileTask_new.setTask_index(0);
+                    profileTask_new.setValid(1);
                     profileTaskRepository.save(profileTask_new);
                 }
             }
             if(enabled.length()!=0){
-                profileTaskRepository.update_Enabled_Profile_By_ProfileId(device_id+"_"+enabled,System.currentTimeMillis());
+                profileTaskRepository.update_Enabled_Profile_By_ProfileId(device_id.trim()+"_"+enabled,System.currentTimeMillis());
+            }
+            if(profile_remove.trim().length()>0&&!profile_remove.trim().equals("0")){
+                profileTaskRepository.update_Valid_Profile_By_ProfileId(0,device_id.trim()+"_"+profile_remove.trim());
             }
             resp.put("status",true);
             data.put("message", "Check hoàn tất");
@@ -255,6 +261,59 @@ public class DeviceController {
         if(checktoken ==0){
             resp.put("status",false);
             data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        try{
+            List<String> arrDevice=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.delete_Device_By_List_Device(arrDevice);
+            accountRepository.reset_Account_By_ListDevice(arrDevice);
+            resp.put("device", "");
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "remove_Profile", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> remove_Profile(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id
+            , @RequestParam(defaultValue = "") String profile_id
+    ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            data.put("message", "Token expired");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        if(device_id.trim().length() ==0){
+            resp.put("status",false);
+            data.put("message", "device_id không để trống");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+        if(profile_id.trim().length() ==0){
+            resp.put("status",false);
+            data.put("message", "profile_id không để trống");
             resp.put("data",data);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
