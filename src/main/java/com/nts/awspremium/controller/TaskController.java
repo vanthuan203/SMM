@@ -1616,6 +1616,8 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            device.setUpdate_time(System.currentTimeMillis());
+            deviceRepository.save(device);
             if((device.getNum_profile()<device.getNum_profile_set() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
                 resp.put("status", true);
                 data.put("platform", "system");
@@ -1624,8 +1626,6 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            device.setUpdate_time(System.currentTimeMillis());
-            deviceRepository.save(device);
             profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
             if(profileTask==null&&!profile_id.trim().equals("0")){
                 resp.put("status", false);
