@@ -23,6 +23,8 @@ public class ProfileTask implements Serializable {
     @Column(columnDefinition = "bigint default 0")
     private Long online_time=0L;
     @Column(columnDefinition = "bigint default 0")
+    private Long google_time=0L;
+    @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
     private Long enabled_time;
@@ -48,6 +50,8 @@ public class ProfileTask implements Serializable {
     private Integer register_index=0;
     @Column(columnDefinition = "integer default 1")
     private Integer valid=1;
+    @Column(columnDefinition = "integer default 0")
+    private Integer reboot=0;
     @Column(columnDefinition = "bigint default 0")
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")

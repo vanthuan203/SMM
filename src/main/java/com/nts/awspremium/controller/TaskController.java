@@ -1556,6 +1556,7 @@ public class TaskController {
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String device_id,
+                                                   @RequestParam(defaultValue = "") String rom_version,
                                                    @RequestParam(defaultValue = "") String profile_id,
                                                    @RequestParam(defaultValue = "") String platform) throws InterruptedException {
 
@@ -1574,6 +1575,12 @@ public class TaskController {
             if (device_id.length()==0) {
                 resp.put("status", false);
                 data.put("message", "device_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (rom_version.length()==0) {
+                resp.put("status", false);
+                data.put("message", "rom_version không để trống");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
@@ -1616,6 +1623,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            device.setRom_version(rom_version.trim());
             device.setUpdate_time(System.currentTimeMillis());
             deviceRepository.save(device);
             if((device.getNum_profile()<device.getNum_profile_set() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
@@ -1651,6 +1659,8 @@ public class TaskController {
                 }
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                 if(profileTask!=null){
+                    profileTask.setReboot(1);
+                    profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -1667,7 +1677,7 @@ public class TaskController {
                 if(profileTask.getEnabled()==0&&platform.length()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                     if(profileTask!=null){
-                        profileTask.setOnline_time(System.currentTimeMillis());
+                        profileTask.setReboot(1);
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
@@ -1684,7 +1694,7 @@ public class TaskController {
                 }else if(profileTask.getEnabled()==0&&platform.length()!=0){
                     profileTask.setEnabled(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
-                    profileTask.setOnline_time(System.currentTimeMillis());
+                    profileTask.setReboot(1);
                     profileTaskRepository.save(profileTask);
                 }
             }
@@ -1694,12 +1704,30 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            String profile_Reboot=profileTaskRepository.get_ProfileId_Reboot_1_By_DeviceId(device_id.trim());
+            if(profile_Reboot!=null?( !profile_id.trim().equals(profile_Reboot) ):false && platform.trim().length()==0){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "profile_changer");
+                data.put("profile_id", Integer.parseInt(profile_Reboot));
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            if(profileTask.getReboot()==1){
+                profileTask.setOnline_time(System.currentTimeMillis());
+                profileTaskRepository.save(profileTask);
+                profileTaskRepository.reset_Reboot_By_DeviceId(device_id.trim());
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "reboot");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
             //update time check
             if(profileTask.getOnline_time()==0){
                 profileTask.setOnline_time(System.currentTimeMillis());
             }
             profileTask.setUpdate_time(System.currentTimeMillis());
-
 
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
@@ -1790,7 +1818,7 @@ public class TaskController {
                             if(platform.length()==0){
                                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                                 if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                    profileTask.setOnline_time(System.currentTimeMillis());
+                                    profileTask.setReboot(1);
                                     profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
                                     data.put("platform", "system");
@@ -1801,7 +1829,7 @@ public class TaskController {
                                 }else if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())==1){
                                     profileTask.setUpdate_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask);
-                                    profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
+                                    //profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                                     resp.put("status", false);
                                     data.put("message", "Không có account_id để chạy");
                                     resp.put("data", data);
@@ -1828,7 +1856,7 @@ public class TaskController {
 
                                 ProfileTask profileTask_Check =profileTaskRepository.get_Profile_Rand_Enable0_And_NotIn(profileTask.getProfile_id(),device.getDevice_id().trim());
                                 if (profileTask_Check !=null){
-                                    profileTask.setOnline_time(System.currentTimeMillis());
+                                    profileTask.setReboot(1);
                                     profileTask_Check.setEnabled(1);
                                     profileTask_Check.setEnabled_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask_Check);
@@ -1841,6 +1869,8 @@ public class TaskController {
                                 }else{
                                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
+                                        profileTask.setReboot(1);
+                                        profileTaskRepository.save(profileTask);
                                         resp.put("status", true);
                                         data.put("platform", "system");
                                         data.put("task", "profile_changer");
@@ -1868,12 +1898,12 @@ public class TaskController {
                         }
                     }
 
-                }else if(profileTask.getRequest_index()>0&&platform.length()==0){ //if live=-1
+                }else if(profileTask.getRequest_index()>0&&platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){ //if live=-1
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                     entityManager.clear();
                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                        profileTask.setOnline_time(System.currentTimeMillis());
+                        profileTask.setReboot(1);
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
@@ -1926,6 +1956,10 @@ public class TaskController {
                 }
             }
             //////////////////////////
+
+            if(profileTask.getGoogle_time()==0){
+                profileTask.setGoogle_time(System.currentTimeMillis());
+            }
 
             if(profileTask.getState()==0 || profileTask.getPlatform().length()==0){
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -2048,7 +2082,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
+                            if((System.currentTimeMillis()-profileTask.getGoogle_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
                                 if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
@@ -2293,7 +2327,7 @@ public class TaskController {
                     if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){
                         if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                             profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                            profileTask.setOnline_time(System.currentTimeMillis());
+                            profileTask.setReboot(1);
                             profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform", "system");
@@ -2302,8 +2336,6 @@ public class TaskController {
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }else{
-                            profileTask.setOnline_time(System.currentTimeMillis());
-                            profileTaskRepository.save(profileTask);
                             resp.put("status", false);
                             data.put("message", "Không có account_id để chạy");
                             resp.put("data", data);
@@ -2567,7 +2599,7 @@ public class TaskController {
                 if(profileTask.getEnabled()==0&&platform.length()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                     if(profileTask!=null){
-                        profileTask.setOnline_time(System.currentTimeMillis());
+                        profileTask.setReboot(1);
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
@@ -2584,7 +2616,6 @@ public class TaskController {
                 }else if(profileTask.getEnabled()==0&&platform.length()!=0){
                     profileTask.setEnabled(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
-                    profileTask.setOnline_time(System.currentTimeMillis());
                     profileTaskRepository.save(profileTask);
                 }
             }
@@ -2690,7 +2721,7 @@ public class TaskController {
                             if(platform.length()==0){
                                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                                 if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                    profileTask.setOnline_time(System.currentTimeMillis());
+                                    profileTask.setReboot(1);
                                     profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
                                     data.put("platform", "system");
@@ -2701,7 +2732,7 @@ public class TaskController {
                                 }else if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())==1){
                                     profileTask.setUpdate_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask);
-                                    profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
+                                    //profileTask = profileTaskRepository.get_ProfileId_Can_Running_By_DeviceId(device_id.trim());
                                 }else{
                                     resp.put("status", false);
                                     data.put("message", "Không có account_id để chạy");
@@ -2724,7 +2755,7 @@ public class TaskController {
 
                                 ProfileTask profileTask_Check =profileTaskRepository.get_Profile_Rand_Enable0_And_NotIn(profileTask.getProfile_id(),device.getDevice_id().trim());
                                 if (profileTask_Check !=null){
-                                    profileTask.setOnline_time(System.currentTimeMillis());
+                                    profileTask.setReboot(1);
                                     profileTask_Check.setEnabled(1);
                                     profileTask_Check.setEnabled_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask_Check);
@@ -2769,7 +2800,7 @@ public class TaskController {
                     entityManager.clear();
                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                        profileTask.setOnline_time(System.currentTimeMillis());
+                        profileTask.setReboot(1);
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
@@ -3189,7 +3220,7 @@ public class TaskController {
                     if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){
                         if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                             profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                            profileTask.setOnline_time(System.currentTimeMillis());
+                            profileTask.setReboot(1);
                             profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform", "system");
@@ -3198,8 +3229,6 @@ public class TaskController {
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }else{
-                            profileTask.setOnline_time(System.currentTimeMillis());
-                            profileTaskRepository.save(profileTask);
                             resp.put("status", false);
                             data.put("message", "Không có account_id để chạy");
                             resp.put("data", data);

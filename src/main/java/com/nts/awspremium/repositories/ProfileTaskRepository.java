@@ -20,7 +20,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "select count(*) from profile_task where device_id=?1",nativeQuery = true)
     public Integer count_Profile(String device_id);
 
-    @Query(value = "Select * from profile_task where  device_id=?1 and round((UNIX_TIMESTAMP()-(select max(enabled_time) from profile_task where  device_id=?1)/1000)/60/60)>(select time_enable_profile from setting_system where id=1)\n" +
+    @Query(value = "Select * from profile_task where  device_id=?1 and round((UNIX_TIMESTAMP()-(select max(google_time) from profile_task where  device_id=?1)/1000)/60/60)>(select time_enable_profile from setting_system where id=1)\n" +
             "  and enabled=0 order by rand() limit 1",nativeQuery = true)
     public ProfileTask get_Profile_Rand_Enable0(String device_id);
 
@@ -60,6 +60,9 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "SELECT profile_id FROM profile_task where valid=0 and device_id=?1 limit 1",nativeQuery = true)
     public String get_ProfileId_Valid_0_By_DeviceId(String device_id);
 
+    @Query(value = "SELECT REPLACE(profile_id, concat(device_id,'_'), '') FROM profile_task where reboot=1 and device_id=?1 order by update_time desc limit 1",nativeQuery = true)
+    public String get_ProfileId_Reboot_1_By_DeviceId(String device_id);
+
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account_profile where live=1 and profile_id=?1",nativeQuery = true)
     public String get_AccountLive_By_ProfileId(String profile_id);
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and profile_id=?1",nativeQuery = true)
@@ -68,6 +71,11 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Transactional
     @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,account_id='',platform='' where profile_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task SET reboot=0 where device_id=?1",nativeQuery = true)
+    public Integer reset_Reboot_By_DeviceId(String device_id);
 
     @Modifying
     @Transactional
