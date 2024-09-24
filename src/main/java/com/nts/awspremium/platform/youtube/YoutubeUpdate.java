@@ -47,8 +47,8 @@ public class YoutubeUpdate {
             if(youtubeVideoHistory!=null){
                 char target = '|';
                 long count = youtubeVideoHistory.getList_id().trim().chars().filter(ch -> ch == target).count();
-                if(count>=15){
-                    int occurrence = (int)count-9;  // Lần xuất hiện thứ n cần tìm
+                if(count>=10){
+                    int occurrence = (int)count-4;  // Lần xuất hiện thứ n cần tìm
                     OptionalInt position = IntStream.range(0, youtubeVideoHistory.getList_id().trim().length())
                             .filter(i -> youtubeVideoHistory.getList_id().trim().charAt(i) == target)
                             .skip(occurrence - 1)
