@@ -1599,6 +1599,13 @@ public class TaskController {
                 data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else if(device.getState()==0){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                resp.put("status", false);
+                data.put("message", "device_id không làm nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time()){
                 device.setReboot(0);
                 device.setUpdate_time(System.currentTimeMillis());
@@ -1608,13 +1615,6 @@ public class TaskController {
                 data.put("platform", "system");
                 data.put("task", "reboot");
                 resp.put("data",data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else if(device.getState()==0){
-                device.setUpdate_time(System.currentTimeMillis());
-                deviceRepository.save(device);
-                resp.put("status", false);
-                data.put("message", "device_id không làm nhiệm vụ");
-                resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getMode().trim().length()==0){
                 device.setUpdate_time(System.currentTimeMillis());

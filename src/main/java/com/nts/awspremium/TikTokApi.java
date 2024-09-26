@@ -37,9 +37,11 @@ public class TikTokApi {
             Response response = client.newCall(request).execute();
 
             String resultJson = response.body().string();
+            System.out.println(resultJson);
             response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
+            System.out.println(jsonObject);
             if(jsonObject.get("sec_uid")==null){
                 return getFollowerCount(tiktok_id,index-1);
             }else{
@@ -50,6 +52,7 @@ public class TikTokApi {
                 resultJson = response.body().string();
                 obj = new JSONParser().parse(resultJson);
                 jsonObject = (JSONObject) obj;
+                System.out.println(jsonObject);
                 if(jsonObject.get("followerCount")==null){
                     return -2;
                 }
