@@ -40,15 +40,15 @@ public class YoutubeUpdate {
     private LogErrorRepository logErrorRepository;
     public Boolean youtube_view(String account_id,String task_key){
         try{
-            if(orderRunningRepository.get_ServiceId_By_TaskKey(task_key.trim())==33){
+            if(orderRunningRepository.check_No_History(task_key.trim())>0){
                 return true;
             }
             YoutubeViewHistory youtubeVideoHistory=youtubeViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeVideoHistory!=null){
                 char target = '|';
                 long count = youtubeVideoHistory.getList_id().trim().chars().filter(ch -> ch == target).count();
-                if(count>=10){
-                    int occurrence = (int)count-4;  // Lần xuất hiện thứ n cần tìm
+                if(count>=15){
+                    int occurrence = (int)count-9;  // Lần xuất hiện thứ n cần tìm
                     OptionalInt position = IntStream.range(0, youtubeVideoHistory.getList_id().trim().length())
                             .filter(i -> youtubeVideoHistory.getList_id().trim().charAt(i) == target)
                             .skip(occurrence - 1)
