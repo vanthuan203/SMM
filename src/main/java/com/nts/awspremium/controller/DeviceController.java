@@ -155,13 +155,13 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
-
             Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
+            List<String> profileIdNotOwner = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
-            if(profileId.size()==1&&profileId.contains("0")&&device.getNum_profile_set()==0){
+            profileIdNotOwner.addAll(Arrays.asList(profile_list.trim().split(",")));
+            profileIdNotOwner.remove("0");
+            if(profileId.size()==1&&profileId.contains("0")){
                 owner_Running=true;
             }else{
                 profileId.remove("0");
@@ -170,6 +170,7 @@ public class DeviceController {
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device==null){
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
@@ -181,20 +182,20 @@ public class DeviceController {
                 device_new.setRom_version(rom_version);
                 device_new.setBox_id("");
                 device_new.setMode("");
-                device_new.setNum_profile(profileId.size());
+                device_new.setNum_profile(profileIdNotOwner.size());
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
                 device.setRom_version(rom_version);
                 device.setIp_address(ip);
-                device.setNum_profile(profileId.size());
+                device.setNum_profile(profileIdNotOwner.size());
                 deviceRepository.save(device);
             }
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             String enabled="";
             Random ran=new Random();
-            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0&&profileId.size()>0){
+            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0){
                 enabled=profileId.get(ran.nextInt(profileId.size()));
             }
             for (int i=0;i<profile.size();i++){
