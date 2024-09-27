@@ -155,10 +155,13 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+
             Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
-            if(profileId.size()==1&&profileId.contains("0")){
+            if(profileId.size()==1&&profileId.contains("0")&&device.getNum_profile_set()==0){
                 owner_Running=true;
             }else{
                 profileId.remove("0");
@@ -167,7 +170,6 @@ public class DeviceController {
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
             if(device==null){
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
