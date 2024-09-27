@@ -194,7 +194,7 @@ public class DeviceController {
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             String enabled="";
             Random ran=new Random();
-            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0){
+            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0&&profileId.size()>0){
                 enabled=profileId.get(ran.nextInt(profileId.size()));
             }
             for (int i=0;i<profile.size();i++){
