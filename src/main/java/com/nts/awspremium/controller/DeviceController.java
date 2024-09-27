@@ -155,17 +155,9 @@ public class DeviceController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            Boolean owner_Running=false;
             List<String> profileId = new ArrayList<>();
-            List<String> profileIdNotOwner = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
-            profileIdNotOwner.addAll(Arrays.asList(profile_list.trim().split(",")));
-            profileIdNotOwner.remove("0");
-            if(profileId.size()==1&&profileId.contains("0")){
-                owner_Running=true;
-            }else{
-                profileId.remove("0");
-            }
+            profileId.remove("0");
             List<String> profile =new ArrayList<>();
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
@@ -182,24 +174,24 @@ public class DeviceController {
                 device_new.setRom_version(rom_version);
                 device_new.setBox_id("");
                 device_new.setMode("");
-                device_new.setNum_profile(profileIdNotOwner.size());
+                device_new.setNum_profile(profile.size());
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
                 device.setRom_version(rom_version);
                 device.setIp_address(ip);
-                device.setNum_profile(profileIdNotOwner.size());
+                device.setNum_profile(profile.size());
                 deviceRepository.save(device);
             }
             profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             String enabled="";
             Random ran=new Random();
-            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0){
+            if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0&&profile.size()>0){
                 enabled=profileId.get(ran.nextInt(profileId.size()));
             }
             for (int i=0;i<profile.size();i++){
-                if(profileId.get(i).toString().trim().equals("0")&&!owner_Running){
+                if(profileId.get(i).toString().trim().equals("0")){
                     continue;
                 }
                 ProfileTask profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profileId.get(i).trim());
@@ -548,6 +540,7 @@ public class DeviceController {
             device.setState(device_body.getState());
             device.setBox_id(device_body.getBox_id());
             device.setMode(device_body.getMode().trim().toLowerCase());
+            device.setNum_profile_set(device_body.getNum_profile_set());
             deviceRepository.save(device);
             JSONArray jsonArray = new JSONArray();
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
