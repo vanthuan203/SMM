@@ -1578,12 +1578,15 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+            /*
             if (rom_version.length()==0) {
                 resp.put("status", false);
                 data.put("message", "rom_version không để trống");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
+
+             */
             if (profile_id.length()==0) {
                 resp.put("status", false);
                 data.put("message", "profile_id không để trống");
