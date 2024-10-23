@@ -1,5 +1,6 @@
 package com.nts.awspremium;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,10 +14,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.*;
 import java.net.Authenticator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -30,14 +34,13 @@ public class TikTokApi {
             if(index<=0){
                 return -2;
             }
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("trong1-1.byeip.net", 16000));
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Request request = null;
             request = new Request.Builder().url("https://countik.com/api/exist/" + tiktok_id).get().build();
 
             Response response = client.newCall(request).execute();
-
             String resultJson = response.body().string();
-            System.out.println(resultJson);
             response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
@@ -62,6 +65,60 @@ public class TikTokApi {
         } catch (Exception e) {
             return -2;
         }
+    }
+
+    public static Integer getFollowerCount2(String tiktok_id,Integer index) {
+        try {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("trong1-1.byeip.net", 16000));
+            Document doc = Jsoup.connect("https://livecounts.io/tiktok-live-follower-counter/"+tiktok_id).proxy(proxy).get();
+            TimeUnit.SECONDS.sleep(2);
+            Elements scriptElements = doc.select("script");
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                if (scriptContent.contains("pageProps")) {
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    System.out.println(jsonString);
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    if (jsonObject.has("props")) {
+                        JsonObject props = jsonObject.getAsJsonObject("props");
+
+                        // Kiểm tra "pageProps" tồn tại trong props
+                        if (props.has("pageProps")) {
+                            JsonObject pageProps = props.getAsJsonObject("pageProps");
+
+                            // Lấy dữ liệu từ pageProps
+                            if (pageProps.has("data")) {
+                                JsonObject data = pageProps.getAsJsonObject("data");
+                                if(data.get("success").getAsBoolean()){
+                                    JsonObject stats = data.getAsJsonObject("stats");
+                                    System.out.println(stats.get("followers").getAsInt());
+                                    return stats.get("followers").getAsInt();
+                                }
+
+                            } else {
+                               return -2;
+                            }
+                        } else {
+                            return -2;
+                        }
+                    } else {
+                        return -2;
+                    }
+                }
+            }
+            return -2;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return -2;
     }
 
     public static JSONObject getInfoVideoTikTok(String link,Integer index) {

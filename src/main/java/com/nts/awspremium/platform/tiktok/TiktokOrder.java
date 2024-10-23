@@ -127,13 +127,17 @@ public class TiktokOrder {
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
             }
+            /*
             JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
             if(infoVideoTikTok.get("status").toString().equals("error")){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
-            video_id=infoVideoTikTok.get("id").toString();
-            Integer like_count=Integer.parseInt(infoVideoTikTok.get("likes").toString());
+
+             */
+            //video_id=infoVideoTikTok.get("id").toString();
+            //Integer like_count=Integer.parseInt(infoVideoTikTok.get("likes").toString());
+            Integer like_count=0;
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
                 return resp;
