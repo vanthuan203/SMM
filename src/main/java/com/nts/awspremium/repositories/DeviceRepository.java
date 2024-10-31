@@ -42,6 +42,11 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
 
     @Modifying
     @Transactional
+    @Query(value = "update device set box_id=?1  where device_id in(?2)",nativeQuery = true)
+    public void update_Box_By_DeviceId(String box_id,List<String> device_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "update device set num_profile=?1  where device_id in(?2)",nativeQuery = true)
     public void update_NumProfile_By_ListDevice(Integer num_profile,List<String> device_id);
 

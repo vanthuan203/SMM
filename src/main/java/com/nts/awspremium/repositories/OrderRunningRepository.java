@@ -41,6 +41,12 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * from order_running where order_key=?1 and  service_id in(select service_id from service where task=?2 and platform=?3) limit 1",nativeQuery = true)
     public OrderRunning find_Order_By_Order_Key(String order_key,String task,String platform);
 
+    @Query(value = "SELECT o.*,s.task from order_running o left join service s on o.service_id=s.service_id where o.start_count=0 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
+    public OrderRunningShow find_Order_By_Start_Count0(String platform);
+
+    @Query(value = "SELECT o.*,s.task from order_running o left join service s on o.service_id=s.service_id where o.total>0 and round((UNIX_TIMESTAMP()-update_current_time/1000)/60)>1 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
+    public OrderRunningShow find_Order_By_Curent0(String platform);
+
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
     public List<OrderRunning> get_Order_By_ListId(List<String> list_orderid);
 
@@ -62,6 +68,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Transactional
     @Query(value = "UPDATE order_running set update_time=IF(total<?1,?2,update_time),total=?1 where order_id=?3",nativeQuery = true)
     public void update_Total_Buff_By_OrderId(Integer total,Long update_time,Long order_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE order_running set check_count=1,check_count_time=?1 where order_id=?2",nativeQuery = true)
+    public void update_Check_Count(Long check_count_time,Long order_id);
 
     @Modifying
     @Transactional
