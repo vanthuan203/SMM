@@ -9,6 +9,7 @@ import com.nts.awspremium.platform.tiktok.TiktokUpdate;
 import com.nts.awspremium.platform.x.XUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.AccountRepository;
+import com.nts.awspremium.repositories.OrderRunningRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,8 @@ import javax.annotation.PostConstruct;
 public class RunAccountCheck {
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private OrderRunningRepository orderRunningRepository;
     @Autowired
     private Environment env;
     @PostConstruct
@@ -35,6 +38,7 @@ public class RunAccountCheck {
                                 throw new RuntimeException(e);
                             }
                             accountRepository.reset_Account_Error();
+                            orderRunningRepository.reset_Check_Count();
                         } catch (Exception e) {
                             continue;
                         }

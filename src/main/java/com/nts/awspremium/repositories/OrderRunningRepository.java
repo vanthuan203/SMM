@@ -76,6 +76,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE order_running set check_count=0 where round((UNIX_TIMESTAMP()-check_count_time/1000)/60)>1",nativeQuery = true)
+    public void reset_Check_Count();
+
+    @Modifying
+    @Transactional
     @Query(value = "DELETE FROM order_running where order_id=?1",nativeQuery = true)
     public void delete_Order_Running_By_OrderId(Long order_id);
 
