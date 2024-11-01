@@ -342,8 +342,13 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
+            Random random=new Random();
             OrderRunningShow orderRunning=orderRunningRepository.find_Order_By_Start_Count0("tiktok");
             if(orderRunning!=null){
+                Thread.sleep(200+random.nextInt(500));
+                if(orderRunningRepository.check_Check_Count(orderRunning.getOrder_id())>0){
+                    resp.put("status", false);
+                }
                 orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning.getOrder_id());
                 resp.put("status", true);
                 resp.put("id", orderRunning.getOrder_key().trim());
@@ -351,6 +356,10 @@ public class SetupController {
             }else{
                 OrderRunningShow orderRunning1=orderRunningRepository.find_Order_By_Curent0("tiktok");
                 if(orderRunning1!=null){
+                    Thread.sleep(200+random.nextInt(500));
+                    if(orderRunningRepository.check_Check_Count(orderRunning1.getOrder_id())>0){
+                        resp.put("status", false);
+                    }
                     orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning1.getOrder_id());
                     resp.put("status", true);
                     resp.put("id", orderRunning1.getOrder_key().trim());
