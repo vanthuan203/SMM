@@ -337,22 +337,35 @@ public class SetupController {
         }
     }
 
-    @GetMapping(value = "/test4", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test4() {
+    @GetMapping(value = "/getCheckCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getCheckCount() {
         Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
         try {
             Random random=new Random();
             OrderRunningShow orderRunning=orderRunningRepository.find_Order_By_Start_Count0("tiktok");
             if(orderRunning!=null){
-                Thread.sleep(200+random.nextInt(500));
+                Thread.sleep(500+random.nextInt(500));
                 if(orderRunningRepository.check_Check_Count(orderRunning.getOrder_id())>0){
                     resp.put("status", false);
                 }
                 orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning.getOrder_id());
                 resp.put("status", true);
-                resp.put("id", orderRunning.getOrder_key().trim());
-                resp.put("task", orderRunning.getTask().trim());
+                resp.put("order_id", orderRunning.getOrder_id());
+                if(orderRunning.getPlatform().equals("tiktok")){
+                    if(orderRunning.getTask().equals("follower")){
+                        resp.put("link", "https://livecounts.io/tiktok-live-follower-counter/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
+                    }else if(orderRunning.getTask().equals("like")){
+                        resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[2]//span[@class='odometer-value']");
+                    }else if(orderRunning.getTask().equals("view")){
+                        resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
+                    }else if(orderRunning.getTask().equals("comment")){
+                        resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[3]//span[@class='odometer-value']");
+                    }
+                }
             }else{
                 OrderRunningShow orderRunning1=orderRunningRepository.find_Order_By_Curent0("tiktok");
                 if(orderRunning1!=null){
@@ -362,8 +375,22 @@ public class SetupController {
                     }
                     orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning1.getOrder_id());
                     resp.put("status", true);
-                    resp.put("id", orderRunning1.getOrder_key().trim());
-                    resp.put("task", orderRunning1.getTask().trim());
+                    resp.put("order_id", orderRunning.getOrder_id());
+                    if(orderRunning.getPlatform().equals("tiktok")){
+                        if(orderRunning.getTask().equals("follower")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-follower-counter/"+orderRunning.getOrder_key());
+                            resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
+                        }else if(orderRunning.getTask().equals("like")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                            resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[2]//span[@class='odometer-value']");
+                        }else if(orderRunning.getTask().equals("view")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                            resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
+                        }else if(orderRunning.getTask().equals("comment")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                            resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[3]//span[@class='odometer-value']");
+                        }
+                    }
                 }else{
                     resp.put("status", false);
                 }
@@ -392,15 +419,15 @@ public class SetupController {
         }
     }
 
-    @GetMapping(value = "/test5", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test5(@RequestParam(defaultValue = "") String id,
+    @GetMapping(value = "/updateCheckCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> updateCheckCount(@RequestParam(defaultValue = "0") Long order_id,
                                               @RequestParam(defaultValue = "0") Integer count,
-                                              @RequestParam(defaultValue = "") String task) {
+                                              @RequestParam(defaultValue = "false") Boolean status) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            OrderRunning orderRunning=orderRunningRepository.find_Order_By_Order_Key(id,task,"tiktok");
-            if(orderRunning!=null&&count>0){
+            OrderRunning orderRunning=orderRunningRepository.get_Order_By_Id(order_id);
+            if(orderRunning!=null&&status==true){
                 if(orderRunning.getStart_count()>0){
                     orderRunning.setCurrent_count(count);
                     orderRunning.setUpdate_current_time(System.currentTimeMillis());
@@ -411,9 +438,11 @@ public class SetupController {
                 }
                 orderRunningRepository.save(orderRunning);
                 resp.put("status", true);
-            }else{
+            }else if(orderRunning!=null){
                 orderRunning.setCheck_count(0);
                 orderRunningRepository.save(orderRunning);
+                resp.put("status", false);
+            }else{
                 resp.put("status", false);
             }
             return new ResponseEntity<>(resp, HttpStatus.OK);

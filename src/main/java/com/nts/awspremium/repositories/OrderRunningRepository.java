@@ -44,10 +44,10 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * from order_running where order_key=?1 and  service_id in(select service_id from service where task=?2 and platform=?3) limit 1",nativeQuery = true)
     public OrderRunning find_Order_By_Order_Key(String order_key,String task,String platform);
 
-    @Query(value = "SELECT o.*,s.task from order_running o left join service s on o.service_id=s.service_id where o.start_count=0 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT o.*,s.task,s.platform from order_running o left join service s on o.service_id=s.service_id where o.start_count=0 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
     public OrderRunningShow find_Order_By_Start_Count0(String platform);
 
-    @Query(value = "SELECT o.*,s.task from order_running o left join service s on o.service_id=s.service_id where o.total>0 and round((UNIX_TIMESTAMP()-update_current_time/1000)/60)>1 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT o.*,s.task,s.platform from order_running o left join service s on o.service_id=s.service_id where o.total>0 and round((UNIX_TIMESTAMP()-update_current_time/1000)/60)>1 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
     public OrderRunningShow find_Order_By_Curent0(String platform);
 
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
@@ -79,7 +79,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE order_running set check_count=0 where round((UNIX_TIMESTAMP()-check_count_time/1000)/60)>1",nativeQuery = true)
+    @Query(value = "UPDATE order_running set check_count=0 where round((UNIX_TIMESTAMP()-check_count_time/1000)/60)>=1",nativeQuery = true)
     public void reset_Check_Count();
 
     @Modifying
