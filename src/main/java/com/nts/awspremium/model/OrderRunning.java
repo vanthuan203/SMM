@@ -39,6 +39,8 @@ public class OrderRunning implements Serializable {
     private Long start_time;
     @Column(columnDefinition = "bigint default 0")
     private Long check_count_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long start_count_time;
     @Column(columnDefinition = "integer default 0")
     private Integer thread;
     @Column(columnDefinition = "integer default 0")

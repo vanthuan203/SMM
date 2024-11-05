@@ -428,12 +428,13 @@ public class SetupController {
         try {
             OrderRunning orderRunning=orderRunningRepository.get_Order_By_Id(order_id);
             if(orderRunning!=null&&status==true){
-                if(orderRunning.getStart_count()>0){
+                if(orderRunning.getStart_count_time()>0){
                     orderRunning.setCurrent_count(count);
                     orderRunning.setUpdate_current_time(System.currentTimeMillis());
                     orderRunning.setCheck_count(0);
                 }else{
                     orderRunning.setStart_count(count);
+                    orderRunning.setStart_count_time(System.currentTimeMillis());
                     orderRunning.setCheck_count(0);
                 }
                 orderRunningRepository.save(orderRunning);

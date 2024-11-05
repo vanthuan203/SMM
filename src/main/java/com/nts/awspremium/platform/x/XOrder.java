@@ -56,6 +56,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
@@ -131,6 +132,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
@@ -206,6 +208,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
@@ -281,6 +284,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
@@ -356,6 +360,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
@@ -431,6 +436,7 @@ public class XOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setStart_time(0L);
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());

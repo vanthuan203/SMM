@@ -73,6 +73,7 @@ public class TiktokOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setValid(1);
             orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
@@ -175,6 +176,7 @@ public class TiktokOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
@@ -274,6 +276,7 @@ public class TiktokOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
@@ -374,6 +377,7 @@ public class TiktokOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
+            orderRunning.setStart_count_time(0L);
             orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);

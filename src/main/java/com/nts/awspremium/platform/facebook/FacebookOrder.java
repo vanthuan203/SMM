@@ -71,6 +71,7 @@ public class FacebookOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setStart_count_time(0L);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -150,6 +151,7 @@ public class FacebookOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setStart_count_time(0L);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -229,6 +231,7 @@ public class FacebookOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setStart_count_time(0L);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -309,6 +312,7 @@ public class FacebookOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setStart_count_time(0L);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -388,6 +392,7 @@ public class FacebookOrder {
             orderRunning.setCurrent_count(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setStart_count_time(0L);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
