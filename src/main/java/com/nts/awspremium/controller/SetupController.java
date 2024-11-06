@@ -375,19 +375,19 @@ public class SetupController {
                     }
                     orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning1.getOrder_id());
                     resp.put("status", true);
-                    resp.put("order_id", orderRunning.getOrder_id());
-                    if(orderRunning.getPlatform().equals("tiktok")){
-                        if(orderRunning.getTask().equals("follower")){
-                            resp.put("link", "https://livecounts.io/tiktok-live-follower-counter/"+orderRunning.getOrder_key());
+                    resp.put("order_id", orderRunning1.getOrder_id());
+                    if(orderRunning1.getPlatform().equals("tiktok")){
+                        if(orderRunning1.getTask().equals("follower")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-follower-counter/"+orderRunning1.getOrder_key());
                             resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
-                        }else if(orderRunning.getTask().equals("like")){
-                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        }else if(orderRunning1.getTask().equals("like")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning1.getOrder_key());
                             resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[2]//span[@class='odometer-value']");
-                        }else if(orderRunning.getTask().equals("view")){
-                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        }else if(orderRunning1.getTask().equals("view")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning1.getOrder_key());
                             resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
-                        }else if(orderRunning.getTask().equals("comment")){
-                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning.getOrder_key());
+                        }else if(orderRunning1.getTask().equals("comment")){
+                            resp.put("link", "https://livecounts.io/tiktok-live-view-counter/"+orderRunning1.getOrder_key());
                             resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[3]//span[@class='odometer-value']");
                         }
                     }
