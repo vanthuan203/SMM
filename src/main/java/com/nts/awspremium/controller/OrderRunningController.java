@@ -550,7 +550,8 @@ public class OrderRunningController {
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }
-                    }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
+                    }/*
+                    else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
                         if (orderRunningList.get(i).getService().getTask().equals("follower")) {
                             int current_Count = TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@", ""), 1);
                             if (current_Count >= 0) {
@@ -581,6 +582,7 @@ public class OrderRunningController {
                             }
                         }
                     }
+                    */
                 } catch (Exception e) {
                     StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
                     LogError logError =new LogError();
