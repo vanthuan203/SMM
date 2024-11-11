@@ -1774,6 +1774,7 @@ public class TaskController {
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform","youtube");
+                        data.put("app","youtube");
                         data.put("task", "register");
                         data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().indexOf("|")));
                         data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().indexOf("|")));
@@ -1810,6 +1811,7 @@ public class TaskController {
 
                             resp.put("status", true);
                             data.put("platform", "youtube");
+                            data.put("app", "youtube");
                             data.put("task", "login");
                             data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
                             data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
@@ -1921,6 +1923,7 @@ public class TaskController {
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "youtube");
+                        data.put("app", "youtube");
                         if(accountProfile_Check.getAccount_id().contains("register")){
                             data.put("task", "register");
                         }else{
@@ -1945,6 +1948,7 @@ public class TaskController {
                     profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "youtube");
+                    data.put("app", "youtube");
                     if(accountProfile_Check.getAccount_id().contains("register")){
                         data.put("task", "register");
                     }else{
@@ -2109,6 +2113,15 @@ public class TaskController {
                                         profileTaskRepository.save(profileTask);
                                         resp.put("status", true);
                                         data.put("platform", profileTask.getPlatform());
+                                        if( profileTask.getPlatform().equals("tiktok")){
+                                            if(device.getMode().equals("tiktok-lite")){
+                                                data.put("app","tiktok-lite");
+                                            }else{
+                                                data.put("app","tiktok");
+                                            }
+                                        }else{
+                                            data.put("app",profileTask.getPlatform());
+                                        }
                                         data.put("task", "register");
                                         data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
                                         data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
@@ -2165,6 +2178,15 @@ public class TaskController {
                                                 profileTaskRepository.save(profileTask);
                                                 resp.put("status", true);
                                                 data.put("platform", profileTask.getPlatform());
+                                                if( profileTask.getPlatform().equals("tiktok")){
+                                                    if(device.getMode().equals("tiktok-lite")){
+                                                        data.put("app","tiktok-lite");
+                                                    }else{
+                                                        data.put("app","tiktok");
+                                                    }
+                                                }else{
+                                                    data.put("app",profileTask.getPlatform());
+                                                }
                                                 data.put("task", "register");
                                                 data.put("task_key", mail);
                                                 data.put("account_id", mail);
@@ -2192,6 +2214,15 @@ public class TaskController {
                                             profileTaskRepository.save(profileTask);
                                             resp.put("status", true);
                                             data.put("platform", profileTask.getPlatform());
+                                            if( profileTask.getPlatform().equals("tiktok")){
+                                                if(device.getMode().equals("tiktok-lite")){
+                                                    data.put("app","tiktok-lite");
+                                                }else{
+                                                    data.put("app","tiktok");
+                                                }
+                                            }else{
+                                                data.put("app",profileTask.getPlatform());
+                                            }
                                             data.put("task", "register");
                                             data.put("task_key",  account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
                                             data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
@@ -2230,6 +2261,15 @@ public class TaskController {
 
                                         resp.put("status", true);
                                         data.put("platform", profileTask.getPlatform().trim());
+                                        if( profileTask.getPlatform().equals("tiktok")){
+                                            if(device.getMode().equals("tiktok-lite")){
+                                                data.put("app","tiktok-lite");
+                                            }else{
+                                                data.put("app","tiktok");
+                                            }
+                                        }else{
+                                            data.put("app",profileTask.getPlatform());
+                                        }
                                         data.put("task", "login");
                                         data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
                                         data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
@@ -2309,6 +2349,15 @@ public class TaskController {
 
                         resp.put("status", true);
                         data.put("platform",profileTask.getPlatform());
+                        if( profileTask.getPlatform().equals("tiktok")){
+                            if(device.getMode().equals("tiktok-lite")){
+                                data.put("app","tiktok-lite");
+                            }else{
+                                data.put("app","tiktok");
+                            }
+                        }else{
+                            data.put("app",profileTask.getPlatform());
+                        }
                         if(accountProfile_Check_Platform.getLive()==-1){
                             data.put("task", "register");
                         }else{
