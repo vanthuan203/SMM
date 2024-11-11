@@ -65,6 +65,7 @@ public class YoutubeTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key", orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 data.put("channel_id", orderRunning.getChannel_id());
@@ -175,6 +176,7 @@ public class YoutubeTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
                 DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
@@ -273,6 +275,7 @@ public class YoutubeTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key", orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 data.put("keyword", orderRunning.getVideo_title());

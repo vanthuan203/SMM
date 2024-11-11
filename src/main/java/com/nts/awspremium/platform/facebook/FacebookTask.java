@@ -76,6 +76,7 @@ public class FacebookTask {
                     data.put("account_id", account_id.trim());
                     data.put("platform", service.getPlatform().toLowerCase());
                     data.put("task", service.getTask());
+                    data.put("app", service.getApp());
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
                     data.put("comment",comment);
@@ -139,6 +140,7 @@ public class FacebookTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 resp.put("data",data);
@@ -197,6 +199,7 @@ public class FacebookTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 resp.put("data",data);
@@ -255,6 +258,7 @@ public class FacebookTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 resp.put("data",data);
@@ -312,6 +316,7 @@ public class FacebookTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 resp.put("data",data);
