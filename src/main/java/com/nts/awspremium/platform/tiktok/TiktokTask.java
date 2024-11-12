@@ -137,7 +137,11 @@ public class TiktokTask {
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
-                data.put("task_link","https://www.tiktok.com/"+orderRunning.getOrder_key());
+                if(service.getApp().equals("tiktok-lite")){
+                    data.put("task_link",orderRunning.getOrder_link());
+                }else{
+                    data.put("task_link","https://www.tiktok.com/"+orderRunning.getOrder_key());
+                }
                 resp.put("data",data);
                 return resp;
 
