@@ -94,6 +94,7 @@ public class DeviceController {
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
+                obj.put("status", deviceList.get(i).getStatus());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
@@ -168,6 +169,7 @@ public class DeviceController {
                 device_new.setDevice_id(device_id.trim());
                 device_new.setAdd_time(System.currentTimeMillis());
                 device_new.setState(0);
+                device_new.setStatus(1);
                 device_new.setUpdate_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setReboot(0);
@@ -245,6 +247,35 @@ public class DeviceController {
 
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+    public Boolean update_Status_Device(
+    ){
+        try{
+            List<String> list_device =deviceRepository.get_All_Device_DieAcc();
+            if(list_device.size()>0){
+                deviceRepository.update_Status_Device(list_device);
+            }
+            return  true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            return false;
         }
 
     }
