@@ -2114,7 +2114,7 @@ public class TaskController {
                                         resp.put("status", true);
                                         data.put("platform", profileTask.getPlatform());
                                         if( profileTask.getPlatform().equals("tiktok")){
-                                            if(device.getMode().equals("tiktok-lite")){
+                                            if(device.getMode().contains("tiktok-lite")){
                                                 data.put("app","tiktok-lite");
                                             }else{
                                                 data.put("app","tiktok");
@@ -2179,7 +2179,7 @@ public class TaskController {
                                                 resp.put("status", true);
                                                 data.put("platform", profileTask.getPlatform());
                                                 if( profileTask.getPlatform().equals("tiktok")){
-                                                    if(device.getMode().equals("tiktok-lite")){
+                                                    if(device.getMode().contains("tiktok-lite")){
                                                         data.put("app","tiktok-lite");
                                                     }else{
                                                         data.put("app","tiktok");
@@ -2215,7 +2215,7 @@ public class TaskController {
                                             resp.put("status", true);
                                             data.put("platform", profileTask.getPlatform());
                                             if( profileTask.getPlatform().equals("tiktok")){
-                                                if(device.getMode().equals("tiktok-lite")){
+                                                if(device.getMode().contains("tiktok-lite")){
                                                     data.put("app","tiktok-lite");
                                                 }else{
                                                     data.put("app","tiktok");
@@ -2262,7 +2262,7 @@ public class TaskController {
                                         resp.put("status", true);
                                         data.put("platform", profileTask.getPlatform().trim());
                                         if( profileTask.getPlatform().equals("tiktok")){
-                                            if(device.getMode().equals("tiktok-lite")){
+                                            if(device.getMode().contains("tiktok-lite")){
                                                 data.put("app","tiktok-lite");
                                             }else{
                                                 data.put("app","tiktok");
@@ -2350,7 +2350,7 @@ public class TaskController {
                         resp.put("status", true);
                         data.put("platform",profileTask.getPlatform());
                         if( profileTask.getPlatform().equals("tiktok")){
-                            if(device.getMode().equals("tiktok-lite")){
+                            if(device.getMode().contains("tiktok-lite")){
                                 data.put("app","tiktok-lite");
                             }else{
                                 data.put("app","tiktok");
