@@ -94,10 +94,12 @@ public class DeviceController {
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
-                obj.put("status", deviceList.get(i).getStatus());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
+                obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -472,6 +474,9 @@ public class DeviceController {
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
+                obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -532,6 +537,9 @@ public class DeviceController {
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
+                obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -592,6 +600,9 @@ public class DeviceController {
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
+                obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -655,6 +666,9 @@ public class DeviceController {
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
+                obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);

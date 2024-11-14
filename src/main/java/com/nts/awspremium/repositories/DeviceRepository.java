@@ -58,20 +58,20 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query(value = "update device set num_profile=?1  where device_id in(?2)",nativeQuery = true)
     public void update_NumProfile_By_ListDevice(Integer num_profile,List<String> device_id);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 group by d.device_id")
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 group by d.device_id")
     Page<DeviceShow> get_List_Device(Pageable pageable);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 where d.device_id in (?1) group by d.device_id")
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 where d.device_id in (?1) group by d.device_id")
     List<DeviceShow> get_List_Device_By_DeviceId(List<String> device);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 where d.state=?1 group by d.device_id")
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.num_profile,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 where d.state=?1 group by d.device_id")
     Page<DeviceShow> get_List_Device_By_State(Pageable pageable,Integer state);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.status,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile_id,a.platform,a.task) " +
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile_id,a.platform,a.task) " +
             "FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id where d.device_id=?1 group by d.device_id")
     Page<DeviceShow> get_List_Device(Pageable pageable, String device_id);
 
-    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.status,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile_id,a.platform,a.task) " +
+    @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,a.running,d.add_time,d.update_time,a.get_time,d.num_account,d.num_profile,a.profile_id,a.platform,a.task) " +
             "FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id where d.device_id=?1 and d.state=?2 group by d.device_id")
     Page<DeviceShow> get_List_Device_By_State(Pageable pageable, String device_id,Integer state);
 
