@@ -168,6 +168,7 @@ public class DeviceController {
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
                 device_new.setAdd_time(System.currentTimeMillis());
+                device_new.setIp_changer_time(System.currentTimeMillis());
                 device_new.setState(0);
                 device_new.setStatus(1);
                 device_new.setUpdate_time(System.currentTimeMillis());
@@ -182,7 +183,10 @@ public class DeviceController {
                 device=device_new;
             }else{
                 device.setRom_version(rom_version);
-                device.setIp_address(ip);
+                if(device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim())){
+                    device.setIp_address(ip);
+                    device.setIp_changer_time(System.currentTimeMillis());
+                }
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
             }
