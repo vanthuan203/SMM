@@ -37,4 +37,5 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Query(value = "Select * from account_profile where account_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id_And_Platform(String account_id,String platform);
+
 }

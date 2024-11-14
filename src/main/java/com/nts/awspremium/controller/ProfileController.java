@@ -1,9 +1,6 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.model.Device;
-import com.nts.awspremium.model.LogError;
-import com.nts.awspremium.model.ProfileShow;
-import com.nts.awspremium.model.ProfileTask;
+import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -22,6 +19,8 @@ import java.util.stream.Collectors;
 public class ProfileController {
     @Autowired
     private ProfileTaskRepository profileTaskRepository;
+    @Autowired
+    private AccountProfileRepository accountProfileRepository;
     @Autowired
     private DeviceRepository deviceRepository;
     @Autowired
@@ -103,6 +102,63 @@ public class ProfileController {
         }
 
     }
+
+    @GetMapping(value = "update_Account_Profile", produces = "application/hal+json;charset=utf8")
+    private ResponseEntity<Map<String, Object>> update_Account_Profile(@RequestHeader(defaultValue = "") String Authorization,
+                                                                 @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id,
+                                                                 @RequestParam(name = "profile_id", required = false, defaultValue = "") String profile_id,
+                                                                 @RequestParam(name = "live", required = false, defaultValue = "-1") Integer live
+    ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if(checktoken ==0){
+                resp.put("status",false);
+                data.put("message", "Token expired");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(live ==-1){
+                resp.put("status",false);
+                data.put("message", "live không để trống");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            AccountProfile accountProfile =accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
+            if(accountProfile!=null){
+                accountProfile.setLive(live);
+                accountProfile.setUpdate_time(System.currentTimeMillis());
+                accountProfileRepository.save(accountProfile);
+            }
+
+            resp.put("status", true);
+            data.put("message", "Update thành công!");
+            resp.put("data", data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
 
     public Boolean update_Enabled_Profile(
     ){
