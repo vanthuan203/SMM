@@ -54,7 +54,7 @@ public class TiktokUpdate {
                 tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
             }
             TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
-            tiktokFollower24h.setId(account_id.trim()+task_key.trim());
+            tiktokFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
             tikTokFollower24hRepository.save(tiktokFollower24h);
             return true;

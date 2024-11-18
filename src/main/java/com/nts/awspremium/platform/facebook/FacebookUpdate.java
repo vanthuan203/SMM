@@ -65,7 +65,7 @@ public class FacebookUpdate {
                 facebookFollowerHistoryRepository.save(facebookFollowerHistory_New);
             }
             FacebookFollower24h facebookFollower24h =new FacebookFollower24h();
-            facebookFollower24h.setId(account_id.trim()+task_key.trim());
+            facebookFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             facebookFollower24h.setUpdate_time(System.currentTimeMillis());
             facebookFollower24hRepository.save(facebookFollower24h);
             return true;

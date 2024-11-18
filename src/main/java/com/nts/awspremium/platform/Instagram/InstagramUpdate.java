@@ -52,7 +52,7 @@ public class InstagramUpdate {
                 instagramFollowerHistoryRepository.save(instagramFollowerHistory_new);
             }
             InstagramFollower24h instagramFollower24h =new InstagramFollower24h();
-            instagramFollower24h.setId(account_id.trim()+task_key.trim());
+            instagramFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             instagramFollower24h.setUpdate_time(System.currentTimeMillis());
             instagramFollower24hRepository.save(instagramFollower24h);
             return true;

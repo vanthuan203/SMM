@@ -67,7 +67,7 @@ public class YoutubeUpdate {
                 youtubeViewHistoryRepository.save(youtubeVideoHistory_New);
             }
             YoutubeView24h youtubeView24h =new YoutubeView24h();
-            youtubeView24h.setId(account_id.trim()+task_key.trim());
+            youtubeView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             youtubeView24h.setUpdate_time(System.currentTimeMillis());
             youtubeView24hRepository.save(youtubeView24h);
             return true;

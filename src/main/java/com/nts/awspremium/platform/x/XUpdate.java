@@ -137,7 +137,7 @@ public class XUpdate {
                 xViewHistoryRepository.save(xViewHistory_new);
             }
             XView24h xView24h =new XView24h();
-            xView24h.setId(account_id.trim()+task_key.trim());
+            xView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             xView24h.setUpdate_time(System.currentTimeMillis());
             xView24hRepository.save(xView24h);
             return true;

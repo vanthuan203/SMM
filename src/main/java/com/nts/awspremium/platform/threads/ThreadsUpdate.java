@@ -61,7 +61,7 @@ public class ThreadsUpdate {
                 threadsFollowerHistoryRepository.save(threadsFollowerHistory_new);
             }
             ThreadsFollower24h threadsFollower24h =new ThreadsFollower24h();
-            threadsFollower24h.setId(account_id.trim()+task_key.trim());
+            threadsFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             threadsFollower24h.setUpdate_time(System.currentTimeMillis());
             threadsFollower24hRepository.save(threadsFollower24h);
             return true;
