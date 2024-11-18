@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.jsoup.Jsoup;
@@ -285,34 +286,8 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            String driverPath = "drivers/chromedriver.exe";
-            System.setProperty("webdriver.chrome.driver", driverPath);
-
-            // Thiết lập tùy chọn Chrome
-            ChromeOptions options = new ChromeOptions();
-            options.addArguments("--remote-allow-origins=*");
-            // Khởi tạo ChromeDriver với tùy chọn
-            WebDriver driver = new ChromeDriver(options);
-            driver.get("https://livecounts.io/embed/youtube-live-view-counter/H4cg1OymzYw");
-            Thread.sleep(6000);
-            for(int i=0;i<5;i++){
-                try{
-                    String count="";
-                    List<WebElement> elements =  driver.findElements(By.xpath("(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']"));
-                   for(int j=0;j<elements.size();j++){
-                       count=count+elements.get(j).getText();
-                   }
-                   if(count.length()>0){
-                       System.out.println(count);
-                       break;
-                   }
-                }catch (Exception e){
-                    Thread.sleep(100);
-                }
-
-            }
-
-            driver.quit();
+            System.out.println(TikTokApi.getFollowerCount("tiet.duy",1));
+            resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -337,8 +312,8 @@ public class SetupController {
         }
     }
 
-    @GetMapping(value = "/getCheckCount", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getCheckCount() {
+    @GetMapping(value = "/getCheckCountoff", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getCheckCountoff() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
             Random random=new Random();
@@ -419,8 +394,8 @@ public class SetupController {
         }
     }
 
-    @GetMapping(value = "/getCheckCountOff", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getCheckCountOff() {
+    @GetMapping(value = "/getCheckCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getCheckCount() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
             Random random=new Random();

@@ -67,6 +67,39 @@ public class TikTokApi {
         }
     }
 
+
+    public static Integer getFollowerCountRapAPI(String tiktok_id,Integer index) {
+
+        try {
+            if(index<=0){
+                return -2;
+            }
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, "");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-api23.p.rapidapi.com/api/user/info?uniqueId="+tiktok_id)
+                    .method("GET", body)
+                    .addHeader("x-rapidapi-host", "tiktok-api23.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            Object obj = new JSONParser().parse(resultJson);
+            JSONObject jsonObject = (JSONObject) obj;
+            System.out.println(jsonObject);
+            if(jsonObject.get("userInfo")==null){
+                return getFollowerCount(tiktok_id,index-1);
+            }
+            return 1;
+        } catch (Exception e) {
+            return -2;
+        }
+    }
+
+
     public static Integer getFollowerCount2(String tiktok_id,Integer index) {
         try {
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("trong1-1.byeip.net", 16000));
