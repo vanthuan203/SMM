@@ -47,7 +47,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT o.*,s.task,s.platform from order_running o left join service s on o.service_id=s.service_id where o.start_count_time=0 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
     public OrderRunningShow find_Order_By_Start_Count0(String platform);
 
-    @Query(value = "SELECT o.*,s.task,s.platform from order_running o left join service s on o.service_id=s.service_id where o.total>0 and (round((UNIX_TIMESTAMP()-o.update_current_time/1000)/60)>=1 or o.update_current_time<o.update_time) and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT o.*,s.task,s.platform from order_running o left join service s on o.service_id=s.service_id where o.total>0 and round((UNIX_TIMESTAMP()-o.update_current_time/1000)/60)>=3 and s.platform=?1 and o.check_count=0 order by rand() limit 1",nativeQuery = true)
     public OrderRunningShow find_Order_By_Curent0(String platform);
 
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
