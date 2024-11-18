@@ -37,16 +37,13 @@ public class TiktokOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-            /*
-            Integer follower_count=-2;
-            int check=0;
-            follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1],3);
+
+            Integer follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1],2);
             if(follower_count==-2){
                 resp.put("error", "This account cannot be found");
                 return resp;
             }
-             */
-            Integer follower_count=0;
+
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
             if (priceorder > (float) user.getBalance()) {
@@ -133,6 +130,12 @@ public class TiktokOrder {
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
             }
+
+            Integer like_count=TikTokApi.getCountLike(link);
+            if(like_count==-2){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
             /*
             JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
             if(infoVideoTikTok.get("status").toString().equals("error")){
@@ -143,7 +146,6 @@ public class TiktokOrder {
              */
             //video_id=infoVideoTikTok.get("id").toString();
             //Integer like_count=Integer.parseInt(infoVideoTikTok.get("likes").toString());
-            Integer like_count=0;
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
                 return resp;
@@ -234,6 +236,11 @@ public class TiktokOrder {
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
             }
+            Integer comment_count=TikTokApi.getCountComment(link);
+            if(comment_count==-2){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
             /*
             JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
             if(infoVideoTikTok.get("status").toString().equals("error")){
@@ -247,7 +254,6 @@ public class TiktokOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-            Integer comment_count=0;
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
             if (priceorder > (float) user.getBalance()) {
@@ -335,6 +341,11 @@ public class TiktokOrder {
                 }
                 link="https://www.tiktok.com/@/video/"+video_id;
             }
+            Integer view_count=TikTokApi.getCountView(link);
+            if(view_count==-2){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
             /*
             JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
             if(infoVideoTikTok.get("status").toString().equals("error")){
@@ -349,7 +360,6 @@ public class TiktokOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-            Integer view_count=0;
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
             if (priceorder > (float) user.getBalance()) {

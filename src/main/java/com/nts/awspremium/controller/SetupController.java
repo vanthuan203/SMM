@@ -286,7 +286,7 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            System.out.println(TikTokApi.getFollowerCount("tiet.duy",1));
+            System.out.println(TikTokApi.getCountLike("7393752589927501087"));
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
