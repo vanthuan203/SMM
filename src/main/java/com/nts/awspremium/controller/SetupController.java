@@ -353,6 +353,88 @@ public class SetupController {
                 resp.put("order_id", orderRunning.getOrder_id());
                 if(orderRunning.getPlatform().equals("tiktok")){
                     if(orderRunning.getTask().equals("follower")){
+                        resp.put("link", "https://countik.com/user/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//h5[@class='count'])[1]");
+                    }else if(orderRunning.getTask().equals("like")){
+                        resp.put("link", "https://countik.com/video/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//h5[@class='count'])[2]");
+                    }else if(orderRunning.getTask().equals("view")){
+                        resp.put("link", "https://countik.com/video/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//h5[@class='count'])[1]");
+                    }else if(orderRunning.getTask().equals("comment")){
+                        resp.put("link", "https://countik.com/video/"+orderRunning.getOrder_key());
+                        resp.put("xpath", "(//h5[@class='count'])[4]");
+                    }
+                }
+            }else{
+                OrderRunningShow orderRunning1=orderRunningRepository.find_Order_By_Curent0("tiktok");
+                if(orderRunning1!=null){
+                    Thread.sleep(200+random.nextInt(500));
+                    if(orderRunningRepository.check_Check_Count(orderRunning1.getOrder_id())>0){
+                        resp.put("status", false);
+                    }
+                    orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning1.getOrder_id());
+                    resp.put("status", true);
+                    resp.put("order_id", orderRunning1.getOrder_id());
+                    if(orderRunning1.getPlatform().equals("tiktok")){
+                        if(orderRunning1.getTask().equals("follower")){
+                            resp.put("link", "https://countik.com/user/"+orderRunning1.getOrder_key());
+                            resp.put("xpath", "(//h5[@class='count'])[1]");
+                        }else if(orderRunning1.getTask().equals("like")){
+                            resp.put("link", "https://countik.com/video/"+orderRunning1.getOrder_key());
+                            resp.put("xpath", "(//h5[@class='count'])[2]");
+                        }else if(orderRunning1.getTask().equals("view")){
+                            resp.put("link", "https://countik.com/video/"+orderRunning1.getOrder_key());
+                            resp.put("xpath", "(//h5[@class='count'])[1]");
+                        }else if(orderRunning1.getTask().equals("comment")){
+                            resp.put("link", "https://countik.com/video/"+orderRunning1.getOrder_key());
+                            resp.put("xpath", "(//h5[@class='count'])[4]");
+                        }
+                    }
+                }else{
+                    resp.put("status", false);
+                }
+            }
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            System.out.println(logError.getMessage());
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/getCheckCountOff", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> getCheckCountOff() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        try {
+            Random random=new Random();
+            OrderRunningShow orderRunning=orderRunningRepository.find_Order_By_Start_Count0("tiktok");
+            if(orderRunning!=null){
+                Thread.sleep(500+random.nextInt(500));
+                if(orderRunningRepository.check_Check_Count(orderRunning.getOrder_id())>0){
+                    resp.put("status", false);
+                }
+                orderRunningRepository.update_Check_Count(System.currentTimeMillis(),orderRunning.getOrder_id());
+                resp.put("status", true);
+                resp.put("order_id", orderRunning.getOrder_id());
+                if(orderRunning.getPlatform().equals("tiktok")){
+                    if(orderRunning.getTask().equals("follower")){
                         resp.put("link", "https://livecounts.io/tiktok-live-follower-counter/"+orderRunning.getOrder_key());
                         resp.put("xpath", "(//div[contains(@class,'odometer odometer-auto-theme')])[1]//span[@class='odometer-value']");
                     }else if(orderRunning.getTask().equals("like")){
