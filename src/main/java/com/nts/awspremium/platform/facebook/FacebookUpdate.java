@@ -65,7 +65,7 @@ public class FacebookUpdate {
                 facebookFollowerHistoryRepository.save(facebookFollowerHistory_New);
             }
             FacebookFollower24h facebookFollower24h =new FacebookFollower24h();
-            facebookFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+            facebookFollower24h.setId(account_id.trim()+task_key.trim());
             facebookFollower24h.setUpdate_time(System.currentTimeMillis());
             facebookFollower24hRepository.save(facebookFollower24h);
             return true;
@@ -141,7 +141,7 @@ public class FacebookUpdate {
                 facebookViewHistoryRepository.save(facebookViewHistory_new);
             }
             FacebookView24h facebookView24h =new FacebookView24h();
-            facebookView24h.setId(account_id.trim()+task_key.trim());
+            facebookView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             facebookView24h.setUpdate_time(System.currentTimeMillis());
             facebookView24hRepository.save(facebookView24h);
             return true;

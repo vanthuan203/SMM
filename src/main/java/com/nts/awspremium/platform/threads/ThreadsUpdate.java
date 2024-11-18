@@ -61,7 +61,7 @@ public class ThreadsUpdate {
                 threadsFollowerHistoryRepository.save(threadsFollowerHistory_new);
             }
             ThreadsFollower24h threadsFollower24h =new ThreadsFollower24h();
-            threadsFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+            threadsFollower24h.setId(account_id.trim()+task_key.trim());
             threadsFollower24h.setUpdate_time(System.currentTimeMillis());
             threadsFollower24hRepository.save(threadsFollower24h);
             return true;
@@ -137,7 +137,7 @@ public class ThreadsUpdate {
                 threadsViewHistoryRepository.save(threadsViewHistory_new);
             }
             ThreadsView24h threadsView24h =new ThreadsView24h();
-            threadsView24h.setId(account_id.trim()+task_key.trim());
+            threadsView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             threadsView24h.setUpdate_time(System.currentTimeMillis());
             threadsView24hRepository.save(threadsView24h);
             return true;

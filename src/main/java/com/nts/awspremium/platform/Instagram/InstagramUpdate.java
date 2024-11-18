@@ -52,7 +52,7 @@ public class InstagramUpdate {
                 instagramFollowerHistoryRepository.save(instagramFollowerHistory_new);
             }
             InstagramFollower24h instagramFollower24h =new InstagramFollower24h();
-            instagramFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+            instagramFollower24h.setId(account_id.trim()+task_key.trim());
             instagramFollower24h.setUpdate_time(System.currentTimeMillis());
             instagramFollower24hRepository.save(instagramFollower24h);
             return true;
@@ -128,7 +128,7 @@ public class InstagramUpdate {
                 instagramViewHistoryRepository.save(instagramViewHistory_new);
             }
             InstagramView24h instagramView24h =new InstagramView24h();
-            instagramView24h.setId(account_id.trim()+task_key.trim());
+            instagramView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             instagramView24h.setUpdate_time(System.currentTimeMillis());
             instagramView24hRepository.save(instagramView24h);
             return true;

@@ -54,7 +54,7 @@ public class TiktokUpdate {
                 tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
             }
             TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
-            tiktokFollower24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+            tiktokFollower24h.setId(account_id.trim()+task_key.trim());
             tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
             tikTokFollower24hRepository.save(tiktokFollower24h);
             return true;
@@ -176,7 +176,7 @@ public class TiktokUpdate {
                 tikTokViewHistoryRepository.save(tikTokViewHistory_new);
             }
             TiktokView24h tiktokView24h =new TiktokView24h();
-            tiktokView24h.setId(account_id.trim()+task_key.trim());
+            tiktokView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             tiktokView24h.setUpdate_time(System.currentTimeMillis());
             tikTokView24hRepository.save(tiktokView24h);
             return true;
