@@ -2091,6 +2091,13 @@ public class TaskController {
                             }
                         }else{
                             if((System.currentTimeMillis()-profileTask.getGoogle_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
+                                //gioi han time reg by platform and time
+                                if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),1)>0){
+                                    resp.put("status", false);
+                                    data.put("message", "Không có account_id để chạy");
+                                    resp.put("data", data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }
                                 if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
@@ -2108,6 +2115,13 @@ public class TaskController {
                                         accountProfile.setAdd_time(System.currentTimeMillis());
                                         accountProfile.setUpdate_time(0L);
                                         accountProfileRepository.save(accountProfile);
+
+                                        HistoryRegister historyRegister=new HistoryRegister();
+                                        historyRegister.setProfileTask(profileTask);
+                                        historyRegister.setPlatform(profileTask.getPlatform().trim());
+                                        historyRegister.setState(0);
+                                        historyRegister.setUpdate_time(System.currentTimeMillis());
+                                        historyRegisterRepository.save(historyRegister);
 
                                         profileTask.setRequest_index(1);
                                         profileTaskRepository.save(profileTask);
