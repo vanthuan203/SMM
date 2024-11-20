@@ -174,6 +174,7 @@ public class DeviceController {
                 device_new.setState(0);
                 device_new.setStatus(1);
                 device_new.setUpdate_time(System.currentTimeMillis());
+                device_new.setReboot_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setReboot(0);
                 device_new.setRom_version(rom_version);

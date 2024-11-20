@@ -282,12 +282,14 @@ public class SetupController {
 
 
     @GetMapping(value = "/test3", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test3() {
+    ResponseEntity<Map<String, Object>> test3(@RequestHeader(defaultValue = "") String tiktok_id) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            System.out.println(TikTokApi.getCountLike("7393752589927501087"));
-            resp.put("status", false);
+            String id=TikTokApi.getId("thuannguyen202203");
+            System.out.println(tiktok_id);
+            System.out.println(id);
+            resp.put("status", id);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
