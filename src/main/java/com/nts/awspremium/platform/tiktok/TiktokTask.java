@@ -38,6 +38,8 @@ public class TiktokTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+    @Autowired
+    private DataFollowerTiktokRepository dataFollowerTiktokRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -74,6 +76,7 @@ public class TiktokTask {
                     data.put("app", service.getApp());
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
                     data.put("comment",comment);
                     resp.put("data",data);
                     return resp;
@@ -137,11 +140,9 @@ public class TiktokTask {
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
-                if(service.getApp().equals("tiktok-lite")){
-                    data.put("task_link",orderRunning.getOrder_link());
-                }else{
-                    data.put("task_link","https://www.tiktok.com/"+orderRunning.getOrder_key());
-                }
+                DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
+                data.put("task_link","https://www.tiktok.com/"+dataFollowerTiktok.getTiktok_id()+"/video/"+dataFollowerTiktok.getVideo_id());
+                data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*dataFollowerTiktok.getDuration()));
                 resp.put("data",data);
                 return resp;
 
@@ -201,6 +202,7 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
                 resp.put("data",data);
                 return resp;
 
@@ -260,6 +262,7 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+                data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
                 resp.put("data",data);
                 return resp;
             } else {

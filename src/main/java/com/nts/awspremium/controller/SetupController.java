@@ -1,9 +1,11 @@
 package com.nts.awspremium.controller;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
@@ -286,10 +288,8 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            String id=TikTokApi.getId("thuannguyen202203");
-            System.out.println(tiktok_id);
-            System.out.println(id);
-            resp.put("status", id);
+            System.out.println(StringUtils.isValidTikTokID("@Sneakerowner"));
+            resp.put("status", "id");
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

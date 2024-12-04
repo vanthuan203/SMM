@@ -105,12 +105,46 @@ public class TikTokApi {
         return -2;
     }
 
-    public static Integer getFollowingCount(String tiktok_id,Integer index) {
+    public static Integer getVideoCount(String tiktok_id,Integer index) {
 
         try {
             if(index<=0){
                 return -2;
             }
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                int followerCount = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("stats")
+                        .get("videoCount")
+                        .getAsInt();
+                return followerCount;
+            }else{
+                getFollowerCount(tiktok_id,index+1);
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+        return -2;
+    }
+
+    public static Integer getFollowingCount(String tiktok_id) {
+
+        try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
@@ -133,13 +167,42 @@ public class TikTokApi {
                         .get("followingCount")
                         .getAsInt();
                 return followingCount;
-            }else{
-                getFollowingCount(tiktok_id,index+1);
             }
         } catch (Exception e) {
             return -2;
         }
         return -2;
+    }
+
+    public static JsonObject getInfoChannel(String tiktok_id) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                JsonObject infoChannel = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("stats");
+
+                return infoChannel;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 
     public static String getId(String tiktok_id) {
@@ -296,6 +359,66 @@ public class TikTokApi {
         }
     }
 
+    public static JsonObject getInfoVideo(String link) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                JsonObject jsonData = jsonObject
+                        .getAsJsonObject("data");
+                return jsonData;
+            }else{
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static JsonArray getInfoVideoByChannel(String tiktok_id,Integer count) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/posts?unique_id="+tiktok_id+"&count="+count)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                JsonArray jsonData = jsonObject
+                        .getAsJsonObject("data").getAsJsonArray("videos");
+                return jsonData;
+            }else{
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static Integer getCountView(String video_id) {
 
         try {
@@ -404,7 +527,7 @@ public class TikTokApi {
         }
     }
     public static String getVideoId(String url) {
-        String pattern = "tiktok\\.com/.*/video/(\\d+)";
+        String pattern = "tiktok\\.com/.*/(video|photo)/(\\d+)";
         Pattern r = Pattern.compile(pattern);
         Matcher m = r.matcher(url);
         if (m.find()) {

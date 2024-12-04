@@ -349,7 +349,7 @@ public class YoutubeOrder {
             }
             List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
             if(videoList.size()<3){
-                resp.put("error", "Can't get video info");
+                resp.put("error", "The total number of videos in the account must be greater than or equal to 3 videos");
                 return resp;
             }
             int start_Count =GoogleApi.getCountSubcriberCurrent(uId);

@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -19,6 +20,7 @@ import com.nts.awspremium.repositories.*;
 import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -1776,8 +1778,8 @@ public class TaskController {
                         data.put("platform","youtube");
                         data.put("app","youtube");
                         data.put("task", "register");
-                        data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().indexOf("|")));
-                        data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().indexOf("|")));
+                        data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                         data.put("password",password);
                         data.put("recover_mail",  accountProfile.getRecover().trim());
                         data.put("auth_2fa", "");
@@ -1813,8 +1815,8 @@ public class TaskController {
                             data.put("platform", "youtube");
                             data.put("app", "youtube");
                             data.put("task", "login");
-                            data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
-                            data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
+                            data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
+                            data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("password", account_get.getPassword().trim());
                             data.put("recover_mail", account_get.getRecover_mail().trim());
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
@@ -1929,8 +1931,8 @@ public class TaskController {
                         }else{
                             data.put("task", "login");
                         }
-                        data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().indexOf("|")));
-                        data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().indexOf("|")));
+                        data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                         data.put("password", accountProfile_Check.getPassword().trim());
                         data.put("recover_mail", accountProfile_Check.getRecover().trim());
                         data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
@@ -1954,8 +1956,8 @@ public class TaskController {
                     }else{
                         data.put("task", "login");
                     }
-                    data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().indexOf("|")));
-                    data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().indexOf("|")));
+                    data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                     data.put("password", accountProfile_Check.getPassword().trim());
                     data.put("recover_mail", accountProfile_Check.getRecover().trim());
                     data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
@@ -2104,7 +2106,7 @@ public class TaskController {
                                     if(connection_account>0){
 
                                         AccountProfile accountProfile=new AccountProfile();
-                                        accountProfile.setAccount_id(accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|"))+"|"+profileTask.getPlatform());
+                                        accountProfile.setAccount_id(accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                         accountProfile.setPassword(accountProfile_Check_Dependent.getPassword().trim());
                                         accountProfile.setRecover(accountProfile_Check_Dependent.getRecover());
                                         accountProfile.setPlatform(profileTask.getPlatform());
@@ -2137,8 +2139,8 @@ public class TaskController {
                                             data.put("app",profileTask.getPlatform());
                                         }
                                         data.put("task", "register");
-                                        data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
-                                        data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().indexOf("|")));
+                                        data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|")));
+                                        data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|")));
                                         data.put("password",accountProfile_Check_Dependent.getPassword().trim());
                                         data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
                                         data.put("auth_2fa", "");
@@ -2212,7 +2214,7 @@ public class TaskController {
                                             }
                                         }else{
                                             AccountProfile accountProfile=new AccountProfile();
-                                            accountProfile.setAccount_id(account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|"))+"|"+profileTask.getPlatform());
+                                            accountProfile.setAccount_id(account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                             accountProfile.setPassword(password);
                                             accountProfile.setRecover(account_Check.getRecover_mail().trim());
                                             accountProfile.setPlatform(profileTask.getPlatform());
@@ -2238,8 +2240,8 @@ public class TaskController {
                                                 data.put("app",profileTask.getPlatform());
                                             }
                                             data.put("task", "register");
-                                            data.put("task_key",  account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
-                                            data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().indexOf("|")));
+                                            data.put("task_key",  account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|")));
+                                            data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|")));
                                             data.put("password", password);
                                             data.put("recover_mail",account_Check.getRecover_mail().trim());
                                             data.put("auth_2fa", "");
@@ -2285,8 +2287,8 @@ public class TaskController {
                                             data.put("app",profileTask.getPlatform());
                                         }
                                         data.put("task", "login");
-                                        data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
-                                        data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().indexOf("|")));
+                                        data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
+                                        data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                                         data.put("password", account_get.getPassword().trim());
                                         data.put("recover_mail", account_get.getRecover_mail().trim());
                                         data.put("auth_2fa", account_get.getAuth_2fa().trim());
@@ -2377,8 +2379,37 @@ public class TaskController {
                         }else{
                             data.put("task", "login");
                         }
-                        data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
-                        data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().indexOf("|")));
+                        data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                        data.put("password", accountProfile_Check_Platform.getPassword().trim());
+                        data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
+                        data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
+                    &&accountProfile_Check_Platform.getPlatform().equals("tiktok")){
+                        System.out.println(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                        profileTask.setRequest_index(1);
+                        profileTaskRepository.save(profileTask);
+
+                        resp.put("status", true);
+                        data.put("platform",profileTask.getPlatform());
+                        if( profileTask.getPlatform().equals("tiktok")){
+                            if(device.getMode().contains("tiktok-lite")){
+                                data.put("app","tiktok-lite");
+                            }else{
+                                data.put("app","tiktok");
+                            }
+                        }else{
+                            data.put("app",profileTask.getPlatform());
+                        }
+                        if(accountProfile_Check_Platform.getLive()==-1){
+                            data.put("task", "register");
+                        }else{
+                            data.put("task", "login");
+                        }
+                        data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
                         data.put("password", accountProfile_Check_Platform.getPassword().trim());
                         data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
                         data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
@@ -6869,11 +6900,16 @@ public class TaskController {
                                 account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 if(account==null){
                                     account=new Account();
-                                    account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                    if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())){
+                                        account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                        account.setLive(1);
+                                    }else{
+                                        account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                        account.setLive(0);
+                                    }
                                     account.setPassword(accountProfile.getPassword());
                                     account.setRecover_mail(accountProfile.getRecover());
                                     account.setPlatform(accountProfile.getPlatform());
-                                    account.setLive(1);
                                     account.setMode(updateTaskRequest.getTask());
                                     account.setRunning(1);
                                     account.setAuth_2fa("");
@@ -6885,8 +6921,13 @@ public class TaskController {
                                     accountRepository.save(account);
                                 }
                             } else if(!account.getAccount_id().equals(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())){
-                                account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                accountRepository.save(account);
+                                if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
+                                    account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                    accountRepository.save(account);
+                                }else if(!updateTaskRequest.getPlatform().equals("tiktok")){
+                                    account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                    accountRepository.save(account);
+                                }
                             }
                         }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
                             accountProfile.setLive(0);

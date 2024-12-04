@@ -3,6 +3,8 @@ package com.nts.awspremium;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtils {
     public static long getLongTimeFromString(String dateTimeString,String format){
@@ -16,6 +18,19 @@ public class StringUtils {
         }
         return 0;
     }
+
+
+    public static boolean isValidTikTokID(String id) {
+        if (id == null || id.isEmpty()) return false;
+
+        // Biểu thức chính quy: @ phải ở đầu
+        String regex = "^@([a-zA-Z0-9._]+)$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(id);
+        return matcher.matches();
+    }
+
+
     public static String convertMMMtoMM(String mmm){
         try {
             if(mmm.contains("Jul")){

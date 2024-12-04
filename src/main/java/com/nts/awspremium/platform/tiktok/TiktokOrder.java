@@ -1,5 +1,7 @@
 package com.nts.awspremium.platform.tiktok;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
@@ -25,6 +27,9 @@ public class TiktokOrder {
     @Autowired
     private LogErrorRepository logErrorRepository;
 
+    @Autowired
+    private DataFollowerTiktokRepository dataFollowerTiktokRepository;
+
     public JSONObject tiktok_follower(DataRequest data, Service service, User user)  throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         try{
@@ -37,12 +42,17 @@ public class TiktokOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-
-            Integer follower_count=TikTokApi.getFollowerCount(tiktok_id.trim().split("@")[1],2);
-            if(follower_count==-2){
+            JsonObject channelInfo=TikTokApi.getInfoChannel(tiktok_id.trim().split("@")[1]);
+            if(channelInfo==null){
                 resp.put("error", "This account cannot be found");
                 return resp;
             }
+            if(channelInfo.get("videoCount").getAsInt()<3){
+                resp.put("error", "The total number of videos in the account must be greater than or equal to 3 videos");
+                return resp;
+            }
+            Integer follower_count=channelInfo.get("followerCount").getAsInt();
+
 
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
@@ -54,7 +64,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link("https://www.tiktok.com/"+tiktok_id);
             orderRunning.setStart_count(follower_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(tiktok_id.trim());
@@ -76,6 +86,31 @@ public class TiktokOrder {
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
+
+
+            JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],3);
+            if(videoList.size()==0){
+                resp.put("error", "Unable to get account video information");
+                return resp;
+            }
+
+            for (JsonElement video: videoList) {
+                JsonObject videoObj=video.getAsJsonObject();
+                DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
+                dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
+                Long duration=videoObj.get("duration").getAsLong();
+                if(duration==0){
+                    duration=videoObj.getAsJsonObject("music_info").get("duration").getAsLong();
+                }
+                dataFollowerTiktok.setDuration(duration);
+                dataFollowerTiktok.setTiktok_id(tiktok_id.trim());
+                dataFollowerTiktok.setOrderRunning(orderRunning);
+                dataFollowerTiktok.setState(1);
+                dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
+                dataFollowerTiktokRepository.save(dataFollowerTiktok);
+            }
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
             Balance balance = new Balance();
@@ -114,38 +149,28 @@ public class TiktokOrder {
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
-            String share_id=TikTokApi.getIdShare(data.getLink());
             String link;
             if (video_id == null) {
-                if(share_id==null){
-                    resp.put("error", "Cant filter video_id from link");
-                    return resp;
-                }else{
-                   link="https://vm.tiktok.com/"+share_id;
-                }
+                   link=data.getLink().trim();
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                     resp.put("error", "This ID in process");
                     return resp;
                 }
-                link="https://www.tiktok.com/@/video/"+video_id;
+                link=data.getLink().trim();
             }
 
-            Integer like_count=TikTokApi.getCountLike(link);
-            if(like_count==-2){
+            JsonObject infoVideo=TikTokApi.getInfoVideo(link);
+            if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
-            /*
-            JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
-            if(infoVideoTikTok.get("status").toString().equals("error")){
-                resp.put("error", "This video cannot be found");
-                return resp;
+            video_id=infoVideo.get("id").getAsString();
+            Integer like_count=infoVideo.get("digg_count").getAsInt();
+            Long duration=infoVideo.get("duration").getAsLong();
+            if(duration==0){
+                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
             }
-
-             */
-            //video_id=infoVideoTikTok.get("id").toString();
-            //Integer like_count=Integer.parseInt(infoVideoTikTok.get("likes").toString());
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
                 return resp;
@@ -181,6 +206,7 @@ public class TiktokOrder {
             orderRunning.setStart_count_time(0L);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setDuration(duration);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -220,36 +246,28 @@ public class TiktokOrder {
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
-            String share_id=TikTokApi.getIdShare(data.getLink());
             String link;
             if (video_id == null) {
-                if(share_id==null){
-                    resp.put("error", "Cant filter video_id from link");
-                    return resp;
-                }else{
-                    link="https://vm.tiktok.com/"+share_id;
-                }
+                link=data.getLink().trim();
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                     resp.put("error", "This ID in process");
                     return resp;
                 }
-                link="https://www.tiktok.com/@/video/"+video_id;
+                link=data.getLink().trim();
             }
-            Integer comment_count=TikTokApi.getCountComment(link);
-            if(comment_count==-2){
+
+            JsonObject infoVideo=TikTokApi.getInfoVideo(link);
+            if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
                 return resp;
             }
-            /*
-            JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
-            if(infoVideoTikTok.get("status").toString().equals("error")){
-                resp.put("error", "This video cannot be found");
-                return resp;
+            video_id=infoVideo.get("id").getAsString();
+            Integer comment_count=infoVideo.get("comment_count").getAsInt();
+            Long duration=infoVideo.get("duration").getAsLong();
+            if(duration==0){
+                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
             }
-            video_id=infoVideoTikTok.get("id").toString();
-            Integer comment_count=Integer.parseInt(infoVideoTikTok.get("comments").toString());
-             */
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
                 return resp;
@@ -265,27 +283,27 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(data.getLink());
-            orderRunning.setComment_list(data.getList());
             orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
-            orderRunning.setOrder_key(video_id.trim());
+            orderRunning.setOrder_key(video_id);
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(0L);
+            orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
+            orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
             orderRunning.setStart_count_time(0L);
-            orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setDuration(duration);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
@@ -325,37 +343,28 @@ public class TiktokOrder {
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
-            String share_id=TikTokApi.getIdShare(data.getLink());
             String link;
             if (video_id == null) {
-                if(share_id==null){
-                    resp.put("error", "Cant filter video_id from link");
-                    return resp;
-                }else{
-                    link="https://vm.tiktok.com/"+share_id;
-                }
+                link=data.getLink().trim();
             }else{
                 if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                     resp.put("error", "This ID in process");
                     return resp;
                 }
-                link="https://www.tiktok.com/@/video/"+video_id;
+                link=data.getLink().trim();
             }
-            Integer view_count=TikTokApi.getCountView(link);
-            if(view_count==-2){
-                resp.put("error", "This video cannot be found");
-                return resp;
-            }
-            /*
-            JSONObject infoVideoTikTok=TikTokApi.getInfoVideoTikTok(link,2);
-            if(infoVideoTikTok.get("status").toString().equals("error")){
-                resp.put("error", "This video cannot be found");
-                return resp;
-            }
-            video_id=infoVideoTikTok.get("id").toString();
-            Integer view_count=Integer.parseInt(infoVideoTikTok.get("plays").toString());
 
-             */
+            JsonObject infoVideo=TikTokApi.getInfoVideo(link);
+            if(infoVideo==null){
+                resp.put("error", "This video cannot be found");
+                return resp;
+            }
+            video_id=infoVideo.get("id").getAsString();
+            Integer view_count=infoVideo.get("play_count").getAsInt();
+            Long duration=infoVideo.get("duration").getAsLong();
+            if(duration==0){
+                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+            }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
                 return resp;
@@ -373,24 +382,25 @@ public class TiktokOrder {
             orderRunning.setOrder_link(data.getLink());
             orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
-            orderRunning.setOrder_key(video_id.trim());
+            orderRunning.setOrder_key(video_id);
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
             orderRunning.setStart_time(System.currentTimeMillis());
             orderRunning.setThread(service.getThread());
-            orderRunning.setThread_set(0);
+            orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);
             orderRunning.setValid(1);
+            orderRunning.setSpeed_up(0);
             orderRunning.setCurrent_count(0);
             orderRunning.setCheck_count(0);
             orderRunning.setCheck_count_time(0L);
             orderRunning.setStart_count_time(0L);
-            orderRunning.setSpeed_up(0);
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
+            orderRunning.setDuration(duration);
             orderRunningRepository.save(orderRunning);
 
             Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
