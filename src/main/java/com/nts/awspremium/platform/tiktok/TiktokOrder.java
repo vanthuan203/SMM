@@ -35,8 +35,13 @@ public class TiktokOrder {
         try{
             String tiktok_id= TikTokApi.getTiktokId(data.getLink().trim());
             if (tiktok_id == null) {
-                resp.put("error", "Cant filter tiktok_id from link");
-                return resp;
+                JsonObject infoVideo=TikTokApi.getInfoVideo(data.getLink().trim());
+                if(infoVideo.size()==0){
+                    resp.put("error", "Cant filter tiktok_id from link");
+                    return resp;
+                }else{
+                    tiktok_id= "@"+infoVideo.getAsJsonObject("author").get("unique_id").getAsString();
+                }
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(tiktok_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
