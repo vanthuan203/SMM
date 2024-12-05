@@ -1754,6 +1754,7 @@ public class TaskController {
                         AccountProfile accountProfile=new AccountProfile();
                         accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
                         accountProfile.setPassword(password);
+                        accountProfile.setName("");
                         accountProfile.setRecover("");
                         accountProfile.setPlatform("youtube");
                         accountProfile.setLive(-1);
@@ -1781,6 +1782,7 @@ public class TaskController {
                         data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                         data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                         data.put("password",password);
+                        data.put("name",accountProfile.getName());
                         data.put("recover_mail",  accountProfile.getRecover().trim());
                         data.put("auth_2fa", "");
                         resp.put("data",data);
@@ -1802,6 +1804,7 @@ public class TaskController {
                             accountProfile.setAccount_id(account_get.getAccount_id());
                             accountProfile.setPassword(account_get.getPassword());
                             accountProfile.setRecover(account_get.getRecover_mail());
+                            accountProfile.setName(account_get.getName());
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
                             accountProfile.setChanged(0);
@@ -1818,6 +1821,7 @@ public class TaskController {
                             data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("password", account_get.getPassword().trim());
+                            data.put("name", account_get.getName());
                             data.put("recover_mail", account_get.getRecover_mail().trim());
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
                             resp.put("data",data);
@@ -1934,6 +1938,7 @@ public class TaskController {
                         data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                         data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                         data.put("password", accountProfile_Check.getPassword().trim());
+                        data.put("name", accountProfile_Check.getName());
                         data.put("recover_mail", accountProfile_Check.getRecover().trim());
                         data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
                         resp.put("data",data);
@@ -1959,6 +1964,7 @@ public class TaskController {
                     data.put("task_key", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                     data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                     data.put("password", accountProfile_Check.getPassword().trim());
+                    data.put("name", accountProfile_Check.getName());
                     data.put("recover_mail", accountProfile_Check.getRecover().trim());
                     data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
                     resp.put("data",data);
@@ -2554,13 +2560,13 @@ public class TaskController {
             Map<String, Object> dataJson=new LinkedHashMap<>();
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
+                dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
                 Long version_app=platformRepository.get_Version_App_Platform(dataJson.get("platform").toString());
                 dataJson.put("version_app",version_app==null?0:version_app);
                 Integer activity=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
                 dataJson.put("activity",activity==0?false:true);
-                //System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
                 //--------------------------------------------//
@@ -6859,7 +6865,7 @@ public class TaskController {
                         logError.setMethod_name(stackTraceElement.getMethodName());
                         logError.setLine_number(stackTraceElement.getLineNumber());
                         logError.setClass_name(stackTraceElement.getClassName());
-                        logError.setFile_name(stackTraceElement.getFileName());
+                        logError.setFile_name(stackTraceElement.getFileName() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform());
                         logError.setMessage(e.getMessage());
                         logError.setAdd_time(System.currentTimeMillis());
                         Date date_time = new Date(System.currentTimeMillis());
