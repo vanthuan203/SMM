@@ -21,7 +21,8 @@ public class Account implements Serializable {
     private String account_id;
     @Column(nullable = false)
     private String password;
-
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String name="";
     @Column(columnDefinition = "varchar(255) default ''")
     private String recover_mail;
 

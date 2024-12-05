@@ -2388,7 +2388,6 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
                     &&accountProfile_Check_Platform.getPlatform().equals("tiktok")){
-                        System.out.println(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
                         profileTask.setRequest_index(1);
                         profileTaskRepository.save(profileTask);
 
@@ -7042,7 +7041,7 @@ public class TaskController {
                 logError.setMethod_name(stackTraceElement.getMethodName());
                 logError.setLine_number(stackTraceElement.getLineNumber());
                 logError.setClass_name(stackTraceElement.getClassName());
-                logError.setFile_name(stackTraceElement.getFileName());
+                logError.setFile_name(stackTraceElement.getFileName() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform());
                 logError.setMessage(e.getMessage());
                 logError.setAdd_time(System.currentTimeMillis());
                 Date date_time = new Date(System.currentTimeMillis());
