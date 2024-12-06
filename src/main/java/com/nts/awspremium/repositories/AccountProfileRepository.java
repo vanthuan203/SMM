@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public interface AccountProfileRepository extends JpaRepository<AccountProfile,String> {
     @Query(value = "SELECT SUBSTRING_INDEX(account_id, '|', 1) as account_id FROM account_profile where profile_id=?1 and platform=?2 and live=1 limit 1",nativeQuery = true)
@@ -14,6 +15,10 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Query(value = "SELECT name FROM account_profile where account_id=?1 limit 1",nativeQuery = true)
     public String get_Name_By_AccountId(String account_id);
+
+    @Query(value = "SELECT * FROM account_profile where platform='tiktok'",nativeQuery = true)
+    public List<AccountProfile> get_Account_Tiktok();
+
     @Query(value = "SELECT account_id FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public String get_AccountId_By_AccountId_And_Platform(String profile_id,String platform);
 
