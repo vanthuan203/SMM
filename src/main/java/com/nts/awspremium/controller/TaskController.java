@@ -2421,7 +2421,8 @@ public class TaskController {
                         data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
-                    }else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
+                    }
+                    /*else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
                     &&accountProfile_Check_Platform.getPlatform().equals("tiktok")){
                         profileTask.setRequest_index(1);
                         profileTaskRepository.save(profileTask);
@@ -2451,6 +2452,8 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
+
+                     */
                 }
 
             }
@@ -6921,27 +6924,30 @@ public class TaskController {
                         accountProfile.setUpdate_time(System.currentTimeMillis());
                         accountProfileRepository.save(accountProfile);
                     }
-                }else if(updateTaskRequest.getIsLogin()==1){
+                }else if(updateTaskRequest.getIsLogin()==1){  ///Check khi login hoặc reg thành công !!!!!!!!!!!!!
+
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
-                            accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+accountProfile.getPlatform());
-                            accountProfile.setLive(1);
+
+                            if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
+                                accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                accountProfile.setLive(1);
+                            }else if(updateTaskRequest.getPlatform().equals("tiktok")){
+                                accountProfile.setLive(0);
+                            }else{
+                                accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                accountProfile.setLive(1);
+                            }
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
 
-                            Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                            if(account==null){
-                                account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                if(account==null){
+                            Account account=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim());
+
+                            if(account==null&&accountProfile.getLive()==1){
                                     account=new Account();
-                                    if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())){
-                                        account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                        account.setLive(1);
-                                    }else{
-                                        account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                        account.setLive(0);
-                                    }
+                                    account.setAccount_id(accountProfile.getAccount_id().trim());
+                                    account.setLive(1);
                                     account.setPassword(accountProfile.getPassword());
                                     account.setName(accountProfile.getName());
                                     account.setRecover_mail(accountProfile.getRecover());
@@ -6955,15 +6961,9 @@ public class TaskController {
                                     account.setGet_time(System.currentTimeMillis());
                                     account.setUpdate_time(System.currentTimeMillis());
                                     accountRepository.save(account);
-                                }
-                            } else if(!account.getAccount_id().equals(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())){
-                                if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
-                                    account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                    accountRepository.save(account);
-                                }else if(!updateTaskRequest.getPlatform().equals("tiktok")){
-                                    account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                    accountRepository.save(account);
-                                }
+                            } else if(account!=null){
+                                account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                accountRepository.save(account);
                             }
                         }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
                             accountProfile.setLive(0);
