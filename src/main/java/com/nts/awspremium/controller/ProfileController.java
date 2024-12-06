@@ -166,7 +166,7 @@ public class ProfileController {
             List<Device> devices =deviceRepository.get_All_Device_Enable0();
             for (Device device:devices) {
                 ProfileTask profileTask =profileTaskRepository.get_Profile_Rand_Enable0(device.getDevice_id().trim());
-                if (profileTask !=null){
+                if (profileTask !=null&&profileTaskRepository.check_Profile_Enabled_And_GoogleLogin(device.getDevice_id().trim())==0){
                     profileTask.setEnabled(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
                     profileTaskRepository.save(profileTask);

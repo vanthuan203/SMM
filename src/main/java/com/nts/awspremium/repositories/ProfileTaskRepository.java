@@ -20,14 +20,8 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "select count(*) from profile_task where device_id=?1",nativeQuery = true)
     public Integer count_Profile(String device_id);
 
-    @Query(value = "Select * from profile_task where  device_id=?1 and \n" +
-            "round((UNIX_TIMESTAMP()-(SELECT \n" +
-            "   IF(\n" +
-            "        (SELECT MAX(google_time) FROM profile_task WHERE device_id = ?1) / 1000 / 60 / 60 = 0,\n" +
-            "        UNIX_TIMESTAMP()*1000,\n" +
-            "        (SELECT MAX(google_time) FROM profile_task WHERE device_id = ?1) / 1000 / 60 / 60\n" +
-            "    ) AS result)/1000)/60/60)>=(select time_enable_profile from setting_system where id=1)\n" +
-            "             and enabled=0 order by rand() limit 1;",nativeQuery = true)
+    @Query(value = "Select * from profile_task where  device_id=?1 and round((UNIX_TIMESTAMP()-(select max(google_time) from profile_task where\n" +
+            "  device_id=?1)/1000)/60/60)>(select time_enable_profile from setting_system where id=1) and enabled=0 order by rand() limit 1",nativeQuery = true)
     public ProfileTask get_Profile_Rand_Enable0(String device_id);
 
     @Query(value = "Select * from profile_task where profile_id!=?1 and device_id=?2 and round((UNIX_TIMESTAMP()-(select max(enabled_time) from profile_task where  device_id=?2)/1000)/60/60)>(select time_enable_profile from setting_system where id=1)\n" +
@@ -36,6 +30,9 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Query(value = "Select * from profile_task where  device_id=?1 order by update_time asc limit 1",nativeQuery = true)
     public ProfileTask get_Profile_Get_Task(String device_id);
+
+    @Query(value = "Select count(*) from profile_task where  device_id=?1 and enabled=1 and google_time=0",nativeQuery = true)
+    public Integer check_Profile_Enabled_And_GoogleLogin(String device_id);
 
     @Query(value = "Select count(*) from profile_task where  device_id=?1 and enabled=1",nativeQuery = true)
     public Integer check_Profile_Enabled(String device_id);
