@@ -159,12 +159,7 @@ public class DeviceController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
 
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
-            if(device!=null){
-                if(device.getNum_profile_set()==0){
-                    profile_list="10";
-                }
-            }
+
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
             profileId.remove("0");
@@ -172,7 +167,8 @@ public class DeviceController {
             for (int i=0;i<profileId.size();i++ ) {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
-            //Device device=deviceRepository.check_DeviceId(device_id.trim()); //code cũ ở đây
+
+            Device device=deviceRepository.check_DeviceId(device_id.trim()); //code cũ ở đây
             if(device==null){
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
@@ -188,6 +184,7 @@ public class DeviceController {
                 device_new.setBox_id("");
                 device_new.setMode("");
                 device_new.setNum_profile(profile.size());
+                device_new.setNum_profile_set(1);
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;

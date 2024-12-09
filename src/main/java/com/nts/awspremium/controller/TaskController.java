@@ -1635,9 +1635,7 @@ public class TaskController {
             device.setRom_version(rom_version.trim());
             device.setUpdate_time(System.currentTimeMillis());
             deviceRepository.save(device);
-            if(device.getNum_profile_set()==0){
-                profile_id="10";
-            }
+
             if((device.getNum_profile()<device.getNum_profile_set() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
                 resp.put("status", true);
                 data.put("platform", "system");
