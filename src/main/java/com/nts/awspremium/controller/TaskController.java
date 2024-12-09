@@ -1761,6 +1761,7 @@ public class TaskController {
                         accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
                         accountProfile.setPassword(password);
                         accountProfile.setName("");
+                        accountProfile.setAvatar(0);
                         accountProfile.setRecover("");
                         accountProfile.setPlatform("youtube");
                         accountProfile.setLive(-1);
@@ -1789,6 +1790,7 @@ public class TaskController {
                         data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                         data.put("password",password);
                         data.put("name",accountProfile.getName());
+                        data.put("avatar",accountProfile.getAvatar()==0?false:true);
                         data.put("recover_mail",  accountProfile.getRecover().trim());
                         data.put("auth_2fa", "");
                         resp.put("data",data);
@@ -1828,6 +1830,7 @@ public class TaskController {
                             data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("password", account_get.getPassword().trim());
                             data.put("name", account_get.getName());
+                            data.put("avatar", account_get.getAvatar()==0?false:true);
                             data.put("recover_mail", account_get.getRecover_mail().trim());
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
                             resp.put("data",data);
@@ -1945,6 +1948,7 @@ public class TaskController {
                         data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                         data.put("password", accountProfile_Check.getPassword().trim());
                         data.put("name", accountProfile_Check.getName());
+                        data.put("avatar", accountProfile_Check.getAvatar()==0?false:true);
                         data.put("recover_mail", accountProfile_Check.getRecover().trim());
                         data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
                         resp.put("data",data);
@@ -1971,6 +1975,7 @@ public class TaskController {
                     data.put("account_id", accountProfile_Check.getAccount_id().substring(0,accountProfile_Check.getAccount_id().lastIndexOf("|")));
                     data.put("password", accountProfile_Check.getPassword().trim());
                     data.put("name", accountProfile_Check.getName());
+                    data.put("avatar", accountProfile_Check.getAvatar()==0?false:true);
                     data.put("recover_mail", accountProfile_Check.getRecover().trim());
                     data.put("auth_2fa", accountProfile_Check.getAuth_2fa().trim());
                     resp.put("data",data);
@@ -2129,6 +2134,7 @@ public class TaskController {
                                         }else{
                                               accountProfile.setName("");
                                         }
+                                        accountProfile.setAvatar(0);
                                         accountProfile.setRecover(accountProfile_Check_Dependent.getRecover());
                                         accountProfile.setPlatform(profileTask.getPlatform());
                                         accountProfile.setLive(-1);
@@ -2165,6 +2171,7 @@ public class TaskController {
                                         data.put("password",accountProfile_Check_Dependent.getPassword().trim());
                                         data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
                                         data.put("name",  accountProfile.getName());
+                                        data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                         data.put("auth_2fa", "");
                                         resp.put("data",data);
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -2208,6 +2215,7 @@ public class TaskController {
                                                 }else{
                                                     accountProfile.setName("");
                                                 }
+                                                accountProfile.setAvatar(0);
                                                 accountProfile.setPassword(password);
                                                 accountProfile.setRecover(mail);
                                                 accountProfile.setPlatform(profileTask.getPlatform());
@@ -2237,6 +2245,7 @@ public class TaskController {
                                                 data.put("account_id", mail);
                                                 data.put("password", password);
                                                 data.put("name", accountProfile.getName());
+                                                data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                                 data.put("recover_mail", mail);
                                                 data.put("auth_2fa", "");
                                                 resp.put("data",data);
@@ -2253,6 +2262,7 @@ public class TaskController {
                                             }else{
                                                 accountProfile.setName("");
                                             }
+                                            accountProfile.setAvatar(0);
                                             accountProfile.setRecover(account_Check.getRecover_mail().trim());
                                             accountProfile.setPlatform(profileTask.getPlatform());
                                             accountProfile.setLive(-1);
@@ -2281,6 +2291,7 @@ public class TaskController {
                                             data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|")));
                                             data.put("password", password);
                                             data.put("name", accountProfile.getName());
+                                            data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                             data.put("recover_mail",account_Check.getRecover_mail().trim());
                                             data.put("auth_2fa", "");
                                             resp.put("data",data);
@@ -2329,6 +2340,7 @@ public class TaskController {
                                         data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                                         data.put("password", account_get.getPassword().trim());
                                         data.put("name", account_get.getName().trim());
+                                        data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                         data.put("recover_mail", account_get.getRecover_mail().trim());
                                         data.put("auth_2fa", account_get.getAuth_2fa().trim());
                                         resp.put("data",data);
@@ -2422,6 +2434,7 @@ public class TaskController {
                         data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
                         data.put("password", accountProfile_Check_Platform.getPassword().trim());
                         data.put("name", accountProfile_Check_Platform.getName().trim());
+                        data.put("avatar", accountProfile_Check_Platform.getAvatar()==0?false:true);
                         data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
                         data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
                         resp.put("data",data);
@@ -2599,6 +2612,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
+                dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
                 Long version_app=platformRepository.get_Version_App_Platform(dataJson.get("platform").toString());
@@ -6955,6 +6969,7 @@ public class TaskController {
                                     account.setLive(1);
                                     account.setPassword(accountProfile.getPassword());
                                     account.setName(accountProfile.getName());
+                                    account.setAvatar(accountProfile.getAvatar());
                                     account.setRecover_mail(accountProfile.getRecover());
                                     account.setPlatform(accountProfile.getPlatform());
                                     account.setMode(updateTaskRequest.getTask());
@@ -6981,6 +6996,7 @@ public class TaskController {
                                 account.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setPassword(accountProfile.getPassword());
                                 account.setName(accountProfile.getName());
+                                account.setAvatar(accountProfile.getAvatar());
                                 account.setRecover_mail(accountProfile.getRecover());
                                 account.setPlatform(accountProfile.getPlatform());
                                 account.setLive(1);

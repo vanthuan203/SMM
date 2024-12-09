@@ -39,6 +39,9 @@ public class AccountController {
     private AccountRepository accountRepository;
 
     @Autowired
+    private AccountProfileRepository accountProfileRepository;
+
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private SettingSystemRepository settingSystemRepository;
@@ -48,11 +51,11 @@ public class AccountController {
 
     @Autowired
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
-/*
-    @GetMapping(value = "updateLive", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> updateLive(@RequestHeader(defaultValue = "") String Authorization,
+
+    @GetMapping(value = "updateAvatar", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> updateAvatar(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String account_id,
-                                                          @RequestParam(defaultValue = "-1") Integer live) throws InterruptedException {
+                                                          @RequestParam(defaultValue = "") String platform ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -69,28 +72,24 @@ public class AccountController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if (live ==-1) {
+            if (platform.length() ==0) {
                 resp.put("status", false);
-                data.put("message", "live không để trống");
+                data.put("message", "platform không để trống");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if(live!=1){
-                Account account=accountRepository.get_Account_By_Account_id(account_id.trim());
-                if(account!=null){
-                    account.setLive(live);
-                    account.setRunning(0);
-                    account.setProfile_id("");
-                    account.setDevice_id("");
-                    accountRepository.save(account);
-                    AccountTask accountTask=accountTaskRepository.get_Account_By_Account_id(account_id.trim());
-                    profileRepository.reset_Num_Account_By_ProfileId(accountTask.getProfile().getProfile_id());
-                    accountTaskRepository.delete(accountTask);
-                }
+            AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_id.trim()+"|"+platform.trim(),platform.trim());
+            if(accountProfile!=null){
+                accountProfile.setAvatar(1);
+                accountProfileRepository.save(accountProfile);
+            }else{
+                resp.put("status", false);
+                data.put("message", "account_id & platform không hợp lệ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            accountTaskRepository.reset_Task_Error();
             resp.put("status",true);
-            data.put("message", "reset thành công");
+            data.put("message", "update Avatar thành công");
             resp.put("data",data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         }catch (Exception e){
@@ -114,6 +113,7 @@ public class AccountController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
+    /*
     @PostMapping(value = "add_Account", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> add_Account(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestBody Account account) throws InterruptedException {

@@ -23,6 +23,10 @@ public class Account implements Serializable {
     private String password;
     @Column(columnDefinition = "varchar(255) default ''")
     private String name="";
+
+    @Column(columnDefinition = "integer default 0")
+    private Integer avatar=0;
+
     @Column(columnDefinition = "varchar(255) default ''")
     private String recover_mail;
 

@@ -16,6 +16,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT name FROM account_profile where account_id=?1 limit 1",nativeQuery = true)
     public String get_Name_By_AccountId(String account_id);
 
+    @Query(value = "SELECT avatar FROM account_profile where account_id=?1 limit 1",nativeQuery = true)
+    public Integer get_Avatar_By_AccountId(String account_id);
+
     @Query(value = "SELECT * FROM account_profile where platform='tiktok'",nativeQuery = true)
     public List<AccountProfile> get_Account_Tiktok();
 
