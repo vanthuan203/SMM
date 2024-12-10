@@ -36,6 +36,8 @@ public class DeviceController {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private SettingSystemRepository settingSystemRepository;
+    @Autowired
     private HttpServletRequest request;
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> get_List_Device(@RequestHeader(defaultValue = "") String Authorization,
@@ -192,6 +194,7 @@ public class DeviceController {
 
             Device device=deviceRepository.check_DeviceId(device_id.trim()); //code cũ ở đây
             if(device==null){
+                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
                 device_new.setAdd_time(System.currentTimeMillis());
@@ -208,7 +211,7 @@ public class DeviceController {
                 device_new.setAccount_live("");
                 device_new.setAccount_die("");
                 device_new.setNum_profile(profile.size());
-                device_new.setNum_profile_set(1);
+                device_new.setNum_profile_set(settingSystem.getMax_profile());
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
