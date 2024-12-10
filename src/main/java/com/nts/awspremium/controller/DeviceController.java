@@ -89,6 +89,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
@@ -409,6 +410,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
@@ -473,6 +475,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
@@ -536,6 +539,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
@@ -599,6 +603,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
@@ -665,6 +670,7 @@ public class DeviceController {
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
+                obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", deviceList.get(i).getNum_account());
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
