@@ -1669,8 +1669,8 @@ public class TaskController {
                 }
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                 if(profileTask!=null){
-                    profileTask.setReboot(1);
-                    profileTaskRepository.save(profileTask);
+                    //profileTask.setReboot(1);
+                    //profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -1687,8 +1687,8 @@ public class TaskController {
                 if(profileTask.getEnabled()==0&&platform.length()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                     if(profileTask!=null){
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
                         data.put("task", "profile_changer");
@@ -1704,7 +1704,7 @@ public class TaskController {
                 }else if(profileTask.getEnabled()==0&&platform.length()!=0){
                     profileTask.setEnabled(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
-                    profileTask.setReboot(1);
+                    //profileTask.setReboot(1);
                     profileTaskRepository.save(profileTask);
                 }
             }
@@ -1837,8 +1837,8 @@ public class TaskController {
                             if(platform.length()==0){
                                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                                 if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                    profileTask.setReboot(1);
-                                    profileTaskRepository.save(profileTask);
+                                    //profileTask.setReboot(1);
+                                    //profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
                                     data.put("platform", "system");
                                     data.put("task", "profile_changer");
@@ -1877,7 +1877,7 @@ public class TaskController {
 
                                 ProfileTask profileTask_Check =profileTaskRepository.get_Profile_Rand_Enable0_And_NotIn(profileTask.getProfile_id(),device.getDevice_id().trim());
                                 if (profileTask_Check !=null){
-                                    profileTask.setReboot(1);
+                                    //profileTask.setReboot(1);
                                     profileTask_Check.setEnabled(1);
                                     profileTask_Check.setEnabled_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask_Check);
@@ -1890,8 +1890,8 @@ public class TaskController {
                                 }else{
                                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                                        profileTask.setReboot(1);
-                                        profileTaskRepository.save(profileTask);
+                                        //profileTask.setReboot(1);
+                                        //profileTaskRepository.save(profileTask);
                                         resp.put("status", true);
                                         data.put("platform", "system");
                                         data.put("task", "profile_changer");
@@ -1924,8 +1924,8 @@ public class TaskController {
                     entityManager.clear();
                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
                         data.put("task", "profile_changer");
@@ -2481,8 +2481,8 @@ public class TaskController {
                     if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){
                         if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                             profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                            profileTask.setReboot(1);
-                            profileTaskRepository.save(profileTask);
+                            //profileTask.setReboot(1);
+                            //profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform", "system");
                             data.put("task", "profile_changer");
@@ -2754,8 +2754,8 @@ public class TaskController {
                 if(profileTask.getEnabled()==0&&platform.length()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                     if(profileTask!=null){
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
                         data.put("task", "profile_changer");
@@ -2876,8 +2876,8 @@ public class TaskController {
                             if(platform.length()==0){
                                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                                 if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                    profileTask.setReboot(1);
-                                    profileTaskRepository.save(profileTask);
+                                    //profileTask.setReboot(1);
+                                    //profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
                                     data.put("platform", "system");
                                     data.put("task", "profile_changer");
@@ -2910,7 +2910,7 @@ public class TaskController {
 
                                 ProfileTask profileTask_Check =profileTaskRepository.get_Profile_Rand_Enable0_And_NotIn(profileTask.getProfile_id(),device.getDevice_id().trim());
                                 if (profileTask_Check !=null){
-                                    profileTask.setReboot(1);
+                                    //profileTask.setReboot(1);
                                     profileTask_Check.setEnabled(1);
                                     profileTask_Check.setEnabled_time(System.currentTimeMillis());
                                     profileTaskRepository.save(profileTask_Check);
@@ -2955,8 +2955,8 @@ public class TaskController {
                     entityManager.clear();
                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                         profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "system");
                         data.put("task", "profile_changer");
@@ -3375,8 +3375,8 @@ public class TaskController {
                     if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){
                         if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                             profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
-                            profileTask.setReboot(1);
-                            profileTaskRepository.save(profileTask);
+                            //profileTask.setReboot(1);
+                            //profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform", "system");
                             data.put("task", "profile_changer");
