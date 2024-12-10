@@ -85,15 +85,15 @@ public class DeviceController {
                 JSONObject obj = new JSONObject();
                 Integer num_account=0;
                 Integer num_account_die=0;
-                String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
-                String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
-                if(acc_live!=null){
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
                     num_account=acc_live.split(",").length;
                     String[] account = acc_live.split(",");
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
                     acc_live = String.join(",", uniqueAccount);
                 }
-                if(acc_die!=null){
+                if(acc_die.length()!=0){
                     num_account_die=acc_die.split(",").length;
                     String[] account = acc_die.split(",");
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
@@ -205,6 +205,8 @@ public class DeviceController {
                 device_new.setRom_version(rom_version);
                 device_new.setBox_id("");
                 device_new.setMode("");
+                device_new.setAccount_live("");
+                device_new.setAccount_die("");
                 device_new.setNum_profile(profile.size());
                 device_new.setNum_profile_set(1);
                 device_new.setIp_address(ip);
@@ -331,8 +333,8 @@ public class DeviceController {
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
                     acc_die = String.join(",", uniqueAccount);
                 }
-                deviceList.get(i).setAccount_live(acc_live);
-                deviceList.get(i).setAccount_die(acc_die);
+                deviceList.get(i).setAccount_live(acc_live==null?"":acc_live);
+                deviceList.get(i).setAccount_die(acc_die==null?"":acc_die);
                 deviceRepository.save(deviceList.get(i));
             }
             return  true;
