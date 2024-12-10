@@ -53,12 +53,15 @@ public class ProfileController {
                 String acc_die=profileTaskRepository.get_AccountDie_By_ProfileId(profiles.get(i).getProfile_id());
                 if(acc_live!=null){
                     num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
                 }
                 if(acc_die!=null){
+                    num_account_die=acc_die.split(",").length;
                     String[] account = acc_die.split(",");
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
                     acc_die = String.join(",", uniqueAccount);
-                    num_account_die=acc_die.split(",").length;
                 }
                 obj.put("device_id", profiles.get(i).getDevice_id());
                 obj.put("profile_id", profiles.get(i).getProfile_id());

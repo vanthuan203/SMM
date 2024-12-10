@@ -23,6 +23,7 @@ public class RunDevice {
                     while (true) {
                         try {
                             deviceController.update_Status_Device();
+                            deviceController.update_Account_Device();
                             try {
                                 Thread.sleep(300000);
                             } catch (InterruptedException e) {

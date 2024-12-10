@@ -83,6 +83,24 @@ public class DeviceController {
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
+                String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
+                if(acc_live!=null){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die!=null){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -90,7 +108,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
@@ -291,6 +312,52 @@ public class DeviceController {
         }
 
     }
+
+    public Boolean update_Account_Device(
+    ){
+        try{
+
+            List<Device> deviceList =deviceRepository.get_All_Device();
+            for (int i=0;i<deviceList.size();i++){
+                String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
+                String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
+                if(acc_live!=null){
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die!=null){
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+                deviceList.get(i).setAccount_live(acc_live);
+                deviceList.get(i).setAccount_die(acc_die);
+                deviceRepository.save(deviceList.get(i));
+            }
+            return  true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            return false;
+        }
+
+    }
+
 
     @DeleteMapping(value = "delete_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> delete_Device(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
