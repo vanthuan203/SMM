@@ -323,16 +323,6 @@ public class DeviceController {
             for (int i=0;i<deviceList.size();i++){
                 String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
                 String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
-                if(acc_live!=null){
-                    String[] account = acc_live.split(",");
-                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
-                    acc_live = String.join(",", uniqueAccount);
-                }
-                if(acc_die!=null){
-                    String[] account = acc_die.split(",");
-                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
-                    acc_die = String.join(",", uniqueAccount);
-                }
                 deviceList.get(i).setAccount_live(acc_live==null?"":acc_live);
                 deviceList.get(i).setAccount_die(acc_die==null?"":acc_die);
                 deviceRepository.save(deviceList.get(i));

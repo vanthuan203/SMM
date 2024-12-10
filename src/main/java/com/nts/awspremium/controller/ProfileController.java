@@ -72,8 +72,8 @@ public class ProfileController {
                 obj.put("get_time", profiles.get(i).getGet_time());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
-                obj.put("acc_live",acc_live );
-                obj.put("acc_die",acc_die );
+                obj.put("acc_live",acc_live==null?"":acc_live );
+                obj.put("acc_die",acc_die==null?"":acc_die );
                 obj.put("state", profiles.get(i).getState());
                 obj.put("platform", profiles.get(i).getPlatform());
                 obj.put("task", profiles.get(i).getTask());
