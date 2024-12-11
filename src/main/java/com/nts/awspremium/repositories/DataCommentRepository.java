@@ -30,7 +30,7 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @Query(value = "update data_comment set running=0,account_id='' where  running=1  and account_id in(select account_id from profile_task where (running=0 or task!='comment')) ",nativeQuery = true)
+    @Query(value = "select * from data_comment  where  running=1  and (account_id in(select account_id from profile_task where (running=0 or task!='comment')) or account_id not in (select account_id from profile_task))",nativeQuery = true)
     public void reset_Running_Comment();
 
 }
