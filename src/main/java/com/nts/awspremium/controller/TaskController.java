@@ -1706,6 +1706,7 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }else if(profileTask.getEnabled()==0&&platform.length()!=0){
+                    profileTask.setOnline_time(System.currentTimeMillis());
                     profileTask.setEnabled(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
                     //profileTask.setReboot(1);
@@ -1728,8 +1729,8 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             if(profileTask.getReboot()==1){
-                //profileTask.setOnline_time(System.currentTimeMillis());
-                //profileTaskRepository.save(profileTask);
+                profileTask.setOnline_time(System.currentTimeMillis());
+                profileTaskRepository.save(profileTask);
                 profileTaskRepository.reset_Reboot_By_DeviceId(device_id.trim());
                 resp.put("status", true);
                 data.put("platform", "system");
@@ -2751,8 +2752,6 @@ public class TaskController {
             }else if(profile_id.trim().equals("0")){
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                 if(profileTask!=null){
-                    profileTask.setOnline_time(System.currentTimeMillis());
-                    profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -2893,8 +2892,6 @@ public class TaskController {
                             if(platform.length()==0){
                                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                                 if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                    profileTask.setOnline_time(System.currentTimeMillis());
-                                    profileTaskRepository.save(profileTask);
                                     //profileTask.setReboot(1);
                                     //profileTaskRepository.save(profileTask);
                                     resp.put("status", true);
