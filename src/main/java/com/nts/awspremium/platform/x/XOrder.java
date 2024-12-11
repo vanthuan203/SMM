@@ -429,7 +429,7 @@ public class XOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(data.getLink());
-            orderRunning.setComment_list(data.getList());
+            orderRunning.setComment_list(data.getComments());
             orderRunning.setStart_count(0);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(x_Id);

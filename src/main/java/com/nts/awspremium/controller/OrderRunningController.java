@@ -656,6 +656,7 @@ public class OrderRunningController {
                 orderHistory.setTime_total(orderRunningList.get(i).getTime_total());
                 orderHistory.setUpdate_time(orderRunningList.get(i).getUpdate_time());
                 orderHistory.setCharge(orderRunningList.get(i).getCharge());
+                orderHistory.setCurrent_count(orderRunningList.get(i).getCurrent_count());
                 orderHistory.setRefund(0);
                 orderHistory.setCancel(0);
                 orderHistory.setRefund_time(0L);
@@ -930,6 +931,7 @@ public class OrderRunningController {
                 orderHistory.setRefund_time(0L);
                 orderHistory.setRefill_time(0L);
                 orderHistory.setRefill(0);
+                orderHistory.setCurrent_count(orderRunningList.get(i).getCurrent_count());
                 orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
                 orderHistory.setOrder_refill(orderRunningList.get(i).getOrder_refill());
 
