@@ -292,7 +292,7 @@ public class TiktokOrder {
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
             orderRunning.setUser(user);
-            orderRunning.setComment_list(data.getList());
+            orderRunning.setComment_list(data.getComments());
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
             orderRunning.setStart_time(0L);
