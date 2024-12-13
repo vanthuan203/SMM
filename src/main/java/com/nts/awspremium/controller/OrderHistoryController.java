@@ -400,7 +400,7 @@ public class OrderHistoryController {
                 orderHistoryRepository.save(orderHistory);
                 if(orderHistory.getService().getRefund()==0){
                     status="✘ DV không bảo hành";
-                }else if(orderHistory.getRefill()==0){
+                }else if(orderHistory.getService().getRefill()==0){
                     status="✘ DV chỉ refund";
                 }else if(orderHistory.getCancel()==1){
                     if(orderHistory.getRefund()>0){
