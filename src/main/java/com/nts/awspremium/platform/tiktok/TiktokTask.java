@@ -279,7 +279,7 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            System.out.println(account_id);
+            //System.out.println(account_id);
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_view()){
                 resp.put("status", false);

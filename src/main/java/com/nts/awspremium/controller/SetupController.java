@@ -316,7 +316,7 @@ public class SetupController {
             sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             String formattedDate = sdf.format(date_time);
             logError.setDate_time(formattedDate);
-            System.out.println(logError.getMessage());
+            //System.out.println(logError.getMessage());
 
 
             resp.put("status", false);
@@ -398,7 +398,7 @@ public class SetupController {
             sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             String formattedDate = sdf.format(date_time);
             logError.setDate_time(formattedDate);
-            System.out.println(logError.getMessage());
+            //System.out.println(logError.getMessage());
 
 
             resp.put("status", false);
@@ -480,7 +480,7 @@ public class SetupController {
             sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             String formattedDate = sdf.format(date_time);
             logError.setDate_time(formattedDate);
-            System.out.println(logError.getMessage());
+            //System.out.println(logError.getMessage());
 
 
             resp.put("status", false);
@@ -531,7 +531,7 @@ public class SetupController {
             sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
             String formattedDate = sdf.format(date_time);
             logError.setDate_time(formattedDate);
-            System.out.println(logError.getMessage());
+            //System.out.println(logError.getMessage());
 
 
             resp.put("status", false);

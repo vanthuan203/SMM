@@ -5280,9 +5280,7 @@ public class TaskController {
                             task_List=platform;
                         }
                         List<String> arrPlatform =new ArrayList<>(Arrays.asList(task_List.split(",")));
-                        System.out.println(arrPlatform);
                         while (arrPlatform.size()>0){
-                            System.out.println("index 1 "+arrPlatform.get(0));
                             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0&&!arrPlatform.get(0).equals("youtube")){
                                 AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), arrPlatform.get(0));
                                 if(accountProfile_Check_Platform==null || (accountProfile_Check_Platform!=null?accountProfile_Check_Platform.getLive()>1:false)  ){
@@ -5432,9 +5430,7 @@ public class TaskController {
                     task_List=platform;
                 }
                 List<String> arrPlatform =new ArrayList<>(Arrays.asList(task_List.split(",")));
-                System.out.println(arrPlatform);
                 while (arrPlatform.size()>0){
-                    System.out.println("index 2 "+arrPlatform.get(0));
                     if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),arrPlatform.get(0))==0&&!arrPlatform.get(0).equals("youtube")){
                         AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), arrPlatform.get(0));
                         if(accountProfile_Check_Platform==null || (accountProfile_Check_Platform!=null?accountProfile_Check_Platform.getLive()>1:false)  ){
@@ -6316,7 +6312,6 @@ public class TaskController {
                 String task_List="";
                 if(platform.length()==0){
                     List<String> string_Task_List=platformRepository.get_All_Platform_True_By_ProfileId(device_id.trim()+"_"+profile_id);
-                    System.out.println(string_Task_List);
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;

@@ -316,7 +316,7 @@ public class GoogleApi {
                     int startIndex = scriptContent.indexOf("{");
                     int endIndex = scriptContent.lastIndexOf("}") + 1;
                     String jsonString = scriptContent.substring(startIndex, endIndex);
-                    System.out.println(jsonString);
+                    //System.out.println(jsonString);
                     // Phân tích cú pháp JSON và trích xuất videoId
                     JsonReader reader = new JsonReader(new StringReader(jsonString));
                     reader.setLenient(true);

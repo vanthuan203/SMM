@@ -44,7 +44,7 @@ public class TikTokApi {
             response.body().close();
             Object obj = new JSONParser().parse(resultJson);
             JSONObject jsonObject = (JSONObject) obj;
-            System.out.println(jsonObject);
+            //System.out.println(jsonObject);
             if(jsonObject.get("sec_uid")==null){
                 return getFollowerCount(tiktok_id,index-1);
             }else{
@@ -55,7 +55,7 @@ public class TikTokApi {
                 resultJson = response.body().string();
                 obj = new JSONParser().parse(resultJson);
                 jsonObject = (JSONObject) obj;
-                System.out.println(jsonObject);
+                //System.out.println(jsonObject);
                 if(jsonObject.get("followerCount")==null){
                     return -2;
                 }
@@ -250,7 +250,7 @@ public class TikTokApi {
                     int startIndex = scriptContent.indexOf("{");
                     int endIndex = scriptContent.lastIndexOf("}") + 1;
                     String jsonString = scriptContent.substring(startIndex, endIndex);
-                    System.out.println(jsonString);
+                    //System.out.println(jsonString);
                     JsonReader reader = new JsonReader(new StringReader(jsonString));
                     reader.setLenient(true);
                     JsonElement jsonElement = JsonParser.parseReader(reader);
@@ -267,7 +267,7 @@ public class TikTokApi {
                                 JsonObject data = pageProps.getAsJsonObject("data");
                                 if(data.get("success").getAsBoolean()){
                                     JsonObject stats = data.getAsJsonObject("stats");
-                                    System.out.println(stats.get("followers").getAsInt());
+                                    //System.out.println(stats.get("followers").getAsInt());
                                     return stats.get("followers").getAsInt();
                                 }
 
