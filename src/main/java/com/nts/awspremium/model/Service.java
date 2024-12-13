@@ -57,6 +57,8 @@ public class Service implements Serializable {
     private Integer min_time;
     @Column(columnDefinition = "integer default 0")
     private Integer max_time;
+    @Column(columnDefinition = "integer default 60")
+    private Integer limit_time=60;
     @Column(columnDefinition = "integer default 0")
     private Integer refill;
     @Column(columnDefinition = "integer default 0")
