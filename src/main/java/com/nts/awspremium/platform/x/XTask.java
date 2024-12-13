@@ -72,6 +72,16 @@ public class XTask {
                 String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
                 if(comment!=null){
                     Service service=orderRunning.getService();
+                    if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                        data.put("bonus","");
+                    }else{
+                        if(ran.nextInt(100)<service.getBonus_list_percent()){
+                            String [] bonus_list=service.getBonus_list().split(",");
+                            data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        }else{
+                            data.put("bonus","");
+                        }
+                    }
                     resp.put("status", true);
                     data.put("order_id", orderRunning.getOrder_id());
                     data.put("account_id", account_id.trim());
@@ -137,6 +147,16 @@ public class XTask {
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
                 resp.put("status", true);
                 data.put("order_id", orderRunning.getOrder_id());
                 data.put("account_id", account_id.trim());
@@ -196,6 +216,16 @@ public class XTask {
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
                 resp.put("status", true);
                 data.put("order_id", orderRunning.getOrder_id());
                 data.put("account_id", account_id.trim());
@@ -256,6 +286,16 @@ public class XTask {
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
                 resp.put("status", true);
                 data.put("order_id", orderRunning.getOrder_id());
                 data.put("account_id", account_id.trim());
@@ -317,6 +357,16 @@ public class XTask {
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
                 resp.put("status", true);
                 data.put("order_id", orderRunning.getOrder_id());
                 data.put("account_id", account_id.trim());

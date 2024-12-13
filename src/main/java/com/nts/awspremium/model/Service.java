@@ -58,6 +58,8 @@ public class Service implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer max_time;
     @Column(columnDefinition = "integer default 0")
+    private Integer refill;
+    @Column(columnDefinition = "integer default 0")
     private Integer refund;
     @Column(columnDefinition = "integer default 0")
     private Integer refund_time;
@@ -95,6 +97,12 @@ public class Service implements Serializable {
     private String device_type;
     @Column(columnDefinition = "varchar(255) default 'auto'")
     private String mode="auto";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String bonus_list="";
+    @Column(columnDefinition = "integer default 1")
+    private Integer bonus_type=1;
+    @Column(columnDefinition = "integer default 0")
+    private Integer bonus_list_percent=0;
     @Column(columnDefinition = "varchar(255) default ''")
     private String app;
 
