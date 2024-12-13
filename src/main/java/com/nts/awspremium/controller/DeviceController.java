@@ -466,6 +466,24 @@ public class DeviceController {
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die.length()!=0){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -473,7 +491,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
@@ -531,6 +552,24 @@ public class DeviceController {
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die.length()!=0){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -538,7 +577,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
@@ -595,6 +637,24 @@ public class DeviceController {
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die.length()!=0){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -602,7 +662,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
@@ -659,6 +722,24 @@ public class DeviceController {
 
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die.length()!=0){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -666,7 +747,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
@@ -726,6 +810,24 @@ public class DeviceController {
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
+
+                Integer num_account=0;
+                Integer num_account_die=0;
+                String acc_live=deviceList.get(i).getAccount_live();
+                String acc_die=deviceList.get(i).getAccount_die();
+                if(acc_live.length()!=0){
+                    num_account=acc_live.split(",").length;
+                    String[] account = acc_live.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_live = String.join(",", uniqueAccount);
+                }
+                if(acc_die.length()!=0){
+                    num_account_die=acc_die.split(",").length;
+                    String[] account = acc_die.split(",");
+                    Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
+                    acc_die = String.join(",", uniqueAccount);
+                }
+
                 obj.put("device_id", deviceList.get(i).getDevice_id());
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
@@ -733,7 +835,10 @@ public class DeviceController {
                 obj.put("get_time", deviceList.get(i).getGet_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
-                obj.put("num_account", deviceList.get(i).getNum_account());
+                obj.put("num_account", num_account);
+                obj.put("num_account_die", num_account_die);
+                obj.put("acc_live",acc_live );
+                obj.put("acc_die",acc_die );
                 obj.put("profile_id", deviceList.get(i).getProfile_id());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
