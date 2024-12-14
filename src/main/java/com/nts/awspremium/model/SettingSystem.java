@@ -27,6 +27,10 @@ public class SettingSystem {
     private Long update_time;
     @Column(columnDefinition = "bigint default 30")
     private Long reboot_time;
+    @Column(columnDefinition = "bigint default 45")
+    private Long update_pi_time;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String clear_data_package="";
     @Column(columnDefinition = "integer default 60")
     private Integer time_profile;
     @Column(columnDefinition = "integer default 4")

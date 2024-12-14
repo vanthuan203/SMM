@@ -28,6 +28,10 @@ public class ProfileTask implements Serializable {
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
     private Long enabled_time;
+    @Column(columnDefinition = "bigint default 0")
+    private Long clear_data_time=0L;
+    @Column(columnDefinition = "bigint default 0")
+    private Long update_pi_time=0L;
     @Column(columnDefinition = "varchar(255) default ''")
     private String task;
     @Column(columnDefinition = "varchar(255) default ''")
@@ -56,6 +60,10 @@ public class ProfileTask implements Serializable {
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")
     private String platform;
+    @Column(columnDefinition = "integer default 0")
+    private Integer clear_data=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer update_pi=0;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id",referencedColumnName = "device_id",updatable = true,insertable = true)
     private Device device;

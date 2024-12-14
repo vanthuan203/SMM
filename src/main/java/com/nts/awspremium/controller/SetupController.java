@@ -41,7 +41,10 @@ public class SetupController {
     private UserRepository userRepository;
     @Autowired
     private YoutubeViewHistoryRepository youtubeViewHistoryRepository;
-
+    @Autowired
+    private DeviceRepository deviceRepository;
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
 
@@ -53,6 +56,90 @@ public class SetupController {
 
     @Autowired
     private AccountNameRepository accountNameRepository;
+    @GetMapping(value = "updateSystem", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> updateSystem(@RequestHeader(defaultValue = "") String Authorization,
+                                                            @RequestParam(defaultValue = "") String device_id,
+                                                            @RequestParam(defaultValue = "") String profile_id,
+                                                            @RequestParam(defaultValue = "") String task,
+                                                            @RequestParam(defaultValue = "") String task_key
+    ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (device_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "device_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (profile_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "profile_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (task.length() ==0) {
+                resp.put("status", false);
+                data.put("message", "task không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            ProfileTask profileTask=null;
+            if(device==null){
+                resp.put("status", false);
+                data.put("message", "device_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+            if(profileTask==null&&!profile_id.trim().equals("0")){
+                resp.put("status", false);
+                data.put("message", "profile_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(task.trim().equals("update_pi")){
+                profileTask.setUpdate_pi(0);
+                profileTask.setUpdate_pi_time(System.currentTimeMillis());
+                profileTaskRepository.save(profileTask);
+            }else if(task.trim().equals("clear_data")){
+                profileTask.setClear_data(0);
+                profileTask.setClear_data_time(System.currentTimeMillis());
+                profileTaskRepository.save(profileTask);
+            }
+            resp.put("status",true);
+            data.put("message", "update thành công");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
 /*
     @GetMapping(value = "/check_task", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> check_task(@RequestParam(defaultValue = "") String device_id,@RequestHeader(defaultValue = "") String Authorization) {

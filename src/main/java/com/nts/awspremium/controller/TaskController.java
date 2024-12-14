@@ -1738,6 +1738,23 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
+            if(profileTask.getUpdate_pi()==1){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "update_pi");
+                data.put("task_key", "fingerprint");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            if(profileTask.getClear_data()==1){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "clear_data");
+                data.put("task_key", settingSystem.getClear_data_package().trim());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
             //update time check
             if(profileTask.getOnline_time()==0){
                 profileTask.setOnline_time(System.currentTimeMillis());
