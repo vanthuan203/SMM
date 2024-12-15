@@ -52,8 +52,8 @@ public class TiktokOrder {
                 resp.put("error", "This account cannot be found");
                 return resp;
             }
-            if(channelInfo.get("videoCount").getAsInt()<3){
-                resp.put("error", "The total number of videos in the account must be greater than or equal to 3 videos");
+            if(channelInfo.get("videoCount").getAsInt()<1){
+                resp.put("error", "The total number of videos in the account must be greater than or equal to 1 videos");
                 return resp;
             }
             Integer follower_count=channelInfo.get("followerCount").getAsInt();
