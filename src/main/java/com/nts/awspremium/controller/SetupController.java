@@ -100,7 +100,7 @@ public class SetupController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
-            if(profileTask==null&&!profile_id.trim().equals("0")){
+            if(profileTask==null){
                 resp.put("status", false);
                 data.put("message", "profile_id không tồn tại");
                 resp.put("data", data);
