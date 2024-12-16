@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.BalanceShow;
 import com.nts.awspremium.model.LogError;
 import com.nts.awspremium.repositories.BalanceRepository;
@@ -14,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -140,9 +145,126 @@ public class BalanceController {
 
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
         } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
             resp.put("status", "fail");
             resp.put("message", e.getMessage());
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "balanceNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> balanceNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float all=balanceRepository.getAllBalanceNow();
+        resp.put("balance",all);
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
+    @GetMapping(path = "fluctuationsNow",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsNow(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Balance balanceHistory=balanceRepository.getfluctuationsNow();
+        if(balanceHistory==null){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balanceHistory.getAdd_time());
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+            String formattedDateTime = newDateTime.format(formatter);
+
+            String value1=balanceHistory.getUser().replace("@gmail.com","")+" ▪\uFE0F "+balanceHistory.getService()+" ▪\uFE0F "+(-balanceHistory.getBalance())+"$";
+            String noti= "⏳ "+formattedDateTime+" ▪\uFE0F "+value1;
+
+
+            resp.put("noti",noti);
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
+    @GetMapping(path = "fluctuationsMobile",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuationsMobile(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Balance balanceHistory=balanceRepository.getfluctuationsNow();
+        if(balanceHistory==null){
+            resp.put("noti","");
+        }else{
+            Instant instant = Instant.ofEpochMilli(balanceHistory.getAdd_time());
+            LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+            LocalDateTime newDateTime = dateTime.plusHours(7);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss a");
+            String formattedDateTime = newDateTime.format(formatter);
+            resp.put("noti","⏳ "+ formattedDateTime+" ⏩ "+balanceHistory.getBalance()+"$");
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+    @GetMapping(path = "fluctuations5M",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> fluctuations5M(@RequestHeader(defaultValue = "") String Authorization){
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        Integer checktoken = userRepository.check_User_By_Token(Authorization);
+        if(checktoken ==0){
+            resp.put("status",false);
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        Float balances=balanceRepository.getfluctuations5M();
+        if(balances==null){
+            resp.put("price",0);
+        }else{
+            resp.put("price",balances);
+        }
+
+        return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+
+
+    }
+
+
 }
