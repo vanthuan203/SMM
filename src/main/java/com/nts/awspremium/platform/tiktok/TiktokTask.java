@@ -87,9 +87,9 @@ public class TiktokTask {
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
                     if(orderRunning.getDuration()>service.getLimit_time()){
-                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*service.getLimit_time()));
+                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                     }else{
-                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
+                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
                     }
                     data.put("comment",comment);
                     resp.put("data",data);
@@ -146,6 +146,11 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
+                Thread.sleep(150+ran.nextInt(200));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id())){
+                    resp.put("status", false);
+                    return resp;
+                }
                 Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
@@ -167,9 +172,9 @@ public class TiktokTask {
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
                 data.put("task_link","https://www.tiktok.com/"+dataFollowerTiktok.getTiktok_id()+"/video/"+dataFollowerTiktok.getVideo_id());
                 if(dataFollowerTiktok.getDuration()>service.getLimit_time()){
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*service.getLimit_time()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*dataFollowerTiktok.getDuration()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*dataFollowerTiktok.getDuration()));
                 }
                 resp.put("data",data);
                 return resp;
@@ -242,9 +247,9 @@ public class TiktokTask {
                 data.put("task_link",orderRunning.getOrder_link());
 
                 if(orderRunning.getDuration()>service.getLimit_time()){
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*service.getLimit_time()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
                 }
 
                 resp.put("data",data);
@@ -317,9 +322,9 @@ public class TiktokTask {
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 if(orderRunning.getDuration()>service.getLimit_time()){
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*service.getLimit_time()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + 60)/100F)*orderRunning.getDuration()));
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
                 }
                 resp.put("data",data);
                 return resp;
