@@ -831,6 +831,7 @@ public class OrderRunningController {
         try{
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Running_Done(1);
             for (int i=0;i<orderRunningList.size();i++){
+                int count_check=0;
                 String key = get_key();
                 if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){ ///////________YOUTUBE_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("like")){
@@ -843,6 +844,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
                         int count=GoogleApi.getCountView(orderRunningList.get(i).getOrder_key(),key.trim());
                         if(count==-2)
@@ -853,6 +855,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
                         int count=GoogleApi.getCountSubcriberCurrent(orderRunningList.get(i).getOrder_key());
                         if(count==-2)
@@ -863,6 +866,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }
                 }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){ ///////________TIKTOK_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("follower")){
@@ -874,6 +878,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("like")){
                         int count= TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
                         if(count==-2) {
@@ -883,6 +888,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
                         int count= TikTokApi.getCountComment(orderRunningList.get(i).getOrder_key());
                         if(count==-2) {
@@ -892,6 +898,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
                         int count= TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
                         if(count==-2) {
@@ -901,6 +908,7 @@ public class OrderRunningController {
                                 continue;
                             }
                         }
+                        count_check=count;
                     }
                 }
                 OrderHistory orderHistory=new OrderHistory();
@@ -931,8 +939,8 @@ public class OrderRunningController {
                 orderHistory.setRefund_time(0L);
                 orderHistory.setRefill_time(0L);
                 orderHistory.setRefill(0);
-                orderHistory.setCurrent_count(orderRunningList.get(i).getCurrent_count());
-                orderHistory.setUpdate_current_time(orderRunningList.get(i).getUpdate_current_time());
+                orderHistory.setCurrent_count(count_check);
+                orderHistory.setUpdate_current_time(System.currentTimeMillis());
                 orderHistory.setOrder_refill(orderRunningList.get(i).getOrder_refill());
 
                 try {
