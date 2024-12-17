@@ -41,7 +41,7 @@ public class TiktokUpdate {
 
     public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
         try{
-            if(success!=false){
+            if(success==null?true:success){
                 TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
                 if(tikTokAccountHistory!=null){
                     tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
