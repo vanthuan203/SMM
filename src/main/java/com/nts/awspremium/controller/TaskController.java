@@ -7046,67 +7046,73 @@ public class TaskController {
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }
-                        Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platformRepository.get_Dependent_By_Platform(updateTaskRequest.getPlatform()));
-                        if(accountDependent!=null){
-                            if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
-                                if(!accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
-                                    if(accountDependent.getDependent().length()==0){
-                                        accountDependent.setDependent(updateTaskRequest.getPlatform());
-                                    }else{
-                                        accountDependent.setDependent(accountDependent.getDependent()+","+updateTaskRequest.getPlatform());
-                                    }
-                                    if(accountDependent.getPassword_dependent().length()==0){
-                                        accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                    }else{
-                                        accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                    }
-                                    List<String> arrDie=new ArrayList<>(Arrays.asList(accountDependent.getDie_dependent().split(",")));
-                                    arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
-                                    accountDependent.setDie_dependent(String.join(",", arrDie));
+                        String dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                        if(dependent!=null){
+                            Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),dependent);
+                            if(accountDependent!=null){
+                                if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
+                                    if(!accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
+                                        if(accountDependent.getDependent().length()==0){
+                                            accountDependent.setDependent(updateTaskRequest.getPlatform());
+                                        }else{
+                                            accountDependent.setDependent(accountDependent.getDependent()+","+updateTaskRequest.getPlatform());
+                                        }
+                                        if(accountDependent.getPassword_dependent().length()==0){
+                                            accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                        }else{
+                                            accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                        }
+                                        List<String> arrDie=new ArrayList<>(Arrays.asList(accountDependent.getDie_dependent().split(",")));
+                                        arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
+                                        accountDependent.setDie_dependent(String.join(",", arrDie));
 
+                                        accountRepository.save(accountDependent);
+                                    }
+                                }else{
+                                    accountDependent.setLive(updateTaskRequest.getIsLogin());
                                     accountRepository.save(accountDependent);
                                 }
-                            }else{
-                                accountDependent.setLive(updateTaskRequest.getIsLogin());
-                                accountRepository.save(accountDependent);
                             }
                         }
+
                     }////
 
                 }else if(updateTaskRequest.getIsLogin()>1){
 
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                    String dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                    if(dependent!=null){
+                        Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),dependent);
 
-                    Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platformRepository.get_Dependent_By_Platform(updateTaskRequest.getPlatform()));
-
-                    if(accountDependent!=null){
-                        if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
-                            if(accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
-                                List<String> arrPlatform =new ArrayList<>(Arrays.asList(accountDependent.getDependent().split(",")));
-                                arrPlatform.remove(updateTaskRequest.getPlatform());
-                                accountDependent.setDependent(String.join(",", arrPlatform));
+                        if(accountDependent!=null){
+                            if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
+                                if(accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
+                                    List<String> arrPlatform =new ArrayList<>(Arrays.asList(accountDependent.getDependent().split(",")));
+                                    arrPlatform.remove(updateTaskRequest.getPlatform());
+                                    accountDependent.setDependent(String.join(",", arrPlatform));
 
                             /*
                             List<String> arrPassword =new ArrayList<>(Arrays.asList(account.getPassword_dependent().split(",")));
                             arrPassword.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
                             account.setPassword_dependent(String.join(",", arrPassword));
                              */
-                            }
-                            if(!accountDependent.getDie_dependent().contains(updateTaskRequest.getPlatform())){
-                                if(accountDependent.getDie_dependent().length()==0){
-                                    accountDependent.setDie_dependent(updateTaskRequest.getPlatform());
-                                }else{
-                                    accountDependent.setDie_dependent(accountDependent.getDie_dependent()+","+updateTaskRequest.getPlatform());
                                 }
-                            }
-                            if(!accountDependent.getPassword_dependent().contains(updateTaskRequest.getPlatform()) && accountProfile!=null){
-                                if(accountDependent.getPassword_dependent().length()==0){
-                                    accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                }else{
-                                    accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                if(!accountDependent.getDie_dependent().contains(updateTaskRequest.getPlatform())){
+                                    if(accountDependent.getDie_dependent().length()==0){
+                                        accountDependent.setDie_dependent(updateTaskRequest.getPlatform());
+                                    }else{
+                                        accountDependent.setDie_dependent(accountDependent.getDie_dependent()+","+updateTaskRequest.getPlatform());
+                                    }
                                 }
+                                if(!accountDependent.getPassword_dependent().contains(updateTaskRequest.getPlatform()) && accountProfile!=null){
+                                    if(accountDependent.getPassword_dependent().length()==0){
+                                        accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                    }else{
+                                        accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
+                                    }
+                                }
+                                accountRepository.save(accountDependent);
                             }
-                            accountRepository.save(accountDependent);
                         }
                     }
                     Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
@@ -7119,6 +7125,12 @@ public class TaskController {
                     }
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
+                        if(updateTaskRequest.getPlatform().trim().equals("tiktok")){
+                            AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(accountProfile.getProfileTask().getProfile_id().trim(),"youtube");
+                            if(accountProfile_Check!=null){
+                                accountProfileRepository.delete(accountProfile_Check);
+                            }
+                        }
                         accountProfileRepository.delete(accountProfile);
                     }
                 }

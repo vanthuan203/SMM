@@ -22,6 +22,9 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
     @Query(value = "SELECT dependent FROM platform where platform=?1 limit 1",nativeQuery = true)
     public String get_Dependent_By_Platform(String platform);
 
+    @Query(value = "SELECT dependent FROM platform where platform=?1 and connection_account=1  limit 1",nativeQuery = true)
+    public String get_Dependent_Connection_By_Platform(String platform);
+
     @Query(value = "SELECT priority FROM platform where platform=?1 limit 1",nativeQuery = true)
     public Integer get_Priority_By_Platform(String platform);
 
