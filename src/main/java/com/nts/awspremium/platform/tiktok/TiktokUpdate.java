@@ -39,19 +39,21 @@ public class TiktokUpdate {
     @Autowired
     private DataCommentRepository dataCommentRepository;
 
-    public Boolean tiktok_follower(String account_id,String task_key){
+    public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
         try{
-            TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
-            if(tikTokAccountHistory!=null){
-                tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
-                tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
-                tikTokAccountHistoryRepository.save(tikTokAccountHistory);
-            }else{
-                TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
-                tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
-                tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
-                tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
+            if(success!=false){
+                TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
+                if(tikTokAccountHistory!=null){
+                    tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
+                    tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                    tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                }else{
+                    TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
+                    tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                    tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
+                    tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
+                    tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
+                }
             }
             TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
             tiktokFollower24h.setId(account_id.trim()+task_key.trim());

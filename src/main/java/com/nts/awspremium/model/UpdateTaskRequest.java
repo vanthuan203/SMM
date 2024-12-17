@@ -7,7 +7,8 @@ import lombok.Setter;
 @Setter
 public class UpdateTaskRequest {
     private String account_id="";
-    private Boolean status;
+    private Boolean status=false;
+    private Boolean success=null;
     private String task="";
     private String task_key="";
     private String platform="";

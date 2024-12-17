@@ -6602,7 +6602,7 @@ public class TaskController {
                 }
             }else if(platform_Check.equals("tiktok")){
                 if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
+                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getSuccess());
                 }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
                     tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
                 }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
@@ -6867,7 +6867,7 @@ public class TaskController {
                     }
                 }else if(platform_Check.equals("tiktok")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                        tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                        tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getSuccess());
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
                         tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
@@ -7215,7 +7215,7 @@ public class TaskController {
                 }
             }else if(platform_Check.equals("tiktok")){
                 if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
-                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
+                    tiktokUpdate.tiktok_follower(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getSuccess());
                 }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
                     tiktokUpdate.tiktok_like(updateTaskRequest.getAccount_id().trim(),updateTaskRequest.getTask_key().trim());
                 }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
