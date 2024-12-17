@@ -2109,15 +2109,29 @@ public class TaskController {
                 if(profileTask!=null){
                     AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), profileTask.getPlatform());
                     if(accountProfile_Check_Platform==null){
+                        Boolean check_GetAccount=true;
+                        AccountProfile accountProfile_Dependent=null;
+                        Account account_Dependent=null;
+                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(profileTask.getPlatform());
+                        if(platform_Dependent!=null){
+                            accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Dependent);
+                            if(accountProfile_Dependent==null){
+                                check_GetAccount=false;
+                            }
+                            account_Dependent=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platform_Dependent);
+                            if(account_Dependent==null){
+                                check_GetAccount=false;
+                            }else{
+                                if(account_Dependent.getDie_dependent().contains(profileTask.getPlatform())){
+                                    check_GetAccount=false;
+                                }
+                            }
+                        }else {
+                            check_GetAccount=true;
+                        }
 
-                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
 
-                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
-
-                        Integer connection_account=platformRepository.get_Connection_Account_Platform(profileTask.getPlatform().trim());
-
-                        if((accountProfile_Check_Dependent==null ||  (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))) &&
-                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()))){
+                        if(!check_GetAccount){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 entityManager.clear();
@@ -2151,11 +2165,11 @@ public class TaskController {
                                 if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
-                                    if(connection_account>0){
+                                    if(platform_Dependent!=null){
 
                                         AccountProfile accountProfile=new AccountProfile();
-                                        accountProfile.setAccount_id(accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
-                                        accountProfile.setPassword(accountProfile_Check_Dependent.getPassword().trim());
+                                        accountProfile.setAccount_id(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
+                                        accountProfile.setPassword(accountProfile_Dependent.getPassword().trim());
                                         if(profileTask.getPlatform().equals("tiktok")){
                                             AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
                                             accountProfile.setName(accountName.getName());
@@ -2164,7 +2178,7 @@ public class TaskController {
                                               accountProfile.setName("");
                                         }
                                         accountProfile.setAvatar(0);
-                                        accountProfile.setRecover(accountProfile_Check_Dependent.getRecover());
+                                        accountProfile.setRecover(accountProfile_Dependent.getRecover());
                                         accountProfile.setPlatform(profileTask.getPlatform());
                                         accountProfile.setLive(-1);
                                         accountProfile.setChanged(0);
@@ -2195,10 +2209,10 @@ public class TaskController {
                                             data.put("app",profileTask.getPlatform());
                                         }
                                         data.put("task", "register");
-                                        data.put("task_key", accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|")));
-                                        data.put("account_id",  accountProfile_Check_Dependent.getAccount_id().substring(0,accountProfile_Check_Dependent.getAccount_id().lastIndexOf("|")));
-                                        data.put("password",accountProfile_Check_Dependent.getPassword().trim());
-                                        data.put("recover_mail",  accountProfile_Check_Dependent.getRecover());
+                                        data.put("task_key", accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
+                                        data.put("account_id",  accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
+                                        data.put("password",accountProfile_Dependent.getPassword().trim());
+                                        data.put("recover_mail",  accountProfile_Dependent.getRecover());
                                         data.put("name",  accountProfile.getName());
                                         data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                         data.put("auth_2fa", "");
@@ -2282,7 +2296,7 @@ public class TaskController {
                                             }
                                         }else{
                                             AccountProfile accountProfile=new AccountProfile();
-                                            accountProfile.setAccount_id(account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
+                                            accountProfile.setAccount_id(account_Dependent.getAccount_id().substring(0,account_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                             accountProfile.setPassword(password);
                                             if(profileTask.getPlatform().equals("tiktok")){
                                                 AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
@@ -2292,7 +2306,7 @@ public class TaskController {
                                                 accountProfile.setName("");
                                             }
                                             accountProfile.setAvatar(0);
-                                            accountProfile.setRecover(account_Check.getRecover_mail().trim());
+                                            accountProfile.setRecover(account_Dependent.getRecover_mail().trim());
                                             accountProfile.setPlatform(profileTask.getPlatform());
                                             accountProfile.setLive(-1);
                                             accountProfile.setChanged(0);
@@ -2316,12 +2330,12 @@ public class TaskController {
                                                 data.put("app",profileTask.getPlatform());
                                             }
                                             data.put("task", "register");
-                                            data.put("task_key",  account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|")));
-                                            data.put("account_id", account_Check.getAccount_id().substring(0,account_Check.getAccount_id().lastIndexOf("|")));
+                                            data.put("task_key",  account_Dependent.getAccount_id().substring(0,account_Dependent.getAccount_id().lastIndexOf("|")));
+                                            data.put("account_id", account_Dependent.getAccount_id().substring(0,account_Dependent.getAccount_id().lastIndexOf("|")));
                                             data.put("password", password);
                                             data.put("name", accountProfile.getName());
                                             data.put("avatar", accountProfile.getAvatar()==0?false:true);
-                                            data.put("recover_mail",account_Check.getRecover_mail().trim());
+                                            data.put("recover_mail",account_Dependent.getRecover_mail().trim());
                                             data.put("auth_2fa", "");
                                             resp.put("data",data);
                                             return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -2677,7 +2691,7 @@ public class TaskController {
             logError.setMethod_name(stackTraceElement.getMethodName());
             logError.setLine_number(stackTraceElement.getLineNumber());
             logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setFile_name(stackTraceElement.getFileName() +device_id+"_"+profile_id);
             logError.setMessage(e.getMessage());
             logError.setAdd_time(System.currentTimeMillis());
             Date date_time = new Date(System.currentTimeMillis());
@@ -7046,9 +7060,9 @@ public class TaskController {
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }
-                        String dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
-                        if(dependent!=null){
-                            Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),dependent);
+                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                        if(platform_Dependent!=null){
+                            Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
                             if(accountDependent!=null){
                                 if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
                                     if(!accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
@@ -7080,9 +7094,10 @@ public class TaskController {
                 }else if(updateTaskRequest.getIsLogin()>1){
 
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
-                    String dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
-                    if(dependent!=null){
-                        Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),dependent);
+
+                    String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                    if(platform_Dependent!=null){
+                        Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
 
                         if(accountDependent!=null){
                             if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
