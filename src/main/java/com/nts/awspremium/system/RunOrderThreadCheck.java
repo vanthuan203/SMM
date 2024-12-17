@@ -25,7 +25,7 @@ public class RunOrderThreadCheck {
                             orderThreadCheck.setValue(orderRunningRepository.get_List_Order_Thread_True());
                             //System.out.println(orderFollowerTrue.getValue());
                             try {
-                                Thread.sleep(rand.nextInt(150));
+                                Thread.sleep(rand.nextInt(100));
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
