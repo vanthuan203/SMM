@@ -36,6 +36,8 @@ public class OrderRunningController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private ServiceRepository serviceRepository;
+    @Autowired
     private BalanceRepository balanceRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -720,6 +722,7 @@ public class OrderRunningController {
                 if(orderRunning==null){
                     continue;
                 }
+                Service service=serviceRepository.get_Service(orderRunning.getService().getService_id());
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunning.getOrder_id());
                 orderHistory.setOrder_key(orderRunning.getOrder_key());
@@ -748,37 +751,77 @@ public class OrderRunningController {
                 orderHistory.setRefill(0);
                 orderHistory.setUpdate_current_time(orderRunning.getUpdate_current_time());
                 orderHistory.setOrder_refill(orderRunning.getOrder_refill());
-                if (cancel == 1) {
-                    User user=userRepository.find_User_By_Token(Authorization.trim());
-                    int remains = orderRunning.getQuantity() - (orderRunning.getTotal() > orderRunning.getQuantity() ? orderRunning.getQuantity() : orderRunning.getTotal());
-                    //System.out.println(videoBuffh.get(0).getViewtotal() > videoBuffh.get(0).getVieworder() ? videoBuffh.get(0).getVieworder() : videoBuffh.get(0).getViewtotal());
-                    float price_Refund = (Math.round(((remains / (float) orderRunning.getQuantity()) * orderRunning.getCharge()) * 1000000f) / 1000000f);
-                    float price_Buff = (orderRunning.getCharge() - price_Refund);
-
-                    orderHistory.setCharge(Math.round(price_Buff * 1000000f) / 1000000f);
-                    if (orderRunning.getTotal() == 0) {
-                        orderHistory.setCancel(1);
-                    } else if (remains<=0) {
-                        orderHistory.setCancel(0);
-                    } else {
-                        orderHistory.setCancel(2);
+                if(service.getCheck_count()==1){
+                    int realTime=orderRunning.getCurrent_count()-orderRunning.getStart_count();
+                    if(realTime>orderRunning.getTotal()){
+                        realTime=orderRunning.getTotal();
                     }
-                    //hoàn tiền & add thong báo số dư
-                    if (remains > 0) {
-                        Float balance_Update=balanceRepository.update_Balance(price_Refund,orderRunning.getUser().getUsername().trim());
-                        Balance balance = new Balance();
-                        balance.setUser(user.getUsername().trim());
-                        balance.setAdd_time(System.currentTimeMillis());
-                        balance.setTotal_blance(balance_Update);
-                        balance.setBalance(price_Refund);
-                        balance.setService(orderRunning.getService().getService_id());
-                        balance.setNote("Refund "+ (remains)+" " + orderRunning.getService().getTask() + " for Id " + orderRunning.getOrder_id());
-                        balanceRepository.save(balance);
+                    orderHistory.setTotal(realTime);
+                    if (cancel == 1) {
+                        User user=userRepository.find_User_By_Token(Authorization.trim());
+                        int remains = orderRunning.getQuantity() - (realTime > orderRunning.getQuantity() ? orderRunning.getQuantity() : realTime);
+                        //System.out.println(videoBuffh.get(0).getViewtotal() > videoBuffh.get(0).getVieworder() ? videoBuffh.get(0).getVieworder() : videoBuffh.get(0).getViewtotal());
+                        float price_Refund = (Math.round(((remains / (float) orderRunning.getQuantity()) * orderRunning.getCharge()) * 1000000f) / 1000000f);
+                        float price_Buff = (orderRunning.getCharge() - price_Refund);
+
+                        orderHistory.setCharge(Math.round(price_Buff * 1000000f) / 1000000f);
+                        if (realTime == 0) {
+                            orderHistory.setCancel(1);
+                        } else if (remains<=0) {
+                            orderHistory.setCancel(0);
+                        } else {
+                            orderHistory.setCancel(2);
+                        }
+                        //hoàn tiền & add thong báo số dư
+                        if (remains > 0) {
+                            Float balance_Update=balanceRepository.update_Balance(price_Refund,orderRunning.getUser().getUsername().trim());
+                            Balance balance = new Balance();
+                            balance.setUser(user.getUsername().trim());
+                            balance.setAdd_time(System.currentTimeMillis());
+                            balance.setTotal_blance(balance_Update);
+                            balance.setBalance(price_Refund);
+                            balance.setService(orderRunning.getService().getService_id());
+                            balance.setNote("Refund "+ (remains)+" " + orderRunning.getService().getTask() + " for Id " + orderRunning.getOrder_id());
+                            balanceRepository.save(balance);
+                        }
+                    }else{
+                        orderHistory.setCancel(0);
+                        orderHistory.setCharge(orderRunning.getCharge());
                     }
                 }else{
-                    orderHistory.setCancel(0);
-                    orderHistory.setCharge(orderRunning.getCharge());
+                    if (cancel == 1) {
+                        User user=userRepository.find_User_By_Token(Authorization.trim());
+                        int remains = orderRunning.getQuantity() - (orderRunning.getTotal() > orderRunning.getQuantity() ? orderRunning.getQuantity() : orderRunning.getTotal());
+                        //System.out.println(videoBuffh.get(0).getViewtotal() > videoBuffh.get(0).getVieworder() ? videoBuffh.get(0).getVieworder() : videoBuffh.get(0).getViewtotal());
+                        float price_Refund = (Math.round(((remains / (float) orderRunning.getQuantity()) * orderRunning.getCharge()) * 1000000f) / 1000000f);
+                        float price_Buff = (orderRunning.getCharge() - price_Refund);
+
+                        orderHistory.setCharge(Math.round(price_Buff * 1000000f) / 1000000f);
+                        if (orderRunning.getTotal() == 0) {
+                            orderHistory.setCancel(1);
+                        } else if (remains<=0) {
+                            orderHistory.setCancel(0);
+                        } else {
+                            orderHistory.setCancel(2);
+                        }
+                        //hoàn tiền & add thong báo số dư
+                        if (remains > 0) {
+                            Float balance_Update=balanceRepository.update_Balance(price_Refund,orderRunning.getUser().getUsername().trim());
+                            Balance balance = new Balance();
+                            balance.setUser(user.getUsername().trim());
+                            balance.setAdd_time(System.currentTimeMillis());
+                            balance.setTotal_blance(balance_Update);
+                            balance.setBalance(price_Refund);
+                            balance.setService(orderRunning.getService().getService_id());
+                            balance.setNote("Refund "+ (remains)+" " + orderRunning.getService().getTask() + " for Id " + orderRunning.getOrder_id());
+                            balanceRepository.save(balance);
+                        }
+                    }else{
+                        orderHistory.setCancel(0);
+                        orderHistory.setCharge(orderRunning.getCharge());
+                    }
                 }
+
                 try {
                     orderHistory.setEnd_time(System.currentTimeMillis());
                     orderHistoryRepository.save(orderHistory);
