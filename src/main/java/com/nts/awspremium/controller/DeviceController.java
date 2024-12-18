@@ -224,7 +224,7 @@ public class DeviceController {
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
             }
-            //profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
+            profileTaskRepository.delete_Profile_Not_In(profile,device_id.trim());
             String enabled="";
             Random ran=new Random();
             if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0&&profile.size()>0){
