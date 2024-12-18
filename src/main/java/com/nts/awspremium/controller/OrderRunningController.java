@@ -776,7 +776,7 @@ public class OrderRunningController {
                         if (remains > 0) {
                             Float balance_Update=balanceRepository.update_Balance(price_Refund,orderRunning.getUser().getUsername().trim());
                             Balance balance = new Balance();
-                            balance.setUser(user.getUsername().trim());
+                            balance.setUser(orderRunning.getUser().getUsername().trim());
                             balance.setAdd_time(System.currentTimeMillis());
                             balance.setTotal_blance(balance_Update);
                             balance.setBalance(price_Refund);
@@ -808,7 +808,7 @@ public class OrderRunningController {
                         if (remains > 0) {
                             Float balance_Update=balanceRepository.update_Balance(price_Refund,orderRunning.getUser().getUsername().trim());
                             Balance balance = new Balance();
-                            balance.setUser(user.getUsername().trim());
+                            balance.setUser(orderRunning.getUser().getUsername().trim());
                             balance.setAdd_time(System.currentTimeMillis());
                             balance.setTotal_blance(balance_Update);
                             balance.setBalance(price_Refund);
