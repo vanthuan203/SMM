@@ -62,7 +62,11 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
-
+                Thread.sleep(ran.nextInt(300));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
                 dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
                 Thread.sleep(ran.nextInt(500));
                 String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
@@ -146,7 +150,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(150+ran.nextInt(300));
+                Thread.sleep(ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -229,6 +233,11 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
+                Thread.sleep(ran.nextInt(300));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
                 Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
