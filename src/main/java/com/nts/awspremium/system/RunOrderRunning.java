@@ -30,7 +30,7 @@ public class RunOrderRunning {
                     while (true) {
                         try {
                             try {
-                                Thread.sleep(5000);
+                                Thread.sleep(1000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
@@ -66,7 +66,6 @@ public class RunOrderRunning {
                 }).start();
             }
         }catch (Exception e){
-
         }
 
 

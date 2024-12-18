@@ -97,7 +97,7 @@ public class TikTokApi {
                         .getAsInt();
                 return followerCount;
             }else{
-                getFollowerCount(tiktok_id,index+1);
+                getFollowerCount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
@@ -134,7 +134,7 @@ public class TikTokApi {
                         .getAsInt();
                 return followerCount;
             }else{
-                getFollowerCount(tiktok_id,index+1);
+                getFollowerCount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
