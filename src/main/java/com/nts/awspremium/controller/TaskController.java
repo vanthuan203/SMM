@@ -2561,6 +2561,14 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }
+            //check time get task 12/20/24
+            if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<settingSystem.getTime_get_task()){
+                resp.put("status",false);
+                data.put("message","Không có nhiệm vụ!");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
             List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
@@ -2673,9 +2681,14 @@ public class TaskController {
                 profileTask.setTask(dataJson.get("task").toString());
                 profileTask.setPlatform(dataJson.get("platform").toString());
                 profileTask.setTask_key(dataJson.get("task_key").toString());
+                //save get task time 20/12/24
+                profileTask.setTask_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
                 //--------------------------------------------//
                 dataJson.remove("order_id");
+
+
+
             }else{
                 respJson.put("status",false);
                 dataJson.put("message","Không có nhiệm vụ!");

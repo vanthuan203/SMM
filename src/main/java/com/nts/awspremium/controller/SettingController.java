@@ -159,6 +159,7 @@ public class SettingController {
             obj.put("max_mysql", settingSystem.getMax_mysql());
             obj.put("max_profile", settingSystem.getMax_profile());
             obj.put("max_task", settingSystem.getMax_task());
+            obj.put("time_get_task", settingSystem.getTime_get_task());
             obj.put("update_time", settingSystem.getUpdate_time());
             jsonArray.add(obj);
             resp.put("accounts",jsonArray);
@@ -297,6 +298,7 @@ public class SettingController {
             settingSystem.setMax_mysql(setting_update.getMax_mysql());
             settingSystem.setMax_profile(setting_update.getMax_profile());
             settingSystem.setMax_task(setting_update.getMax_task());
+            settingSystem.setTime_get_task(setting_update.getTime_get_task());
             settingSystem.setUpdate_time(System.currentTimeMillis());
             settingSystemRepository.save(settingSystem);
             JSONObject obj = new JSONObject();
@@ -305,6 +307,7 @@ public class SettingController {
             obj.put("max_mysql", settingSystem.getMax_mysql());
             obj.put("max_profile", settingSystem.getMax_profile());
             obj.put("max_task", settingSystem.getMax_task());
+            obj.put("time_get_task", settingSystem.getTime_get_task());
             obj.put("update_time", settingSystem.getUpdate_time());
             resp.put("account",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

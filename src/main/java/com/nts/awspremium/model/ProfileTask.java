@@ -64,6 +64,8 @@ public class ProfileTask implements Serializable {
     private Integer clear_data=0;
     @Column(columnDefinition = "integer default 0")
     private Integer update_pi=0;
+    @Column(columnDefinition = "bigint default 0")
+    private Long task_time=0L;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id",referencedColumnName = "device_id",updatable = true,insertable = true)
     private Device device;
