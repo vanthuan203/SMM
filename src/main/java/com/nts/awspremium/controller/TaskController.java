@@ -2562,12 +2562,15 @@ public class TaskController {
                 }
             }
             //check time get task 12/20/24
+            /*
             if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<settingSystem.getTime_get_task()){
                 resp.put("status",false);
                 data.put("message","Không có nhiệm vụ!");
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
+             */
 
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
@@ -2583,6 +2586,17 @@ public class TaskController {
             String task_index=null;
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
+                if(task.equals("tiktok_follower")&&((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<settingSystem.getTime_get_task())){
+                    resp.put("status",false);
+                    data.put("message","Không có nhiệm vụ!");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(task.equals("tiktok_like")&&((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<1)){
+                    resp.put("status",false);
+                    data.put("message","Không có nhiệm vụ!");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("tiktok_follower")){

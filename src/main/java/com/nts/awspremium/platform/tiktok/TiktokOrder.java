@@ -32,6 +32,7 @@ public class TiktokOrder {
 
     public JSONObject tiktok_follower(DataRequest data, Service service, User user)  throws IOException, ParseException {
         JSONObject resp = new JSONObject();
+        OrderRunning orderRunningCheck=null;
         try{
             String tiktok_id= TikTokApi.getTiktokId(data.getLink().trim());
             if (tiktok_id == null) {
@@ -91,7 +92,7 @@ public class TiktokOrder {
             orderRunning.setOrder_refill(data.getOrder_refill());
             orderRunning.setPriority(0);
             orderRunningRepository.save(orderRunning);
-
+            orderRunningCheck=orderRunning;
 
             JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],3);
             if(videoList.size()==0){
@@ -105,7 +106,7 @@ public class TiktokOrder {
                 dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
                 Long duration=videoObj.get("duration").getAsLong();
                 if(duration==0){
-                    duration=videoObj.getAsJsonObject("music_info").get("duration").getAsLong();
+                    duration=15L;
                 }
                 dataFollowerTiktok.setDuration(duration);
                 dataFollowerTiktok.setTiktok_id(tiktok_id.trim());
@@ -113,7 +114,7 @@ public class TiktokOrder {
                 dataFollowerTiktok.setState(1);
                 dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
                 dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
-                dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
+                //dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
                 dataFollowerTiktokRepository.save(dataFollowerTiktok);
             }
 
@@ -130,6 +131,9 @@ public class TiktokOrder {
             return resp;
 
         }catch (Exception e) {
+            if(orderRunningCheck!=null){
+                orderRunningRepository.delete_Order_Running_By_OrderId(orderRunningCheck.getOrder_id());
+            }
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
             logError.setMethod_name(stackTraceElement.getMethodName());
@@ -174,7 +178,8 @@ public class TiktokOrder {
             Integer like_count=infoVideo.get("digg_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
-                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+                //duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+                duration=15L;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
@@ -271,7 +276,8 @@ public class TiktokOrder {
             Integer comment_count=infoVideo.get("comment_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
-                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+                //duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+                duration=15L;
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");

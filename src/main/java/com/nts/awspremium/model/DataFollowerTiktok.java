@@ -15,7 +15,7 @@ public class DataFollowerTiktok {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id",referencedColumnName = "order_id",updatable = true,insertable = true)
     private OrderRunning orderRunning;
-    @Column(columnDefinition = "varchar(555) default ''")
+    @Column(columnDefinition = "varchar(1555) default ''")
     private String video_title;
     @Column(columnDefinition = "varchar(555) default ''")
     private String tiktok_id;
