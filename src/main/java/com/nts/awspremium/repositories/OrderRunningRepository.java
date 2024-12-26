@@ -53,6 +53,9 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
     public List<OrderRunning> get_Order_By_ListId(List<String> list_orderid);
 
+    @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
+    public Integer get_Count_OrderRunning_By_Service(Integer service_id);
+
     @Query(value = "SELECT o FROM OrderRunning o where o.service.task='comment' and o.start_time=0")
     public List<OrderRunning> get_Order_Comment_Pending();
 

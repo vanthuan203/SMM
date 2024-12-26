@@ -189,6 +189,10 @@ public class ApiController {
                     resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
+                    resp.put("error", "System busy try again");
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
                 if(service.getPlatform().trim().equals("youtube")){
                     if(service.getTask().trim().equals("view")){
                         get_task=youtubeOrder.youtube_view(data,service,user);
@@ -412,6 +416,10 @@ public class ApiController {
                 }
                 if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
                     resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
+                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                }
+                if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
+                    resp.put("error", "System busy try again");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
                 if(service.getPlatform().trim().equals("youtube")){
