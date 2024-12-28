@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -53,8 +54,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * from order_running where order_id in (?1)",nativeQuery = true)
     public List<OrderRunning> get_Order_By_ListId(List<String> list_orderid);
 
-    @Query(value = "SELECT * from order_running where round((UNIX_TIMESTAMP()-update_time/1000)/60)>=30",nativeQuery = true)
-    public List<OrderRunning> get_Order_Check_Valid();
+    ///@Query(value = "select o from OrderRunning o JOIN FETCH o.service where round((UNIX_TIMESTAMP()-o.update_time/1000)/60)>=30")//
+    //public List<OrderRunning> get_Order_Check_Valid();
+
+    @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold")
+    public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
     public Integer get_Count_OrderRunning_By_Service(Integer service_id);
