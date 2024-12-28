@@ -1,5 +1,7 @@
 package com.nts.awspremium.controller;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.TikTokApi;
@@ -44,7 +46,8 @@ public class OrderRunningController {
     @Autowired
     private DataCommentRepository dataCommentRepository;
 
-
+    @Autowired
+    private DataFollowerTiktokRepository dataFollowerTiktokRepository;
     String get_key(){
         try{
             GoogleKey key = googleKeyRepository.get_Google_Key();
@@ -628,6 +631,99 @@ public class OrderRunningController {
 
     }
 
+    @GetMapping(value = "check_Valid_OrderRunning", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> check_Valid_OrderRunning() throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Check_Valid();
+            for(int i=0;i<orderRunningList.size();i++){
+                try {
+                    if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
+                        if(orderRunningList.get(i).getService().getTask().equals("follower")){
+                            JsonObject channelInfo=TikTokApi.getInfoChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
+                            if(channelInfo==null){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Could not find this account");
+                            }else if(channelInfo.get("videoCount").getAsInt()<1){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"This account has no videos");
+                            }else{
+                                JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],3);
+                                if(videoList.size()==0){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Unable to get account video information");
+                                }
+                                dataFollowerTiktokRepository.delete_Data_Follower_By_OrderId(orderRunningList.get(i).getOrder_id());
+
+                                for (JsonElement video: videoList) {
+                                    JsonObject videoObj=video.getAsJsonObject();
+                                    DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
+                                    dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
+                                    Long duration=videoObj.get("duration").getAsLong();
+                                    if(duration==0){
+                                        duration=15L;
+                                    }
+                                    dataFollowerTiktok.setDuration(duration);
+                                    dataFollowerTiktok.setTiktok_id(orderRunningList.get(i).getOrder_key().trim());
+                                    dataFollowerTiktok.setOrderRunning(orderRunningList.get(i));
+                                    dataFollowerTiktok.setState(1);
+                                    dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                                    dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                                    //dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
+                                    dataFollowerTiktokRepository.save(dataFollowerTiktok);
+                                }
+                            }
+                        }else{
+                            JsonObject infoVideo=TikTokApi.getInfoVideo(orderRunningList.get(i).getOrder_link());
+                            if(infoVideo==null){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Video is currently unavailable");
+                            }
+                        }
+                    }
+
+                } catch (Exception e) {
+                    StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+                    LogError logError =new LogError();
+                    logError.setMethod_name(stackTraceElement.getMethodName());
+                    logError.setLine_number(stackTraceElement.getLineNumber());
+                    logError.setClass_name(stackTraceElement.getClassName());
+                    logError.setFile_name(stackTraceElement.getFileName());
+                    logError.setMessage(e.getMessage());
+                    logError.setAdd_time(System.currentTimeMillis());
+                    Date date_time = new Date(System.currentTimeMillis());
+                    // Tạo SimpleDateFormat với múi giờ GMT+7
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                    String formattedDate = sdf.format(date_time);
+                    logError.setDate_time(formattedDate);
+                    logErrorRepository.save(logError);
+                }
+            }
+            resp.put("status",true);
+            data.put("message", "update thành công");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
     @GetMapping(value = "update_Order_Running_Done_No_Check", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Order_Running_Done_No_Check() throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -699,7 +795,7 @@ public class OrderRunningController {
     }
 
     @DeleteMapping(value = "delete_Order_Running", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> delete_Order_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String order_id, @RequestParam(defaultValue = "1") Integer cancel) throws InterruptedException {
+    public ResponseEntity<Map<String, Object>> delete_Order_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String order_id, @RequestParam(defaultValue = "1") Integer cancel,@RequestParam(defaultValue = "") String note) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         Integer checktoken = userRepository.check_User_By_Token(Authorization);
@@ -722,7 +818,7 @@ public class OrderRunningController {
                 if(orderRunning==null){
                     continue;
                 }
-                Service service=serviceRepository.get_Service(orderRunning.getService().getService_id());
+                Service service=serviceRepository.get_Service_By_ServiceId(orderRunning.getService().getService_id());
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunning.getOrder_id());
                 orderHistory.setOrder_key(orderRunning.getOrder_key());
@@ -738,7 +834,11 @@ public class OrderRunningController {
                 orderHistory.setDuration(orderRunning.getDuration());
                 orderHistory.setDuration(orderRunning.getDuration());
                 orderHistory.setService(orderRunning.getService());
-                orderHistory.setNote(orderRunning.getNote());
+                if(note.trim().length()>0){
+                    orderHistory.setNote(orderRunning.getNote()+" | "+note.trim());
+                }else{
+                    orderHistory.setNote(orderRunning.getNote());
+                }
                 orderHistory.setUser(orderRunning.getUser());
                 orderHistory.setQuantity(orderRunning.getQuantity());
                 orderHistory.setTotal(orderRunning.getTotal());

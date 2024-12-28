@@ -37,7 +37,7 @@ public class TiktokOrder {
             String tiktok_id= TikTokApi.getTiktokId(data.getLink().trim());
             if (tiktok_id == null) {
                 JsonObject infoVideo=TikTokApi.getInfoVideo(data.getLink().trim());
-                if(infoVideo.size()==0){
+                if(infoVideo==null){
                     resp.put("error", "Cant filter tiktok_id from link");
                     return resp;
                 }else{

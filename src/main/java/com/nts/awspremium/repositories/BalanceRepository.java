@@ -17,7 +17,7 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
             " b.service IS NOT NULL and round((UNIX_TIMESTAMP()-b.add_time/1000)/60/60/24)<=10 order by b.add_time desc",nativeQuery = true)
     public List<BalanceShow> getAllBalance();
     @Query(value = "Select b.id,b.balance,b.add_time,b.user,b.total_blance,b.note,b.service,s.platform,s.task from balance b\n" +
-            " left join service s on b.service=s.service_id where user=?1\n" +
+            " left join service s on b.service=s.service_id where user=?1 and\n" +
             " b.service IS NOT NULL and round((UNIX_TIMESTAMP()-b.add_time/1000)/60/60/24)<=10 order by b.add_time desc",nativeQuery = true)
     public List<BalanceShow> getAllBalance(String user);
 
