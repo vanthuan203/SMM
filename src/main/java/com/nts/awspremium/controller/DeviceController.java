@@ -39,6 +39,9 @@ public class DeviceController {
     private SettingSystemRepository settingSystemRepository;
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private ModeRepository modeRepository;
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> get_List_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -211,11 +214,15 @@ public class DeviceController {
                 device_new.setAccount_live("");
                 device_new.setAccount_die("");
                 device_new.setNum_profile(profile.size());
-                device_new.setNum_profile_set(settingSystem.getMax_profile());
+                device_new.setNum_profile_set(1);
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
+                Mode mode=modeRepository.get_Mode_Info(device.getMode().trim());
+                if(mode!=null){
+                    device.setNum_profile_set(mode.getMax_profile());
+                }
                 device.setRom_version(rom_version);
                 if(device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim())){
                     device.setIp_address(ip);

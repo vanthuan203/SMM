@@ -1638,11 +1638,22 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
+            Mode mode =modeRepository.get_Mode_Info(device.getMode().trim());
+            if(mode==null){
+                resp.put("status", false);
+                data.put("message", "mode không hợp lệ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+            device.setNum_profile_set(mode.getMax_profile());
             device.setRom_version(rom_version.trim());
             device.setUpdate_time(System.currentTimeMillis());
             deviceRepository.save(device);
 
-            if((device.getNum_profile()<device.getNum_profile_set() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
+
+
+            if((device.getNum_profile()<mode.getMax_profile() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");
@@ -1666,7 +1677,7 @@ public class TaskController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                if(device.getNum_profile()<device.getNum_profile_set()){
+                if(device.getNum_profile()<mode.getMax_profile()){
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "create_profile");
@@ -1766,8 +1777,6 @@ public class TaskController {
                 profileTask.setOnline_time(System.currentTimeMillis());
             }
             profileTask.setUpdate_time(System.currentTimeMillis());
-            //mode
-            Mode mode =modeRepository.get_Mode_Info(device.getMode().trim());
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
@@ -1953,7 +1962,7 @@ public class TaskController {
                         }
                     }
 
-                }else if(profileTask.getRequest_index()>0&&platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){ //if live=-1
+                }else if(profileTask.getRequest_index()>0&&platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile()){ //if live=-1
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                     entityManager.clear();
                     if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
@@ -2528,7 +2537,7 @@ public class TaskController {
             if(profileTask==null){
                 if(platform.length()==0){
                     profileTask = profileTaskRepository.get_Profile_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
-                    if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=settingSystem.getTime_profile()){
+                    if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile()){
                         if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
                             profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
                             profileTask.setOnline_time(System.currentTimeMillis());
@@ -2594,7 +2603,12 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 ModeOption modeOption=modeOptionRepository.get_Mode_Option(device.getMode().trim(),profileTask.getPlatform().trim(),task.trim().split("_")[1]);
-                if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<modeOption.getTime_get_task()){
+                if(modeOption==null){
+                    resp.put("status",false);
+                    data.put("message","modeOption không hợp lệ!");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<modeOption.getTime_get_task()){
                     resp.put("status",false);
                     data.put("message","Không có nhiệm vụ!");
                     resp.put("data",data);

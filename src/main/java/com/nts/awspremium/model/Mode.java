@@ -17,9 +17,9 @@ public class Mode {
     @Column(columnDefinition = "integer default 0")
     private Integer time_enable_profile;
     @Column(columnDefinition = "integer default 0")
-    private Long max_profile;
+    private Integer max_profile;
     @Column(columnDefinition = "integer default 0")
-    private Long max_account;
+    private Integer max_account;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     public Mode() {
