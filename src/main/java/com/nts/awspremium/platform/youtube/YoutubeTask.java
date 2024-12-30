@@ -37,12 +37,14 @@ public class YoutubeTask {
     private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> youtube_view(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
-            if(youtubeView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","view");
+            if(youtubeView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -161,8 +163,8 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
-            if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_subscriber()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","subscriber");
+            if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -271,8 +273,8 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingYoutube settingYoutube=settingYoutubeRepository.get_Setting();
-            if(youtubeLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingYoutube.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","like");
+            if(youtubeLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }

@@ -44,12 +44,14 @@ public class XTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> x_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingX settingX=settingXRepository.get_Setting();
-            if(xComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_comment()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"x","comment");
+            if(xComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -128,8 +130,8 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingX settingX=settingXRepository.get_Setting();
-            if(xFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_follower()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"x","follower");
+            if(xFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -197,8 +199,8 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingX settingX=settingXRepository.get_Setting();
-            if(xLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"x","like");
+            if(xLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -267,8 +269,8 @@ public class XTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingX settingX=settingXRepository.get_Setting();
-            if(xView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"x","view");
+            if(xView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -337,8 +339,8 @@ public class XTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
 
-            SettingX settingX=settingXRepository.get_Setting();
-            if(xRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=settingX.getMax_repost()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"x","repost");
+            if(xRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }

@@ -90,6 +90,12 @@ public class TaskController {
 
     @Autowired
     private AccountNameRepository accountNameRepository;
+
+    @Autowired
+    private ModeRepository modeRepository;
+
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -1760,7 +1766,8 @@ public class TaskController {
                 profileTask.setOnline_time(System.currentTimeMillis());
             }
             profileTask.setUpdate_time(System.currentTimeMillis());
-
+            //mode
+            Mode mode =modeRepository.get_Mode_Info(device.getMode().trim());
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
@@ -2586,12 +2593,8 @@ public class TaskController {
             String task_index=null;
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
-                if(task.equals("tiktok_follower")&&((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<settingSystem.getTime_get_task())){
-                    resp.put("status",false);
-                    data.put("message","Không có nhiệm vụ!");
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(task.equals("tiktok_like")&&((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<1)){
+                ModeOption modeOption=modeOptionRepository.get_Mode_Option(device.getMode().trim(),profileTask.getPlatform().trim(),task.trim().split("_")[1]);
+                if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<modeOption.getTime_get_task()){
                     resp.put("status",false);
                     data.put("message","Không có nhiệm vụ!");
                     resp.put("data",data);

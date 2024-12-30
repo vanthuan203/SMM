@@ -43,12 +43,14 @@ public class FacebookTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> facebook_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
-            if(facebookComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_comment()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"facebook","comment");
+            if(facebookComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -126,8 +128,8 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
-            if(facebookFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_follower()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"facebook","follower");
+            if(facebookFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -195,8 +197,8 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
-            if(facebookLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"facebook","like");
+            if(facebookLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -264,8 +266,8 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
-            if(facebookView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"facebook","view");
+            if(facebookView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -332,8 +334,8 @@ public class FacebookTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingFacebook settingFacebook=settingFacebookRepository.get_Setting();
-            if(facebookMember24hRepository.count_Member_24h_By_Username(account_id.trim()+"%")>=settingFacebook.getMax_member()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"facebook","member");
+            if(facebookMember24hRepository.count_Member_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }

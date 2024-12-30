@@ -40,12 +40,14 @@ public class TiktokTask {
     private DataCommentRepository dataCommentRepository;
     @Autowired
     private DataFollowerTiktokRepository dataFollowerTiktokRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_comment()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","comment");
+            if(tikTokComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -132,8 +134,8 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_follower()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","follower");
+            if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -215,8 +217,8 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -296,9 +298,8 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            //System.out.println(account_id);
-            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingTiktok.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
+            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }

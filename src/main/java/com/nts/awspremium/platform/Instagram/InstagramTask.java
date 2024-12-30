@@ -39,12 +39,14 @@ public class InstagramTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> instagram_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
-            if(instagramComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_comment()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"instagram","comment");
+            if(instagramComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -122,8 +124,8 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
-            if(instagramFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_follower()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"instagram","follower");
+            if(instagramFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -190,8 +192,8 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
-            if(instagramLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"instagram","like");
+            if(instagramLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -259,8 +261,8 @@ public class InstagramTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingInstagram settingInstagram=settingInstagramRepository.get_Setting();
-            if(instagramView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingInstagram.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"instagram","view");
+            if(instagramView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }

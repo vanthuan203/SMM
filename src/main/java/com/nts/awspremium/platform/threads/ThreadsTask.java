@@ -43,12 +43,14 @@ public class ThreadsTask {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
     public Map<String, Object> threads_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
-            if(threadsComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_comment()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"threads","comment");
+            if(threadsComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -126,8 +128,8 @@ public class ThreadsTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
 
-            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
-            if(threadsFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_follower()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"threads","follower");
+            if(threadsFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -194,8 +196,8 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
-            if(threadsLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_like()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"threads","like");
+            if(threadsLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -263,8 +265,8 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
-            if(threadsView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_view()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"threads","view");
+            if(threadsView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
@@ -331,8 +333,8 @@ public class ThreadsTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            SettingThreads settingThreads=settingThreadsRepository.get_Setting();
-            if(threadsRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=settingThreads.getMax_repost()){
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"threads","repost");
+            if(threadsRepost24hRepository.count_Repost_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
                 return resp;
             }
