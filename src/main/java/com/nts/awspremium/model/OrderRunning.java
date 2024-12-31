@@ -79,8 +79,8 @@ public class OrderRunning implements Serializable {
     private Integer speed_up;
     @Column(columnDefinition = "bigint default 0")
     private Long order_refill;
-    @Version
-    private Long version=0L;
+    //@Version
+    //private Long version=0L;
     public OrderRunning() {
     }
 
