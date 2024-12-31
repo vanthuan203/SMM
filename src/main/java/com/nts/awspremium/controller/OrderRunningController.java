@@ -545,6 +545,7 @@ public class OrderRunningController {
                             if(current_Count>=0){
                                 orderRunningList.get(i).setCurrent_count(current_Count);
                                 orderRunningList.get(i).setUpdate_current_time(System.currentTimeMillis());
+                                if(orderRunningRepository.existsById(orderRunningList.get(i).getOrder_id()))
                                 orderRunningRepository.save(orderRunningList.get(i));
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("like")){
