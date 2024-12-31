@@ -34,18 +34,6 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            orderRunningController.update_Order_Running_Done_No_Check();
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
-                            orderRunningController.update_Order_Running_Done_Check();
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                throw new RuntimeException(e);
-                            }
                             orderRunningController.update_Total_Buff();
                             try {
                                 Thread.sleep(1000);
@@ -53,6 +41,18 @@ public class RunOrderRunning {
                                 throw new RuntimeException(e);
                             }
                             orderRunningController.update_Current_Total();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            orderRunningController.update_Order_Running_Done_No_Check();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            orderRunningController.update_Order_Running_Done_Check();
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
