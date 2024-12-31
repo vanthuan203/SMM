@@ -69,10 +69,18 @@ public class TiktokUpdate {
                 AccountTask accountTask_New=new AccountTask();
                 accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
                 accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
-                accountTask_New.setFollower_time(System.currentTimeMillis());
+                if(success==null?true:success){
+                    accountTask_New.setFollower_time(System.currentTimeMillis());
+                }else{
+                    accountTask_New.setFollower_time(System.currentTimeMillis()+60 * 60 * 1000);
+                }
                 accountTaskRepository.save(accountTask_New);
             }else{
-                accountTask.setFollower_time(System.currentTimeMillis());
+                if(success==null?true:success){
+                    accountTask.setFollower_time(System.currentTimeMillis());
+                }else{
+                    accountTask.setFollower_time(System.currentTimeMillis()+60 * 60 * 1000);
+                }
                 accountTaskRepository.save(accountTask);
             }
 
