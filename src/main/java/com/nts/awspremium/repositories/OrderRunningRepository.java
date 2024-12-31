@@ -84,6 +84,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE order_running set current_count=?1,update_time=?2 where order_id=?3",nativeQuery = true)
+    public void update_Current_Count(Integer current_count,Long update_time,Long order_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE order_running set check_count=1,check_count_time=?1 where order_id=?2",nativeQuery = true)
     public void update_Check_Count(Long check_count_time,Long order_id);
 
