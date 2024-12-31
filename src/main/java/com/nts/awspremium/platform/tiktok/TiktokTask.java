@@ -179,6 +179,10 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
+                if(dataFollowerTiktok==null){
+                    resp.put("status", false);
+                    return resp;
+                }
                 data.put("task_link","https://www.tiktok.com/"+dataFollowerTiktok.getTiktok_id()+"/video/"+dataFollowerTiktok.getVideo_id());
                 if(dataFollowerTiktok.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
