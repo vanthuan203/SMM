@@ -20,4 +20,7 @@ public class FacebookFollowerHistory {
     private String list_id;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "integer default 0")
+    private Integer following_count=0;
+
 }
