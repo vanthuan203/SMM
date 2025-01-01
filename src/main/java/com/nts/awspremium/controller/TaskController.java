@@ -1781,6 +1781,7 @@ public class TaskController {
             }
             profileTask.setUpdate_time(System.currentTimeMillis());
             profileTaskRepository.save(profileTask);
+            profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
