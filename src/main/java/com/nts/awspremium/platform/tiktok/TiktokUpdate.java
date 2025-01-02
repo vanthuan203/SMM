@@ -42,6 +42,8 @@ public class TiktokUpdate {
     private DataCommentRepository dataCommentRepository;
     @Autowired
     private AccountTaskRepository accountTaskRepository;
+    @Autowired
+    private TaskPriorityRepository taskPriorityRepository;
 
     public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
         try{
@@ -72,14 +74,14 @@ public class TiktokUpdate {
                 if(success==null?true:success){
                     accountTask_New.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask_New.setFollower_time(System.currentTimeMillis()+60 * 60 * 1000);
+                    accountTask_New.setFollower_time(System.currentTimeMillis()+(taskPriorityRepository.get_Wating_Time_By_Task("tiktok_follower")) * 60 * 1000);
                 }
                 accountTaskRepository.save(accountTask_New);
             }else{
                 if(success==null?true:success){
                     accountTask.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask.setFollower_time(System.currentTimeMillis()+60 * 60 * 1000);
+                    accountTask.setFollower_time(System.currentTimeMillis()+(taskPriorityRepository.get_Wating_Time_By_Task("tiktok_follower")) * 60 * 1000);
                 }
                 accountTaskRepository.save(accountTask);
             }

@@ -22,6 +22,8 @@ public class TaskPriority {
     private Long update_time;
     @Column(columnDefinition = " varchar(255) default ''")
     private String platform;
+    @Column(columnDefinition = "integer default 0")
+    private Integer time_waiting_task=0;
     public TaskPriority() {
     }
 

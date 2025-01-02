@@ -23,6 +23,8 @@ public class ModeOption {
     private Integer max_task;
     @Column(columnDefinition = "integer default 0")
     private Integer time_get_task=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer time_waiting_task=0;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     public ModeOption() {

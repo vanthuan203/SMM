@@ -39,6 +39,8 @@ public class SettingSystem {
     private String rom_version;
     @Column(columnDefinition = "integer default 0")
     private Integer time_get_task;
+    @Column(columnDefinition = "integer default 0")
+    private Integer time_waiting_task=0;
     public SettingSystem() {
     }
 

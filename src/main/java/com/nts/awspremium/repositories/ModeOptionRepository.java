@@ -14,5 +14,4 @@ public interface ModeOptionRepository extends JpaRepository<ModeOption,Long> {
     @Query(value = "SELECT * FROM mode_option ",nativeQuery = true)
     public List<ModeOption> get_List_Mode_Option();
 
-
 }
