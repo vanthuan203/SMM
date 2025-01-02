@@ -57,7 +57,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     ///@Query(value = "select o from OrderRunning o JOIN FETCH o.service where round((UNIX_TIMESTAMP()-o.update_time/1000)/60)>=30")//
     //public List<OrderRunning> get_Order_Check_Valid();
 
-    @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold")
+    @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold or o.valid=0")
     public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
@@ -86,6 +86,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Transactional
     @Query(value = "UPDATE order_running set current_count=?1,update_current_time=?2 where order_id=?3",nativeQuery = true)
     public void update_Current_Count(Integer current_count,Long update_current_time,Long order_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE order_running set valid=?1 where order_id=?2",nativeQuery = true)
+    public void update_Valid_By_OrderId(Integer valid,Long order_id);
 
     @Modifying
     @Transactional

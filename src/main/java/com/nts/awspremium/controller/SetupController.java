@@ -381,12 +381,7 @@ public class SetupController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-                List<AccountProfile> accountProfiles=accountProfileRepository.get_Account_Tiktok();
-                List<AccountName> accountNames=accountNameRepository.get_Acount_Name(accountProfiles.size());
-                for(int i=0;i<accountProfiles.size();i++){
-                    accountProfiles.get(i).setName(accountNames.get(i).getName());
-                    accountProfileRepository.save(accountProfiles.get(i));
-                }
+            System.out.println(TikTokApi.getFollowerCount("ibrahim.smileyy",1));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

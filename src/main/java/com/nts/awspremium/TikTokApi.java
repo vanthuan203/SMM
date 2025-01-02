@@ -96,8 +96,48 @@ public class TikTokApi {
                         .get("followerCount")
                         .getAsInt();
                 return followerCount;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followerCount từ data.stats
+              return -1;
             }else{
                 getFollowerCount(tiktok_id,index-1);
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+        return -2;
+    }
+
+    public static Integer getFollowerCountByUserId(String user_id,Integer index) {
+
+        try {
+            if(index<=0){
+                return -2;
+            }
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                int followerCount = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("stats")
+                        .get("followerCount")
+                        .getAsInt();
+                return followerCount;
+            }else{
+                getFollowerCountByUserId(user_id,index-1);
             }
         } catch (Exception e) {
             return -2;
@@ -127,14 +167,17 @@ public class TikTokApi {
             // Kiểm tra nếu msg là "success"
             if ("success".equals(jsonObject.get("msg").getAsString())) {
                 // Lấy followerCount từ data.stats
-                int followerCount = jsonObject
+                int videoCount = jsonObject
                         .getAsJsonObject("data")
                         .getAsJsonObject("stats")
                         .get("videoCount")
                         .getAsInt();
-                return followerCount;
+                return videoCount;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy videoCount từ data.stats
+                return -1;
             }else{
-                getFollowerCount(tiktok_id,index-1);
+                getVideoCount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
@@ -167,6 +210,9 @@ public class TikTokApi {
                         .get("followingCount")
                         .getAsInt();
                 return followingCount;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followingCount từ data.stats
+                return -1;
             }
         } catch (Exception e) {
             return -2;
@@ -351,12 +397,14 @@ public class TikTokApi {
                         .get("digg_count")
                         .getAsInt();
                 return liveCount;
-            }else{
-                return -2;
+            }else if (jsonObject.get("msg").getAsString().contains("Url parsing is failed")) {
+                // Lấy digg_count từ data.stats
+                return -1;
             }
         } catch (Exception e) {
             return -2;
         }
+        return -2;
     }
 
     public static JsonObject getInfoVideo(String link) {
@@ -444,12 +492,14 @@ public class TikTokApi {
                         .get("play_count")
                         .getAsInt();
                 return liveCount;
-            }else{
-                return -2;
+            }else if (jsonObject.get("msg").getAsString().contains("Url parsing is failed")) {
+                // Lấy play_count từ data.stats
+                return -1;
             }
         } catch (Exception e) {
             return -2;
         }
+        return -2;
     }
     public static Integer getCountComment(String video_id) {
 
@@ -476,12 +526,14 @@ public class TikTokApi {
                         .get("comment_count")
                         .getAsInt();
                 return liveCount;
-            }else{
-                return -2;
+            }else if (jsonObject.get("msg").getAsString().contains("Url parsing is failed")) {
+                // Lấy comment_count từ data.stats
+                return -1;
             }
         } catch (Exception e) {
             return -2;
         }
+        return -2;
     }
     public static String getTiktokId(String url) {
         String pattern = "tiktok\\.com\\/@([a-zA-Z0-9_.]+)";
