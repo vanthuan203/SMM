@@ -472,7 +472,8 @@ public class OrderHistoryController {
                                 orderHistory.setRefill_time(System.currentTimeMillis());
                                 orderHistoryRepository.save(orderHistory);
                             }else{
-                                status="✘ Chờ BH "+quantity_Refund+" "+orderHistory.getService().getTask();
+                                //status="✘ Chờ BH "+quantity_Refund+" "+orderHistory.getService().getTask();
+                                status= "✘ Error "+ checkTrue.get("error").toString();
                             }
 
                         }
