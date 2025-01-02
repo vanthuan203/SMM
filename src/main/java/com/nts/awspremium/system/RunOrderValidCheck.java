@@ -26,7 +26,7 @@ public class RunOrderValidCheck {
                     while (true) {
                         try {
                             try {
-                                Thread.sleep(300000);
+                                Thread.sleep(30000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
