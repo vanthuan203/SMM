@@ -443,7 +443,7 @@ public class OrderHistoryController {
                             current_Count=TikTokApi.getCountComment(orderHistory.getOrder_key());
                         }
                     }
-                    if(current_Count>=0){
+                    if(current_Count>=0 && current_Count>=orderHistory.getStart_count()){
                         int quantity=orderHistory.getQuantity()>orderHistory.getTotal()?orderHistory.getTotal():orderHistory.getQuantity();
                         int count_Sum=quantity+orderHistory.getStart_count();
                         int quantity_Refund= count_Sum-current_Count ;
@@ -477,6 +477,8 @@ public class OrderHistoryController {
                             }
 
                         }
+                    }else if(current_Count>=0 && current_Count<orderHistory.getStart_count()){
+                        status="✘ current_Count<start_count => Chỉ refund";
                     }else{
                         status="✘ Lỗi check Current Count";
                     }

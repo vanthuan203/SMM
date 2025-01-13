@@ -863,6 +863,8 @@ public class OrderRunningController {
                     int realTime=orderRunning.getCurrent_count()<=0?orderRunning.getTotal():orderRunning.getCurrent_count()-orderRunning.getStart_count();
                     if(realTime>orderRunning.getTotal()){
                         realTime=orderRunning.getTotal();
+                    }else if(realTime<0){
+                        realTime=0;
                     }
                     orderHistory.setTotal(realTime);
                     if (cancel == 1) {
