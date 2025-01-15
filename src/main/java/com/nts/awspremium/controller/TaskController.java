@@ -2473,36 +2473,39 @@ public class TaskController {
                                 }
                             }
                         }
-                    }else if(accountProfile_Check_Platform.getLive()!=1){
+                    }else  if(accountProfile_Check_Platform.getLive()!=1){
+                        if(!(platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==0&&accountProfile_Check_Platform.getLive()==-1)){
 
-                        profileTask.setRequest_index(1);
-                        profileTaskRepository.save(profileTask);
+                            profileTask.setRequest_index(1);
+                            profileTaskRepository.save(profileTask);
 
-                        resp.put("status", true);
-                        data.put("platform",profileTask.getPlatform());
-                        if( profileTask.getPlatform().equals("tiktok")){
-                            if(device.getMode().contains("tiktok-lite")){
-                                data.put("app","tiktok-lite");
+                            resp.put("status", true);
+                            data.put("platform",profileTask.getPlatform());
+                            if( profileTask.getPlatform().equals("tiktok")){
+                                if(device.getMode().contains("tiktok-lite")){
+                                    data.put("app","tiktok-lite");
+                                }else{
+                                    data.put("app","tiktok-lite");
+                                }
                             }else{
-                                data.put("app","tiktok-lite");
+                                data.put("app",profileTask.getPlatform());
                             }
-                        }else{
-                            data.put("app",profileTask.getPlatform());
+                            if(accountProfile_Check_Platform.getLive()==-1){
+                                data.put("task", "register");
+                            }else{
+                                data.put("task", "login");
+                            }
+                            data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                            data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
+                            data.put("password", accountProfile_Check_Platform.getPassword().trim());
+                            data.put("name", accountProfile_Check_Platform.getName().trim());
+                            data.put("avatar", accountProfile_Check_Platform.getAvatar()==0?false:true);
+                            data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
+                            data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
+                            resp.put("data",data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
-                        if(accountProfile_Check_Platform.getLive()==-1){
-                            data.put("task", "register");
-                        }else{
-                            data.put("task", "login");
-                        }
-                        data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
-                        data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
-                        data.put("password", accountProfile_Check_Platform.getPassword().trim());
-                        data.put("name", accountProfile_Check_Platform.getName().trim());
-                        data.put("avatar", accountProfile_Check_Platform.getAvatar()==0?false:true);
-                        data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
-                        data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
-                        resp.put("data",data);
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
+
                     }
                     /*else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
                     &&accountProfile_Check_Platform.getPlatform().equals("tiktok")){
