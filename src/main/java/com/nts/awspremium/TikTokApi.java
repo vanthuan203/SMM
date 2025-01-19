@@ -458,7 +458,11 @@ public class TikTokApi {
                 // Lấy followerCount từ data.stats
                 JsonArray jsonData = jsonObject
                         .getAsJsonObject("data").getAsJsonArray("videos");
-                return jsonData;
+                if(jsonData.size()==0){
+                    return null;
+                }else{
+                    return jsonData;
+                }
             }else{
                 return null;
             }

@@ -95,7 +95,7 @@ public class TiktokOrder {
             orderRunningCheck=orderRunning;
 
             JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],8);
-            if(videoList.size()==0){
+            if(videoList==null){
                 resp.put("error", "Unable to get account video information");
                 return resp;
             }

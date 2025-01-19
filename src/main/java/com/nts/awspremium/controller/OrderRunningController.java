@@ -642,15 +642,14 @@ public class OrderRunningController {
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
                             Integer followerCount=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().trim().split("@")[1],1);
                             if(followerCount>0){
-                                JsonObject channelInfo=TikTokApi.getInfoChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
-                                if(channelInfo==null){
-                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Could not find this account");
-                                }else if(channelInfo.get("videoCount").getAsInt()<1){
-                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"This account has no videos");
+                                Integer videoCount=TikTokApi.getVideoCount(orderRunningList.get(i).getOrder_key().trim().split("@")[1],2);
+                                if(videoCount==0){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
                                 }else{
                                     JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],3);
-                                    if(videoList.size()==0){
-                                        delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Unable to get account video information");
+                                    if(videoList==null){
+                                        orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                        continue;
                                     }
                                     dataFollowerTiktokRepository.delete_Data_Follower_By_OrderId(orderRunningList.get(i).getOrder_id());
 
@@ -674,14 +673,16 @@ public class OrderRunningController {
                                     orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                                 }
                             }else if(followerCount==-1){
-                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Could not find this account");
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
+                            }else{
+                                orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                             }
 
                         }else{
                             Integer likeCount=TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
                             if(likeCount==-1){
-                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),0,"Video is currently unavailable");
-                            }else if(likeCount>=0){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Video is currently unavailable");
+                            }else{
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                             }
                         }
