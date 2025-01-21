@@ -531,6 +531,35 @@ public class SetupController {
         }
     }
 
+    @GetMapping(value = "/ping", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> ping() {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        try {
+                resp.put("status", true);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            //System.out.println(logError.getMessage());
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @GetMapping(value = "/getCheckCountoff", produces = "application/json;charset=utf8")
     ResponseEntity<Map<String, Object>> getCheckCountoff() {
         Map<String, Object> resp = new LinkedHashMap<>();
