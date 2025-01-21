@@ -377,8 +377,8 @@ public class SetupController {
  */
 
 
-    @GetMapping(value = "/live_count", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> live_count(@RequestParam(defaultValue = "") String link) {
+    @GetMapping(value = "/subscriberCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> subscriberCount(@RequestParam(defaultValue = "") String link) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
@@ -400,7 +400,7 @@ public class SetupController {
             int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
             if(start_Count==-2){
                 resp.put("status", false);
-                data.put("error", "Can't get SubcriberCurrent");
+                data.put("error", "Can't get subcriberCurrent");
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else{
@@ -408,6 +408,103 @@ public class SetupController {
                 data.put("name",title);
                 data.put("uid",uId);
                 data.put("subscriberCount",start_Count);
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            //System.out.println(logError.getMessage());
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/likeCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> likeCount(@RequestParam(defaultValue = "") String video_id) {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            if (video_id.length() ==0) {
+                resp.put("status", false);
+                data.put("error", "video_id is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+
+            int start_Count =GoogleApi.getCountLikeCurrent(video_id.trim());
+            if(start_Count==-2){
+                resp.put("status", false);
+                data.put("error", "Can't get likeCurrent");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else{
+                resp.put("status", true);
+                data.put("video_id",video_id);
+                data.put("likeCount",start_Count);
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            //System.out.println(logError.getMessage());
+
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @GetMapping(value = "/viewCount", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> viewCount(@RequestParam(defaultValue = "") String video_id) {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            if (video_id.length() ==0) {
+                resp.put("status", false);
+                data.put("error", "video_id is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+
+            int start_Count =GoogleApi.getCountViewCurrent(video_id.trim());
+            if(start_Count==-2){
+                resp.put("status", false);
+                data.put("error", "Can't get viewCurrent");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else{
+                resp.put("status", true);
+                data.put("video_id",video_id);
+                data.put("viewCount",start_Count);
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
