@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
@@ -376,13 +377,40 @@ public class SetupController {
  */
 
 
-    @GetMapping(value = "/test3", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> test3(@RequestHeader(defaultValue = "") String tiktok_id) {
+    @GetMapping(value = "/live_count", produces = "application/json;charset=utf8")
+    ResponseEntity<Map<String, Object>> live_count(@RequestParam(defaultValue = "") String link) {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try {
-            System.out.println(TikTokApi.getFollowerCount("ibrahim.smileyy",1));
-            return new ResponseEntity<>(resp, HttpStatus.OK);
+            if (link.length() ==0) {
+                resp.put("status", false);
+                data.put("error", "link is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            String channelId = GoogleApi.getChannelId(link);
+            if (channelId == null) {
+                resp.put("status", false);
+                data.put("error", "Cant filter channel from link");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            String title=channelId.split(",")[0];
+            String uId=channelId.split(",")[1];
+            int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
+            if(start_Count==-2){
+                resp.put("status", false);
+                data.put("error", "Can't get SubcriberCurrent");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else{
+                resp.put("status", true);
+                data.put("name",title);
+                data.put("uid",uId);
+                data.put("subscriberCount",start_Count);
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
