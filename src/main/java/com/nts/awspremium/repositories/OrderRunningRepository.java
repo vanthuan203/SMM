@@ -25,7 +25,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             "                       group by order_id having total<thread) as t",nativeQuery = true)
     public List<String> get_List_Order_Thread_True();
 
-    @Query(value = "SELECT * from order_running where order_id=?1",nativeQuery = true)
+    @Query(value = "SELECT o from OrderRunning o JOIN FETCH o.service where o.order_id=?1")
     public OrderRunning get_Order_By_Id(Long order_id);
 
     @Query(value = "SELECT count(*) from order_running where order_key=?1",nativeQuery = true)

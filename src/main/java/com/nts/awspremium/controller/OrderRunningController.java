@@ -827,7 +827,6 @@ public class OrderRunningController {
                 if(orderRunning==null){
                     continue;
                 }
-                Service service=serviceRepository.get_Service_By_ServiceId(orderRunning.getService().getService_id());
                 OrderHistory orderHistory=new OrderHistory();
                 orderHistory.setOrder_id(orderRunning.getOrder_id());
                 orderHistory.setOrder_key(orderRunning.getOrder_key());
@@ -860,7 +859,7 @@ public class OrderRunningController {
                 orderHistory.setRefill(0);
                 orderHistory.setUpdate_current_time(orderRunning.getUpdate_current_time());
                 orderHistory.setOrder_refill(orderRunning.getOrder_refill());
-                if(service.getCheck_count()==1){
+                if(orderRunning.getService().getCheck_count()==1){
                     int realTime=orderRunning.getCurrent_count()<=0?orderRunning.getTotal():orderRunning.getCurrent_count()-orderRunning.getStart_count();
                     if(realTime>orderRunning.getTotal()){
                         realTime=orderRunning.getTotal();
