@@ -495,7 +495,7 @@ public class SetupController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
 
-            int start_Count =GoogleApi.getCountViewCurrent(video_id.trim());
+            long start_Count =GoogleApi.getCountViewCurrent(video_id.trim());
             if(start_Count==-2){
                 resp.put("status", false);
                 data.put("error", "Can't get viewCurrent");

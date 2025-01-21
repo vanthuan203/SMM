@@ -230,7 +230,7 @@ public class GoogleApi {
         }
     }
 
-    public static Integer getCountViewCurrent(String order_key){
+    public static Long getCountViewCurrent(String order_key){
         try {
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
             Request request = null;
@@ -241,13 +241,13 @@ public class GoogleApi {
                 response.body().close();
                 Object obj1 = new JSONParser().parse(resultJson1);
                 JSONObject jsonObject1 = (JSONObject) obj1;
-                return Integer.parseInt(jsonObject1.get("est_sub").toString());
+                return Long.parseLong(jsonObject1.get("est_sub").toString());
             }else{
                 response.body().close();
-                return -2;
+                return -2L;
             }
         } catch (Exception e) {
-            return -2;
+            return -2L;
         }
     }
     public static String getChannelId(String channelUrl) {
