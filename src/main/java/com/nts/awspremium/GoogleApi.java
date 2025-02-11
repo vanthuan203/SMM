@@ -250,6 +250,41 @@ public class GoogleApi {
             return -2L;
         }
     }
+    public static String x(String channelUrl) {
+        try {
+            // Kết nối tới trang YouTube và lấy nội dung trang
+            Document doc = Jsoup.connect(channelUrl).get();
+            // Tìm tất cả các thẻ <script> chứa đoạn JSON
+            Elements scriptElements = doc.select("script");
+            System.out.println(doc);
+            for (Element scriptElement : scriptElements) {
+                String scriptContent = scriptElement.html();
+                if (scriptContent.contains("responseContext")) {
+                    // Lấy phần JSON trong nội dung của thẻ script
+                    int startIndex = scriptContent.indexOf("{");
+                    int endIndex = scriptContent.lastIndexOf("}") + 1;
+                    String jsonString = scriptContent.substring(startIndex, endIndex);
+                    //System.out.println(jsonString);
+                    JsonReader reader = new JsonReader(new StringReader(jsonString));
+                    reader.setLenient(true);
+                    JsonElement jsonElement = JsonParser.parseReader(reader);
+                    JsonObject jsonObject =  jsonElement.getAsJsonObject();
+                    JsonObject jsonElement11 =  jsonObject.getAsJsonObject("metadata");
+                    String id = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("title").toString().replace("\"","");
+                    String chann = jsonObject.getAsJsonObject("metadata")
+                            .getAsJsonObject("channelMetadataRenderer")
+                            .get("externalId").toString().replace("\"","");
+                    return id+","+chann;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String getChannelId(String channelUrl) {
         try {
             // Kết nối tới trang YouTube và lấy nội dung trang
