@@ -42,6 +42,8 @@ public class TiktokTask {
     private DataFollowerTiktokRepository dataFollowerTiktokRepository;
     @Autowired
     private ModeOptionRepository modeOptionRepository;
+    @Autowired
+    private AccountRepository accountRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -55,6 +57,10 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+
+            if(accountRepository.check_Account_Follower_True(account_id.trim())==0&&mode.equals("auto")){
+                mode="activity";
+            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -143,6 +149,10 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
+
+            if(accountRepository.check_Account_Follower_True(account_id.trim())==0&&mode.equals("auto")){
+                mode="activity";
+            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -230,6 +240,10 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+
+            if(accountRepository.check_Account_Follower_True(account_id.trim())==0&&mode.equals("auto")){
+                mode="activity";
+            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -310,6 +324,10 @@ public class TiktokTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+
+            if(accountRepository.check_Account_Follower_True(account_id.trim())==0&&mode.equals("auto")){
+                mode="activity";
+            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
                 if(orderRunning==null){
