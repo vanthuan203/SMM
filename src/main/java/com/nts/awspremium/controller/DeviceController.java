@@ -230,8 +230,12 @@ public class DeviceController {
                 }
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
+
+                if(profile.size()>=mode.getMax_profile()){
+                    profileTaskRepository.delete_Profile_Not_In(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
+                }
             }
-            profileTaskRepository.delete_Profile_Not_In(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
+            profileTaskRepository.delete_Profile_Not_In_And_Valid0(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
             String enabled="";
             Random ran=new Random();
             if(profileTaskRepository.check_Profile_Enabled(device_id.trim())==0&&profile.size()>0){
