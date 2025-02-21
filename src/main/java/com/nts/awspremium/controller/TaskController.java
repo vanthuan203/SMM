@@ -1775,6 +1775,25 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            //changer profile luon khi du thoi gian
+            if(platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile()) {
+                profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
+                entityManager.clear();
+                if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
+                    profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim());
+                    profileTask.setOnline_time(System.currentTimeMillis());
+                    profileTaskRepository.save(profileTask);
+                    //profileTask.setReboot(1);
+                    //profileTaskRepository.save(profileTask);
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "profile_changer");
+                    data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim() + "_")[1]));
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }
+
             //update time check
             if(profileTask.getOnline_time()==0){
                 profileTask.setOnline_time(System.currentTimeMillis());
