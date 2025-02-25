@@ -60,6 +60,9 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold or o.valid=0")
     public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
+    @Query(value = "SELECT SUM(thread_set) FROM Data.order_running where service_id in(SELECT service_id FROM service where mode='auto');",nativeQuery = true)
+    public Integer get_Sum_Thread_By_Mode_Auto();
+
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
     public Integer get_Count_OrderRunning_By_Service(Integer service_id);
 

@@ -42,6 +42,8 @@ public class ApiController {
     @Autowired
     private ServiceRepository serviceRepository;
     @Autowired
+    private SettingSystemRepository settingSystemRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private UserRepository userRepository;
@@ -179,19 +181,26 @@ public class ApiController {
                 }
             }
             if (data.getAction().equals("add")) {
+                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 JSONObject get_task = null;
                 Service service = serviceRepository.get_Service(data.getService());
                 if (service == null) {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
-                    resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
-                    resp.put("error", "System busy try again");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                if(!user.getRole().equals("ROLE_ADMIN")){
+                    if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
+                        resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                 }
                 if(service.getPlatform().trim().equals("youtube")){
                     if(service.getTask().trim().equals("view")){
@@ -408,19 +417,26 @@ public class ApiController {
                 }
             }
             if (data.getAction().equals("add")) {
+                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 JSONObject get_task = null;
                 Service service = serviceRepository.get_Service(data.getService());
                 if (service == null) {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
-                if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
-                    resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
-                }
-                if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
-                    resp.put("error", "System busy try again");
-                    return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                if(!user.getRole().equals("ROLE_ADMIN")){
+                    if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
+                        resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(orderRunningRepository.get_Count_OrderRunning_By_Service(service.getService_id())>=service.getMax_order()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
+                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                 }
                 if(service.getPlatform().trim().equals("youtube")){
                     if(service.getTask().trim().equals("view")){
