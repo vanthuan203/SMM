@@ -197,7 +197,7 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()&&!service.getTask().equals("comment")){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -433,7 +433,7 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()&&!service.getTask().equals("comment")){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
