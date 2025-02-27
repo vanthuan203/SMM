@@ -1775,8 +1775,13 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
+            Integer time_Changer_Profile=mode.getTime_profile();
+            if(accountRepository.check_Account_AddTime_Than7D(profileTask.getProfile_id().trim(),"tiktok")==0){//tai khoan chua du 7 ngay
+                time_Changer_Profile=5;
+            }
             //changer profile luon khi du thoi gian
-            if(platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile()) {
+            if(platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=time_Changer_Profile) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                 entityManager.clear();
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
