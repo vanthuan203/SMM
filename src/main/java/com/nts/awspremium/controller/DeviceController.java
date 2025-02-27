@@ -214,11 +214,12 @@ public class DeviceController {
                 device_new.setAccount_live("");
                 device_new.setAccount_die("");
                 device_new.setNum_profile(profile.size());
-                device_new.setNum_profile_set(1);
+                device_new.setNum_profile_set(settingSystem.getMax_profile());
                 device_new.setIp_address(ip);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
+                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Mode mode=modeRepository.get_Mode_Info(device.getMode().trim());
                 if(mode!=null){
                     device.setNum_profile_set(mode.getMax_profile());
@@ -231,7 +232,7 @@ public class DeviceController {
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
 
-                if(profile.size()>=mode.getMax_profile()){
+                if(profile.size()>=( mode!=null?mode.getMax_profile():settingSystem.getMax_profile() )){
                     profileTaskRepository.delete_Profile_Not_In(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
                 }
             }
@@ -283,7 +284,7 @@ public class DeviceController {
             logError.setMethod_name(stackTraceElement.getMethodName());
             logError.setLine_number(stackTraceElement.getLineNumber());
             logError.setClass_name(stackTraceElement.getClassName());
-            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setFile_name(stackTraceElement.getFileName()+ "|"+device_id);
             logError.setMessage(e.getMessage());
             logError.setAdd_time(System.currentTimeMillis());
             Date date_time = new Date(System.currentTimeMillis());
