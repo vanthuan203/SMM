@@ -36,8 +36,8 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "Select count(*) from account where device_id=?1",nativeQuery = true)
     public Integer check_Count_By_DeviceId(String device_id);
 
-    @Query(value = "SELECT count(*) FROM Data.account where round((UNIX_TIMESTAMP()-add_time/1000)/60/60/24)>=7 and platform='tiktok' and account_id=?1 and mode='register'",nativeQuery = true)
-    public Integer check_Account_Follower_True(String account_id);
+    @Query(value = "SELECT count(*) FROM Data.account where round((UNIX_TIMESTAMP()-add_time/1000)/60/60/24)>=?1 and platform=?2 and account_id=?3 and mode='register'",nativeQuery = true)
+    public Integer check_Account_Task_True(Integer day,String platform,String account_id);
 
     @Query(value = "Select count(*) from account where account_id=?1",nativeQuery = true)
     public Integer check_Count_By_AccountId(String account_id);
