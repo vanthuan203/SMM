@@ -2199,7 +2199,9 @@ public class TaskController {
                         }else{
                             if((System.currentTimeMillis()-profileTask.getGoogle_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
                                 //gioi han time reg by platform and time
-                                if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),10,System.currentTimeMillis())>0){
+                                List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
+                                System.out.println(list_device);
+                                if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,10)>0){
                                     resp.put("status", false);
                                     data.put("message", "Đợi đến lượt tạo tài khoản!");
                                     resp.put("data", data);

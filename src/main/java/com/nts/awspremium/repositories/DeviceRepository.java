@@ -25,6 +25,9 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query(value = "SELECT device_id FROM Data.account where live>1 and device_id in(select device_id from device where status=1) group by device_id",nativeQuery = true)
     public List<String> get_All_Device_DieAcc();
 
+    @Query(value = "SELECT device_id FROM Data.device where ip_address=?1",nativeQuery = true)
+    public List<String> get_All_Device_By_IP(String ip_address);
+
 
     @Modifying
     @Transactional
