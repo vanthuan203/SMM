@@ -58,7 +58,7 @@ public interface AccountRepository extends JpaRepository<Account,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "update account set running=0,profile_id='',device_id='' where running=1  and device_id in(?1)",nativeQuery = true)
+    @Query(value = "update account set running=0,profile_id='',device_id='' where device_id in(?1)",nativeQuery = true)
     public Integer reset_Account_By_ListDevice(List<String> device_id);
     @Modifying
     @Transactional

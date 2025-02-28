@@ -58,7 +58,7 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
 
     @Modifying
     @Transactional
-    @Query(value = "update device set num_profile=?1,account_die='',account_live=''  where device_id in(?2)",nativeQuery = true)
+    @Query(value = "update device set num_profile=?1,account_die='',account_live='',status=1  where device_id in(?2)",nativeQuery = true)
     public void update_NumProfile_By_ListDevice(Integer num_profile,List<String> device_id);
 
     @Query(value = "SELECT new com.nts.awspremium.model.DeviceShow(d.device_id,d.box_id,d.rom_version,d.mode,d.state,d.ip_address,d.ip_changer_time,d.status,MAX(a.running),d.add_time,d.update_time,MAX(a.get_time),d.num_account,d.account_live,d.account_die,d.num_profile,d.num_profile_set,a.profile_id,a.platform,a.task) FROM Device d left join ProfileTask  a on a.device.device_id=d.device_id and a.running=1 group by d.device_id")
