@@ -13,6 +13,6 @@ public interface HistoryRegisterRepository extends JpaRepository<HistoryRegister
     @Query(value = "select count(*) from history_register where platform=?1 and profile_id=?2 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24",nativeQuery = true)
     public Integer count_Register_24h_By_Platform_And_ProfileId(String platform,String profile_id);
 
-    @Query(value = "select count(*) from history_register where platform=?1 and profile_id in (select profile_id from profile_task where device_id in(?2)) and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<?3",nativeQuery = true)
+    @Query(value = "select count(*) from history_register where platform=?1 and profile_id in (select profile_id from profile_task where device_id in(?2)) and round((UNIX_TIMESTAMP()-update_time/1000)/60)<?3",nativeQuery = true)
     public Integer count_Register_By_Platform_And_Time(String platform,List<String> device_id,Integer minute);
 }
