@@ -1777,9 +1777,11 @@ public class TaskController {
             }
 
             Integer time_Changer_Profile=mode.getTime_profile();
+            /*
             if(accountRepository.check_Account_AddTime_Than7D(profileTask.getProfile_id().trim(),"tiktok")==0){//tai khoan chua du 7 ngay
                 time_Changer_Profile=5;
             }
+             */
             //changer profile luon khi du thoi gian
             if(platform.length()==0 && (System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=time_Changer_Profile) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -1806,7 +1808,62 @@ public class TaskController {
             profileTask.setUpdate_time(System.currentTimeMillis());
             profileTaskRepository.save(profileTask);
             profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
-            if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
+
+
+            if(device.getRom_version().toLowerCase().contains("offff")){
+
+                if(accountProfileRepository.check_AccountLive_Gmail_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0&&
+                        historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
+                        accountRepository.check_Count_Gmail_Reg_Less7D_By_DeviceId(device.getDevice_id().trim())<5) {
+
+                    String password="Cmc#";
+                    String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                    for(int i=0;i<6;i++){
+                        Integer ranver=ran.nextInt(passrand.length());
+                        password=password+passrand.charAt(ranver);
+                    }
+
+                    AccountProfile accountProfile=new AccountProfile();
+                    accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
+                    accountProfile.setPassword(password);
+                    accountProfile.setName("");
+                    accountProfile.setAvatar(0);
+                    accountProfile.setRecover("");
+                    accountProfile.setPlatform("youtube");
+                    accountProfile.setLive(-1);
+                    accountProfile.setChanged(0);
+                    accountProfile.setAuth_2fa("");
+                    accountProfile.setProfileTask(profileTask);
+                    accountProfile.setAdd_time(System.currentTimeMillis());
+                    accountProfile.setUpdate_time(0L);
+                    accountProfileRepository.save(accountProfile);
+
+                    HistoryRegister historyRegister=new HistoryRegister();
+                    historyRegister.setProfileTask(profileTask);
+                    historyRegister.setPlatform("youtube");
+                    historyRegister.setState(0);
+                    historyRegister.setUpdate_time(System.currentTimeMillis());
+                    historyRegisterRepository.save(historyRegister);
+
+                    profileTask.setRegister_index(1);
+                    profileTask.setRequest_index(1);
+                    profileTaskRepository.save(profileTask);
+                    resp.put("status", true);
+                    data.put("platform","youtube");
+                    data.put("app","youtube");
+                    data.put("task", "register");
+                    data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
+                    data.put("password",password);
+                    data.put("name",accountProfile.getName());
+                    data.put("avatar",accountProfile.getAvatar()==0?false:true);
+                    data.put("recover_mail",  accountProfile.getRecover().trim());
+                    data.put("auth_2fa", "");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+
+            }else if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
