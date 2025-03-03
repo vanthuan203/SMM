@@ -44,6 +44,8 @@ public class TiktokUpdate {
     private AccountTaskRepository accountTaskRepository;
     @Autowired
     private TaskPriorityRepository taskPriorityRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
 
     public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
         try{
@@ -65,8 +67,8 @@ public class TiktokUpdate {
             tiktokFollower24h.setId(account_id.trim()+task_key.trim());
             tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
             tikTokFollower24hRepository.save(tiktokFollower24h);
-
             AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
             if(accountTask==null){
                 AccountTask accountTask_New=new AccountTask();
                 accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
@@ -74,14 +76,14 @@ public class TiktokUpdate {
                 if(success==null?true:success){
                     accountTask_New.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask_New.setFollower_time(System.currentTimeMillis()+(taskPriorityRepository.get_Wating_Time_By_Task("tiktok_follower")) * 60 * 1000);
+                    accountTask_New.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:modeOption.getTime_waiting_task()) * 60 * 1000);
                 }
                 accountTaskRepository.save(accountTask_New);
             }else{
                 if(success==null?true:success){
                     accountTask.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask.setFollower_time(System.currentTimeMillis()+(taskPriorityRepository.get_Wating_Time_By_Task("tiktok_follower")) * 60 * 1000);
+                    accountTask.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:modeOption.getTime_waiting_task()) * 60 * 1000);
                 }
                 accountTaskRepository.save(accountTask);
             }

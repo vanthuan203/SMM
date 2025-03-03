@@ -22,6 +22,10 @@ public class ModeOption {
     @Column(columnDefinition = "integer default 0")
     private Integer max_task;
     @Column(columnDefinition = "integer default 0")
+    private Integer priority;
+    @Column(columnDefinition = "integer default 0")
+    private Integer state;
+    @Column(columnDefinition = "integer default 0")
     private Integer time_get_task=0;
     @Column(columnDefinition = "integer default 0")
     private Integer time_waiting_task=0;

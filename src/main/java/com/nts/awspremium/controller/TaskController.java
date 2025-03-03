@@ -307,7 +307,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -322,7 +322,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -332,7 +332,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -392,11 +392,11 @@ public class TaskController {
                 if(profileTask!=null){
                     AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), profileTask.getPlatform());
                     if(accountProfile_Check_Platform==null){
-                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
-                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
-                        Integer connection_account=platformRepository.get_Connection_Account_Platform(profileTask.getPlatform().trim());
+                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
+                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
+                        Integer connection_account=platformRepository.get_Connection_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode());
                         if((accountProfile_Check_Dependent==null ||  (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))) &&
-                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()))){
+                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 entityManager.clear();
@@ -417,7 +417,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if(platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==0){
+                            if(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0){
                                 Account account_get=null;
                                 if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                                     String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -510,7 +510,7 @@ public class TaskController {
                                         Integer ranver=ran.nextInt(passrand.length());
                                         password=password+passrand.charAt(ranver);
                                     }
-                                    if(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()).length()==0){
+                                    if(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()).length()==0){
                                         JSONArray domains= MailApi.getDomains();
                                         String stringrand="abcdefhijkprstuvwx0123456789";
                                         String mail="";
@@ -624,7 +624,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -719,7 +719,7 @@ public class TaskController {
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -861,7 +861,7 @@ public class TaskController {
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
-                    if(platformRepository.get_Register_Account_Platform("youtube")==1&&
+                    if(platformRepository.get_Register_Account_Platform_And_Mode("youtube",device.getMode())==1&&
                             historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0){
 
                         String password="Cmc#";
@@ -905,7 +905,7 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
-                    platformRepository.get_Login_Account_Platform("youtube")==1){
+                    platformRepository.get_Login_Account_Platform_And_Mode("youtube",device.getMode())==1){
                         Account account_get=null;
                         if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -1068,7 +1068,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -1083,7 +1083,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -1093,7 +1093,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -1154,14 +1154,14 @@ public class TaskController {
                     AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), profileTask.getPlatform());
                     if(accountProfile_Check_Platform==null){
 
-                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
+                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
 
-                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
+                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
 
-                        Integer connection_account=platformRepository.get_Connection_Account_Platform(profileTask.getPlatform().trim());
+                        Integer connection_account=platformRepository.get_Connection_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode());
 
                         if((accountProfile_Check_Dependent==null ||  (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))) &&
-                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()))){
+                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 entityManager.clear();
@@ -1182,7 +1182,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
+                            if((platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==1 || platform.length()!=0)&&
                                     historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                             ){
                                 if(connection_account>0){
@@ -1228,7 +1228,7 @@ public class TaskController {
                                         Integer ranver=ran.nextInt(passrand.length());
                                         password=password+passrand.charAt(ranver);
                                     }
-                                    if(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()).length()==0){
+                                    if(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()).length()==0){
                                         JSONArray domains= MailApi.getDomains();
                                         String stringrand="abcdefhijkprstuvwx0123456789";
                                         String mail="";
@@ -1298,7 +1298,7 @@ public class TaskController {
                                     }
                                 }
                             }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())<3&&
-                                    platformRepository.get_Login_Account_Platform(profileTask.getPlatform().trim())==1){
+                                    platformRepository.get_Login_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode())==1){
                                 Account account_get=null;
                                 if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                                     String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -1426,7 +1426,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -1521,7 +1521,7 @@ public class TaskController {
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -1867,7 +1867,7 @@ public class TaskController {
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
-                    if((platformRepository.get_Register_Account_Platform("youtube")==1 || platform.length()!=0)&&
+                    if((platformRepository.get_Register_Account_Platform_And_Mode("youtube",device.getMode())==1 || platform.length()!=0)&&
                             historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
                         accountRepository.check_Count_Account_VeryPhone_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")==0
                     ){
@@ -1918,7 +1918,7 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
-                            platformRepository.get_Login_Account_Platform("youtube")==1){
+                            platformRepository.get_Login_Account_Platform_And_Mode("youtube",device.getMode())==1){
                         Account account_get=null;
                         if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -2126,7 +2126,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -2141,7 +2141,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -2151,7 +2151,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -2214,7 +2214,7 @@ public class TaskController {
                         Boolean check_GetAccount=true;
                         AccountProfile accountProfile_Dependent=null;
                         Account account_Dependent=null;
-                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(profileTask.getPlatform());
+                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
                         if(platform_Dependent!=null){
                             accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Dependent);
                             if(accountProfile_Dependent==null){
@@ -2254,7 +2254,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((System.currentTimeMillis()-profileTask.getGoogle_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
+                            if((System.currentTimeMillis()-profileTask.getGoogle_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode()) || platform.length()!=0){
                                 //gioi han time reg by platform and time
                                 List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
                                 System.out.println(list_device);
@@ -2264,7 +2264,7 @@ public class TaskController {
                                     resp.put("data", data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }
-                                if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
+                                if((platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
                                     if(platform_Dependent!=null){
@@ -2336,7 +2336,7 @@ public class TaskController {
                                             Integer ranver=ran.nextInt(passrand.length());
                                             password=password+passrand.charAt(ranver);
                                         }
-                                        if(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()).length()==0){
+                                        if(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()).length()==0){
                                             JSONArray domains= MailApi.getDomains();
                                             String stringrand="abcdefhijkprstuvwx0123456789";
                                             String mail="";
@@ -2444,7 +2444,7 @@ public class TaskController {
                                         }
                                     }
                                 }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())<3&&
-                                        platformRepository.get_Login_Account_Platform(profileTask.getPlatform().trim())==1){
+                                        platformRepository.get_Login_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode())==1){
                                     Account account_get=null;
                                     if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                                         String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -2555,7 +2555,7 @@ public class TaskController {
                             }
                         }
                     }else  if(accountProfile_Check_Platform.getLive()!=1){
-                        if(!(platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==0&&accountProfile_Check_Platform.getLive()==-1)){
+                        if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Check_Platform.getLive()==-1)){
 
                             profileTask.setRequest_index(1);
                             profileTaskRepository.save(profileTask);
@@ -2679,7 +2679,7 @@ public class TaskController {
 
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -2807,10 +2807,10 @@ public class TaskController {
                 dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
-                Long version_app=platformRepository.get_Version_App_Platform(dataJson.get("platform").toString());
+                Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("version_app",version_app==null?0:version_app);
-                Integer activity=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
-                dataJson.put("activity",activity==0?false:true);
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
+                dataJson.put("activity",platform_task==0?false:true);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
                 //--------------------------------------------//
@@ -2990,7 +2990,7 @@ public class TaskController {
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
 
-                    if((platformRepository.get_Register_Account_Platform("youtube")==1 || platform.length()!=0)&&
+                    if((platformRepository.get_Register_Account_Platform_And_Mode("youtube",device.getMode())==1 || platform.length()!=0)&&
                             historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
                             accountRepository.check_Count_Account_VeryPhone_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")==0
                     ){
@@ -3036,7 +3036,7 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
-                            platformRepository.get_Login_Account_Platform("youtube")==1){
+                            platformRepository.get_Login_Account_Platform_And_Mode("youtube",device.getMode())==1){
                         Account account_get=null;
                         if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -3215,7 +3215,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -3230,7 +3230,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -3240,7 +3240,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -3301,14 +3301,14 @@ public class TaskController {
                     AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), profileTask.getPlatform());
                     if(accountProfile_Check_Platform==null){
 
-                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
+                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
 
-                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
+                        Account account_Check=accountRepository.get_Account_By_ProfileId_And_Platfrom(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
 
-                        Integer connection_account=platformRepository.get_Connection_Account_Platform(profileTask.getPlatform().trim());
+                        Integer connection_account=platformRepository.get_Connection_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode());
 
                         if((accountProfile_Check_Dependent==null ||  (connection_account==1&&account_Check.getDie_dependent().contains(profileTask.getPlatform()))) &&
-                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()))){
+                                !profileTask.getPlatform().trim().equals(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                                 entityManager.clear();
@@ -3329,8 +3329,8 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                             }
                         }else{
-                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform(profileTask.getPlatform()) || platform.length()!=0){
-                                if((platformRepository.get_Register_Account_Platform(profileTask.getPlatform())==1 || platform.length()!=0)&&
+                            if((System.currentTimeMillis()-profileTask.getEnabled_time())/1000/60/60>=platformRepository.get_Time_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode()) || platform.length()!=0){
+                                if((platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==1 || platform.length()!=0)&&
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
                                     if(connection_account>0){
@@ -3376,7 +3376,7 @@ public class TaskController {
                                             Integer ranver=ran.nextInt(passrand.length());
                                             password=password+passrand.charAt(ranver);
                                         }
-                                        if(platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()).length()==0){
+                                        if(platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()).length()==0){
                                             JSONArray domains= MailApi.getDomains();
                                             String stringrand="abcdefhijkprstuvwx0123456789";
                                             String mail="";
@@ -3446,7 +3446,7 @@ public class TaskController {
                                         }
                                     }
                                 }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())<3&&
-                                        platformRepository.get_Login_Account_Platform(profileTask.getPlatform().trim())==1){
+                                        platformRepository.get_Login_Account_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode())==1){
                                     Account account_get=null;
                                     if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
                                         String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -3611,7 +3611,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -3706,10 +3706,10 @@ public class TaskController {
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                 dataJson.put("task_index",profileTask.getTask_index());
-                Long version_app=platformRepository.get_Version_App_Platform(dataJson.get("platform").toString());
+                Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("version_app",version_app==null?0:version_app);
-                Integer activity=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
-                dataJson.put("activity",activity==0?false:true);
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
+                dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
                 respJson.put("data",dataJson);
@@ -3941,7 +3941,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -3957,7 +3957,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -3967,7 +3967,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -4027,7 +4027,7 @@ public class TaskController {
                 if(profileTask!=null){
                     AccountProfile accountProfile_Check_Platform=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), profileTask.getPlatform());
                     if(accountProfile_Check_Platform==null){
-                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform(profileTask.getPlatform()));
+                        AccountProfile accountProfile_Check_Dependent=accountProfileRepository.get_AccountLike_By_ProfileId_And_Platform(profileTask.getProfile_id(),platformRepository.get_Dependent_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
                         if(accountProfile_Check_Dependent==null){
                             if(profileTask.getTask_list().trim().length()==0){
                                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -4123,7 +4123,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -4217,7 +4217,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -4450,7 +4450,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -4465,7 +4465,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -4475,7 +4475,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -4641,7 +4641,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -4735,7 +4735,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -4948,7 +4948,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -4963,7 +4963,7 @@ public class TaskController {
                 profileTask.setRequest_index(0);
                 profileTaskRepository.save(profileTask);
             }
-            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform()))
+            if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
             {
                 if(profileTask.getTask_list().trim().length()==0){
                     profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -4973,7 +4973,7 @@ public class TaskController {
                         profileTask.setUpdate_time(System.currentTimeMillis());
                         String task_List="";
                         if(platform.length()==0){
-                            List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                            List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                             task_List=String.join(",", string_Task_List);
                         }else{
                             task_List=platform;
@@ -5140,7 +5140,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -5234,7 +5234,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -5451,7 +5451,8 @@ public class TaskController {
             //--------------------end_get_Account----------------------//
             profileTask = profileTaskRepository.check_ProfileId_Running(device_id.trim()+"_"+profile_id);//Check số lần get nhiệm vụ của 1 account
             if(profileTask!=null){
-                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform())){
+                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
+                {
                     if(profileTask.getTask_list().trim().length()==0){
                         profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                         profileTask=null;
@@ -5607,7 +5608,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -5773,7 +5774,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -5867,7 +5868,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -6019,7 +6020,8 @@ public class TaskController {
             profileTask = profileTaskRepository.check_ProfileId_Running(device_id.trim()+"_"+profile_id);//Check số lần get nhiệm vụ của 1 account
             if(profileTask!=null){
 
-                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform())){
+                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
+                {
                     if(profileTask.getTask_list().trim().length()==0){
                         profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
                         profileTask=null;
@@ -6093,7 +6095,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True();
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -6176,7 +6178,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -6270,7 +6272,7 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
                 dataJson= (Map<String, Object>) get_task.get("data");
                 dataJson.put("task_index",profileTask.getTask_index());
-                Integer platform_task=platformRepository.get_Activity_Platform(dataJson.get("platform").toString());
+                Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("activity",platform_task==0?false:true);
                 //System.out.println(dataJson);
                 respJson.put("status",true);
@@ -6419,7 +6421,8 @@ public class TaskController {
             //--------------------end_get_Account----------------------//
             profileTask = profileTaskRepository.check_ProfileId_Running(device_id.trim()+"_"+profile_id);//Check số lần get nhiệm vụ của 1 account
             if(profileTask!=null){
-                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform(profileTask.getPlatform())){
+                if(profileTask.getTask_index()>=platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()))
+                {
                     if(profileTask.getTask_list().trim().length()==0){
                         profileTaskRepository.reset_Thread_Index_By_ProfileId(profileTask.getProfile_id());
                         profileTask=null;
@@ -6494,7 +6497,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 String task_List="";
                 if(platform.length()==0){
-                    List<String> string_Task_List=platformRepository.get_All_Platform_True_By_ProfileId(device_id.trim()+"_"+profile_id);
+                    List<String> string_Task_List=platformRepository.get_All_Platform_True_By_ProfileId(device.getMode(),device_id.trim()+"_"+profile_id);
                     task_List=String.join(",", string_Task_List);
                 }else{
                     task_List=platform;
@@ -6579,7 +6582,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =taskPriorityRepository.get_Priority_Task_By_Platform(profileTask.getPlatform());
+            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -7212,7 +7215,7 @@ public class TaskController {
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }
-                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                        String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
                         if(platform_Dependent!=null){
                             Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
                             if(accountDependent!=null){
@@ -7247,7 +7250,7 @@ public class TaskController {
 
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
 
-                    String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform(updateTaskRequest.getPlatform().trim());
+                    String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
                     if(platform_Dependent!=null){
                         Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
 

@@ -12,41 +12,41 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
     @Query(value = "SELECT GROUP_CONCAT(platform SEPARATOR ',') AS concatenated_rows from platform  where priority>0 and state=1 order by rand()",nativeQuery = true)
     public String get_All_Platform();
 
-    @Query(value = "SELECT platform from platform  where priority>0 and state=1 and mode='auto' order by rand()",nativeQuery = true)
-    public List<String> get_All_Platform_True();
-    @Query(value = "SELECT platform from platform  where priority>0 and state=1 and \n" +
-            "INSTR(IF((SELECT GROUP_CONCAT(platform ) AS platform FROM Data.account_profile where live!=1 and profile_id=?1) is null\n" +
-            ",'',(SELECT GROUP_CONCAT(platform ) AS platform FROM Data.account_profile where live!=1 and profile_id=?1))\n" +
+    @Query(value = "SELECT platform from platform  where priority>0 and state=1 and mode=?1 order by rand()",nativeQuery = true)
+    public List<String> get_All_Platform_True(String mode);
+    @Query(value = "SELECT platform from platform  where priority>0 and mode=?1 and state=1 and \n" +
+            "INSTR(IF((SELECT GROUP_CONCAT(platform ) AS platform FROM Data.account_profile where live!=1 and profile_id=?2) is null\n" +
+            ",'',(SELECT GROUP_CONCAT(platform ) AS platform FROM Data.account_profile where live!=1 and profile_id=?2))\n" +
             ",platform)=0 order by rand()",nativeQuery = true)
-    public List<String> get_All_Platform_True_By_ProfileId(String profile_id);
-    @Query(value = "SELECT dependent FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public String get_Dependent_By_Platform(String platform);
+    public List<String> get_All_Platform_True_By_ProfileId(String mode,String profile_id);
+    @Query(value = "SELECT dependent FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public String get_Dependent_By_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT dependent FROM platform where platform=?1 and connection_account=1  limit 1",nativeQuery = true)
-    public String get_Dependent_Connection_By_Platform(String platform);
+    @Query(value = "SELECT dependent FROM platform where platform=?1 and mode=?2 and connection_account=1  limit 1",nativeQuery = true)
+    public String get_Dependent_Connection_By_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT priority FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Priority_By_Platform(String platform);
+    @Query(value = "SELECT priority FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Priority_By_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT activity FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Activity_Platform(String platform);
+    @Query(value = "SELECT activity FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Activity_Platform_And_Mode(String platform,String mode);
 
     @Query(value = "SELECT platform FROM platform ",nativeQuery = true)
     public List<String> get_List_String_Platform();
 
-    @Query(value = "SELECT connection_account FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Connection_Account_Platform(String platform);
+    @Query(value = "SELECT connection_account FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Connection_Account_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT register_account FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Register_Account_Platform(String platform);
+    @Query(value = "SELECT register_account FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Register_Account_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT register_time FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Time_Register_Account_Platform(String platform);
+    @Query(value = "SELECT register_time FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Time_Register_Account_Platform_And_Mode(String platform,String mode);
 
-    @Query(value = "SELECT login_account FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Integer get_Login_Account_Platform(String platform);
-    @Query(value = "SELECT version_app FROM platform where platform=?1 limit 1",nativeQuery = true)
-    public Long get_Version_App_Platform(String platform);
+    @Query(value = "SELECT login_account FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Integer get_Login_Account_Platform_And_Mode(String platform,String mode);
+    @Query(value = "SELECT version_app FROM platform where platform=?1 and mode=?2 limit 1",nativeQuery = true)
+    public Long get_Version_App_Platform_And_Mode(String platform,String mode);
 
     @Query(value = "SELECT * FROM platform ",nativeQuery = true)
     public List<Platform> get_List_Platform();
