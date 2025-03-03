@@ -624,7 +624,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -1426,7 +1426,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -2679,7 +2679,7 @@ public class TaskController {
 
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -3611,7 +3611,7 @@ public class TaskController {
             }
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -4123,7 +4123,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -4641,7 +4641,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -5140,7 +5140,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -5774,7 +5774,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -6178,7 +6178,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
@@ -6582,7 +6582,7 @@ public class TaskController {
                 }
             }
             profileTask.setTask_index(profileTask.getTask_index()+1);
-            List<TaskPriority> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
+            List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
             for(int i=0;i<priorityTasks.size();i++){
