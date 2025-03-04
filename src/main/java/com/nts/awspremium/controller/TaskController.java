@@ -1810,7 +1810,7 @@ public class TaskController {
             profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
 
 
-            if(device.getRom_version().toLowerCase().contains("offff")){
+            if(device.getRom_version().toLowerCase().contains("ddddY4")){
 
                 if(accountProfileRepository.check_AccountLive_Gmail_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0&&
                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim())==0&&
@@ -7310,7 +7310,7 @@ public class TaskController {
                 logError.setMethod_name(stackTraceElement.getMethodName());
                 logError.setLine_number(stackTraceElement.getLineNumber());
                 logError.setClass_name(stackTraceElement.getClassName());
-                logError.setFile_name(stackTraceElement.getFileName() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform());
+                logError.setFile_name(stackTraceElement.getFileName() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform()+ "|"+updateTaskRequest.getIsLogin()+ "|"+updateTaskRequest.getAccount_id());
                 logError.setMessage(e.getMessage());
                 logError.setAdd_time(System.currentTimeMillis());
                 Date date_time = new Date(System.currentTimeMillis());
