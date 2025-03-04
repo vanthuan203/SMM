@@ -2724,67 +2724,67 @@ public class TaskController {
                 }
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
-                    if(task.equals("tiktok_follower")){
+                    if(task.equals("follower")){
                         get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("tiktok_like")){
+                    }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("tiktok_view")){
+                    }else if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("tiktok_comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
-                    if(task.equals("youtube_view")){
+                    if(task.equals("view")){
                         get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("youtube_like")){
+                    }else if(task.equals("like")){
                         get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("youtube_subscriber")){
+                    }else if(task.equals("subscriber")){
                         get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
-                    if(task.equals("facebook_follower")){
+                    if(task.equals("follower")){
                         get_task=facebookTask.facebook_follower(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("facebook_like")){
+                    }else if(task.equals("like")){
                         get_task=facebookTask.facebook_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("facebook_view")){
+                    }else if(task.equals("view")){
                         get_task=facebookTask.facebook_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("facebook_comment")){
+                    }else if(task.equals("comment")){
                         get_task=facebookTask.facebook_comment(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("facebook_member")){
+                    }else if(task.equals("member")){
                         get_task=facebookTask.facebook_member(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("x")){
-                    if(task.equals("x_follower")){
+                    if(task.equals("follower")){
                         get_task=xTask.x_follower(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("x_like")){
+                    }else if(task.equals("like")){
                         get_task=xTask.x_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("x_view")){
+                    }else if(task.equals("view")){
                         get_task=xTask.x_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("x_comment")){
+                    }else if(task.equals("comment")){
                         get_task=xTask.x_comment(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("x_repost")){
+                    }else if(task.equals("repost")){
                         get_task=xTask.x_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("instagram")){
                     if(task.equals("instagram_follower")){
                         get_task=instagramTask.instagram_follower(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("instagram_like")){
+                    }else if(task.equals("like")){
                         get_task=instagramTask.instagram_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("instagram_view")){
+                    }else if(task.equals("view")){
                         get_task=instagramTask.instagram_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("instagram_comment")){
+                    }else if(task.equals("comment")){
                         get_task=instagramTask.instagram_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("threads")){
-                    if(task.equals("threads_follower")){
+                    if(task.equals("follower")){
                         get_task=threadsTask.threads_follower(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("threads_like")){
+                    }else if(task.equals("like")){
                         get_task=threadsTask.threads_like(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("threads_view")){
+                    }else if(task.equals("view")){
                         get_task=threadsTask.threads_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("threads_comment")){
+                    }else if(task.equals("comment")){
                         get_task=threadsTask.threads_comment(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("threads_repost")){
+                    }else if(task.equals("repost")){
                         get_task=threadsTask.threads_repost(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 }
