@@ -7146,6 +7146,7 @@ public class TaskController {
                     if(accountProfile!=null){
                         if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
                             //check acc co that su hop le khong
+                            /*
                             if(accountProfileRepository.check_Account_By_AccountId(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())>0&&
                                !updateTaskRequest.getAccount_id().trim().equals(updateTaskRequest.getTask_key().trim())
                             ){
@@ -7155,7 +7156,7 @@ public class TaskController {
                                 resp.put("data", data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
-
+                             */
                             if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
