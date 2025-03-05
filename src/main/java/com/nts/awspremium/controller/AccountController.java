@@ -36,7 +36,7 @@ public class AccountController {
     private DeviceRepository deviceRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountSaveRepository accountSaveRepository;
 
     @Autowired
     private AccountProfileRepository accountProfileRepository;
@@ -92,6 +92,70 @@ public class AccountController {
             data.put("message", "update Avatar thành công");
             resp.put("data",data);
             return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "getAccountSave", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> getAccountSave(@RequestHeader(defaultValue = "") String Authorization,
+                                                            @RequestParam(defaultValue = "google") String platform ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Integer checktoken = userRepository.check_User_By_Token(Authorization);
+            if (checktoken ==0) {
+                resp.put("status", false);
+                data.put("message", "Token expired");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if (platform.length() ==0) {
+                resp.put("status", false);
+                data.put("message", "platform không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            Random ran=new Random();
+            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+            String code="";
+            for(int i=0;i<15;i++){
+                Integer ranver=ran.nextInt(stringrand.length());
+                code=code+stringrand.charAt(ranver);
+            }
+            AccountSave accountSave=accountSaveRepository.get_Account_Save(platform.trim(),System.currentTimeMillis(),code);
+            if(accountSave!=null){
+                resp.put("status", true);
+                data.put("platform", "google");
+                data.put("account_id",accountSave.getAccount_id().substring(0,accountSave.getAccount_id().indexOf("|")));
+                data.put("password", accountSave.getPassword().trim());
+                data.put("recover_mail", accountSave.getRecover_mail().trim());
+                data.put("auth_2fa", accountSave.getAuth_2fa().trim());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else{
+                resp.put("status", false);
+                data.put("message", "sold out!");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
