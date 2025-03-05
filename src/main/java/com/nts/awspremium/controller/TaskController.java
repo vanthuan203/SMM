@@ -1823,6 +1823,11 @@ public class TaskController {
                         password=password+passrand.charAt(ranver);
                     }
 
+                    AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
+                    if(accountCheck!=null){
+                        accountProfileRepository.delete(accountCheck);
+                    }
+
                     AccountProfile accountProfile=new AccountProfile();
                     accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
                     accountProfile.setPassword(password);
@@ -1879,6 +1884,11 @@ public class TaskController {
                             password=password+passrand.charAt(ranver);
                         }
 
+                        AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
+                        if(accountCheck!=null){
+                            accountProfileRepository.delete(accountCheck);
+                        }
+
                         AccountProfile accountProfile=new AccountProfile();
                         accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
                         accountProfile.setPassword(password);
@@ -1930,6 +1940,12 @@ public class TaskController {
                             account_get= accountRepository.get_Account_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,device.getMode().trim());
                         }
                         if(account_get!=null){
+
+                            AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_get.getAccount_id(),"youtube");
+                            if(accountCheck!=null){
+                                accountProfileRepository.delete(accountCheck);
+                            }
+
                             AccountProfile accountProfile=new AccountProfile();
                             accountProfile.setAccount_id(account_get.getAccount_id());
                             accountProfile.setPassword(account_get.getPassword());
@@ -2354,6 +2370,12 @@ public class TaskController {
 
                                             }
                                             if(success){
+
+                                                AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(mail+"|"+profileTask.getPlatform(),profileTask.getPlatform());
+                                                if(accountCheck!=null){
+                                                    accountProfileRepository.delete(accountCheck);
+                                                }
+
                                                 AccountProfile accountProfile=new AccountProfile();
                                                 accountProfile.setAccount_id(mail+"|"+profileTask.getPlatform());
                                                 if(profileTask.getPlatform().equals("tiktok")){
@@ -2400,6 +2422,12 @@ public class TaskController {
                                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                                             }
                                         }else{
+
+                                            AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_Dependent.getAccount_id().substring(0,account_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform(),profileTask.getPlatform());
+                                            if(accountCheck!=null){
+                                                accountProfileRepository.delete(accountCheck);
+                                            }
+
                                             AccountProfile accountProfile=new AccountProfile();
                                             accountProfile.setAccount_id(account_Dependent.getAccount_id().substring(0,account_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                             accountProfile.setPassword(password);
@@ -2459,6 +2487,12 @@ public class TaskController {
                                         account_get= accountRepository.get_Account_Platform_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,profileTask.getPlatform().trim());
                                     }
                                     if(account_get!=null){
+
+                                        AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(account_get.getAccount_id(),profileTask.getPlatform());
+                                        if(accountCheck!=null){
+                                            accountProfileRepository.delete(accountCheck);
+                                        }
+
                                         AccountProfile accountProfile=new AccountProfile();
                                         accountProfile.setAccount_id(account_get.getAccount_id());
                                         accountProfile.setPassword(account_get.getPassword());
