@@ -7145,6 +7145,16 @@ public class TaskController {
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
+                            //check acc co that su hop le khong
+                            if(accountProfileRepository.check_Account_By_AccountId(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())>0&&
+                               !updateTaskRequest.getAccount_id().trim().equals(updateTaskRequest.getTask_key().trim())
+                            ){
+                                accountProfileRepository.delete(accountProfile);
+                                resp.put("status", true);
+                                data.put("message", "Update thành công!");
+                                resp.put("data", data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }
 
                             if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
