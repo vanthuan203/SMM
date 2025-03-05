@@ -7146,17 +7146,22 @@ public class TaskController {
                     if(accountProfile!=null){
                         if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()!=0){
                             //check acc co that su hop le khong
-                            /*
                             if(accountProfileRepository.check_Account_By_AccountId(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim())>0&&
-                               !updateTaskRequest.getAccount_id().trim().equals(updateTaskRequest.getTask_key().trim())
+                               !updateTaskRequest.getAccount_id().trim().equals(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")
                             ){
-                                accountProfileRepository.delete(accountProfile);
+                                String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
+                                AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                                Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
+                                if(accountDependent.getPassword().equals(accountCheck.getPassword())){
+                                    accountProfileRepository.delete(accountCheck);
+                                }else{
+                                    accountProfileRepository.delete(accountProfile);
+                                }
                                 resp.put("status", true);
                                 data.put("message", "Update thành công!");
                                 resp.put("data", data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
-                             */
                             if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
