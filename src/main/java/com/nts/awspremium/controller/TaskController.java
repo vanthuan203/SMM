@@ -2268,7 +2268,10 @@ public class TaskController {
                                         historyRegisterRepository.count_Register_24h_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim())==0
                                 ){
                                     if(platform_Dependent!=null){
-
+                                        AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform(),profileTask.getPlatform());
+                                        if(accountCheck!=null){
+                                            accountProfileRepository.delete(accountCheck);
+                                        }
                                         AccountProfile accountProfile=new AccountProfile();
                                         accountProfile.setAccount_id(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                         accountProfile.setPassword(accountProfile_Dependent.getPassword().trim());
