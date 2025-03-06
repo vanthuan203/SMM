@@ -31,7 +31,7 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     public Integer check_AccountLive_Gmail_By_ProfileId_And_Platform(String profile_id,String platform);
     @Query(value = "SELECT count(*) FROM account_profile where account_id=?1 limit 1",nativeQuery = true)
     public Integer check_Account_By_AccountId(String account_id);
-    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and account_id not like '%@gmail%' limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_ProfileId_And_Platform(String profile_id,String platform);
 
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
@@ -50,6 +50,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Query(value = "Select * from account_profile where account_id=?1 and platform=?2 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id_And_Platform(String account_id,String platform);
+
+    @Query(value = "select count(*) from account_profile where platform=?1 and profile_id like ?2 and round((UNIX_TIMESTAMP()-login_time/1000)/60/60)<?3",nativeQuery = true)
+    public Integer count_Login_By_Platform_And_DeviceId(String platform,String device_id,Integer count);
 
     @Query(value = "Select * from account_profile where account_id=?1 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id(String account_id);

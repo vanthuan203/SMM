@@ -43,7 +43,8 @@ public class AccountProfile implements Serializable {
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
 
-
+    @Column(columnDefinition = "bigint default 0")
+    private Long login_time=0L;
 
     @Column(columnDefinition = "varchar(255) default ''")
     private String auth_2fa="";

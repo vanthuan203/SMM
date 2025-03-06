@@ -53,6 +53,9 @@ public interface PlatformRepository extends JpaRepository<Platform,String> {
     @Query(value = "SELECT * FROM platform where platform=?1 ",nativeQuery = true)
     public Platform get_Platform_By_PlatformId(String platform);
 
+    @Query(value = "SELECT * FROM platform where platform=?1 and mode=?2 ",nativeQuery = true)
+    public Platform get_Platform_By_Platform_And_Mode(String platform,String mode);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE platform SET state=1 where platform in(?1) and mode='auto'",nativeQuery = true)
