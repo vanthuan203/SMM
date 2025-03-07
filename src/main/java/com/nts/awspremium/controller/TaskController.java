@@ -439,8 +439,8 @@ public class TaskController {
                         if(platform.length()==0){
                             if(profileTaskRepository.count_Profile(device.getDevice_id().trim())>1){
                                 //thay vi off thử xóa profile
-                                //profileTask.setEnabled_time(0L);
-                                profileTask.setValid(0);
+                                profileTask.setEnabled_time(0L);
+                                //profileTask.setValid(0);
                                 profileTask.setEnabled(0);
                                 profileTaskRepository.save(profileTask);
 
