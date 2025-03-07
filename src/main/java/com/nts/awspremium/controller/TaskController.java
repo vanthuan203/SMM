@@ -114,7 +114,7 @@ public class TaskController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             Random ran=new Random();
-            Thread.sleep(ran.nextInt(3000));
+            Thread.sleep(ran.nextInt(1500));
             Integer checktoken = userRepository.check_User_By_Token(Authorization);
             if (checktoken ==0) {
                 resp.put("status", false);
