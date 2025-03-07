@@ -348,7 +348,7 @@ public class TaskController {
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
-                    if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
+                    if(accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&&
                             platform_Check.getLogin_account()==1&&
                             accountProfileRepository.count_Login_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Check.getLogin_time())==0
                     ){
@@ -964,7 +964,7 @@ public class TaskController {
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
                                     }
                                 }
-                            }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())==0&&
+                            }else if(accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&&
                                     platform_Check.getLogin_account()==1&&
                                     accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim(),platform_Check.getLogin_time())==0
                             ){

@@ -43,7 +43,10 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     public Integer check_Count_By_AccountId(String account_id);
 
     @Query(value = "SELECT count(*) FROM Data.account where profile_id=?1 and platform=?2 and round((UNIX_TIMESTAMP()-get_time/1000)/60/60)<24 and live>1",nativeQuery = true)
-    public Integer check_Count_AccountDie24H_By_ProfileId(String profile_id,String platform);
+    public Integer check_Count_AccountDie24H_By_Platform_And_ProfileId(String profile_id,String platform);
+
+    @Query(value = "SELECT count(*) FROM Data.account where device_id=?1 and platform=?2 and round((UNIX_TIMESTAMP()-get_time/1000)/60/60)<24 and live>1",nativeQuery = true)
+    public Integer check_Count_AccountDie24H_By_Platform_And_DeviceId(String device_id,String platform);
 
     @Query(value = "SELECT count(*) FROM Data.account where profile_id=?1 and platform=?2 and live=2 and round((UNIX_TIMESTAMP()-get_time/1000)/60/60)<24",nativeQuery = true)
     public Integer check_Count_Account_VeryPhone_By_ProfileId(String profile_id,String platform);
