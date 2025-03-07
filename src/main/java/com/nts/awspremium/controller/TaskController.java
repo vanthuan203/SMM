@@ -107,6 +107,7 @@ public class TaskController {
                                                    @RequestParam(defaultValue = "") String device_id,
                                                    @RequestParam(defaultValue = "") String rom_version,
                                                    @RequestParam(defaultValue = "") String profile_id,
+                                                   @RequestParam(defaultValue = "0") Integer index,
                                                    @RequestParam(defaultValue = "") String platform) throws InterruptedException {
 
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -1063,9 +1064,10 @@ public class TaskController {
                                 }
                             }
                         }
-                    }else  if(accountProfile_Check_Platform.getLive()!=1){
+                    }else  if(accountProfile_Check_Platform.getLive()!=1&&(System.currentTimeMillis()-accountProfile_Check_Platform.getLast_time())/1000/60>10&&!profileTask.getPlatform().equals("youtube")){//check last time task login
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Check_Platform.getLive()==-1)){
-
+                            accountProfile_Check_Platform.setLast_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile_Check_Platform);
                             profileTask.setRequest_index(1);
                             profileTaskRepository.save(profileTask);
 
@@ -1096,39 +1098,14 @@ public class TaskController {
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
 
-                    }
-                    /*else if(!StringUtils.isValidTikTokID(accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")))
-                    &&accountProfile_Check_Platform.getPlatform().equals("tiktok")){
-                        profileTask.setRequest_index(1);
+                    }else if(!profileTask.getPlatform().equals("youtube")){
+                        profileTask.setTask_index(10000);
                         profileTaskRepository.save(profileTask);
-
-                        resp.put("status", true);
-                        data.put("platform",profileTask.getPlatform());
-                        if( profileTask.getPlatform().equals("tiktok")){
-                            if(device.getMode().contains("tiktok-lite")){
-                                data.put("app","tiktok-lite");
-                            }else{
-                                data.put("app","tiktok");
-                            }
-                        }else{
-                            data.put("app",profileTask.getPlatform());
-                        }
-                        if(accountProfile_Check_Platform.getLive()==-1){
-                            data.put("task", "register");
-                        }else{
-                            data.put("task", "login");
-                        }
-                        data.put("task_key", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
-                        data.put("account_id", accountProfile_Check_Platform.getAccount_id().substring(0,accountProfile_Check_Platform.getAccount_id().lastIndexOf("|")));
-                        data.put("password", accountProfile_Check_Platform.getPassword().trim());
-                        data.put("name", accountProfile_Check_Platform.getName().trim());
-                        data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
-                        data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
-                        resp.put("data",data);
+                        resp.put("status", false);
+                        data.put("message", "Đợi time login || register tài khoản "+profileTask.getPlatform());
+                        resp.put("data", data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
-
-                     */
                 }
 
             }
@@ -1168,7 +1145,6 @@ public class TaskController {
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-
             }else{
                 if( accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform())==0){
                     resp.put("status", false);
