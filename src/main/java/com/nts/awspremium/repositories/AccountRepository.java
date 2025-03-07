@@ -30,8 +30,8 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "call update_running_account_gmail(?1,?2,?3,?4)",nativeQuery = true)
     public Account get_Account_Gmail_By_ProfileId(String profile_id,String device_id,Long time_check,String code);
 
-    @Query(value = "call update_running_account_platform(?1,?2,?3,?4,?5)",nativeQuery = true)
-    public Account get_Account_Platform_By_ProfileId(String profile_id,String device_id,Long time_check,String code,String platform);
+    @Query(value = "call update_running_account_platform(?1,?2,?3,?4,?5,?6)",nativeQuery = true)
+    public Account get_Account_Platform_By_ProfileId(String profile_id,String device_id,Long time_check,String code,String platform,String mode);
 
     @Query(value = "Select count(*) from account where device_id=?1",nativeQuery = true)
     public Integer check_Count_By_DeviceId(String device_id);

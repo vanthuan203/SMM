@@ -976,7 +976,7 @@ public class TaskController {
                                         Integer ranver=ran.nextInt(stringrand.length());
                                         code=code+stringrand.charAt(ranver);
                                     }
-                                    account_get= accountRepository.get_Account_Platform_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,profileTask.getPlatform().trim());
+                                    account_get= accountRepository.get_Account_Platform_By_ProfileId(device_id.trim()+"_"+profile_id.trim(),device_id,System.currentTimeMillis(),code,profileTask.getPlatform().trim(),device.getMode().trim());
                                 }
                                 if(account_get!=null){
 
