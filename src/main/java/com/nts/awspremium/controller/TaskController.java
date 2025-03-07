@@ -964,7 +964,7 @@ public class TaskController {
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
                                     }
                                 }
-                            }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())<3&&
+                            }else if(accountRepository.check_Count_AccountDie24H_By_ProfileId(profileTask.getProfile_id().trim(),profileTask.getPlatform().trim())==0&&
                                     platform_Check.getLogin_account()==1&&
                                     accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim(),platform_Check.getLogin_time())==0
                             ){
