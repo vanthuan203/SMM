@@ -691,7 +691,6 @@ public class TaskController {
                 }
             }
             if(profileTask!=null){
-
                 if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform())==0&&profileTask.getRequest_index()==1){
                     if(profileTask.getTask_list().trim().length()==0){
                         profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -1096,15 +1095,15 @@ public class TaskController {
                             data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }else if(!profileTask.getPlatform().equals("youtube")){
+                            profileTask.setTask_index(10000);
+                            profileTaskRepository.save(profileTask);
+                            resp.put("status", false);
+                            data.put("message", "Đợi time login || register tài khoản "+profileTask.getPlatform());
+                            resp.put("data", data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
 
-                    }else if(!profileTask.getPlatform().equals("youtube")){
-                        profileTask.setTask_index(10000);
-                        profileTaskRepository.save(profileTask);
-                        resp.put("status", false);
-                        data.put("message", "Đợi time login || register tài khoản "+profileTask.getPlatform());
-                        resp.put("data", data);
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }
 
