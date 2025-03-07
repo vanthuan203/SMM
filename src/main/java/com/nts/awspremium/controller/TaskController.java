@@ -966,7 +966,8 @@ public class TaskController {
                                 }
                             }else if(accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&&
                                     platform_Check.getLogin_account()==1&&
-                                    accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim(),platform_Check.getLogin_time())==0
+                                    accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim(),platform_Check.getLogin_time())==0&&
+                                    accountProfileRepository.count_Login_Time_Null_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim())==0
                             ){
                                 Account account_get=null;
                                 if(mySQLCheck.getValue()<settingSystem.getMax_mysql()){
@@ -2074,9 +2075,6 @@ public class TaskController {
                                 accountProfile.setLive(1);
                             }
                             accountProfile.setUpdate_time(System.currentTimeMillis());
-                            if(accountProfile.getLogin_time()==0){
-                                accountProfile.setLogin_time(System.currentTimeMillis());
-                            }
                             accountProfileRepository.save(accountProfile);
 
                             Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
@@ -2163,6 +2161,10 @@ public class TaskController {
                                     accountRepository.save(accountDependent);
                                 }
                             }
+                        }
+                        if(accountProfile.getLogin_time()==0){
+                            accountProfile.setLogin_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
                         }
 
                     }////
