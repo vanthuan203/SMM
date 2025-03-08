@@ -293,7 +293,12 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }
-
+            if((System.currentTimeMillis()-profileTask.getOnline_time())/1000<30){
+                resp.put("status", false);
+                data.put("message", "Không thực hiện nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
             //update time check
             if(profileTask.getState()==0){ // check profile bắt đầu mở file
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -308,12 +313,14 @@ public class TaskController {
                 task_List=String.join(",", subPlatform);
                 profileTask.setTask_list(task_List);
                 profileTask.setTask_index(0);
+                profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setState(1);
                 profileTask.setRequest_index(0);
                 profileTask.setOnline_time(System.currentTimeMillis());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
             }else{
+                profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
             }
