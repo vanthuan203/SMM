@@ -504,9 +504,10 @@ public class TaskController {
             }else if(profileTask.getRegister_index()==0) {
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
                 if(platform_Check.getRegister_account()==1&&
-                        historyRegisterRepository.count_Register_By_Platform_And_ProfileId("youtube",profileTask.getProfile_id().trim(),platform_Check.getRegister_time())==0&&
+                        historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Check.getRegister_time())==0&&
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Check.getRegister_limit()&&
-                        accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0
+                        accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
+                        accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0
                 ){
 
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
@@ -682,7 +683,7 @@ public class TaskController {
                             Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                             //check time reg gan nhat
                             if(platform_Check.getRegister_account()==1 &&
-                                    historyRegisterRepository.count_Register_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim(),platform_Check.getRegister_time())==0&&
+                                    historyRegisterRepository.count_Register_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%",platform_Check.getRegister_time())==0&&
                                     accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),profileTask.getPlatform().trim(),7)<platform_Check.getRegister_limit()
                             ){
                                 //gioi han time reg by platform and time
