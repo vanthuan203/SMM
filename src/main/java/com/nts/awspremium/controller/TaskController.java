@@ -216,7 +216,7 @@ public class TaskController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
+                profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask==null?"":profileTask.getProfile_id());
                 if(profileTask!=null){
                     resp.put("status", true);
                     data.put("platform", "system");
