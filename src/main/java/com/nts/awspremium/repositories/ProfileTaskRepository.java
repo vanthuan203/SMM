@@ -37,8 +37,8 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "Select count(*) from profile_task where  device_id=?1 and enabled=1",nativeQuery = true)
     public Integer check_Profile_Enabled(String device_id);
 
-    @Query(value = "Select * from profile_task where  device_id=?1 and enabled=1 order by update_time asc limit 1",nativeQuery = true)
-    public ProfileTask get_Profile_Get_Task_By_Enabled(String device_id);
+    @Query(value = "Select * from profile_task where  device_id=?1 and enabled=1 and profile_id!=?2  order by update_time asc limit 1",nativeQuery = true)
+    public ProfileTask get_Profile_Get_Task_By_Enabled(String device_id,String profile_id);
 
     @Query(value = "Select * from profile_task where profile_id=?1 limit 1",nativeQuery = true)
     public ProfileTask get_Profile_By_ProfileId(String profile_id);
@@ -87,7 +87,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,account_id='',platform='',state=0 where device_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,account_id='',platform='' where device_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_DeviceId(String device_id);
 
     @Modifying
