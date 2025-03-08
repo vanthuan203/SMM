@@ -141,6 +141,11 @@ public class TaskController {
                 data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }else if((System.currentTimeMillis()-device.getUpdate_time())/1000<30){
+                resp.put("status", false);
+                data.put("message", "Không thực hiện nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getState()==0){
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
@@ -292,12 +297,6 @@ public class TaskController {
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-            }
-            if((System.currentTimeMillis()-profileTask.getOnline_time())/1000<30){
-                resp.put("status", false);
-                data.put("message", "Không thực hiện nhiệm vụ");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             //update time check
             if(profileTask.getState()==0){ // check profile bắt đầu mở file
