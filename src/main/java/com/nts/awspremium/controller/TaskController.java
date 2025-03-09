@@ -327,13 +327,13 @@ public class TaskController {
             //profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
 
             //check acc youtube
+            Platform platform_Youtube_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
             if(accountProfileRepository.check_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")==0){
-                Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Check==null){ // If account null or not live then get new acc
                     if(accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&& //check acc die in 24h
-                            platform_Check.getLogin_account()==1&& // check task login acc
-                            accountProfileRepository.count_Login_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Check.getLogin_time())==0 // check time login gần nhất
+                            platform_Youtube_Check.getLogin_account()==1&& // check task login acc
+                            accountProfileRepository.count_Login_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getLogin_time())==0 // check time login gần nhất
                     ){
                         String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
                         String code="";
@@ -377,22 +377,10 @@ public class TaskController {
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }else{
-                            if(profileTaskRepository.get_Count_Profile_Enabled(device_id.trim())>1){
-                                profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
-                                profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
-                                entityManager.clear();
-                                resp.put("status", true);
-                                data.put("platform", "system");
-                                data.put("task", "profile_changer");
-                                data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim()+"_")[1]));
-                                resp.put("data",data);
-                                return new ResponseEntity<>(resp, HttpStatus.OK);
-                            }else{
-                                resp.put("status", false);
-                                data.put("message", "Không get được tài khoản youtube");
-                                resp.put("data", data);
-                                return new ResponseEntity<>(resp, HttpStatus.OK);
-                            }
+                            resp.put("status", false);
+                            data.put("message", "Không get được tài khoản youtube");
+                            resp.put("data", data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
                     }else if(accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3){// Reset enabled profile and enable profile new
                             if(profileTaskRepository.count_Profile(device.getDevice_id().trim())>1){
@@ -501,48 +489,42 @@ public class TaskController {
                     }
 
                 }
-            }else if(profileTask.getRegister_index()==0) {
-                Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
-                if(platform_Check.getRegister_account()==1&&
-                        historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Check.getRegister_time())==0&&
-                        accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Check.getRegister_limit()&&
+            }else if(profileTask.getRegister_index()==0&&platform_Youtube_Check.getRegister_account()==1) {
+                AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
+                if(historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getRegister_time())==0&&
+                        accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
-                        accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0
+                        accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
+                        accountProfile==null
                 ){
-
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
-                    if(accountProfile==null){
-
-                        String password="Cmc#";
-                        String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        for(int i=0;i<6;i++){
-                            Integer ranver=ran.nextInt(passrand.length());
-                            password=password+passrand.charAt(ranver);
-                        }
-
-                        accountProfile=new AccountProfile();
-                        accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
-                        accountProfile.setPassword(password);
-                        accountProfile.setName("");
-                        accountProfile.setAvatar(0);
-                        accountProfile.setRecover("");
-                        accountProfile.setPlatform("youtube");
-                        accountProfile.setLive(-1);
-                        accountProfile.setChanged(0);
-                        accountProfile.setAuth_2fa("");
-                        accountProfile.setProfileTask(profileTask);
-                        accountProfile.setAdd_time(System.currentTimeMillis());
-                        accountProfile.setUpdate_time(0L);
-                        accountProfileRepository.save(accountProfile);
-
-                        HistoryRegister historyRegister=new HistoryRegister();
-                        historyRegister.setProfileTask(profileTask);
-                        historyRegister.setPlatform("youtube");
-                        historyRegister.setState(0);
-                        historyRegister.setUpdate_time(System.currentTimeMillis());
-                        historyRegisterRepository.save(historyRegister);
-
+                    String password="Cmc#";
+                    String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                    for(int i=0;i<6;i++){
+                        Integer ranver=ran.nextInt(passrand.length());
+                        password=password+passrand.charAt(ranver);
                     }
+
+                    accountProfile=new AccountProfile();
+                    accountProfile.setAccount_id("register_"+profileTask.getProfile_id()+"|youtube");
+                    accountProfile.setPassword(password);
+                    accountProfile.setName("");
+                    accountProfile.setAvatar(0);
+                    accountProfile.setRecover("");
+                    accountProfile.setPlatform("youtube");
+                    accountProfile.setLive(-1);
+                    accountProfile.setChanged(0);
+                    accountProfile.setAuth_2fa("");
+                    accountProfile.setProfileTask(profileTask);
+                    accountProfile.setAdd_time(System.currentTimeMillis());
+                    accountProfile.setUpdate_time(0L);
+                    accountProfileRepository.save(accountProfile);
+
+                    HistoryRegister historyRegister=new HistoryRegister();
+                    historyRegister.setProfileTask(profileTask);
+                    historyRegister.setPlatform("youtube");
+                    historyRegister.setState(0);
+                    historyRegister.setUpdate_time(System.currentTimeMillis());
+                    historyRegisterRepository.save(historyRegister);
 
                     profileTask.setRegister_index(profileTask.getRegister_index()+1);
                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
@@ -560,6 +542,26 @@ public class TaskController {
                     data.put("auth_2fa", "");
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(accountProfile!=null){
+                    if(accountProfile.getLive()!=-1){
+                        Account account =accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id());
+                        accountRepository.delete(account);
+                        accountProfileRepository.delete(accountProfile);
+                    }else{
+                        resp.put("status", true);
+                        data.put("platform","youtube");
+                        data.put("app","youtube");
+                        data.put("task", "register");
+                        data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
+                        data.put("password",accountProfile.getPassword());
+                        data.put("name",accountProfile.getName());
+                        data.put("avatar",accountProfile.getAvatar()==0?false:true);
+                        data.put("recover_mail",  accountProfile.getRecover().trim());
+                        data.put("auth_2fa", "");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
                 }
             }
 
@@ -689,10 +691,20 @@ public class TaskController {
                                 //gioi han time reg by platform and time
                                 List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
                                 if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,10)>0){
-                                    resp.put("status", false);
-                                    data.put("message", "Đợi đến lượt tạo tài khoản!");
-                                    resp.put("data", data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                    if(profileTask.getTask_list().trim().length()==0){
+                                        profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
+                                        entityManager.clear();
+                                        profileTask=null;
+                                    }else{
+                                        String task_List = profileTask.getTask_list();
+                                        List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
+                                        profileTask.setPlatform(arrPlatform.get(0));
+                                        List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
+                                        task_List = String.join(",", subPlatform);
+                                        profileTask.setTask_list(task_List);
+                                        profileTask.setRequest_index(0);
+                                        profileTaskRepository.save(profileTask);
+                                    }
                                 }
 
                                 if(platform_Dependent!=null){
