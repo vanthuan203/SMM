@@ -233,7 +233,7 @@ public class DeviceController {
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
 
-                if(profile.size()>=( mode!=null?mode.getMax_profile():settingSystem.getMax_profile() )){
+                if(profile.size()>=( mode==null?settingSystem.getMax_profile():mode.getMax_profile())){
                     profileTaskRepository.delete_Profile_Not_In(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
                 }
             }
@@ -405,7 +405,7 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @Transactional
     @GetMapping(value = "update_State", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_State(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id,
                                                             @RequestParam(defaultValue = "1") Integer state) throws InterruptedException {
@@ -490,7 +490,7 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @Transactional
     @GetMapping(value = "reset_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> reset_Device(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id
                                                           ) throws InterruptedException {
@@ -578,7 +578,7 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @Transactional
     @GetMapping(value = "update_Mode", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Mode(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id,
                                                             @RequestParam(defaultValue = "") String mode) throws InterruptedException {
@@ -664,7 +664,7 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @Transactional
     @GetMapping(value = "update_Box", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> update_Box(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id,
                                                            @RequestParam(defaultValue = "") String box) throws InterruptedException {
@@ -765,12 +765,7 @@ public class DeviceController {
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
             Optional<Device> deviceOpt=deviceRepository.check_DeviceIdLock(device_body.getDevice_id().trim());
-            Device device = deviceOpt.get();
-            device.setState(device_body.getState());
-            device.setBox_id(device_body.getBox_id());
-            device.setMode(device_body.getMode().trim().toLowerCase());
-            device.setNum_profile_set(device_body.getNum_profile_set());
-            deviceRepository.save(device);
+            deviceRepository.update_Device_By_DeviceId(device_body.getState(),device_body.getBox_id().trim(),device_body.getMode().trim().toLowerCase(),device_body.getNum_profile_set(),deviceOpt.get().getDevice_id());
             JSONArray jsonArray = new JSONArray();
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             for (int i = 0; i < deviceList.size(); i++) {

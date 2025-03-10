@@ -23,6 +23,10 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query("SELECT d FROM Device d WHERE d.device_id = :deviceId")
     Optional<Device> check_DeviceIdLock(@Param("deviceId") String deviceId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update device set state=?1,box_id=?2,mode=?3,num_profile_set=?4  where device_id=?5",nativeQuery = true)
+    public void update_Device_By_DeviceId(Integer state,String box_id,String mode,Integer num_profile_set,String device_id);
 
     @Query(value = "select count(*) from device where device_id=?1",nativeQuery = true)
     public Integer find_Device(String device_id);
