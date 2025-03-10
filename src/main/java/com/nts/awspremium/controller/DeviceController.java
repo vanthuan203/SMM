@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -419,6 +420,7 @@ public class DeviceController {
         }
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
             deviceRepository.update_State_By_DeviceId(state,arrPlatform);
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
@@ -504,6 +506,7 @@ public class DeviceController {
         try{
             List<String> arrDevice=new ArrayList<>(Arrays.asList(device_id.split(",")));
             profileTaskRepository.delete_Profile_By_List_Device(arrDevice);
+            deviceRepository.findAndLockDevices(arrDevice);// Chờ lock trước khi update
             deviceRepository.update_NumProfile_By_ListDevice(1,arrDevice);
             accountRepository.reset_Account_By_ListDevice(arrDevice);
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrDevice);
@@ -590,7 +593,8 @@ public class DeviceController {
         }
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
-            deviceRepository.update_Mode_By_DeviceId(mode.trim().toLowerCase(),arrPlatform);
+            deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
+            deviceRepository.update_Mode_By_DeviceId(mode.trim().toLowerCase(),arrPlatform); // Chỉ update khi không có lệnh nào khác
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
 
@@ -675,6 +679,7 @@ public class DeviceController {
         }
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
             deviceRepository.update_Box_By_DeviceId(box.trim().toLowerCase(),arrPlatform);
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
@@ -745,9 +750,9 @@ public class DeviceController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @Transactional
     @PostMapping(path = "update",produces = "application/hal+json;charset=utf8")
-    ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization,@RequestBody Device device_body){
+    public ResponseEntity<String> update(@RequestHeader(defaultValue = "") String Authorization, @RequestBody Device device_body){
         JSONObject resp = new JSONObject();
         JSONObject data = new JSONObject();
         Integer checktoken = userRepository.check_User_By_Token(Authorization);
@@ -758,8 +763,9 @@ public class DeviceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            Device device=deviceRepository.check_DeviceId(device_body.getDevice_id().trim());
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
+            Optional<Device> deviceOpt=deviceRepository.check_DeviceIdLock(device_body.getDevice_id().trim());
+            Device device = deviceOpt.get();
             device.setState(device_body.getState());
             device.setBox_id(device_body.getBox_id());
             device.setMode(device_body.getMode().trim().toLowerCase());

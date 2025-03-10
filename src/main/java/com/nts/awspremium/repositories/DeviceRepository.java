@@ -4,16 +4,26 @@ import com.nts.awspremium.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface DeviceRepository extends JpaRepository<Device,String> {
 
-    @Query(value = "Select * from device where device_id=?1 limit 1",nativeQuery = true)
+    @Query(value = "Select * from device where device_id=?1 for update",nativeQuery = true)
     public Device check_DeviceId(String device_id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT d FROM Device d WHERE d.device_id = :deviceId")
+    Optional<Device> check_DeviceIdLock(@Param("deviceId") String deviceId);
+
+
     @Query(value = "select count(*) from device where device_id=?1",nativeQuery = true)
     public Integer find_Device(String device_id);
 
@@ -49,9 +59,13 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query(value = "update device set state=?1  where device_id in(?2)",nativeQuery = true)
     public void update_State_By_DeviceId(Integer state,List<String> device_id);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT d FROM Device d WHERE d.device_id IN (:deviceIds)")
+    List<Device> findAndLockDevices(@Param("deviceIds") List<String> deviceIds);
+
     @Modifying
     @Transactional
-    @Query(value = "update device set mode=?1  where device_id in(?2)",nativeQuery = true)
+    @Query(value = "update device set mode=?1  where device_id in(?2) ",nativeQuery = true)
     public void update_Mode_By_DeviceId(String mode,List<String> device_id);
 
     @Modifying
