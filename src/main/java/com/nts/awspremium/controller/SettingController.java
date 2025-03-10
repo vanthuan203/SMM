@@ -155,12 +155,12 @@ public class SettingController {
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             JSONObject obj = new JSONObject();
             obj.put("id",settingSystem.getId());
-            obj.put("max_acc", settingSystem.getMax_acc());
+            obj.put("max_priority", settingSystem.getMax_priority());
             obj.put("max_mysql", settingSystem.getMax_mysql());
-            obj.put("max_profile", settingSystem.getMax_profile());
-            obj.put("max_task", settingSystem.getMax_task());
-            obj.put("time_get_task", settingSystem.getTime_get_task());
-            obj.put("update_time", settingSystem.getUpdate_time());
+            obj.put("reboot_time", settingSystem.getReboot_time());
+            obj.put("clear_data_package", settingSystem.getClear_data_package());
+            obj.put("time_waiting_task", settingSystem.getTime_waiting_task());
+            obj.put("max_thread", settingSystem.getMax_thread());
             jsonArray.add(obj);
             resp.put("accounts",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -201,11 +201,17 @@ public class SettingController {
             List<Platform> platforms=platformRepository.get_List_Platform();
             for(int i=0;i<platforms.size();i++){
                 JSONObject obj = new JSONObject();
+                obj.put("id",platforms.get(i).getId());
+                obj.put("mode",platforms.get(i).getMode());
                 obj.put("platform",platforms.get(i).getPlatform());
                 obj.put("priority", platforms.get(i).getPriority());
                 obj.put("state", platforms.get(i).getState());
                 obj.put("activity", platforms.get(i).getActivity());
-                obj.put("update_time", platforms.get(i).getUpdate_time());
+                obj.put("register_account", platforms.get(i).getRegister_account());
+                obj.put("login_account", platforms.get(i).getLogin_account());
+                obj.put("login_time", platforms.get(i).getLogin_time());
+                obj.put("register_time", platforms.get(i).getRegister_time());
+                obj.put("register_limit", platforms.get(i).getRegister_limit());
                 jsonArray.add(obj);
             }
 
@@ -294,21 +300,21 @@ public class SettingController {
         }
         try{
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
-            settingSystem.setMax_acc(setting_update.getMax_acc());
             settingSystem.setMax_mysql(setting_update.getMax_mysql());
-            settingSystem.setMax_profile(setting_update.getMax_profile());
-            settingSystem.setMax_task(setting_update.getMax_task());
-            settingSystem.setTime_get_task(setting_update.getTime_get_task());
-            settingSystem.setUpdate_time(System.currentTimeMillis());
+            settingSystem.setMax_priority(setting_update.getMax_priority());
+            settingSystem.setReboot_time(setting_update.getReboot_time());
+            settingSystem.setClear_data_package(setting_update.getClear_data_package());
+            settingSystem.setTime_waiting_task(setting_update.getTime_waiting_task());
+            settingSystem.setMax_thread(setting_update.getMax_thread());
             settingSystemRepository.save(settingSystem);
             JSONObject obj = new JSONObject();
             obj.put("id",settingSystem.getId());
-            obj.put("max_acc", settingSystem.getMax_acc());
+            obj.put("max_priority", settingSystem.getMax_priority());
             obj.put("max_mysql", settingSystem.getMax_mysql());
-            obj.put("max_profile", settingSystem.getMax_profile());
-            obj.put("max_task", settingSystem.getMax_task());
-            obj.put("time_get_task", settingSystem.getTime_get_task());
-            obj.put("update_time", settingSystem.getUpdate_time());
+            obj.put("reboot_time", settingSystem.getReboot_time());
+            obj.put("clear_data_package", settingSystem.getClear_data_package());
+            obj.put("time_waiting_task", settingSystem.getTime_waiting_task());
+            obj.put("max_thread", settingSystem.getMax_thread());
             resp.put("account",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
@@ -558,17 +564,28 @@ public class SettingController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         try{
-            Platform platform=platformRepository.get_Platform_By_PlatformId(platformBody.getPlatform().trim());
+            Platform platform=platformRepository.get_Platform_By_Platform_And_Mode(platformBody.getPlatform().trim(),platformBody.getMode().trim());
             platform.setPriority(platformBody.getPriority());
             platform.setState(platformBody.getState());
             platform.setActivity(platformBody.getActivity());
+            platform.setLogin_account(platformBody.getLogin_account());
+            platform.setRegister_account(platformBody.getRegister_account());
+            platform.setLogin_time(platformBody.getLogin_time());
+            platform.setRegister_time(platformBody.getRegister_time());
+            platform.setRegister_limit(platformBody.getRegister_limit());
             platform.setUpdate_time(System.currentTimeMillis());
             platformRepository.save(platform);
             JSONObject obj = new JSONObject();
+            obj.put("mode",platform.getMode());
             obj.put("platform",platform.getPlatform());
             obj.put("priority",platform.getPriority());
             obj.put("state",platform.getState());
             obj.put("activity",platform.getActivity());
+            obj.put("register_account",platform.getRegister_account());
+            obj.put("login_account",platform.getLogin_account());
+            obj.put("login_time",platform.getLogin_time());
+            obj.put("register_time",platform.getRegister_time());
+            obj.put("register_limit",platform.getRegister_limit());
             obj.put("update_time",platform.getUpdate_time());
             resp.put("platform",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);

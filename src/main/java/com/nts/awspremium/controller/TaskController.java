@@ -141,7 +141,7 @@ public class TaskController {
                 data.put("message", "device_id không tồn tại");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }else if((System.currentTimeMillis()-device.getUpdate_time())/1000<30){
+            }else if((System.currentTimeMillis()-device.getUpdate_time())/1000<settingSystem.getTime_waiting_task()){
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
@@ -1046,16 +1046,6 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }
-            //check time get task 12/20/24
-            /*
-            if((System.currentTimeMillis()-profileTask.getTask_time())/1000/60<settingSystem.getTime_get_task()){
-                resp.put("status",false);
-                data.put("message","Không có nhiệm vụ!");
-                resp.put("data",data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
-            }
-
-             */
 
             profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_AccountId_And_Platform(profileTask.getProfile_id(),profileTask.getPlatform()));
             profileTask.setTask_index(profileTask.getTask_index()+1);

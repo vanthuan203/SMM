@@ -71,8 +71,6 @@ public class ModeController {
                 obj.put("time_profile", modes.get(i).getTime_profile());
                 obj.put("time_enable_profile", modes.get(i).getTime_enable_profile());
                 obj.put("max_profile", modes.get(i).getMax_profile());
-                obj.put("max_account", modes.get(i).getMax_account());
-                obj.put("update_time", modes.get(i).getUpdate_time());
                 jsonArray.add(obj);
             }
 
@@ -150,8 +148,12 @@ public class ModeController {
                 obj.put("mode", modeOptions.get(i).getMode());
                 obj.put("platform", modeOptions.get(i).getPlatform());
                 obj.put("task", modeOptions.get(i).getTask());
+                obj.put("state", modeOptions.get(i).getState());
+                obj.put("priority", modeOptions.get(i).getPriority());
                 obj.put("max_task", modeOptions.get(i).getMax_task());
                 obj.put("time_get_task", modeOptions.get(i).getTime_get_task());
+                obj.put("time_waiting_task", modeOptions.get(i).getTime_waiting_task());
+                obj.put("day_true_task", modeOptions.get(i).getDay_true_task());
                 obj.put("update_time", modeOptions.get(i).getUpdate_time());
                 jsonArray.add(obj);
             }
@@ -194,8 +196,6 @@ public class ModeController {
         }
         try{
             Mode mode1=modeRepository.get_Mode_Info(mode.getMode());
-            mode1.setMax_account(mode.getMax_account());
-            mode1.setMax_profile(mode.getMax_profile());
             mode1.setMax_profile(mode.getMax_profile());
             mode1.setTime_profile(mode.getTime_profile());
             mode1.setTime_enable_profile(mode.getTime_enable_profile());
@@ -248,7 +248,11 @@ public class ModeController {
         try{
             ModeOption mode1=modeOptionRepository.get_Mode_Option(modeOption.getMode(),modeOption.getPlatform(),modeOption.getTask());
             mode1.setMax_task(modeOption.getMax_task());
+            mode1.setPriority(modeOption.getPriority());
+            mode1.setState(modeOption.getState());
             mode1.setTime_get_task(modeOption.getTime_get_task());
+            mode1.setTime_waiting_task(modeOption.getTime_waiting_task());
+            mode1.setDay_true_task(modeOption.getDay_true_task());
             mode1.setUpdate_time(System.currentTimeMillis());
             modeOptionRepository.save(mode1);
             JSONObject obj = new JSONObject();
@@ -257,6 +261,10 @@ public class ModeController {
             obj.put("platform", mode1.getPlatform());
             obj.put("task",mode1.getTask());
             obj.put("max_task",mode1.getMax_task());
+            obj.put("state",mode1.getState());
+            obj.put("priority",mode1.getPriority());
+            obj.put("time_waiting_task",mode1.getTime_waiting_task());
+            obj.put("day_true_task",mode1.getDay_true_task());
             obj.put("time_get_task", mode1.getTime_get_task());
             obj.put("update_time", mode1.getUpdate_time());
             resp.put("setting_platform",obj);
