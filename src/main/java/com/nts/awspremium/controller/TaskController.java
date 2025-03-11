@@ -1101,7 +1101,7 @@ public class TaskController {
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
-                    }else if(task.equals("tiktok_comment")){
+                    }else if(task.equals("comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
