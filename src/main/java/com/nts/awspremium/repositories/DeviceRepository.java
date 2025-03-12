@@ -23,6 +23,9 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Query("SELECT d FROM Device d WHERE d.device_id = :deviceId")
     Optional<Device> check_DeviceIdLock(@Param("deviceId") String deviceId);
 
+    @Query(value = "SELECT d.ip_address  FROM ProfileTask p JOIN p.device d WHERE p.order_id = ?1 AND p.running = 1")
+    public List<String>  get_IP_Running_Task_By_OrderId(Long order_id);
+
     @Modifying
     @Transactional
     @Query(value = "update device set state=?1,box_id=?2,mode=?3,num_profile_set=?4  where device_id=?5",nativeQuery = true)

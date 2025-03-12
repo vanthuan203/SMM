@@ -262,7 +262,7 @@ public class TaskController {
             }
             //check reboot profile
             if(profileTask.getReboot()==1){
-                profileTaskRepository.reset_Reboot_By_DeviceId(device_id.trim());
+                profileTaskRepository.reset_Reboot_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "reboot");
@@ -1190,6 +1190,16 @@ public class TaskController {
                     data.put("message","Không có nhiệm vụ!");
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+                List<String> ip_List=deviceRepository.get_IP_Running_Task_By_OrderId(Long.parseLong(dataJson.get("order_id").toString()));
+                if(ip_List.size()!=0){
+                    Set<String> ipSet = new HashSet<>(ip_List);
+                    if(ipSet.contains(device.getIp_address())){
+                        resp.put("status",false);
+                        data.put("message","Không có nhiệm vụ!");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
                 }
 
                 dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
