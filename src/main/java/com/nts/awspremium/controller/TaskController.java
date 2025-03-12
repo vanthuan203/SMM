@@ -102,6 +102,9 @@ public class TaskController {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Autowired
+    private OrderThreadCheck orderThreadCheck;
+
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
                                                    @RequestParam(defaultValue = "") String device_id,
@@ -1178,7 +1181,17 @@ public class TaskController {
             Map<String, Object> respJson=new LinkedHashMap<>();
             Map<String, Object> dataJson=new LinkedHashMap<>();
             if(get_task.get("status").equals(true)){
+
                 dataJson= (Map<String, Object>) get_task.get("data");
+
+                Thread.sleep(300+ran.nextInt(500));
+                if(!orderThreadCheck.getValue().contains(dataJson.get("order_id").toString())){
+                    resp.put("status",false);
+                    data.put("message","Không có nhiệm vụ!");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+
                 dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                 dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
