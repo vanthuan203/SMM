@@ -70,7 +70,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(100+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
