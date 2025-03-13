@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Service
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/device")
@@ -155,7 +156,7 @@ public class DeviceController {
         }
 
     }
-
+    @Transactional
     @GetMapping(value = "check_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> check_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                                @RequestParam(defaultValue = "") String device_id,
@@ -196,7 +197,7 @@ public class DeviceController {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
 
-            Device device=deviceRepository.check_DeviceId(device_id.trim()); //code cũ ở đây
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim()).get(); //code cũ ở đây
             if(device==null){
                 SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Device device_new=new Device();
@@ -301,10 +302,12 @@ public class DeviceController {
         }
 
     }
+    @Transactional
     public Boolean update_Status_Device(
     ){
         try{
             List<String> list_device =deviceRepository.get_All_Device_DieAcc();
+            deviceRepository.findAndLockDevices(list_device);
             if(list_device.size()>0){
                 deviceRepository.update_Status_Device(list_device);
             }
@@ -330,7 +333,7 @@ public class DeviceController {
         }
 
     }
-
+    @Transactional
     public Boolean update_Account_Device(
     ){
         try{
@@ -366,7 +369,7 @@ public class DeviceController {
 
     }
 
-
+    @Transactional
     @DeleteMapping(value = "delete_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> delete_Device(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String device_id) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -380,6 +383,7 @@ public class DeviceController {
         }
         try{
             List<String> arrDevice=new ArrayList<>(Arrays.asList(device_id.split(",")));
+            deviceRepository.findAndLockDevices(arrDevice);
             deviceRepository.delete_Device_By_List_Device(arrDevice);
             accountRepository.reset_Account_By_ListDevice(arrDevice);
             resp.put("device", "");

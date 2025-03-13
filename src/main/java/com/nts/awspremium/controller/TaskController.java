@@ -23,14 +23,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Service
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/task")
@@ -104,14 +107,14 @@ public class TaskController {
 
     @Autowired
     private OrderThreadCheck orderThreadCheck;
-
+    @Transactional
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
-    ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
-                                                   @RequestParam(defaultValue = "") String device_id,
-                                                   @RequestParam(defaultValue = "") String rom_version,
-                                                   @RequestParam(defaultValue = "") String profile_id,
-                                                   @RequestParam(defaultValue = "0") Integer index,
-                                                   @RequestParam(defaultValue = "") String platform) throws InterruptedException {
+    public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
+                                                          @RequestParam(defaultValue = "") String device_id,
+                                                          @RequestParam(defaultValue = "") String rom_version,
+                                                          @RequestParam(defaultValue = "") String profile_id,
+                                                          @RequestParam(defaultValue = "0") Integer index,
+                                                          @RequestParam(defaultValue = "") String platform) throws InterruptedException {
 
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -137,7 +140,7 @@ public class TaskController {
             }
             //---------------------get_Account------------------//
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim()).get();
             ProfileTask profileTask=null;
             if(device==null){
                 resp.put("status", false);
