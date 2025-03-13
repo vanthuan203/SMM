@@ -22,7 +22,7 @@ public class RunDevice {
                     //Random rand =new Random();
                     while (true) {
                         try {
-                            deviceController.update_Status_Device();
+                            //deviceController.update_Status_Device();
                             deviceController.update_Account_Device();
                             try {
                                 Thread.sleep(300000);
