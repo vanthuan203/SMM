@@ -307,10 +307,8 @@ public class DeviceController {
     ){
         try{
             List<String> list_device =deviceRepository.get_All_Device_DieAcc();
-            deviceRepository.findAndLockDevices(list_device);
             if(list_device.size()>0){
                 deviceRepository.update_Status0_Device(list_device);
-                deviceRepository.update_Status1_Device(list_device);
             }
             return  true;
         }catch (Exception e){
@@ -341,7 +339,6 @@ public class DeviceController {
 
             List<Device> deviceList =deviceRepository.get_All_Device();
             for (int i=0;i<deviceList.size();i++){
-                deviceRepository.check_DeviceIdLock(deviceList.get(i).getDevice_id().trim());
                 String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
                 String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(deviceList.get(i).getDevice_id()+"%");
                 deviceList.get(i).setAccount_live(acc_live==null?"":acc_live);
