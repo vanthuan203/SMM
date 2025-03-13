@@ -52,7 +52,12 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
     @Modifying
     @Transactional
     @Query(value = "update device set status=0  where device_id in(?1)",nativeQuery = true)
-    public void update_Status_Device(List<String> device_id);
+    public void update_Status0_Device(List<String> device_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update device set status=1  where device_id not in(?1)",nativeQuery = true)
+    public void update_Status1_Device(List<String> device_id);
 
     @Modifying
     @Transactional
