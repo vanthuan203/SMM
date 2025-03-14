@@ -104,6 +104,24 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Transactional
     @Query(value = "DELETE  FROM profile_task  where profile_id not in(?1) and device_id=?2",nativeQuery = true)
     public Integer delete_Profile_Not_In(List<String>  list_profile, String device_id);
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE  FROM profile_task  where profile_id in(?1) and device_id=?2",nativeQuery = true)
+    public Integer delete_Profile_In(List<String>  list_profile, String device_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE  FROM profile_task  where profile_id in(?1) and device_id=?2 and valid=0",nativeQuery = true)
+    public Integer delete_Profile_In_And_Valid0(List<String>  list_profile, String device_id);
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT profile_id FROM profile_task  where profile_id not in(?1) and device_id=?2",nativeQuery = true)
+    public List<String> get_ProfileId_Not_In(List<String>  list_profile, String device_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "SELECT profile_id FROM profile_task  where profile_id not in(?1) and device_id=?2 and valid=0",nativeQuery = true)
+    public List<String> get_ProfileId_Not_In_And_Valid0(List<String>  list_profile, String device_id);
 
     @Modifying
     @Transactional
