@@ -332,7 +332,6 @@ public class DeviceController {
         }
 
     }
-    @Transactional
     public Boolean update_Account_Device(
     ){
         try{
