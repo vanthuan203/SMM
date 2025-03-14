@@ -19,7 +19,7 @@ public interface DeviceRepository extends JpaRepository<Device,String> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE )
     @Query("SELECT d FROM Device d WHERE d.device_id = :deviceId")
-    Optional<Device> check_DeviceIdLock(@Param("deviceId") String deviceId);
+    Device check_DeviceIdLock(@Param("deviceId") String deviceId);
 
     @Query(value = "SELECT d.ip_address  FROM ProfileTask p JOIN p.device d WHERE p.order_id = ?1 AND p.running = 1")
     public List<String>  get_IP_Running_Task_By_OrderId(Long order_id);

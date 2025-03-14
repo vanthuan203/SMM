@@ -197,7 +197,7 @@ public class DeviceController {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
 
-            Device device=deviceRepository.check_DeviceIdLock(device_id.trim()).get(); //code cũ ở đây
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
             if(device==null){
                 SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Device device_new=new Device();
@@ -772,8 +772,8 @@ public class DeviceController {
         }
         try{
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_body.getDevice_id().trim().split(",")));
-            Optional<Device> deviceOpt=deviceRepository.check_DeviceIdLock(device_body.getDevice_id().trim());
-            deviceRepository.update_Device_By_DeviceId(device_body.getState(),device_body.getBox_id().trim(),device_body.getMode().trim().toLowerCase(),device_body.getNum_profile_set(),deviceOpt.get().getDevice_id());
+            Device device=deviceRepository.check_DeviceIdLock(device_body.getDevice_id().trim());
+            deviceRepository.update_Device_By_DeviceId(device_body.getState(),device_body.getBox_id().trim(),device_body.getMode().trim().toLowerCase(),device_body.getNum_profile_set(),device.getDevice_id());
             JSONArray jsonArray = new JSONArray();
             List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             for (int i = 0; i < deviceList.size(); i++) {

@@ -140,7 +140,7 @@ public class TaskController {
             }
             //---------------------get_Account------------------//
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
-            Device device=deviceRepository.check_DeviceIdLock(device_id.trim()).get();
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
             ProfileTask profileTask=null;
             if(device==null){
                 resp.put("status", false);
