@@ -92,14 +92,7 @@ public class SetupController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
             ProfileTask profileTask=null;
-            if(device==null){
-                resp.put("status", false);
-                data.put("message", "device_id không tồn tại");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }
             profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
             if(profileTask==null){
                 resp.put("status", false);

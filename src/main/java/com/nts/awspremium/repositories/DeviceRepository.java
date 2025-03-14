@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface DeviceRepository extends JpaRepository<Device,String> {
 
-    @Query(value = "Select * from device where device_id=?1 for update",nativeQuery = true)
+    @Query(value = "Select * from device where device_id=?1",nativeQuery = true)
     public Device check_DeviceId(String device_id);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE )
