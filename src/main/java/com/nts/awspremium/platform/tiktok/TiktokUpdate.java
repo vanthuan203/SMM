@@ -87,6 +87,20 @@ public class TiktokUpdate {
                 }
                 accountTaskRepository.save(accountTask);
             }
+            LogError logError =new LogError();
+            logError.setMethod_name(String.valueOf(success));
+            logError.setLine_number(0);
+            logError.setClass_name(account_id);
+            logError.setFile_name(task_key);
+            logError.setMessage("");
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
 
             return true;
         }catch (Exception e){
