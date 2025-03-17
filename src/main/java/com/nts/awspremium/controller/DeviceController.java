@@ -232,10 +232,18 @@ public class DeviceController {
                     device.setIp_changer_time(System.currentTimeMillis());
                 }
 
-                String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
-                String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
-                device.setAccount_live(acc_live==null?"":acc_live);
-                device.setAccount_die(acc_die==null?"":acc_die);
+                if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
+                    String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
+                    String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
+                    if(acc_die==null){
+                        device.setStatus(1);
+                    }else{
+                        device.setStatus(0);
+                    }
+                    device.setAccount_live(acc_live==null?"":acc_live);
+                    device.setAccount_die(acc_die==null?"":acc_die);
+                    device.setCheck_time(System.currentTimeMillis());
+                }
 
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);

@@ -25,6 +25,8 @@ public class Device implements Serializable {
     private Long ip_changer_time;
     @Column(columnDefinition = "bigint default 0")
     private Long reboot_time=0L;
+    @Column(columnDefinition = "bigint default 0")
+    private Long check_time=0L;
     @Column(columnDefinition = "integer default 0")
     private Integer num_profile;
     @Column(columnDefinition = "integer default 0")
