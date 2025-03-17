@@ -40,7 +40,7 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
 
     @Modifying
     @Transactional
-    @QueryHints({ @QueryHint(name = "javax.persistence.query.timeout", value = "1000") }) // 5 giây
+    @QueryHints({ @QueryHint(name = "javax.persistence.query.timeout", value = "10000") }) // 5 giây
     @Query("UPDATE DataComment d SET d.running = 0, d.account_id = '' " +
             "WHERE d.running = 1 AND (EXISTS " +
             "(SELECT 1 FROM ProfileTask p WHERE p.account_id = d.account_id AND (p.running = 0 OR p.task <> 'comment')) " +
