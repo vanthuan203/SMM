@@ -83,7 +83,7 @@ public class DataConmentController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             try{
-                dataCommentRepository.reset_Running_Comment_JPQL();
+                dataCommentRepository.reset_Running_Comment();
                 resp.put("status",true);
                 data.put("message", "reset thành công");
                 resp.put("data",data);
