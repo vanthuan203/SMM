@@ -1225,7 +1225,7 @@ public class TaskController {
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
                 //--------------------------------------------//
-                dataJson.remove("order_id");
+                //dataJson.remove("order_id"); // trả về order_id => 17/3/2025
 
 
 
