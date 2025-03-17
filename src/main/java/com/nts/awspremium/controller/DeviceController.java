@@ -231,6 +231,12 @@ public class DeviceController {
                     device.setIp_address(ip);
                     device.setIp_changer_time(System.currentTimeMillis());
                 }
+
+                String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
+                String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
+                device.setAccount_live(acc_live==null?"":acc_live);
+                device.setAccount_die(acc_die==null?"":acc_die);
+
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
 

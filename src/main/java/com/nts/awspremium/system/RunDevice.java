@@ -14,7 +14,6 @@ public class RunDevice {
     private DeviceController deviceController;
     @Autowired
     private Environment env;
-    @PostConstruct
     public void init() throws InterruptedException {
         try{
             if(Integer.parseInt(env.getProperty("server.port"))==8000){
@@ -23,7 +22,7 @@ public class RunDevice {
                     while (true) {
                         try {
                             //deviceController.update_Status_Device();
-                            deviceController.update_Account_Device();
+                            //deviceController.update_Account_Device();
                             try {
                                 Thread.sleep(300000);
                             } catch (InterruptedException e) {
