@@ -82,11 +82,18 @@ public class DataConmentController {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            dataCommentRepository.reset_Running_Comment();
-            resp.put("status",true);
-            data.put("message", "reset thành công");
-            resp.put("data",data);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
+            try{
+                dataCommentRepository.reset_Running_Comment_JPQL();
+                resp.put("status",true);
+                data.put("message", "reset thành công");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }catch (Exception e){
+                resp.put("status",false);
+                data.put("message", "reset thất bại");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
