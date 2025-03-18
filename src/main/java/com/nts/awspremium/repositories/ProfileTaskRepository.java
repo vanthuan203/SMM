@@ -5,7 +5,9 @@ import com.nts.awspremium.model.ProfileTask;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 
+import javax.persistence.QueryHint;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -154,6 +156,12 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
+    @QueryHints({ @QueryHint(name = "javax.persistence.query.timeout", value = "1000") }) // 1 giây
+    @Query("UPDATE ProfileTask p SET p.running = 0,p.order_id=0,p.task='',p.task_key='' WHERE p.profile_id=?1")
+    void reset_Thread_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE profile_task SET task_index=(select priority from platform where platform=?1 limit 1) where profile_id in(select profile_id from account_profile where account_id=?2)",nativeQuery = true)
     public Integer update_Than_Task_Index_By_AccountId(String platform,String account_id);
 
@@ -170,7 +178,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>15",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>15 limit 50",nativeQuery = true)
     public Integer reset_Task_Error();
 
     @Modifying

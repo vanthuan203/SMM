@@ -1078,6 +1078,26 @@ public class OrderRunningController {
                             }
                         }
                         count_check=count;
+                    }else if(orderRunningList.get(i).getService().getTask().equals("share")){
+                        int count= TikTokApi.getCountShare(orderRunningList.get(i).getOrder_key());
+                        if(count==-2) {
+                            continue;
+                        }else if(count>=0){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                        count_check=count;
+                    }else if(orderRunningList.get(i).getService().getTask().equals("favorites")){
+                        int count= TikTokApi.getCountFavorites(orderRunningList.get(i).getOrder_key());
+                        if(count==-2) {
+                            continue;
+                        }else if(count>=0){
+                            if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
+                                continue;
+                            }
+                        }
+                        count_check=count;
                     }
                 }
                 OrderHistory orderHistory=new OrderHistory();
