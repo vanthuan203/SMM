@@ -50,4 +50,8 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
 
     @Query(value = "Select sum(balance) from balance where balance<0 and round((UNIX_TIMESTAMP()-add_time/1000)/60)<=5  order by id desc limit 1 ",nativeQuery = true)
     public Float getfluctuations5M();
+
+    @Query(value = "SELECT * FROM  balance  WHERE balance<0 and service IS NOT NULL  order by id desc limit 1",nativeQuery = true)
+    public Balance getBalanceByMaxId();
+
 }
