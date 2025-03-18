@@ -219,6 +219,10 @@ public class ApiController {
                         get_task=tiktokOrder.tiktok_comment(data,service,user);
                     }else if(service.getTask().trim().equals("view")){
                         get_task=tiktokOrder.tiktok_view(data,service,user);
+                    }else if(service.getTask().trim().equals("share")){
+                        get_task=tiktokOrder.tiktok_share(data,service,user);
+                    }else if(service.getTask().trim().equals("favorites")){
+                        get_task=tiktokOrder.tiktok_favorites(data,service,user);
                     }
                 }else if(service.getPlatform().trim().equals("facebook")){
                     if(service.getTask().trim().equals("follower")){
@@ -455,6 +459,10 @@ public class ApiController {
                         get_task=tiktokOrder.tiktok_comment(data,service,user);
                     }else if(service.getTask().trim().equals("view")){
                         get_task=tiktokOrder.tiktok_view(data,service,user);
+                    }else if(service.getTask().trim().equals("share")){
+                        get_task=tiktokOrder.tiktok_share(data,service,user);
+                    }else if(service.getTask().trim().equals("favorites")){
+                        get_task=tiktokOrder.tiktok_favorites(data,service,user);
                     }
                 }else if(service.getPlatform().trim().equals("facebook")){
                     if(service.getTask().trim().equals("follower")){
@@ -561,6 +569,10 @@ public class ApiController {
                     get_task=tiktokOrder.tiktok_comment(data,service,user);
                 }else if(service.getTask().trim().equals("view")){
                     get_task=tiktokOrder.tiktok_view(data,service,user);
+                }else if(service.getTask().trim().equals("share")){
+                    get_task=tiktokOrder.tiktok_share(data,service,user);
+                }else if(service.getTask().trim().equals("favorites")){
+                    get_task=tiktokOrder.tiktok_favorites(data,service,user);
                 }
             }else if(service.getPlatform().trim().equals("facebook")){
                 if(service.getTask().trim().equals("follower")){
@@ -666,6 +678,10 @@ public class ApiController {
                     get_task=tiktokOrder.tiktok_comment(data,service,user);
                 }else if(service.getTask().trim().equals("view")){
                     get_task=tiktokOrder.tiktok_view(data,service,user);
+                }else if(service.getTask().trim().equals("share")){
+                    get_task=tiktokOrder.tiktok_share(data,service,user);
+                }else if(service.getTask().trim().equals("favorites")){
+                    get_task=tiktokOrder.tiktok_favorites(data,service,user);
                 }
             }else if(service.getPlatform().trim().equals("facebook")){
                 if(service.getTask().trim().equals("follower")){

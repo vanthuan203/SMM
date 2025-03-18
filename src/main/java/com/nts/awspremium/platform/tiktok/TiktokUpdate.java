@@ -25,6 +25,10 @@ public class TiktokUpdate {
     @Autowired
     private TikTokLike24hRepository tikTokLike24hRepository;
     @Autowired
+    private TiktokShare24hRepository tiktokShare24hRepository;
+    @Autowired
+    private TiktokFavorites24hRepository tiktokFavorites24hRepository;
+    @Autowired
     private TikTokView24hRepository tikTokView24hRepository;
     @Autowired
     private TikTokComment24hRepository tikTokComment24hRepository;
@@ -32,6 +36,10 @@ public class TiktokUpdate {
     private TikTokAccountHistoryRepository tikTokAccountHistoryRepository;
     @Autowired
     private TikTokLikeHistoryRepository tikTokLikeHistoryRepository;
+    @Autowired
+    private TiktokFavoritesHistoryRepository tiktokFavoritesHistoryRepository;
+    @Autowired
+    private TiktokShareHistoryRepository tiktokShareHistoryRepository;
     @Autowired
     private TikTokCommentHistoryRepository tikTokCommentHistoryRepository;
     @Autowired
@@ -162,6 +170,117 @@ public class TiktokUpdate {
             return false;
         }
     }
+
+    public Boolean tiktok_share(String account_id,String task_key){
+        try{
+
+            TiktokShareHistory tiktokShareHistory=tiktokShareHistoryRepository.get_By_AccountId(account_id.trim());
+            if(tiktokShareHistory!=null){
+                tiktokShareHistory.setList_id(tiktokShareHistory.getList_id()+task_key.trim()+"|");
+                tiktokShareHistory.setUpdate_time(System.currentTimeMillis());
+                tiktokShareHistoryRepository.save(tiktokShareHistory);
+            }else{
+                TiktokShareHistory tiktokShareHistory_New=new TiktokShareHistory();
+                tiktokShareHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                tiktokShareHistory_New.setUpdate_time(System.currentTimeMillis());
+                tiktokShareHistory_New.setList_id(task_key.trim()+"|");
+                tiktokShareHistoryRepository.save(tiktokShareHistory_New);
+            }
+            TiktokShare24h tiktokShare24h =new TiktokShare24h();
+            tiktokShare24h.setId(account_id.trim()+task_key.trim());
+            tiktokShare24h.setUpdate_time(System.currentTimeMillis());
+            tiktokShare24hRepository.save(tiktokShare24h);
+
+
+            AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+            if(accountTask==null){
+                AccountTask accountTask_New=new AccountTask();
+                accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
+                accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                accountTask_New.setShare_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask_New);
+            }else{
+                accountTask.setShare_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+
+
+            return true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            return false;
+        }
+    }
+
+    public Boolean tiktok_favorites(String account_id,String task_key){
+        try{
+
+            TiktokFavoritesHistory tiktokFavoritesHistory=tiktokFavoritesHistoryRepository.get_By_AccountId(account_id.trim());
+            if(tiktokFavoritesHistory!=null){
+                tiktokFavoritesHistory.setList_id(tiktokFavoritesHistory.getList_id()+task_key.trim()+"|");
+                tiktokFavoritesHistory.setUpdate_time(System.currentTimeMillis());
+                tiktokFavoritesHistoryRepository.save(tiktokFavoritesHistory);
+            }else{
+                TiktokFavoritesHistory tiktokFavoritesHistory_New=new TiktokFavoritesHistory();
+                tiktokFavoritesHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                tiktokFavoritesHistory_New.setUpdate_time(System.currentTimeMillis());
+                tiktokFavoritesHistory_New.setList_id(task_key.trim()+"|");
+                tiktokFavoritesHistoryRepository.save(tiktokFavoritesHistory_New);
+            }
+            TiktokFavorites24h tiktokFavorites24h =new TiktokFavorites24h();
+            tiktokFavorites24h.setId(account_id.trim()+task_key.trim());
+            tiktokFavorites24h.setUpdate_time(System.currentTimeMillis());
+            tiktokFavorites24hRepository.save(tiktokFavorites24h);
+
+
+            AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+            if(accountTask==null){
+                AccountTask accountTask_New=new AccountTask();
+                accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
+                accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                accountTask_New.setFavorites_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask_New);
+            }else{
+                accountTask.setFavorites_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+
+
+            return true;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            return false;
+        }
+    }
+
     public Boolean tiktok_comment(String account_id,String task_key,Boolean status){
         try{
             if(status==true){

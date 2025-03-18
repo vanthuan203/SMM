@@ -1114,6 +1114,10 @@ public class TaskController {
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
+                    }else if(task.equals("share")){
+                        get_task=tiktokTask.tiktok_share(profileTask.getAccount_id(),device.getMode().trim());
+                    }else if(task.equals("favorites")){
+                        get_task=tiktokTask.tiktok_favorites(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("view")){
@@ -1328,6 +1332,10 @@ public class TaskController {
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")){
                         tiktokUpdate.tiktok_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
+                        tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("share")&&updateTaskRequest.getStatus()==true){
+                        tiktokUpdate.tiktok_share(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("favorites")&&updateTaskRequest.getStatus()==true){
                         tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }
                 }else if(platform_Check.equals("facebook")){

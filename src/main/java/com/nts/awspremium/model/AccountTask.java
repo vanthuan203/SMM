@@ -27,6 +27,10 @@ public class AccountTask {
     @Column(columnDefinition = "bigint default 0")
     private Long comment_time=0L;
     @Column(columnDefinition = "bigint default 0")
+    private Long share_time=0L;
+    @Column(columnDefinition = "bigint default 0")
+    private Long favorites_time=0L;
+    @Column(columnDefinition = "bigint default 0")
     private Long repost_time=0L;
     @Column(columnDefinition = "bigint default 0")
     private Long member_time=0L;
