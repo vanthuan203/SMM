@@ -213,6 +213,10 @@ public class OrderHistoryController {
                             current_Count=TikTokApi.getCountView(orderHistory.getOrder_key());
                         }else if(orderHistory.getService().getTask().equals("comment")){
                             current_Count=TikTokApi.getCountComment(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("share")){
+                            current_Count=TikTokApi.getCountShare(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("favorites")){
+                            current_Count=TikTokApi.getCountFavorites(orderHistory.getOrder_key());
                         }
                     }
                     if(current_Count>=0){
@@ -441,6 +445,10 @@ public class OrderHistoryController {
                             current_Count=TikTokApi.getCountView(orderHistory.getOrder_key());
                         }else if(orderHistory.getService().getTask().equals("comment")){
                             current_Count=TikTokApi.getCountComment(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("share")){
+                            current_Count=TikTokApi.getCountShare(orderHistory.getOrder_key());
+                        }else if(orderHistory.getService().getTask().equals("favorites")){
+                            current_Count=TikTokApi.getCountFavorites(orderHistory.getOrder_key());
                         }
                     }
                     if(current_Count>=0 && current_Count>=orderHistory.getStart_count()){

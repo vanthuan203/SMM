@@ -407,7 +407,7 @@ public class TikTokApi {
         return -2;
     }
 
-    public static Integer getFavoritesLike(String video_id) {
+    public static Integer getCountFavorites(String video_id) {
 
         try {
             String link="https://www.tiktok.com/@/video/"+video_id;
@@ -442,7 +442,7 @@ public class TikTokApi {
         return -2;
     }
 
-    public static Integer getShareLike(String video_id) {
+    public static Integer getCountShare(String video_id) {
 
         try {
             String link="https://www.tiktok.com/@/video/"+video_id;

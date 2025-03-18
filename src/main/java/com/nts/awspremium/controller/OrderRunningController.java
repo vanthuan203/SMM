@@ -581,6 +581,22 @@ public class OrderRunningController {
                                 orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
 
                             }
+                        }else if (orderRunningList.get(i).getService().getTask().equals("share")) {
+                            int current_Count = TikTokApi.getCountShare(orderRunningList.get(i).getOrder_key());
+                            if (current_Count >= 0) {
+                                orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                            }else if(current_Count==-1){
+                                orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
+
+                            }
+                        }else if (orderRunningList.get(i).getService().getTask().equals("favorites")) {
+                            int current_Count = TikTokApi.getCountFavorites(orderRunningList.get(i).getOrder_key());
+                            if (current_Count >= 0) {
+                                orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                            }else if(current_Count==-1){
+                                orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
+
+                            }
                         }
                     }
                 } catch (Exception e) {
