@@ -1336,7 +1336,7 @@ public class TaskController {
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("share")&&updateTaskRequest.getStatus()==true){
                         tiktokUpdate.tiktok_share(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("favorites")&&updateTaskRequest.getStatus()==true){
-                        tiktokUpdate.tiktok_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                        tiktokUpdate.tiktok_favorites(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     }
                 }else if(platform_Check.equals("facebook")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")&&updateTaskRequest.getStatus()==true){
