@@ -1313,7 +1313,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            profileTaskRepository.reset_Thread_By_AccountId(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
+            profileTaskRepository.reset_Thread_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
             if(!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")){
                 String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
                 if(platform_Check.equals("youtube")){
@@ -1387,13 +1387,7 @@ public class TaskController {
                 }
                 if(updateTaskRequest.getStatus()==true){
                     try {
-                        OrderRunning orderRunning=null;
-                        if(platform_Check.equals("youtube")&&updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")){
-                            String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(updateTaskRequest.getTask_key().trim());
-                            orderRunning=orderRunningRepository.find_Order_By_Order_Key(order_Key,updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
-                        }else{
-                            orderRunning=orderRunningRepository.find_Order_By_Order_Key(updateTaskRequest.getTask_key().trim(),updateTaskRequest.getTask().trim(),updateTaskRequest.getPlatform().trim());
-                        }
+                        OrderRunning orderRunning= orderRunningRepository.find_Order_By_OrderId(updateTaskRequest.getOrder_id());
                         if(orderRunning!=null){
                             HistorySum historySum=new HistorySum();
                             historySum.setOrderRunning(orderRunning);

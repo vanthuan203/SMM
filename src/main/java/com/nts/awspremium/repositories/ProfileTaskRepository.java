@@ -156,8 +156,8 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @QueryHints({ @QueryHint(name = "javax.persistence.query.timeout", value = "1000") }) // 1 giây
-    @Query("UPDATE ProfileTask p SET p.running = 0,p.order_id=0,p.task='',p.task_key='' WHERE p.profile_id=?1")
+    @QueryHints({ @QueryHint(name = "javax.persistence.query.timeout", value = "2000") }) // 2 giây
+    @Query("UPDATE ProfileTask p SET p.running = 0 WHERE p.profile_id=?1")
     void reset_Thread_By_ProfileId(String profile_id);
 
     @Modifying
