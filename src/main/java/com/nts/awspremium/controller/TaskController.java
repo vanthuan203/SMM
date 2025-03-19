@@ -1313,7 +1313,6 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            profileTaskRepository.reset_Thread_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
             if(!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")){
                 String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
                 if(platform_Check.equals("youtube")){
@@ -1429,7 +1428,15 @@ public class TaskController {
                         logErrorRepository.save(logError);
                     }
                 }
+
             }
+
+            try{
+                profileTaskRepository.reset_Thread_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+            }catch (Exception e){
+
+            }
+
             try{
                 if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
