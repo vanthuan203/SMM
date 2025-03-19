@@ -1417,7 +1417,7 @@ public class TaskController {
             }
             try{
                 if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
-                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
+                    //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         if(updateTaskRequest.getTask().equals("register")){
@@ -1488,7 +1488,11 @@ public class TaskController {
                                 accountRepository.save(account);
                             }
                         }else if((updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))&&updateTaskRequest.getTask_key().length()==0){
-                            accountProfile.setLive(0);
+                            if(updateTaskRequest.getTask().equals("register")){
+                                accountProfile.setLive(-1);
+                            }else{
+                                accountProfile.setLive(0);
+                            }
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }else{
