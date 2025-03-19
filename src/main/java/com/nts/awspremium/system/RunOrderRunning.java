@@ -29,6 +29,7 @@ public class RunOrderRunning {
                     //Random rand =new Random();
                     while (true) {
                         try {
+                            Long check_time=System.currentTimeMillis();
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -69,6 +70,17 @@ public class RunOrderRunning {
                                 throw new RuntimeException(e);
                             }
                             dataConmentController.update_Running_Comment();
+                            while (true){
+                                if((System.currentTimeMillis()-check_time)/1000<90){
+                                    try {
+                                        Thread.sleep(5000);
+                                    } catch (InterruptedException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }else{
+                                    break;
+                                }
+                            }
                         } catch (Exception e) {
                             continue;
                         }
