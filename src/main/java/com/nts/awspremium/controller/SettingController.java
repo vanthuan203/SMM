@@ -45,6 +45,10 @@ public class SettingController {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private TaskPriorityRepository taskPriorityRepository;
+    @Autowired
+    private OrderRunningRepository orderRunningRepository;
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
     @GetMapping(path = "get_Setting_Platform",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> get_Setting_Platform(@RequestHeader(defaultValue = "") String Authorization){
         JSONObject resp = new JSONObject();
@@ -365,6 +369,43 @@ public class SettingController {
             return false;
         }
     }
+
+
+    public Boolean  updateTime_Pending_Task() {
+        try {
+            Integer thread_set= orderRunningRepository.get_Sum_Thread_Order_Running_By_Mode_Auto();
+            Integer thread_running= profileTaskRepository.count_Profile_Running_And_Mode_Auto();
+            if(thread_running<thread_set){
+                SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+                settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()-5)>0?(settingSystem.getTime_waiting_task()-5):0);
+                settingSystemRepository.save(settingSystem);
+            }else if(thread_running>thread_set*1.05){
+                SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+                settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<100?(settingSystem.getTime_waiting_task()+5):100);
+                settingSystemRepository.save(settingSystem);
+            }
+            return true;
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError = new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            return false;
+        }
+    }
+
     @PostMapping(path = "update_Setting_Platform",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update_Setting_Platform(@RequestHeader(defaultValue = "") String Authorization,
                                                  @RequestBody JSONObject jsonObject
