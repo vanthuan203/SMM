@@ -79,7 +79,7 @@ public class YoutubeTask {
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
                 data.put("task_key", orderRunning.getOrder_key());
-                data.put("task_link",orderRunning.getOrder_link());
+                data.put("task_link",orderRunning.getOrder_link()+"&t=0");
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
 
