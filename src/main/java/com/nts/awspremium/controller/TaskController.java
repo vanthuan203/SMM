@@ -1395,6 +1395,21 @@ public class TaskController {
                             historySum.setViewing_time(updateTaskRequest.getViewing_time());
                             historySum.setAdd_time(System.currentTimeMillis());
                             historySumRepository.save(historySum);
+                        }else{
+                            LogError logError =new LogError();
+                            logError.setMethod_name("updateTask");
+                            logError.setLine_number(1);
+                            logError.setClass_name("1");
+                            logError.setFile_name(updateTaskRequest.getOrder_id() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform());
+                            logError.setMessage("e.getMessage()");
+                            logError.setAdd_time(System.currentTimeMillis());
+                            Date date_time = new Date(System.currentTimeMillis());
+                            // Tạo SimpleDateFormat với múi giờ GMT+7
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+                            String formattedDate = sdf.format(date_time);
+                            logError.setDate_time(formattedDate);
+                            logErrorRepository.save(logError);
                         }
                     }catch (Exception e){
                         StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
