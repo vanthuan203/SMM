@@ -40,7 +40,17 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            orderRunningController.update_Current_Total();
+                            Integer check_count_num=orderRunningController.update_Check_Count_Num();
+                            for(int i=1;i<=check_count_num;i++) {
+                                int finalI = i;
+                                new Thread(() -> {
+                                        try {
+                                            orderRunningController.update_Current_Total(finalI);
+                                        } catch (Exception e) {
+                                        }
+
+                                }).start();
+                            }
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {

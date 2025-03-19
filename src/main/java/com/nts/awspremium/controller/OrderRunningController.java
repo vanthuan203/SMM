@@ -531,12 +531,48 @@ public class OrderRunningController {
 
     }
 
-    @GetMapping(value = "update_Current_Total", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> update_Current_Total() throws InterruptedException {
-        Map<String, Object> resp = new LinkedHashMap<>();
-        Map<String, Object> data = new LinkedHashMap<>();
+    @GetMapping(value = "update_Check_Count_Num", produces = "application/hal+json;charset=utf8")
+    public Integer update_Check_Count_Num() throws InterruptedException {
         try{
+            orderRunningRepository.reset_Check_Count_ALL();
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count(System.currentTimeMillis());
+            Integer check_count_num=0;
+            for(int i=0;i<orderRunningList.size();i++){
+                if(i%30==0){
+                    check_count_num=check_count_num+1;
+                }
+                orderRunningList.get(i).setCheck_count(check_count_num);
+                orderRunningRepository.save(orderRunningList.get(i));
+            }
+
+            return check_count_num;
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            return 0;
+        }
+
+    }
+
+    @GetMapping(value = "update_Current_Total", produces = "application/hal+json;charset=utf8")
+    public boolean update_Current_Total(@RequestParam Integer check_count_num ) throws InterruptedException {
+
+        try{
+            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count_Num(check_count_num);
             for(int i=0;i<orderRunningList.size();i++){
                 try {
                     if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){
@@ -617,10 +653,7 @@ public class OrderRunningController {
                     logErrorRepository.save(logError);
                 }
             }
-            resp.put("status",true);
-            data.put("message", "update thành công");
-            resp.put("data",data);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
+            return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();
@@ -638,8 +671,7 @@ public class OrderRunningController {
             logError.setDate_time(formattedDate);
             logErrorRepository.save(logError);
 
-            resp.put("status", false);
-            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            return false;
         }
 
     }
