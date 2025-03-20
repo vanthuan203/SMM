@@ -163,7 +163,8 @@ public class DeviceController {
                                                                @RequestParam(defaultValue = "") String profile_list,
                                                                @RequestParam(defaultValue = "") String profile_remove,
                                                                @RequestParam(defaultValue = "") String ip,
-                                                               @RequestParam(defaultValue = "") String rom_version
+                                                               @RequestParam(defaultValue = "") String rom_version,
+                                                               @RequestParam(defaultValue = "") String app_version
                                                               ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -210,7 +211,8 @@ public class DeviceController {
                 device_new.setReboot_time(System.currentTimeMillis());
                 device_new.setNum_account(0);
                 device_new.setReboot(0);
-                device_new.setRom_version(rom_version);
+                device_new.setRom_version(rom_version.trim());
+                device_new.setApp_version(app_version.trim());
                 device_new.setBox_id("");
                 device_new.setMode("");
                 device_new.setAccount_live("");
@@ -226,7 +228,8 @@ public class DeviceController {
                 if(mode!=null){
                     device.setNum_profile_set(mode.getMax_profile());
                 }
-                device.setRom_version(rom_version);
+                device.setRom_version(rom_version.trim());
+                device.setApp_version(app_version.trim());
                 if(device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim())){
                     device.setIp_address(ip);
                     device.setIp_changer_time(System.currentTimeMillis());
@@ -484,6 +487,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
@@ -571,6 +575,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -657,6 +662,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -743,6 +749,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -827,6 +834,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());

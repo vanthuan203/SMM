@@ -46,6 +46,8 @@ public class Device implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String rom_version;
     @Column(columnDefinition = "varchar(255) default ''")
+    private String app_version;
+    @Column(columnDefinition = "varchar(255) default ''")
     private String mode="";
     @Column(columnDefinition = "varchar(1555) default ''")
     private String account_live="";

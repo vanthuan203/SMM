@@ -23,13 +23,15 @@ public class DeviceShow {
     String task;
     String box_id;
     String rom_version;
+    String app_version;
     String mode;
 
 
-    public DeviceShow(String device_id,String box_id,String rom_version,String mode, Integer state,String ip_address,Long ip_changer_time, Integer status, Integer running, Long add_time, Long update_time, Long get_time, Integer num_account,String account_live,String account_die, Integer num_profile,Integer num_profile_set, String profile_id, String platform, String task) {
+    public DeviceShow(String device_id,String box_id,String rom_version,String app_version,String mode, Integer state,String ip_address,Long ip_changer_time, Integer status, Integer running, Long add_time, Long update_time, Long get_time, Integer num_account,String account_live,String account_die, Integer num_profile,Integer num_profile_set, String profile_id, String platform, String task) {
         this.device_id = device_id;
         this.box_id = box_id;
         this.rom_version = rom_version;
+        this.app_version = app_version;
         this.mode = mode;
         this.state = state;
         this.ip_address = ip_address;

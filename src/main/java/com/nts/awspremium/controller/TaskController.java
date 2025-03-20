@@ -111,10 +111,9 @@ public class TaskController {
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
-                                                          @RequestParam(defaultValue = "") String rom_version,
-                                                          @RequestParam(defaultValue = "") String profile_id,
-                                                          @RequestParam(defaultValue = "0") Integer index,
-                                                          @RequestParam(defaultValue = "") String platform) throws InterruptedException {
+                                                          @RequestParam(defaultValue = "") String tiktok_lite_version,
+                                                          @RequestParam(defaultValue = "") String profile_id
+                                                        ) throws InterruptedException {
 
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -323,6 +322,7 @@ public class TaskController {
                 List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
                 task_List=String.join(",", subPlatform);
                 profileTask.setTask_list(task_List);
+                profileTask.setTiktok_lite_version(tiktok_lite_version.trim());
                 profileTask.setTask_index(0);
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setState(1);
@@ -331,6 +331,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
             }else{
+                profileTask.setTiktok_lite_version(tiktok_lite_version.trim());
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
@@ -638,12 +639,7 @@ public class TaskController {
                         entityManager.clear();
                         profileTask=null;
                     }else{
-                        String task_List = "";
-                        if (platform.length() == 0) {
-                            task_List = profileTask.getTask_list();
-                        } else {
-                            task_List = platform;
-                        }
+                        String task_List = profileTask.getTask_list();
                         List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
                         profileTask.setPlatform(arrPlatform.get(0));
                         List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
@@ -1394,21 +1390,6 @@ public class TaskController {
                             historySum.setViewing_time(updateTaskRequest.getViewing_time());
                             historySum.setAdd_time(System.currentTimeMillis());
                             historySumRepository.save(historySum);
-                        }else{
-                            LogError logError =new LogError();
-                            logError.setMethod_name("updateTask");
-                            logError.setLine_number(1);
-                            logError.setClass_name("1");
-                            logError.setFile_name(updateTaskRequest.getOrder_id() + "| " + updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform());
-                            logError.setMessage("e.getMessage()");
-                            logError.setAdd_time(System.currentTimeMillis());
-                            Date date_time = new Date(System.currentTimeMillis());
-                            // Tạo SimpleDateFormat với múi giờ GMT+7
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
-                            String formattedDate = sdf.format(date_time);
-                            logError.setDate_time(formattedDate);
-                            logErrorRepository.save(logError);
                         }
                     }catch (Exception e){
                         StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
