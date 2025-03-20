@@ -76,6 +76,7 @@ public class ProfileController {
                 obj.put("acc_die",acc_die==null?"":acc_die );
                 obj.put("state", profiles.get(i).getState());
                 obj.put("platform", profiles.get(i).getPlatform());
+                obj.put("tiktok_lite_version", profiles.get(i).getTiktok_lite_version());
                 obj.put("task", profiles.get(i).getTask());
                 obj.put("state", profiles.get(i).getState());
                 obj.put("running", profiles.get(i).getRunning());

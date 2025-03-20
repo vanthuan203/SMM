@@ -125,6 +125,7 @@ public class DeviceController {
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
+                obj.put("app_version", deviceList.get(i).getApp_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
