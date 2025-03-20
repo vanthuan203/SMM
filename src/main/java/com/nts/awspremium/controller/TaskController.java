@@ -158,6 +158,13 @@ public class TaskController {
                 data.put("message", "device_id không làm nhiệm vụ");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(!device.getApp_version().trim().equals(settingSystem.getApp_version().trim())){
+                device.setUpdate_time(System.currentTimeMillis());
+                deviceRepository.save(device);
+                resp.put("status", false);
+                data.put("message", "device_id chưa cập nhật version auto");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time() ){
                 device.setReboot(0);
                 device.setUpdate_time(System.currentTimeMillis());

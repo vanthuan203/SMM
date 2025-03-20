@@ -39,6 +39,8 @@ public class SettingSystem {
     private Integer time_enable_profile;
     @Column(columnDefinition = "varchar(255) default ''")
     private String rom_version;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String app_version;
     @Column(columnDefinition = "integer default 0")
     private Integer time_get_task;
     @Column(columnDefinition = "integer default 0")
