@@ -70,11 +70,11 @@ public class TiktokUpdate {
                     tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
                     tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
                 }
+                TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
+                tiktokFollower24h.setId(account_id.trim()+task_key.trim());
+                tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
+                tikTokFollower24hRepository.save(tiktokFollower24h);
             }
-            TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
-            tiktokFollower24h.setId(account_id.trim()+task_key.trim());
-            tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
-            tikTokFollower24hRepository.save(tiktokFollower24h);
             AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
             ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
             if(accountTask==null){
