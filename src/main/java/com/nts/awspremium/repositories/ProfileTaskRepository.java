@@ -63,7 +63,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "SELECT * FROM profile_task where device_id=?1",nativeQuery = true)
     public List<ProfileShow> get_Profile_By_DeviceId(String device_id);
 
-    @Query(value = "SELECT MAX(tiktok_lite_version) AS max_value FROM profile_task WHERE  device_id=?1",nativeQuery = true)
+    @Query(value = "SELECT COALESCE(MAX(tiktok_lite_version), 0) AS max_value FROM profile_task WHERE  device_id=?1",nativeQuery = true)
     public Long get_Max_Version_Tiktok_By_DeviceId(String device_id);
     @Query(value = "SELECT MAX(tiktok_lite_version) AS max_value FROM profile_task",nativeQuery = true)
     public Long get_Max_Version_Tiktok_In_System();
