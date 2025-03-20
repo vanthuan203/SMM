@@ -302,6 +302,7 @@ public class DeviceController {
                     profileTask_new.setTask_index(0);
                     profileTask_new.setTask_index(0);
                     profileTask_new.setValid(1);
+                    profileTask_new.setTiktok_lite_version(0L);
                     profileTaskRepository.save(profileTask_new);
                 }
             }
