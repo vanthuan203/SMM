@@ -11,7 +11,7 @@ public interface ProfileShow {
     Integer getNum_account();
     Integer getEnabled();
     String getProfile_id();
-    String getTiktok_lite_version();
+    Long getTiktok_lite_version();
     String getPlatform();
     String getTask();
 }

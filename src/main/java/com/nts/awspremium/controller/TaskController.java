@@ -111,7 +111,7 @@ public class TaskController {
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
-                                                          @RequestParam(defaultValue = "") String tiktok_lite_version,
+                                                          @RequestParam(defaultValue = "") Long tiktok_lite_version,
                                                           @RequestParam(defaultValue = "") String profile_id
                                                         ) throws InterruptedException {
 
@@ -322,7 +322,7 @@ public class TaskController {
                 List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
                 task_List=String.join(",", subPlatform);
                 profileTask.setTask_list(task_List);
-                profileTask.setTiktok_lite_version(tiktok_lite_version.trim());
+                profileTask.setTiktok_lite_version(tiktok_lite_version);
                 profileTask.setTask_index(0);
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setState(1);
@@ -331,7 +331,7 @@ public class TaskController {
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
             }else{
-                profileTask.setTiktok_lite_version(tiktok_lite_version.trim());
+                profileTask.setTiktok_lite_version(tiktok_lite_version);
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);

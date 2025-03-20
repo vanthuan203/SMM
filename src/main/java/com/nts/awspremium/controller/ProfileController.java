@@ -27,6 +27,8 @@ public class ProfileController {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private SettingTikTokRepository settingTikTokRepository;
     @GetMapping(value = "get_List_Profile", produces = "application/hal+json;charset=utf8")
     private ResponseEntity<Map<String, Object>> get_List_Profile(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
@@ -42,7 +44,7 @@ public class ProfileController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             List<ProfileShow> profiles =profileTaskRepository.get_Profile_By_DeviceId(device_id.toString());
-
+            SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             JSONArray jsonArray = new JSONArray();
 
             for (int i = 0; i < profiles.size(); i++) {
@@ -63,6 +65,13 @@ public class ProfileController {
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
                     acc_die = String.join(",", uniqueAccount);
                 }
+
+                if(profiles.get(i).getTiktok_lite_version()>settingTiktok.getMax_version()) {
+                    obj.put("code_tiktok_version",false);
+                }else{
+                    obj.put("code_tiktok_version",true);
+                }
+
                 obj.put("device_id", profiles.get(i).getDevice_id());
                 obj.put("profile_id", profiles.get(i).getProfile_id());
                 obj.put("add_time", profiles.get(i).getAdd_time());

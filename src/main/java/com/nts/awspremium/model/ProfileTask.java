@@ -60,8 +60,8 @@ public class ProfileTask implements Serializable {
     private Long order_id;
     @Column(columnDefinition = "varchar(255) default ''")
     private String platform;
-    @Column(columnDefinition = "varchar(255) default ''")
-    private String tiktok_lite_version;
+    @Column(columnDefinition = "bigint default 0")
+    private Long tiktok_lite_version;
     @Column(columnDefinition = "integer default 0")
     private Integer clear_data=0;
     @Column(columnDefinition = "integer default 0")
