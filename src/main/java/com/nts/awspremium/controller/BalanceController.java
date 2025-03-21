@@ -3,10 +3,7 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.BalanceShow;
 import com.nts.awspremium.model.LogError;
-import com.nts.awspremium.repositories.BalanceRepository;
-import com.nts.awspremium.repositories.LogErrorRepository;
-import com.nts.awspremium.repositories.ServiceRepository;
-import com.nts.awspremium.repositories.UserRepository;
+import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +30,9 @@ public class BalanceController {
     private BalanceRepository balanceRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TikTokFollower24hRepository tikTokFollower24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
     @GetMapping(path = "get_List_Balance",produces = "application/hal+json;charset=utf8")
@@ -177,7 +177,7 @@ public class BalanceController {
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
         }
         Float all=balanceRepository.getAllBalanceNow();
-        resp.put("balance",all);
+        resp.put("balance",all.toString()+"$|"+tikTokFollower24hRepository.check_Follower_24h()+"F");
         return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
 
 

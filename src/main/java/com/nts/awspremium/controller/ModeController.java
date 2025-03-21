@@ -48,6 +48,8 @@ public class ModeController {
     @Autowired
     private ModeRepository modeRepository;
 
+    @Autowired
+    private TikTokFollower24hRepository tikTokFollower24hRepository;
 
     @Autowired
     private ModeOptionRepository modeOptionRepository;
@@ -146,6 +148,9 @@ public class ModeController {
                 JSONObject obj = new JSONObject();
                 obj.put("id",modeOptions.get(i).getId());
                 obj.put("mode", modeOptions.get(i).getMode());
+                if(modeOptions.get(i).getMode().equals("auto")&&modeOptions.get(i).getTask().equals("follower")){
+                    obj.put("count_24h",  tikTokFollower24hRepository.check_Follower_24h());
+                }
                 obj.put("platform", modeOptions.get(i).getPlatform());
                 obj.put("task", modeOptions.get(i).getTask());
                 obj.put("state", modeOptions.get(i).getState());

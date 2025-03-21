@@ -18,4 +18,6 @@ public interface TikTokFollower24hRepository extends JpaRepository<TiktokFollowe
 
     @Query(value = "select count(*) from tiktok_follower_24h where id=?1",nativeQuery = true)
     public Integer check_Follower_24h_By_Username_And_TiktokId(String id);
+    @Query(value = "SELECT count(*) FROM Data.tiktok_follower_24h;",nativeQuery = true)
+    public Integer check_Follower_24h();
 }
