@@ -18,6 +18,7 @@ public interface OrderRunningShow {
     Integer getQuantity();
     Integer getStart_count();
     Integer getCheck_count();
+    Long getCheck_count_time();
     Integer getCurrent_count();
     String getPlatform();
     String getTask();

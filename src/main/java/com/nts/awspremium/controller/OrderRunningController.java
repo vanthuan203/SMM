@@ -94,6 +94,7 @@ public class OrderRunningController {
                 obj.put("update_current_time", orderRunnings.get(i).getUpdate_current_time());
                 obj.put("start_count", orderRunnings.get(i).getStart_count());
                 obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("check_count_time", orderRunnings.get(i).getCheck_count_time());
                 obj.put("current_count", orderRunnings.get(i).getCurrent_count());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("quantity", orderRunnings.get(i).getQuantity());
@@ -168,6 +169,7 @@ public class OrderRunningController {
                 obj.put("update_current_time",orderRunningShow.getUpdate_current_time());
                 obj.put("start_count", orderRunningShow.getStart_count());
                 obj.put("check_count", orderRunningShow.getCheck_count());
+                obj.put("check_count_time", orderRunningShow.getCheck_count_time());
                 obj.put("current_count",orderRunningShow.getCurrent_count());
                 obj.put("total",orderRunningShow.getTotal());
                 obj.put("quantity",orderRunningShow.getQuantity());
@@ -241,6 +243,7 @@ public class OrderRunningController {
                 obj.put("update_current_time",orderRunningShow.getUpdate_current_time());
                 obj.put("start_count", orderRunningShow.getStart_count());
                 obj.put("check_count", orderRunningShow.getCheck_count());
+                obj.put("check_count_time", orderRunningShow.getCheck_count_time());
                 obj.put("current_count",orderRunningShow.getCurrent_count());
                 obj.put("total",orderRunningShow.getTotal());
                 obj.put("quantity",orderRunningShow.getQuantity());
@@ -314,6 +317,7 @@ public class OrderRunningController {
                 obj.put("update_current_time",orderRunningShow.getUpdate_current_time());
                 obj.put("start_count", orderRunningShow.getStart_count());
                 obj.put("check_count", orderRunningShow.getCheck_count());
+                obj.put("check_count_time", orderRunningShow.getCheck_count_time());
                 obj.put("current_count",orderRunningShow.getCurrent_count());
                 obj.put("total",orderRunningShow.getTotal());
                 obj.put("quantity",orderRunningShow.getQuantity());
@@ -385,6 +389,7 @@ public class OrderRunningController {
                 obj.put("update_time", orderRunnings.get(i).getUpdate_time());
                 obj.put("start_count", orderRunnings.get(i).getStart_count());
                 obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("check_count_time", orderRunnings.get(i).getCheck_count_time());
                 obj.put("current_count", orderRunnings.get(i).getCurrent_count());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("quantity", orderRunnings.get(i).getQuantity());
@@ -451,6 +456,7 @@ public class OrderRunningController {
                 obj.put("update_time", orderRunnings.get(i).getUpdate_time());
                 obj.put("start_count", orderRunnings.get(i).getStart_count());
                 obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("check_count_time", orderRunnings.get(i).getCheck_count_time());
                 obj.put("current_count", orderRunnings.get(i).getCurrent_count());
                 obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("quantity", orderRunnings.get(i).getQuantity());

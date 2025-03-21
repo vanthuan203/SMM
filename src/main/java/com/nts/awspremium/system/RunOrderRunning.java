@@ -41,7 +41,7 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            if((System.currentTimeMillis()-check_time)/1000<180){
+                            if((System.currentTimeMillis()-check_time)/1000>180){
                                 Integer check_count_num=orderRunningController.update_Check_Count_Num();
                                 for(int i=1;i<=check_count_num;i++) {
                                     int finalI = i;
