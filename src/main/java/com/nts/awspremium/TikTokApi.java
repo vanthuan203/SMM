@@ -26,6 +26,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
+
 public class TikTokApi {
 
     public static Integer getFollowerCountOFF(String tiktok_id,Integer index) {
@@ -68,6 +70,19 @@ public class TikTokApi {
     }
 
 
+    public static String getKey() {
+
+        try {
+            Random random = new Random();
+            return random.nextInt(10)<=5?"199c73e9e3msh0138b95e7755c65p1c4d6ajsn9330b60a69c8":"4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a";
+
+        } catch (Exception e) {
+            return "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a";
+        }
+    }
+
+
+
     public static Integer getFollowerCount(String tiktok_id,Integer index) {
 
         try {
@@ -80,7 +95,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -120,7 +135,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -157,7 +172,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -194,7 +209,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -229,7 +244,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -260,7 +275,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -382,7 +397,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -417,7 +432,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -452,7 +467,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -486,7 +501,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -516,7 +531,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/posts?unique_id="+tiktok_id+"&count="+count)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -551,7 +566,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
@@ -585,7 +600,7 @@ public class TikTokApi {
             Request request = new Request.Builder()
                     .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
                     .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a")
+                    .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
