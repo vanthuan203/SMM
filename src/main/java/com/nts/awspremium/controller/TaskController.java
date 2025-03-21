@@ -162,7 +162,7 @@ public class TaskController {
 
                 String ver_Device = device.getApp_version().trim().replaceAll("\\.", ""); // Xóa dấu chấm
                 String ver_System = settingSystem.getApp_version().trim().replaceAll("\\.", ""); // Xóa dấu chấm
-                if(Long.parseLong(ver_Device)<Long.parseLong(ver_System)){
+                if(Long.parseLong(ver_Device==null?"0":ver_Device)<Long.parseLong(ver_System)){
                     device.setUpdate_time(System.currentTimeMillis());
                     deviceRepository.save(device);
                     resp.put("status", false);
