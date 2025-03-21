@@ -71,7 +71,7 @@ public class RunOrderRunning {
                             }
                             dataConmentController.update_Running_Comment();
                             while (true){
-                                if((System.currentTimeMillis()-check_time)/1000<60){
+                                if((System.currentTimeMillis()-check_time)/1000<120){
                                     try {
                                         Thread.sleep(5000);
                                     } catch (InterruptedException e) {
