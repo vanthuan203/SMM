@@ -538,7 +538,7 @@ public class OrderRunningController {
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_By_Check_Count(System.currentTimeMillis());
             Integer check_count_num=0;
             for(int i=0;i<orderRunningList.size();i++){
-                if(i%100==0){
+                if(i%50==0){
                     check_count_num=check_count_num+1;
                 }
                 orderRunningList.get(i).setCheck_count(check_count_num);

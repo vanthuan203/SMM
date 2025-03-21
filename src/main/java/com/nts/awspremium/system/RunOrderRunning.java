@@ -27,9 +27,9 @@ public class RunOrderRunning {
             if(Integer.parseInt(env.getProperty("server.port"))==8000){
                 new Thread(() -> {
                     //Random rand =new Random();
+                    Long check_time=System.currentTimeMillis();
                     while (true) {
                         try {
-                            Long check_time=System.currentTimeMillis();
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
@@ -41,16 +41,19 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            Integer check_count_num=orderRunningController.update_Check_Count_Num();
-                            for(int i=1;i<=check_count_num;i++) {
-                                int finalI = i;
-                                new Thread(() -> {
+                            if((System.currentTimeMillis()-check_time)/1000<180){
+                                Integer check_count_num=orderRunningController.update_Check_Count_Num();
+                                for(int i=1;i<=check_count_num;i++) {
+                                    int finalI = i;
+                                    new Thread(() -> {
                                         try {
                                             orderRunningController.update_Current_Total(finalI);
                                         } catch (Exception e) {
                                         }
 
-                                }).start();
+                                    }).start();
+                                }
+                                check_time=System.currentTimeMillis();
                             }
                             try {
                                 Thread.sleep(1000);
@@ -70,17 +73,6 @@ public class RunOrderRunning {
                                 throw new RuntimeException(e);
                             }
                             dataConmentController.update_Running_Comment();
-                            while (true){
-                                if((System.currentTimeMillis()-check_time)/1000<120){
-                                    try {
-                                        Thread.sleep(5000);
-                                    } catch (InterruptedException e) {
-                                        throw new RuntimeException(e);
-                                    }
-                                }else{
-                                    break;
-                                }
-                            }
                         } catch (Exception e) {
                             continue;
                         }
