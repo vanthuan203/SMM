@@ -53,6 +53,8 @@ public class TiktokUpdate {
     @Autowired
     private TaskPriorityRepository taskPriorityRepository;
     @Autowired
+    private TaskSumRepository taskSumRepository;
+    @Autowired
     private ModeOptionRepository modeOptionRepository;
 
     public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
@@ -74,6 +76,13 @@ public class TiktokUpdate {
                 tiktokFollower24h.setId(account_id.trim()+task_key.trim());
                 tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
                 tikTokFollower24hRepository.save(tiktokFollower24h);
+
+                TaskSum taskSum =new TaskSum();
+                taskSum.setId(account_id.trim()+task_key.trim());
+                taskSum.setUpdate_time(System.currentTimeMillis());
+                taskSum.setTask("follower");
+                taskSum.setPlatform("tiktok");
+                taskSumRepository.save(taskSum);
             }
             AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
             ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
