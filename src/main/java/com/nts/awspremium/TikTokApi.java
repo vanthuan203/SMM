@@ -634,6 +634,22 @@ public class TikTokApi {
             return null;
         }
     }
+
+    public static String extractTikTokId(String input) {
+        // Xóa phần query string nếu có (ví dụ: ?lang=vi-VN)
+        String cleanInput = input.split("\\?")[0];
+
+        // Regex để lấy username TikTok (có thể có hoặc không có "@")
+        Pattern pattern = Pattern.compile("^@?([a-zA-Z0-9_.]+)$");
+        Matcher matcher = pattern.matcher(cleanInput);
+
+        if (matcher.find()) {
+            return "@" + matcher.group(1);
+        } else {
+            return null;
+        }
+    }
+
     public static String checkTiktokTrue(String url) {
         try {
             // Kết nối tới trang YouTube và lấy nội dung trang
