@@ -19,6 +19,7 @@ import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
 import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,8 @@ public class TaskController {
     private HistorySumRepository historySumRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private TaskSumRepository taskSumRepository;
     @Autowired
     private TiktokTask tiktokTask;
     @Autowired
@@ -1773,6 +1776,37 @@ public class TaskController {
 
             resp.put("status", false);
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "get_Task_7D", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Task_7D(@RequestParam(defaultValue = "") String user) {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> task_7_Day = taskSumRepository.get_Task_7d();
+            JSONArray jsonArray = new JSONArray();
+            Long max_Task = 0L;
+
+            for (int i = 0; i < task_7_Day.size(); i++) {
+                    if (max_Task < Float.parseFloat(task_7_Day.get(i).split(",")[1])) {
+                        max_Task = Long.parseLong(task_7_Day.get(i).split(",")[1]);
+                    }
+            }
+            for (int i = 0; i < task_7_Day.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("date", task_7_Day.get(i).split(",")[0]);
+                obj.put("task", Long.parseLong(task_7_Day.get(i).split(",")[1]));
+                obj.put("max_task", max_Task);
+
+                jsonArray.add(obj);
+            }
+            resp.put("view7day", jsonArray);
+
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            resp.put("status", "fail");
+            resp.put("message", e.getMessage());
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
 

@@ -66,8 +66,17 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold or o.valid=0")
     public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
-    @Query(value = "SELECT SUM(thread_set) FROM Data.order_running where service_id in(SELECT service_id FROM service where mode='auto');",nativeQuery = true)
-    public Integer get_Sum_Thread_By_Mode_Auto();
+    @Query(value = "SELECT COALESCE(SUM(thread_set), 0) AS total_threads\n" +
+            "FROM Data.order_running\n" +
+            "WHERE start_time > 0 \n" +
+            "AND service_id IN (SELECT service_id FROM service WHERE mode = 'auto');",nativeQuery = true)
+    public Integer get_Sum_Thread_Running_By_Mode_Auto();
+
+    @Query(value = "SELECT COALESCE(SUM(thread_set), 0) AS total_threads\n" +
+            "FROM Data.order_running\n" +
+            "WHERE start_time = 0 \n" +
+            "AND service_id IN (SELECT service_id FROM service WHERE mode = 'auto');",nativeQuery = true)
+    public Integer get_Sum_Thread_Pending_By_Mode_Auto();
 
     @Query(value = "SELECT SUM(thread_set) FROM Data.order_running where start_time>0 and service_id in(SELECT service_id FROM service where mode='auto');",nativeQuery = true)
     public Integer get_Sum_Thread_Order_Running_By_Mode_Auto();
@@ -75,8 +84,8 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
     public Integer get_Count_OrderRunning_By_Service(Integer service_id);
 
-    @Query(value = "SELECT o FROM OrderRunning o where o.service.task='comment' and o.start_time=0")
-    public List<OrderRunning> get_Order_Comment_Pending();
+    @Query(value = "select o from OrderRunning o JOIN FETCH o.service where o.start_time=0 ORDER BY o.insert_time ASC")
+    public List<OrderRunning> get_Order_Pending_ASC();
 
     @Query(value = "SELECT service_id from order_running where order_key=?1 and service_id in(select service_id from service where task='view' and platform='youtube')",nativeQuery = true)
     public Integer get_ServiceId_By_TaskKey(String order_key);

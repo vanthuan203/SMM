@@ -72,7 +72,7 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            dataConmentController.update_Running_Comment();
+                            orderRunningController.update_Running_Order_Pending();
                         } catch (Exception e) {
                             continue;
                         }

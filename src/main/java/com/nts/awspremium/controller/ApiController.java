@@ -188,6 +188,7 @@ public class ApiController {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                Boolean pending=false;
                 if(!user.getRole().equals("ROLE_ADMIN")){
                     if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
                         resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
@@ -197,7 +198,10 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()&&!service.getTask().equals("comment")){
+                    if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                        pending=true;
+                    }
+                    if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -212,17 +216,17 @@ public class ApiController {
                     }
                 }else if(service.getPlatform().trim().equals("tiktok")){
                     if(service.getTask().trim().equals("follower")){
-                        get_task=tiktokOrder.tiktok_follower(data,service,user);
+                        get_task=tiktokOrder.tiktok_follower(data,service,user,pending);
                     }else if(service.getTask().trim().equals("like")){
-                        get_task=tiktokOrder.tiktok_like(data,service,user);
+                        get_task=tiktokOrder.tiktok_like(data,service,user,pending);
                     }else if(service.getTask().trim().equals("comment")){
-                        get_task=tiktokOrder.tiktok_comment(data,service,user);
+                        get_task=tiktokOrder.tiktok_comment(data,service,user,pending);
                     }else if(service.getTask().trim().equals("view")){
-                        get_task=tiktokOrder.tiktok_view(data,service,user);
+                        get_task=tiktokOrder.tiktok_view(data,service,user,pending);
                     }else if(service.getTask().trim().equals("share")){
-                        get_task=tiktokOrder.tiktok_share(data,service,user);
+                        get_task=tiktokOrder.tiktok_share(data,service,user,pending);
                     }else if(service.getTask().trim().equals("favorites")){
-                        get_task=tiktokOrder.tiktok_favorites(data,service,user);
+                        get_task=tiktokOrder.tiktok_favorites(data,service,user,pending);
                     }
                 }else if(service.getPlatform().trim().equals("facebook")){
                     if(service.getTask().trim().equals("follower")){
@@ -428,6 +432,7 @@ public class ApiController {
                     resp.put("error", "Invalid service");
                     return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                 }
+                Boolean pending=false;
                 if(!user.getRole().equals("ROLE_ADMIN")){
                     if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
                         resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
@@ -437,7 +442,10 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_By_Mode_Auto()>=settingSystem.getMax_thread()&&!service.getTask().equals("comment")){
+                    if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()){
+                        pending=true;
+                    }
+                    if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -452,17 +460,17 @@ public class ApiController {
                     }
                 }else if(service.getPlatform().trim().equals("tiktok")){
                     if(service.getTask().trim().equals("follower")){
-                        get_task=tiktokOrder.tiktok_follower(data,service,user);
+                        get_task=tiktokOrder.tiktok_follower(data,service,user,pending);
                     }else if(service.getTask().trim().equals("like")){
-                        get_task=tiktokOrder.tiktok_like(data,service,user);
+                        get_task=tiktokOrder.tiktok_like(data,service,user,pending);
                     }else if(service.getTask().trim().equals("comment")){
-                        get_task=tiktokOrder.tiktok_comment(data,service,user);
+                        get_task=tiktokOrder.tiktok_comment(data,service,user,pending);
                     }else if(service.getTask().trim().equals("view")){
-                        get_task=tiktokOrder.tiktok_view(data,service,user);
+                        get_task=tiktokOrder.tiktok_view(data,service,user,pending);
                     }else if(service.getTask().trim().equals("share")){
-                        get_task=tiktokOrder.tiktok_share(data,service,user);
+                        get_task=tiktokOrder.tiktok_share(data,service,user,pending);
                     }else if(service.getTask().trim().equals("favorites")){
-                        get_task=tiktokOrder.tiktok_favorites(data,service,user);
+                        get_task=tiktokOrder.tiktok_favorites(data,service,user,pending);
                     }
                 }else if(service.getPlatform().trim().equals("facebook")){
                     if(service.getTask().trim().equals("follower")){
@@ -562,17 +570,17 @@ public class ApiController {
                 }
             }else if(service.getPlatform().trim().equals("tiktok")){
                 if(service.getTask().trim().equals("follower")){
-                    get_task=tiktokOrder.tiktok_follower(data,service,user);
+                    get_task=tiktokOrder.tiktok_follower(data,service,user,false);
                 }else if(service.getTask().trim().equals("like")){
-                    get_task=tiktokOrder.tiktok_like(data,service,user);
+                    get_task=tiktokOrder.tiktok_like(data,service,user,false);
                 }else if(service.getTask().trim().equals("comment")){
-                    get_task=tiktokOrder.tiktok_comment(data,service,user);
+                    get_task=tiktokOrder.tiktok_comment(data,service,user,false);
                 }else if(service.getTask().trim().equals("view")){
-                    get_task=tiktokOrder.tiktok_view(data,service,user);
+                    get_task=tiktokOrder.tiktok_view(data,service,user,false);
                 }else if(service.getTask().trim().equals("share")){
-                    get_task=tiktokOrder.tiktok_share(data,service,user);
+                    get_task=tiktokOrder.tiktok_share(data,service,user,false);
                 }else if(service.getTask().trim().equals("favorites")){
-                    get_task=tiktokOrder.tiktok_favorites(data,service,user);
+                    get_task=tiktokOrder.tiktok_favorites(data,service,user,false);
                 }
             }else if(service.getPlatform().trim().equals("facebook")){
                 if(service.getTask().trim().equals("follower")){
@@ -671,17 +679,17 @@ public class ApiController {
                 }
             }else if(service.getPlatform().trim().equals("tiktok")){
                 if(service.getTask().trim().equals("follower")){
-                    get_task=tiktokOrder.tiktok_follower(data,service,user);
+                    get_task=tiktokOrder.tiktok_follower(data,service,user,false);
                 }else if(service.getTask().trim().equals("like")){
-                    get_task=tiktokOrder.tiktok_like(data,service,user);
+                    get_task=tiktokOrder.tiktok_like(data,service,user,false);
                 }else if(service.getTask().trim().equals("comment")){
-                    get_task=tiktokOrder.tiktok_comment(data,service,user);
+                    get_task=tiktokOrder.tiktok_comment(data,service,user,false);
                 }else if(service.getTask().trim().equals("view")){
-                    get_task=tiktokOrder.tiktok_view(data,service,user);
+                    get_task=tiktokOrder.tiktok_view(data,service,user,false);
                 }else if(service.getTask().trim().equals("share")){
-                    get_task=tiktokOrder.tiktok_share(data,service,user);
+                    get_task=tiktokOrder.tiktok_share(data,service,user,false);
                 }else if(service.getTask().trim().equals("favorites")){
-                    get_task=tiktokOrder.tiktok_favorites(data,service,user);
+                    get_task=tiktokOrder.tiktok_favorites(data,service,user,false);
                 }
             }else if(service.getPlatform().trim().equals("facebook")){
                 if(service.getTask().trim().equals("follower")){

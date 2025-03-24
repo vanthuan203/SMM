@@ -30,7 +30,7 @@ public class TiktokOrder {
     @Autowired
     private DataFollowerTiktokRepository dataFollowerTiktokRepository;
 
-    public JSONObject tiktok_follower(DataRequest data, Service service, User user)  throws IOException, ParseException {
+    public JSONObject tiktok_follower(DataRequest data, Service service, User user,Boolean pending)  throws IOException, ParseException {
         JSONObject resp = new JSONObject();
         OrderRunning orderRunningCheck=null;
         try{
@@ -82,8 +82,12 @@ public class TiktokOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(follower_count<0?0:System.currentTimeMillis());
-            orderRunning.setThread(follower_count<0?0:service.getThread());
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
+            orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
@@ -159,7 +163,7 @@ public class TiktokOrder {
             return resp;
         }
     }
-    public JSONObject tiktok_like(DataRequest data,Service service,User user)  throws IOException, ParseException{
+    public JSONObject tiktok_like(DataRequest data,Service service,User user,Boolean pending)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
@@ -207,7 +211,11 @@ public class TiktokOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(System.currentTimeMillis());
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
@@ -258,7 +266,7 @@ public class TiktokOrder {
         }
     }
 
-    public JSONObject tiktok_share(DataRequest data,Service service,User user)  throws IOException, ParseException{
+    public JSONObject tiktok_share(DataRequest data,Service service,User user,Boolean pending)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
@@ -306,7 +314,11 @@ public class TiktokOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(System.currentTimeMillis());
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
@@ -358,7 +370,7 @@ public class TiktokOrder {
     }
 
 
-    public JSONObject tiktok_favorites(DataRequest data,Service service,User user)  throws IOException, ParseException{
+    public JSONObject tiktok_favorites(DataRequest data,Service service,User user,Boolean pending)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
@@ -406,7 +418,11 @@ public class TiktokOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(System.currentTimeMillis());
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
@@ -457,7 +473,7 @@ public class TiktokOrder {
         }
     }
 
-    public JSONObject tiktok_comment(DataRequest data,Service service,User user)  throws IOException, ParseException{
+    public JSONObject tiktok_comment(DataRequest data,Service service,User user,Boolean pending)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
@@ -506,7 +522,11 @@ public class TiktokOrder {
             orderRunning.setComment_list(data.getComments());
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(0L);
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
@@ -556,7 +576,7 @@ public class TiktokOrder {
             return resp;
         }
     }
-    public JSONObject tiktok_view(DataRequest data,Service service,User user)  throws IOException, ParseException{
+    public JSONObject tiktok_view(DataRequest data,Service service,User user,Boolean pending)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
@@ -603,7 +623,11 @@ public class TiktokOrder {
             orderRunning.setUser(user);
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            orderRunning.setStart_time(System.currentTimeMillis());
+            if(pending==false){
+                orderRunning.setStart_time(System.currentTimeMillis());
+            }else{
+                orderRunning.setStart_time(0L);
+            }
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());

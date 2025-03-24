@@ -20,6 +20,8 @@ public class SettingSystem {
     @Column(columnDefinition = "integer default 0")
     private Integer max_thread=0;
     @Column(columnDefinition = "integer default 0")
+    private Integer max_thread_pending=0;
+    @Column(columnDefinition = "integer default 0")
     private Integer max_profile;
     @Column(columnDefinition = "integer default 0")
     private Integer max_mysql;
