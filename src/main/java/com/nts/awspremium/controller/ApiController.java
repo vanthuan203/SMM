@@ -104,7 +104,7 @@ public class ApiController {
                         resp.put("start_count", orderRunning.getStart_count());
                         resp.put("current_count", orderRunning.getTotal() + orderRunning.getStart_count());
                         resp.put("charge", orderRunning.getCharge());
-                        if (orderRunning.getThread() <= 0) {
+                        if (orderRunning.getStart_time() <= 0) {
                             resp.put("status", "Pending");
                         } else {
                             resp.put("status", "In progress");
@@ -142,7 +142,7 @@ public class ApiController {
                         orderJson.put("start_count", order.getStart_count());
                         orderJson.put("current_count", order.getStart_count() + order.getTotal());
                         orderJson.put("charge", order.getCharge());
-                        if (order.getThread() <=0) {
+                        if (order.getStart_time() <=0) {
                             orderJson.put("status", "Pending");
                         } else {
                             orderJson.put("status", "In progress");
@@ -348,7 +348,7 @@ public class ApiController {
                         resp.put("start_count", orderRunning.getStart_count());
                         resp.put("current_count", orderRunning.getTotal() + orderRunning.getStart_count());
                         resp.put("charge", orderRunning.getCharge());
-                        if (orderRunning.getThread() <= 0) {
+                        if (orderRunning.getStart_time() <= 0) {
                             resp.put("status", "Pending");
                         } else {
                             resp.put("status", "In progress");
@@ -386,7 +386,7 @@ public class ApiController {
                         orderJson.put("start_count", order.getStart_count());
                         orderJson.put("current_count", order.getStart_count() + order.getTotal());
                         orderJson.put("charge", order.getCharge());
-                        if (order.getThread() <=0) {
+                        if (order.getStart_time() <=0) {
                             orderJson.put("status", "Pending");
                         } else {
                             orderJson.put("status", "In progress");
