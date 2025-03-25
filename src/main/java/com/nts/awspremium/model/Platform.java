@@ -29,7 +29,10 @@ public class Platform {
     private Integer login_account=0;
     @Column(columnDefinition = "integer default 0")
     private Integer register_time=0;
+    @Column(columnDefinition = "integer default 0")
     private Integer register_limit=5;
+    @Column(columnDefinition = "integer default 0")
+    private Integer max_account=5;
     @Column(columnDefinition = "integer default 0")
     private Integer login_time=0;
     @Column(columnDefinition = "integer default 0")

@@ -44,6 +44,9 @@ public class AccountProfile implements Serializable {
     private Long update_time;
 
     @Column(columnDefinition = "bigint default 0")
+    private Long task_time;
+
+    @Column(columnDefinition = "bigint default 0")
     private Long login_time=0L;
 
     @Column(columnDefinition = "bigint default 0")
@@ -51,6 +54,11 @@ public class AccountProfile implements Serializable {
 
     @Column(columnDefinition = "varchar(255) default ''")
     private String auth_2fa="";
+
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String code="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String connection_platform="";
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id",referencedColumnName = "profile_id",updatable = true,insertable = true)
