@@ -39,7 +39,7 @@ public interface BalanceRepository extends JpaRepository<Balance,Long> {
             "LIMIT 7;",nativeQuery = true)
     public List<String> get_Refund_7day();
 
-    @Query(value = "SELECT ROUND(-sum(balance),2)\n" +
+    @Query(value = "SELECT COALESCE(ROUND(-sum(balance),2),0)\n" +
             "                              FROM balance\n" +
             "                                WHERE user in(select username from user where role='ROLE_USER') and FROM_UNIXTIME((add_time/1000+(7-TIME_TO_SEC(TIMEDIFF(NOW(), UTC_TIMESTAMP)) / 3600)*60*60),'%Y-%m-%d %H:%i:%s')>=DATE_FORMAT(CONVERT_TZ(NOW(), @@session.time_zone, '+07:00'),'%Y-%m-%d 00-00-00')\n" +
             "                        AND  balance<0 ",nativeQuery = true)
