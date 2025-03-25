@@ -1564,7 +1564,7 @@ public class TaskController {
 
                             resp.put("status", true);
                             data.put("platform", "youtube");
-                            data.put("app", "youtube");
+                            data.put("app", platform_Youtube_Check.getApp_name().trim());
                             data.put("task", "login");
                             data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
@@ -1643,7 +1643,7 @@ public class TaskController {
                             profileTaskRepository.save(profileTask);
                             resp.put("status", true);
                             data.put("platform", "youtube");
-                            data.put("app", "youtube");
+                            data.put("app", platform_Youtube_Check.getApp_name().trim());
                             if (accountProfile_Live0.getAccount_id().contains("register")) {
                                 data.put("task", "register");
                             } else {
@@ -1670,7 +1670,7 @@ public class TaskController {
                         profileTaskRepository.save(profileTask);
                         resp.put("status", true);
                         data.put("platform", "youtube");
-                        data.put("app", "youtube");
+                        data.put("app", platform_Youtube_Check.getApp_name().trim());
                         if(accountProfile_Live0.getAccount_id().contains("register")){
                             data.put("task", "register");
                         }else{
@@ -1733,7 +1733,7 @@ public class TaskController {
                     profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform","youtube");
-                    data.put("app","youtube");
+                    data.put("app",platform_Youtube_Check.getApp_name().trim());
                     data.put("task", "register");
                     data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                     data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
@@ -1752,7 +1752,7 @@ public class TaskController {
                     }else{
                         resp.put("status", true);
                         data.put("platform","youtube");
-                        data.put("app","youtube");
+                        data.put("app",platform_Youtube_Check.getApp_name().trim());
                         data.put("task", "register");
                         data.put("task_key", accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
                         data.put("account_id",accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")));
@@ -1898,7 +1898,7 @@ public class TaskController {
                                 profileTaskRepository.save(profileTask);
                                 resp.put("status", true);
                                 data.put("platform", profileTask.getPlatform());
-                                data.put("app",profileTask.getPlatform());
+                                data.put("app",platform_Check.getApp_name().trim());
                                 data.put("task", "register");
                                 data.put("task_key", accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
                                 data.put("account_id",  accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
@@ -1950,15 +1950,7 @@ public class TaskController {
 
                                 resp.put("status", true);
                                 data.put("platform", profileTask.getPlatform().trim());
-                                if( profileTask.getPlatform().equals("tiktok")){
-                                    if(device.getMode().contains("tiktok-lite")){
-                                        data.put("app","tiktok-lite");
-                                    }else{
-                                        data.put("app","tiktok-lite");
-                                    }
-                                }else{
-                                    data.put("app",profileTask.getPlatform());
-                                }
+                                data.put("app",platform_Check.getApp_name().trim());
                                 data.put("task", "login");
                                 data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                                 data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
@@ -2010,7 +2002,7 @@ public class TaskController {
 
                             resp.put("status", true);
                             data.put("platform",profileTask.getPlatform());
-                            data.put("app",profileTask.getPlatform());
+                            data.put("app",platform_Check.getApp_name().trim());
                             if(accountProfile_Live0.getLive()==-1){
                                 data.put("task", "register");
                             }else{

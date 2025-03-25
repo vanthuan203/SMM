@@ -41,6 +41,8 @@ public class Platform {
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
     private Long version_app;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String app_name;
     @Column(columnDefinition = "bigint default 0")
     private Long change_info;
     @Column(columnDefinition = "varchar(255) default ''")
