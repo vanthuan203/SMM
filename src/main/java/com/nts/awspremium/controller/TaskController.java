@@ -1581,7 +1581,7 @@ public class TaskController {
                         }
                     }
 
-                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()){
+                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=1){
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
                     resp.put("status", true);
