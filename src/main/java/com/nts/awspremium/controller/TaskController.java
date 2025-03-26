@@ -1554,6 +1554,7 @@ public class TaskController {
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
                             accountProfile.setRunning(0);
+                            accountProfile.setSign_in(0);
                             accountProfile.setCode(code);
                             accountProfile.setTask_time(0L);
                             accountProfile.setConnection_platform("");
@@ -1622,6 +1623,7 @@ public class TaskController {
                     accountProfile.setName("");
                     accountProfile.setAvatar(0);
                     accountProfile.setRunning(0);
+                    accountProfile.setSign_in(0);
                     accountProfile.setRecover("");
                     accountProfile.setPlatform("youtube");
                     accountProfile.setLive(-1);
@@ -1775,6 +1777,7 @@ public class TaskController {
                                 accountProfile.setLive(-1);
                                 accountProfile.setChanged(0);
                                 accountProfile.setRunning(0);
+                                accountProfile.setSign_in(0);
                                 accountProfile.setAuth_2fa("");
                                 accountProfile.setProfileTask(profileTask);
                                 accountProfile.setAdd_time(System.currentTimeMillis());
@@ -1840,6 +1843,7 @@ public class TaskController {
                                 accountProfile.setLive(0);
                                 accountProfile.setChanged(0);
                                 accountProfile.setRunning(0);
+                                accountProfile.setSign_in(0);
                                 accountProfile.setCode(code);
                                 accountProfile.setTask_time(0L);
                                 accountProfile.setConnection_platform("");
