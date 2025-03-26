@@ -1476,6 +1476,7 @@ public class TaskController {
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                 entityManager.clear();
+                accountProfileRepository.update_Running_By_ProfileId(profileTask.getProfile_id().trim());
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     resp.put("status", true);
@@ -1552,6 +1553,7 @@ public class TaskController {
                             accountProfile.setName(account_get.getName());
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
+                            accountProfile.setRunning(0);
                             accountProfile.setCode(code);
                             accountProfile.setTask_time(0L);
                             accountProfile.setConnection_platform("");
@@ -1575,118 +1577,29 @@ public class TaskController {
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
-                        }else{
-                            resp.put("status", false);
-                            data.put("message", "Không get được tài khoản youtube");
-                            resp.put("data", data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
-                    }else if(accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3){// Reset enabled profile and enable profile new
-                        if(profileTaskRepository.count_Profile(device.getDevice_id().trim())>1){
-                            // off profile
-                            profileTask.setEnabled_time(0L);
-                            //profileTask.setValid(0);
-                            profileTask.setEnabled(0);
-                            profileTaskRepository.save(profileTask);
-
-                            ProfileTask profileTask_Check =profileTaskRepository.get_Profile_Rand_Enable0_And_NotIn(profileTask.getProfile_id(),device.getDevice_id().trim());
-                            if (profileTask_Check !=null){
-                                profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
-                                entityManager.clear();
-                                profileTask_Check.setEnabled(1);
-                                profileTask_Check.setEnabled_time(System.currentTimeMillis());
-                                profileTaskRepository.save(profileTask_Check);
-                                resp.put("status", true);
-                                data.put("platform", "system");
-                                data.put("task", "profile_changer");
-                                data.put("profile_id", Integer.parseInt(profileTask_Check.getProfile_id().split(device_id.trim()+"_")[1]));
-                                resp.put("data",data);
-                                return new ResponseEntity<>(resp, HttpStatus.OK);
-                            }else{
-                                resp.put("status", false);
-                                data.put("message", "Không đủ điều kiện get tài khoản youtube");
-                                resp.put("data", data);
-                                return new ResponseEntity<>(resp, HttpStatus.OK);
-                            }
-                        }else{
-                            resp.put("status", false);
-                            data.put("message", "Không đủ điều kiện get tài khoản youtube");
-                            resp.put("data", data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
-                        }
-                    }else{
-                        resp.put("status", false);
-                        data.put("message", "Không đủ điều kiện get tài khoản youtube");
-                        resp.put("data", data);
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
 
-                }else if(accountProfile_Live0.getLive()!=1) {
-
-                    if(profileTask.getRequest_index()>1){ //giới hạn số lần trả mail trong một lần mở profile
-
-                        if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
-                            profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
-                            entityManager.clear();
-                            profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id().trim());
-                            //profileTask.setReboot(1);
-                            //profileTaskRepository.save(profileTask);
-                            resp.put("status", true);
-                            data.put("platform", "system");
-                            data.put("task", "profile_changer");
-                            data.put("profile_id", Integer.parseInt(profileTask.getProfile_id().split(device_id.trim() + "_")[1]));
-                            resp.put("data", data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
-                        } else if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) == 1) {
-
-                            profileTask.setRequest_index(1);
-                            profileTaskRepository.save(profileTask);
-                            resp.put("status", true);
-                            data.put("platform", "youtube");
-                            data.put("app", platform_Youtube_Check.getApp_name().trim());
-                            if (accountProfile_Live0.getAccount_id().contains("register")) {
-                                data.put("task", "register");
-                            } else {
-                                data.put("task", "login");
-                            }
-                            data.put("task_key", accountProfile_Live0.getAccount_id().substring(0, accountProfile_Live0.getAccount_id().lastIndexOf("|")));
-                            data.put("account_id", accountProfile_Live0.getAccount_id().substring(0, accountProfile_Live0.getAccount_id().lastIndexOf("|")));
-                            data.put("password", accountProfile_Live0.getPassword().trim());
-                            data.put("name", accountProfile_Live0.getName());
-                            data.put("avatar", accountProfile_Live0.getAvatar() == 0 ? false : true);
-                            data.put("recover_mail", accountProfile_Live0.getRecover().trim());
-                            data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
-                            resp.put("data", data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
-
-                        } else {
-                            resp.put("status", false);
-                            data.put("message", "Đợi time login || register tài khoản youtube");
-                            resp.put("data", data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
-                        }
+                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()){
+                    accountProfile_Live0.setLast_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile_Live0);
+                    resp.put("status", true);
+                    data.put("platform", "youtube");
+                    data.put("app", platform_Youtube_Check.getApp_name().trim());
+                    if(accountProfile_Live0.getAccount_id().contains("register")){
+                        data.put("task", "register");
                     }else{
-                        profileTask.setRequest_index(profileTask.getRequest_index()+1);
-                        profileTaskRepository.save(profileTask);
-                        resp.put("status", true);
-                        data.put("platform", "youtube");
-                        data.put("app", platform_Youtube_Check.getApp_name().trim());
-                        if(accountProfile_Live0.getAccount_id().contains("register")){
-                            data.put("task", "register");
-                        }else{
-                            data.put("task", "login");
-                        }
-                        data.put("task_key", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
-                        data.put("account_id", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
-                        data.put("password", accountProfile_Live0.getPassword().trim());
-                        data.put("name", accountProfile_Live0.getName());
-                        data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
-                        data.put("recover_mail", accountProfile_Live0.getRecover().trim());
-                        data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
-                        resp.put("data",data);
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                        data.put("task", "login");
                     }
-
+                    data.put("task_key", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
+                    data.put("password", accountProfile_Live0.getPassword().trim());
+                    data.put("name", accountProfile_Live0.getName());
+                    data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
+                    data.put("recover_mail", accountProfile_Live0.getRecover().trim());
+                    data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }else if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
@@ -1708,6 +1621,7 @@ public class TaskController {
                     accountProfile.setPassword(password);
                     accountProfile.setName("");
                     accountProfile.setAvatar(0);
+                    accountProfile.setRunning(0);
                     accountProfile.setRecover("");
                     accountProfile.setPlatform("youtube");
                     accountProfile.setLive(-1);
@@ -1839,22 +1753,7 @@ public class TaskController {
                         ){
                             //gioi han time reg by platform and time
                             List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
-                            if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,10)>0){
-                                if(profileTask.getTask_list().trim().length()==0){
-                                    profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
-                                    entityManager.clear();
-                                    profileTask=null;
-                                }else{
-                                    String task_List = profileTask.getTask_list();
-                                    List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
-                                    profileTask.setPlatform(arrPlatform.get(0));
-                                    List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
-                                    task_List = String.join(",", subPlatform);
-                                    profileTask.setTask_list(task_List);
-                                    profileTask.setRequest_index(0);
-                                    profileTaskRepository.save(profileTask);
-                                }
-                            }else{
+                            if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,10)==0){
                                 AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%");
                                 AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform(),profileTask.getPlatform());
                                 if(accountCheck!=null){
@@ -1875,6 +1774,7 @@ public class TaskController {
                                 accountProfile.setPlatform(profileTask.getPlatform());
                                 accountProfile.setLive(-1);
                                 accountProfile.setChanged(0);
+                                accountProfile.setRunning(0);
                                 accountProfile.setAuth_2fa("");
                                 accountProfile.setProfileTask(profileTask);
                                 accountProfile.setAdd_time(System.currentTimeMillis());
@@ -1939,6 +1839,7 @@ public class TaskController {
                                 accountProfile.setPlatform(profileTask.getPlatform().trim());
                                 accountProfile.setLive(0);
                                 accountProfile.setChanged(0);
+                                accountProfile.setRunning(0);
                                 accountProfile.setCode(code);
                                 accountProfile.setTask_time(0L);
                                 accountProfile.setConnection_platform("");
@@ -1961,44 +1862,13 @@ public class TaskController {
                                 data.put("auth_2fa", account_get.getAuth_2fa().trim());
                                 resp.put("data",data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
-                            }else{
-                                if(profileTask.getTask_list().trim().length()==0){
-                                    profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
-                                    entityManager.clear();
-                                    profileTask=null;
-                                }else{
-                                    String task_List = profileTask.getTask_list();
-                                    List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
-                                    profileTask.setPlatform(arrPlatform.get(0));
-                                    List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
-                                    task_List = String.join(",", subPlatform);
-                                    profileTask.setTask_list(task_List);
-                                    profileTask.setRequest_index(0);
-                                    profileTaskRepository.save(profileTask);
-                                }
-                            }
-                        }else{
-                            if(profileTask.getTask_list().trim().length()==0){
-                                profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
-                                entityManager.clear();
-                                profileTask=null;
-                            }else{
-                                String task_List = profileTask.getTask_list();
-                                List<String> arrPlatform = new ArrayList<>(Arrays.asList(task_List.split(",")));
-                                profileTask.setPlatform(arrPlatform.get(0));
-                                List<String> subPlatform = arrPlatform.subList(1, arrPlatform.size());
-                                task_List = String.join(",", subPlatform);
-                                profileTask.setTask_list(task_List);
-                                profileTask.setRequest_index(0);
-                                profileTaskRepository.save(profileTask);
                             }
                         }
+
                     }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()){//check last time task login
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
-                            profileTask.setRequest_index(1);
-                            profileTaskRepository.save(profileTask);
 
                             resp.put("status", true);
                             data.put("platform",profileTask.getPlatform());
@@ -2048,8 +1918,15 @@ public class TaskController {
                 }
             }
 
-
-            profileTask.setAccount_id(accountProfileRepository.get_AccountId_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform()));
+            AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
+            Boolean sign_In=false;
+            if(accountProfile_Task.getRunning()==0){
+                sign_In=true;
+                profileTask.setAccount_id(accountProfile_Task.getAccount_id().trim());
+                accountProfile_Task.setTask_time(System.currentTimeMillis());
+                accountProfile_Task.setRunning(1);
+                accountProfileRepository.save(accountProfile_Task);
+            }
             profileTask.setTask_index(profileTask.getTask_index()+1);
             profileTaskRepository.save(profileTask);
             List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
@@ -2202,7 +2079,13 @@ public class TaskController {
                 dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                 dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
+                if(accountProfile_Task.getRecover().trim().contains("|")){
+                    dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                }else{
+                    dataJson.put("recover","");
+                }
                 dataJson.put("task_index",profileTask.getTask_index());
+                dataJson.put("sign_in",sign_In);
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("version_app",version_app==null?0:version_app);
                 Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
