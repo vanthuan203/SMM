@@ -1919,16 +1919,34 @@ public class TaskController {
             }
 
             AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
-            Boolean sign_In=false;
             if(accountProfile_Task.getRunning()==0){
-                sign_In=true;
+
                 profileTask.setAccount_id(accountProfile_Task.getAccount_id().trim());
+                profileTaskRepository.save(profileTask);
                 accountProfile_Task.setTask_time(System.currentTimeMillis());
                 accountProfile_Task.setRunning(1);
+                accountProfile_Task.setSign_in(1);
                 accountProfileRepository.save(accountProfile_Task);
             }
-            profileTask.setTask_index(profileTask.getTask_index()+1);
-            profileTaskRepository.save(profileTask);
+            if(accountProfile_Task.getSign_in()==1){
+                Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
+                resp.put("status", true);
+                data.put("platform",profileTask.getPlatform());
+                data.put("app",platform_Check.getApp_name().trim());
+                data.put("task", "sign_in");
+                data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                data.put("password", accountProfile_Task.getPassword().trim());
+                data.put("name", accountProfile_Task.getName().trim());
+                data.put("avatar", accountProfile_Task.getAvatar()==0?false:true);
+                data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+                data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else{
+                profileTask.setTask_index(profileTask.getTask_index()+1);
+                profileTaskRepository.save(profileTask);
+            }
             List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
@@ -2085,7 +2103,6 @@ public class TaskController {
                     dataJson.put("recover","");
                 }
                 dataJson.put("task_index",profileTask.getTask_index());
-                dataJson.put("sign_in",sign_In);
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("version_app",version_app==null?0:version_app);
                 Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
@@ -2298,7 +2315,15 @@ public class TaskController {
             }
 
             try{
-                if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
+
+
+                if(updateTaskRequest.getTask().equals("sign_in")&&updateTaskRequest.getIsLogin()==1){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                    if(accountProfile!=null){
+                        accountProfile.setSign_in(0);
+                        accountProfileRepository.save(accountProfile);
+                    }
+                }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){

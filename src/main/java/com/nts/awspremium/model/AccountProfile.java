@@ -37,6 +37,9 @@ public class AccountProfile implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer changed;
 
+    @Column(columnDefinition = "integer default 0")
+    private Integer sign_in=0;
+
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;
 
