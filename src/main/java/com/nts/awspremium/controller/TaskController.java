@@ -1869,7 +1869,8 @@ public class TaskController {
                             }
                         }
 
-                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()){//check last time task login
+                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()&&
+                            accountProfile_Live0.getLive()==-1){//check last time task login
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
@@ -1887,7 +1888,7 @@ public class TaskController {
                             data.put("password", accountProfile_Live0.getPassword().trim());
                             data.put("name", accountProfile_Live0.getName().trim());
                             data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
-                            data.put("recover_mail", accountProfile_Live0.getRecover().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
+                            data.put("recover_mail", accountProfile_Live0.getRecover().substring(0,accountProfile_Live0.getRecover().lastIndexOf("|")));
                             data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
