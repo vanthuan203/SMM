@@ -522,11 +522,7 @@ public class TiktokOrder {
             orderRunning.setComment_list(data.getComments());
             orderRunning.setUpdate_time(0L);
             orderRunning.setUpdate_current_time(0L);
-            if(pending==false){
-                orderRunning.setStart_time(System.currentTimeMillis());
-            }else{
-                orderRunning.setStart_time(0L);
-            }
+            orderRunning.setStart_time(0L);
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(service.getThread());
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
