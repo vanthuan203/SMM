@@ -915,7 +915,7 @@ public class TaskController {
                                         data.put("password", password);
                                         data.put("name", accountProfile.getName());
                                         data.put("avatar", accountProfile.getAvatar()==0?false:true);
-                                        data.put("recover_mail",account_Dependent.getRecover_mail().trim());
+                                        data.put("recover_mail","");
                                         data.put("auth_2fa", "");
                                         resp.put("data",data);
                                         return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -972,7 +972,7 @@ public class TaskController {
                                     data.put("password", account_get.getPassword().trim());
                                     data.put("name", account_get.getName().trim());
                                     data.put("avatar", accountProfile.getAvatar()==0?false:true);
-                                    data.put("recover_mail", account_get.getRecover_mail().trim());
+                                    data.put("recover_mail", "");
                                     data.put("auth_2fa", account_get.getAuth_2fa().trim());
                                     resp.put("data",data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -1037,7 +1037,7 @@ public class TaskController {
                             data.put("password", accountProfile_Check_Platform.getPassword().trim());
                             data.put("name", accountProfile_Check_Platform.getName().trim());
                             data.put("avatar", accountProfile_Check_Platform.getAvatar()==0?false:true);
-                            data.put("recover_mail", accountProfile_Check_Platform.getRecover().trim());
+                            data.put("recover_mail", "");
                             data.put("auth_2fa", accountProfile_Check_Platform.getAuth_2fa().trim());
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -2326,6 +2326,7 @@ public class TaskController {
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         accountProfile.setSign_in(0);
+                        accountProfile.setRunning(1);
                         accountProfileRepository.save(accountProfile);
                     }
                 }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
