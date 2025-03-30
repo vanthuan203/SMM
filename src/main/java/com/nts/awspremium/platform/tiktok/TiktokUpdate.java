@@ -93,14 +93,22 @@ public class TiktokUpdate {
                 if(success==null?true:success){
                     accountTask_New.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask_New.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:modeOption.getTime_waiting_task()) * 60 * 1000);
+                    accountTask_New.setFollower_time(System.currentTimeMillis()+ 180* 60 * 1000); // lần đầu limit 300m
+                    accountTask_New.setTask_success_24h(-1); //set fail lần 1
                 }
                 accountTaskRepository.save(accountTask_New);
             }else{
                 if(success==null?true:success){
                     accountTask.setFollower_time(System.currentTimeMillis());
                 }else{
-                    accountTask.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:modeOption.getTime_waiting_task()) * 60 * 1000);
+                    if(accountTask.getTask_success_24h()==-1){
+                        accountTask.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:modeOption.getTime_waiting_task()) * 60 * 1000);
+                        accountTask.setTask_success_24h(0);
+                    }else{
+                        accountTask.setFollower_time(System.currentTimeMillis()+ 180* 60 * 1000); // lần đầu limit 300m
+                        accountTask.setTask_success_24h(-1); //set fail lần 1
+                    }
+
                 }
                 accountTaskRepository.save(accountTask);
             }
