@@ -102,7 +102,12 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Modifying
     @Transactional
-    @Query(value = "update  account_profile set running=0,sign_in=0 where profile_id=?1",nativeQuery = true)
+    @Query(value = "update  account_profile set running=0,sign_in=1 where profile_id=?1",nativeQuery = true)
     public Integer update_Running_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update  account_profile set sign_in=1 where profile_id=?1",nativeQuery = true)
+    public Integer update_SignIn_By_ProfileId(String profile_id);
 
 }
