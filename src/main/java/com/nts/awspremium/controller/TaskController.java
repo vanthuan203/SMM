@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.Openai;
 import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
@@ -110,6 +111,9 @@ public class TaskController {
 
     @Autowired
     private OrderThreadCheck orderThreadCheck;
+
+    @Autowired
+    private OpenAiKeyRepository openAiKeyRepository;
     @Transactional
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
@@ -1777,9 +1781,14 @@ public class TaskController {
                                 accountProfile.setAccount_id(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                 accountProfile.setPassword(accountProfile_Dependent.getPassword().trim());
                                 if(profileTask.getPlatform().equals("tiktok")){
-                                    AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
-                                    accountProfile.setName(accountName.getName());
-                                    accountNameRepository.delete(accountName);
+                                    String name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
+                                    if(name!=null?((name.toLowerCase().contains(":")||name.toLowerCase().contains("tiktok"))?false:true):false){
+                                        accountProfile.setName(name);
+                                    }else {
+                                        AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
+                                        accountProfile.setName(accountName.getName());
+                                    }
+
                                 }else{
                                     accountProfile.setName("");
                                 }

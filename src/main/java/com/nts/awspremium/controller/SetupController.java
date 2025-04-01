@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.Openai;
 import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
@@ -56,7 +57,7 @@ public class SetupController {
     private AccountProfileRepository accountProfileRepository;
 
     @Autowired
-    private AccountNameRepository accountNameRepository;
+    private OpenAiKeyRepository openAiKeyRepository;
     @GetMapping(value = "updateSystem", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> updateSystem(@RequestHeader(defaultValue = "") String Authorization,
                                                             @RequestParam(defaultValue = "") String device_id,
@@ -528,7 +529,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> ping() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-                resp.put("status", true);
+                resp.put("status",  Openai.nameTiktok("vuongnhirw86295",openAiKeyRepository.get_OpenAI_Key()));
                 return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
