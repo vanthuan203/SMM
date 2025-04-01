@@ -1525,7 +1525,7 @@ public class TaskController {
 
             //check acc youtube
             Platform platform_Youtube_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
-            if(accountProfileRepository.check_Count_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")<platform_Youtube_Check.getMax_account()){ //check xem đủ tài khoản youtbe live=1 chưa
+            if(accountProfileRepository.check_Count_AccountLive1_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")<platform_Youtube_Check.getMax_account()){ //check xem đủ tài khoản youtbe live=1 chưa
                 AccountProfile accountProfile_Live0=accountProfileRepository.get_AccountLive0_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Live0==null){ // If account null or not live then get new acc
                     if(accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&& //check acc die in 24h
