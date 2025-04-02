@@ -15,31 +15,48 @@ public class Openai {
 
         try {
             Random random=new Random();
-            String prompt="Tạo giúp 1 tôi tên TikTok hay từ địa chỉ email "+mail+",tên kiểu giới trẻ";
-            String space=", tên có dấu cách";
-            if(random.nextInt(100)<3){
-                space=", tên không dấu cách";
-            }
-            String icon=", tên có 1 icon";
-            if(random.nextInt(100)<60){
-                icon=", tên không chứa icon";
-            }
-            String uniky=", tên có ký tự đặc biệt";
-            if(random.nextInt(100)<50){
-                uniky=", tên không có ký tự đặc biệt";
-            }
-            String font=", tên có phông đặc biệt";
-            if(random.nextInt(100)<65){
-                font="";
-            }
-            String number=", tên có số";
-            if(random.nextInt(100)<80){
-                number=", tên không có số";
-            }
-            String end="=> Lưu ý tuyệt đối chỉ trả lời duy nhất tên tiktok";
-            prompt=prompt+space+icon+uniky+font+number+end;
-
-
+            String prompt="Bạn là AI hỗ trợ đặt tên TikTok ngắn gọn dựa vào ID người dùng cung cấp.  \n" +
+                    "Tên bạn tạo phải liên quan rõ ràng đến ID ban đầu và được chọn ngẫu nhiên theo 1 trong 16 phong cách dưới đây:\n" +
+                    "\n" +
+                    "1. Hài hước, dễ nhớ\n" +
+                    "2. Cá tính, ngầu\n" +
+                    "3. Đáng yêu, dễ thương\n" +
+                    "4. Idol Kpop/USUK\n" +
+                    "5. Buồn, tâm trạng\n" +
+                    "6. Tên tiếng nước ngoài (Anh, Hàn hoặc Nhật)\n" +
+                    "7. Ghép trend vui nhộn\n" +
+                    "8. Đơn giản, dễ nhớ\n" +
+                    "9. Bí ẩn, cuốn hút\n" +
+                    "10. Anime/Manga (Nhật Bản)\n" +
+                    "11. Gaming, trò chơi điện tử\n" +
+                    "12. Dân chơi hài hước, trẻ trâu\n" +
+                    "13. Đồ ăn, thức uống dễ thương\n" +
+                    "14. Cổ trang, kiếm hiệp\n" +
+                    "15. Thiên nhiên, nhẹ nhàng\n" +
+                    "16. Nghiêm túc, trưởng thành, lịch sự\n" +
+                    "\n" +
+                    "Ngoài phong cách ngẫu nhiên trên, bạn bắt buộc làm theo lần lượt từng bước dưới đây để có sự ngẫu nhiên chính xác:\n" +
+                    "\n" +
+                    "- Bước 1: Tạo ngẫu nhiên 1 số (1-100):\n" +
+                    "    • Nếu số ≤ 3, tên KHÔNG chứa dấu cách.\n" +
+                    "    • Nếu số > 3, tên chứa dấu cách bình thường.\n" +
+                    "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "    • Nếu số ≤ 40, thêm 1 emoji nhỏ (icon đơn giản).\n" +
+                    "    • Nếu số > 40, tên không thêm emoji.\n" +
+                    "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "    • Nếu số ≤ 50, thêm đúng 1 ký tự đặc biệt (×, ⚡, α, β,...).\n" +
+                    "    • Nếu số > 50, tên không ký tự đặc biệt.\n" +
+                    "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "    • Nếu số ≤ 25, áp dụng phông chữ đặc biệt unicode (vd: \uD835\uDCDD\uD835\uDCEA\uD835\uDCF6\uD835\uDCEE, \uD835\uDD79\uD835\uDD86\uD835\uDD92\uD835\uDD8A...). Nếu áp dụng thì toàn bộ tên phải cùng 1 kiểu font đồng nhất.\n" +
+                    "    • Nếu số > 25, tên không dùng phông đặc biệt.\n" +
+                    "- Bước 5: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "    • Nếu số ≤ 20, tên thêm số (ví dụ: 07, 99, 24,...).\n" +
+                    "    • Nếu số > 20, tên không thêm số.\n" +
+                    "\n" +
+                    "Bạn CHỈ trả về duy nhất tên TikTok tạo mới đã thực hiện đầy đủ các bước ngẫu nhiên trên (chính xác tỷ lệ như hướng dẫn), TUYỆT ĐỐI không thêm bất kỳ nội dung hay mô tả gì khác vào kết quả.\n" +
+                    "\n" +
+                    "ID TikTok: \"@"+mail+"\"\n" +
+                    "Tên TikTok mới:";
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(300, TimeUnit.SECONDS) // Time to establish the connection
                     .readTimeout(600, TimeUnit.SECONDS)    // Time to read the response
@@ -47,7 +64,7 @@ public class Openai {
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
             JsonObject jsonRequest = new JsonObject();
-            jsonRequest.addProperty("model", "gpt-4o-mini");
+            jsonRequest.addProperty("model", "gpt-4o");
 
             // Create the messages array
             JsonArray messagesArray = new JsonArray();

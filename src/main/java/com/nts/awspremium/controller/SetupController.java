@@ -54,7 +54,7 @@ public class SetupController {
     private OrderRunningRepository orderRunningRepository;
 
     @Autowired
-    private AccountProfileRepository accountProfileRepository;
+    private AccountNameRepository accountNameRepository;
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
