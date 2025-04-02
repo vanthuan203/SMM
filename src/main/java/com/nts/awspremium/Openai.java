@@ -15,9 +15,9 @@ public class Openai {
 
         try {
             Random random=new Random();
-            String prompt="Tạo giúp 1 tôi tên TikTok hay từ địa chỉ email "+mail;
+            String prompt="Tạo giúp 1 tôi tên TikTok hay từ địa chỉ email "+mail+",tên kiểu giới trẻ";
             String space=", tên có dấu cách";
-            if(random.nextInt(100)<5){
+            if(random.nextInt(100)<3){
                 space=", tên không dấu cách";
             }
             String icon=", tên có 1 icon";
@@ -38,8 +38,6 @@ public class Openai {
             }
             String end="=> Lưu ý tuyệt đối chỉ trả lời duy nhất tên tiktok";
             prompt=prompt+space+icon+uniky+font+number+end;
-            System.out.println(prompt);
-
 
 
             OkHttpClient client = new OkHttpClient.Builder()
@@ -49,7 +47,7 @@ public class Openai {
                     .build();
             MediaType mediaType = MediaType.parse("application/json");
             JsonObject jsonRequest = new JsonObject();
-            jsonRequest.addProperty("model", "gpt-4o");
+            jsonRequest.addProperty("model", "gpt-4o-mini");
 
             // Create the messages array
             JsonArray messagesArray = new JsonArray();
