@@ -15,8 +15,9 @@ public class Openai {
 
         try {
             Random random=new Random();
-            String prompt="Bạn là AI hỗ trợ đặt tên TikTok ngắn gọn dựa vào ID người dùng cung cấp.  \n" +
-                    "Tên bạn tạo phải liên quan rõ ràng đến ID ban đầu và được chọn ngẫu nhiên theo 1 trong 16 phong cách dưới đây:\n" +
+            String prompt="Bạn là AI hỗ trợ đặt tên TikTok ngắn gọn dựa vào ID người dùng cung cấp.\n" +
+                    "\n" +
+                    "Tên bạn tạo phải liên quan rõ ràng đến ID ban đầu và được chọn ngẫu nhiên theo 1 trong 16 phong cách sau:\n" +
                     "\n" +
                     "1. Hài hước, dễ nhớ\n" +
                     "2. Cá tính, ngầu\n" +
@@ -35,25 +36,32 @@ public class Openai {
                     "15. Thiên nhiên, nhẹ nhàng\n" +
                     "16. Nghiêm túc, trưởng thành, lịch sự\n" +
                     "\n" +
-                    "Ngoài phong cách ngẫu nhiên trên, bạn bắt buộc làm theo lần lượt từng bước dưới đây để có sự ngẫu nhiên chính xác:\n" +
+                    "Hãy làm lần lượt theo đúng các bước sau đây, sử dụng các phép ngẫu nhiên (1-100) mỗi bước để quyết định:\n" +
                     "\n" +
                     "- Bước 1: Tạo ngẫu nhiên 1 số (1-100):\n" +
-                    "    • Nếu số ≤ 3, tên KHÔNG chứa dấu cách.\n" +
-                    "    • Nếu số > 3, tên chứa dấu cách bình thường.\n" +
-                    "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "    • Nếu số ≤ 40, thêm 1 emoji nhỏ (icon đơn giản).\n" +
-                    "    • Nếu số > 40, tên không thêm emoji.\n" +
-                    "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "    • Nếu số ≤ 50, thêm đúng 1 ký tự đặc biệt (×, ⚡, α, β,...).\n" +
-                    "    • Nếu số > 50, tên không ký tự đặc biệt.\n" +
-                    "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "    • Nếu số ≤ 25, áp dụng phông chữ đặc biệt unicode (vd: \uD835\uDCDD\uD835\uDCEA\uD835\uDCF6\uD835\uDCEE, \uD835\uDD79\uD835\uDD86\uD835\uDD92\uD835\uDD8A...). Nếu áp dụng thì toàn bộ tên phải cùng 1 kiểu font đồng nhất.\n" +
-                    "    • Nếu số > 25, tên không dùng phông đặc biệt.\n" +
-                    "- Bước 5: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "    • Nếu số ≤ 20, tên thêm số (ví dụ: 07, 99, 24,...).\n" +
-                    "    • Nếu số > 20, tên không thêm số.\n" +
+                    "  • Nếu số ≤ 3, tên KHÔNG chứa dấu cách.\n" +
+                    "  • Nếu số > 3, tên chứa dấu cách bình thường.\n" +
                     "\n" +
-                    "Bạn CHỈ trả về duy nhất tên TikTok tạo mới đã thực hiện đầy đủ các bước ngẫu nhiên trên (chính xác tỷ lệ như hướng dẫn), TUYỆT ĐỐI không thêm bất kỳ nội dung hay mô tả gì khác vào kết quả.\n" +
+                    "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "  • Nếu số ≤ 40, thêm 1 emoji nhỏ (icon đơn giản).\n" +
+                    "  • Nếu số > 40, tên không thêm emoji.\n" +
+                    "\n" +
+                    "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "  • Nếu số ≤ 50, thêm đúng 1 ký tự đặc biệt (×, ⚡, α, β,...).\n" +
+                    "  • Nếu số > 50, tên không ký tự đặc biệt.\n" +
+                    "\n" +
+                    "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "  • Nếu số ≤ 35, áp dụng phông chữ đặc biệt unicode (vd: \uD835\uDCDD\uD835\uDCEA\uD835\uDCF6\uD835\uDCEE, \uD835\uDD79\uD835\uDD86\uD835\uDD92\uD835\uDD8A...). Nếu áp dụng thì toàn bộ tên phải cùng 1 kiểu font đồng nhất.\n" +
+                    "  • Nếu số > 35, tên không dùng phông đặc biệt.\n" +
+                    "\n" +
+                    "- Bước 5: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
+                    "  • Nếu số ≤ 20, tên thêm số (ví dụ: 07, 99, 24,...).\n" +
+                    "  • Nếu số > 20, tên không thêm số.\n" +
+                    "\n" +
+                    "LƯU Ý ĐẶC BIỆT:\n" +
+                    "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
+                    "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
+                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
                     "\n" +
                     "ID TikTok: \"@"+mail+"\"\n" +
                     "Tên TikTok mới:";
