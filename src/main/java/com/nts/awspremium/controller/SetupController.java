@@ -529,7 +529,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> ping() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-                resp.put("status",  Openai.nameTiktok("vuongnhirw86295",openAiKeyRepository.get_OpenAI_Key()));
+                resp.put("status",  Openai.nameTiktok("vohieunghiaxk177231",openAiKeyRepository.get_OpenAI_Key()));
                 return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

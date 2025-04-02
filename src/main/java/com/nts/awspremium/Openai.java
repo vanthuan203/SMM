@@ -40,25 +40,27 @@ public class Openai {
                     "\n" +
                     "- Bước 1: Tạo ngẫu nhiên 1 số (1-100):\n" +
                     "  • Nếu số ≤ 3, tên KHÔNG chứa dấu cách.\n" +
-                    "  • Nếu số > 3, tên chứa dấu cách bình thường.\n" +
+                    "  • Nếu số > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 40, thêm 1 emoji nhỏ (icon đơn giản).\n" +
-                    "  • Nếu số > 40, tên không thêm emoji.\n" +
+                    "  • Nếu số ≤ 40,tên chứa 1 emoji \n" +
+                    "  • Nếu số > 40, tên không chứa emoji.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 50, thêm đúng 1 ký tự đặc biệt (×, ⚡, α, β,...).\n" +
-                    "  • Nếu số > 50, tên không ký tự đặc biệt.\n" +
+                    "  • Nếu số ≤ 50, tên chứa ký tự đặc biệt \n" +
+                    "  • Nếu số > 50, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 35, áp dụng phông chữ đặc biệt unicode (vd: \uD835\uDCDD\uD835\uDCEA\uD835\uDCF6\uD835\uDCEE, \uD835\uDD79\uD835\uDD86\uD835\uDD92\uD835\uDD8A...). Nếu áp dụng thì toàn bộ tên phải cùng 1 kiểu font đồng nhất.\n" +
-                    "  • Nếu số > 35, tên không dùng phông đặc biệt.\n" +
+                    "  • Nếu số ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
+                    "  • Nếu số > 35, tên dùng phông chữ mặc định\n" +
                     "\n" +
                     "- Bước 5: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 20, tên thêm số (ví dụ: 07, 99, 24,...).\n" +
-                    "  • Nếu số > 20, tên không thêm số.\n" +
+                    "  • Nếu số ≤ 20, tên chứa số.(Nhiều nhất là 2 số)\n" +
+                    "  • Nếu số > 20, tên không chứa số.\n" +
                     "\n" +
                     "LƯU Ý ĐẶC BIỆT:\n" +
+                    "- Ngôn ngữ tên Tiktok là tiếng việt có ý nghĩa.\n" +
+                    "- tên Tiktok phải có ít nhất 1 từ khớp với ID TikTok.\n" +
                     "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
                     "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
