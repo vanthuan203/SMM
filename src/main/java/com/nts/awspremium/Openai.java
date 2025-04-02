@@ -17,7 +17,7 @@ public class Openai {
             Random random=new Random();
             String prompt="Bạn là AI hỗ trợ đặt tên TikTok ngắn gọn dựa vào ID người dùng cung cấp.\n" +
                     "\n" +
-                    "Tên bạn tạo phải liên quan rõ ràng đến ID ban đầu và được chọn ngẫu nhiên theo 1 trong 16 phong cách sau:\n" +
+                    "Tên bạn tạo phải liên quan rõ ràng đến ID ban đầu, ID ban đầu đang có cấu trúc \"họ+ tên đệm + tên\" và được chọn ngẫu nhiên theo 1 trong 16 phong cách sau:\n" +
                     "\n" +
                     "1. Hài hước, dễ nhớ\n" +
                     "2. Cá tính, ngầu\n" +
@@ -43,12 +43,12 @@ public class Openai {
                     "  • Nếu số > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 40,tên chứa 1 emoji \n" +
-                    "  • Nếu số > 40, tên không chứa emoji.\n" +
+                    "  • Nếu số ≤ 30,tên chứa 1 icon \n" +
+                    "  • Nếu số > 30, tên không chứa icon.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 50, tên chứa ký tự đặc biệt \n" +
-                    "  • Nếu số > 50, tên không chứa ký tự đặc biệt.\n" +
+                    "  • Nếu số ≤ 30, tên chứa 1 ký tự đặc biệt(không phải ký tự hình ảnh) \n" +
+                    "  • Nếu số > 30, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
                     "  • Nếu số ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
