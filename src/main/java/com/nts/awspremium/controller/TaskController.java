@@ -1782,7 +1782,7 @@ public class TaskController {
                                 accountProfile.setPassword(accountProfile_Dependent.getPassword().trim());
                                 if(profileTask.getPlatform().equals("tiktok")){
                                     String name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
-                                    if(name!=null?((name.toLowerCase().contains(":")||name.toLowerCase().contains("tiktok"))?false:true):false){
+                                    if(name!=null){
                                         accountProfile.setName(name);
                                     }else {
                                         AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
