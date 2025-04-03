@@ -38,25 +38,25 @@ public class Openai {
                     "\n" +
                     "Hãy làm lần lượt theo đúng các bước sau đây, sử dụng các phép ngẫu nhiên (1-100) mỗi bước để quyết định:\n" +
                     "\n" +
-                    "- Bước 1: Tạo ngẫu nhiên 1 số (1-100):\n" +
-                    "  • Nếu số ≤ 3, tên KHÔNG chứa dấu cách.\n" +
-                    "  • Nếu số > 3, tên chứa dấu cách.\n" +
+                    "- Bước 1: Tạo ngẫu nhiên 1 số x (1-100):\n" +
+                    "  • Nếu x ≤ 3, tên KHÔNG chứa dấu cách.\n" +
+                    "  • Nếu x > 3, tên chứa dấu cách.\n" +
                     "\n" +
-                    "- Bước 2: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 30,tên chứa 1 icon \n" +
-                    "  • Nếu số > 30, tên không chứa icon.\n" +
+                    "- Bước 2: Tạo ngẫu nhiên 1 số z (1-100):\n" +
+                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt. \n" +
+                    "  • Nếu z > 25, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
-                    "- Bước 3: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 30, tên chứa 1 ký tự đặc biệt(không phải ký tự hình ảnh) \n" +
-                    "  • Nếu số > 30, tên không chứa ký tự đặc biệt.\n" +
+                    "- Bước 3: Tạo ngẫu nhiên 1 số j (1-100):\n" +
+                    "  • Nếu j ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
+                    "  • Nếu j > 35, tên dùng phông chữ mặc định\n" +
                     "\n" +
-                    "- Bước 4: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
-                    "  • Nếu số > 35, tên dùng phông chữ mặc định\n" +
+                    "- Bước 4: Tạo ngẫu nhiên 1 số f (1-100):\n" +
+                    "  • Nếu f ≤ 20, tên chứa số.(Nhiều nhất là 2 số)\n" +
+                    "  • Nếu f > 20, tên không chứa số.\n" +
                     "\n" +
-                    "- Bước 5: Tạo ngẫu nhiên 1 số khác (1-100):\n" +
-                    "  • Nếu số ≤ 20, tên chứa số.(Nhiều nhất là 2 số)\n" +
-                    "  • Nếu số > 20, tên không chứa số.\n" +
+                    "- Bước 5: Tạo ngẫu nhiên 1 số y (1-100):\n" +
+                    "  • Nếu y ≤ 15, tên dùng in hoa.\n" +
+                    "  • Nếu y > 15, tên không dùng in hoa.\n" +
                     "\n" +
                     "LƯU Ý ĐẶC BIỆT:\n" +
                     "- Ngôn ngữ tên Tiktok là tiếng việt có ý nghĩa.\n" +
