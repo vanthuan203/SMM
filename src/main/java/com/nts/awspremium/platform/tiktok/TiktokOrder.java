@@ -184,6 +184,8 @@ public class TiktokOrder {
                 return resp;
             }
             video_id=infoVideo.get("id").getAsString();
+            String unique_id=infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString();
+            link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer like_count=infoVideo.get("digg_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
@@ -204,7 +206,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link(link);
             orderRunning.setStart_count(like_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -287,6 +289,8 @@ public class TiktokOrder {
                 return resp;
             }
             video_id=infoVideo.get("id").getAsString();
+            String unique_id=infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString();
+            link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer share_count=infoVideo.get("share_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
@@ -307,7 +311,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link(link);
             orderRunning.setStart_count(share_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -391,6 +395,8 @@ public class TiktokOrder {
                 return resp;
             }
             video_id=infoVideo.get("id").getAsString();
+            String unique_id=infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString();
+            link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer collect_count=infoVideo.get("collect_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
@@ -411,7 +417,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link(link);
             orderRunning.setStart_count(collect_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -494,6 +500,8 @@ public class TiktokOrder {
                 return resp;
             }
             video_id=infoVideo.get("id").getAsString();
+            String unique_id=infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString();
+            link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer comment_count=infoVideo.get("comment_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
@@ -514,7 +522,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link(link);
             orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -593,6 +601,8 @@ public class TiktokOrder {
                 return resp;
             }
             video_id=infoVideo.get("id").getAsString();
+            String unique_id=infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString();
+            link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer view_count=infoVideo.get("play_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
             if(duration==0){
@@ -612,7 +622,7 @@ public class TiktokOrder {
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
-            orderRunning.setOrder_link(data.getLink());
+            orderRunning.setOrder_link(link);
             orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);

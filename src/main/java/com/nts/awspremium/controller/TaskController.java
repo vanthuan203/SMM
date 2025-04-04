@@ -2455,6 +2455,7 @@ public class TaskController {
                             } else if(account!=null){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setRecover_mail(accountProfile.getRecover());
+                                account.setPassword(accountProfile.getPassword());
                                 account.setRunning(1);
                                 account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
                                 account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
