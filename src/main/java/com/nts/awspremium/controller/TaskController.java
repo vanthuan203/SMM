@@ -22,7 +22,6 @@ import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.query.JSqlParserUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -114,6 +113,43 @@ public class TaskController {
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
+
+
+    @Transactional
+    @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
+                                                      @RequestParam(defaultValue = "") String device_id,
+                                                      @RequestParam(defaultValue = "") Long tiktok_lite_version,
+                                                      @RequestParam(defaultValue = "") String profile_id
+    ) throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            if (device_id.length()==0) {
+                resp.put("status", false);
+                data.put("message", "device_id không để trống");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            if(device==null){
+                resp.put("status", false);
+                data.put("message", "device_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(!device.getBox_id().contains("munti")){
+                return getTask006(Authorization,device_id,tiktok_lite_version,profile_id);
+            }else{
+                return getTaskNew(Authorization,device_id,tiktok_lite_version,profile_id);
+            }
+
+        }catch (Exception e){
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }
+        //return new ResponseEntity<>(resp, HttpStatus.OK);
+
+    }
     @Transactional
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
@@ -1282,8 +1318,8 @@ public class TaskController {
     }
 
     @Transactional
-    @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
+    @GetMapping(value = "getTaskNew", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> getTaskNew(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
                                                           @RequestParam(defaultValue = "") Long tiktok_lite_version,
                                                           @RequestParam(defaultValue = "") String profile_id
