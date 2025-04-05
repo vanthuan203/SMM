@@ -114,8 +114,6 @@ public class TaskController {
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
 
-
-    @Transactional
     @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
                                                       @RequestParam(defaultValue = "") String device_id,
@@ -145,12 +143,27 @@ public class TaskController {
             }
 
         }catch (Exception e){
-            return new ResponseEntity<>(resp, HttpStatus.OK);
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
         //return new ResponseEntity<>(resp, HttpStatus.OK);
 
     }
-    @Transactional
     @GetMapping(value = "getTask006", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask006(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
@@ -182,7 +195,7 @@ public class TaskController {
             }
             //---------------------get_Account------------------//
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
-            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
             ProfileTask profileTask=null;
             if(device==null){
                 resp.put("status", false);
@@ -1349,7 +1362,7 @@ public class TaskController {
             }
             //---------------------get_Account------------------//
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
-            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
+            Device device=deviceRepository.check_DeviceId(device_id.trim());
             ProfileTask profileTask=null;
             if(device==null){
                 resp.put("status", false);
