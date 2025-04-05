@@ -1330,7 +1330,6 @@ public class TaskController {
 
     }
 
-    @Transactional
     @GetMapping(value = "getTaskNew", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTaskNew(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
