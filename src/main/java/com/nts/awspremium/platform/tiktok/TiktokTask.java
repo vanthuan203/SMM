@@ -84,10 +84,25 @@ public class TiktokTask {
                     resp.put("status", false);
                     return resp;
                 }
+                String comment=null;
+                Long comment_ID= dataCommentRepository.get_Comment_Pending_By_OrderId(orderRunning.getOrder_id());
+                if(comment_ID!=null){
+                    try{
+                        dataCommentRepository.update_Running_Comment_By_CommentId(System.currentTimeMillis(),account_id.trim(),comment_ID);
+                        Thread.sleep(ran.nextInt(500));
+                        comment=dataCommentRepository.get_Comment_By_CommentId_And_Username(comment_ID,account_id.trim());
+                    }catch (Exception e){
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
                 //dataCommentRepository.update_Running_Comment(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
                 //Thread.sleep(ran.nextInt(500));
                 //String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
-                String comment=dataCommentRepository.update_Running_Comment_PROCEDURE(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
+                //String comment=dataCommentRepository.update_Running_Comment_PROCEDURE(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
                 if(comment!=null){
                     Service service=orderRunning.getService();
                     if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
