@@ -113,7 +113,7 @@ public class TaskController {
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
-
+    @Transactional
     @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
                                                       @RequestParam(defaultValue = "") String device_id,
@@ -129,7 +129,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            Device device=deviceRepository.check_DeviceId(device_id.trim());
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
             if(device==null){
                 resp.put("status", false);
                 data.put("message", "device_id không tồn tại");
