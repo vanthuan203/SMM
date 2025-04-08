@@ -7,9 +7,11 @@ import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+@org.springframework.stereotype.Service
 @RestController
 public class TiktokTask {
     @Autowired
@@ -52,6 +54,7 @@ public class TiktokTask {
     private ModeOptionRepository modeOptionRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Transactional
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
