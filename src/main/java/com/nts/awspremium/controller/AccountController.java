@@ -1,5 +1,8 @@
 package com.nts.awspremium.controller;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -33,13 +36,17 @@ public class AccountController {
     private YoutubeSubscriberHistoryRepository youtubeChannelHistoryRepository;
 
     @Autowired
-    private DeviceRepository deviceRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
     private AccountSaveRepository accountSaveRepository;
 
     @Autowired
     private AccountProfileRepository accountProfileRepository;
+
+
+    @Autowired
+    private AccountCloneRepository accountCloneRepository;
 
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -177,6 +184,58 @@ public class AccountController {
             return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
     }
+
+    public void updateAccountClone(){
+        try{
+        List<Account> accounts=accountRepository.get_Account_NotIn_Clone("tiktok");
+            for (Account account:accounts
+                 ) {
+                String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
+                tiktok_id=tiktok_id.replace("|tiktok","");
+                JsonObject object= TikTokApi.getInfoFullChannel(tiktok_id);
+                if(object==null){
+                    continue;
+                }
+                JsonElement jsonElement= TikTokApi.getUserByKeyword(object.getAsJsonObject("user").get("nickname").getAsString(),10);
+                if(jsonElement==null){
+                    continue;
+                }
+                AccountClone accountClone = new AccountClone();
+                accountClone.setAccount_id(account.getAccount_id().trim());
+                accountClone.setName(object.getAsJsonObject("user").get("nickname").getAsString());
+                accountClone.setId_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
+                accountClone.setUnique_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString());
+                accountClone.setAvatar_link(jsonElement.getAsJsonObject().getAsJsonObject("user").get("avatarLarger").getAsString());
+                accountClone.setAdd_time(System.currentTimeMillis());
+                accountClone.setAvatar(0);
+                accountClone.setPlatform("tiktok");
+                accountClone.setUpdate_time(0L);
+                accountClone.setVideo_list("");
+                accountCloneRepository.save(accountClone);
+
+            }
+
+
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+        }
+    }
+
     /*
     @PostMapping(value = "add_Account", produces = "application/hal+json;charset=utf8")
     ResponseEntity<Map<String, Object>> add_Account(@RequestHeader(defaultValue = "") String Authorization,

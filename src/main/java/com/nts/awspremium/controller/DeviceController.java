@@ -259,7 +259,7 @@ public class DeviceController {
                     device.setAccount_die(acc_die==null?"":acc_die);
                     device.setCheck_time(System.currentTimeMillis());
                 }
-
+                device.setUpdate_time(System.currentTimeMillis());
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
 
