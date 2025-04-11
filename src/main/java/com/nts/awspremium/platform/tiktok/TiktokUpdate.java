@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.OptionalInt;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RestController
 public class TiktokUpdate {
@@ -359,7 +361,18 @@ public class TiktokUpdate {
         try{
             TikTokViewHistory tikTokViewHistory=tikTokViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(tikTokViewHistory!=null){
-                tikTokViewHistory.setList_id(tikTokViewHistory.getList_id()+task_key.trim()+"|");
+                char target = '|';
+                long count = tikTokViewHistory.getList_id().trim().chars().filter(ch -> ch == target).count();
+                if(count>=4){
+                    int occurrence = (int)count-2;  // Lần xuất hiện thứ n cần tìm
+                    OptionalInt position = IntStream.range(0, tikTokViewHistory.getList_id().trim().length())
+                            .filter(i -> tikTokViewHistory.getList_id().trim().charAt(i) == target)
+                            .skip(occurrence - 1)
+                            .findFirst();
+                    tikTokViewHistory.setList_id(tikTokViewHistory.getList_id().trim().substring(position.getAsInt()+1)+task_key.trim()+"|");
+                }else{
+                    tikTokViewHistory.setList_id(tikTokViewHistory.getList_id()+task_key.trim()+"|");
+                }
                 tikTokViewHistory.setUpdate_time(System.currentTimeMillis());
                 tikTokViewHistoryRepository.save(tikTokViewHistory);
             }else{
