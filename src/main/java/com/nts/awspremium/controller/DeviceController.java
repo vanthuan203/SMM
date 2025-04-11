@@ -261,7 +261,8 @@ public class DeviceController {
                 }
                 device.setNum_profile(profile.size());
                 deviceRepository.save(device);
-
+                //reset running by device_id
+                profileTaskRepository.reset_Task_By_deviceId(device.getDevice_id().trim());
                 if(profile.size()>=( mode==null?settingSystem.getMax_profile():mode.getMax_profile())){
                     List<String> profileIdList=profileTaskRepository.get_ProfileId_Not_In(profile.size()==0? Collections.singletonList("") :profile,device_id.trim());
                     if(profileIdList.size()>0){

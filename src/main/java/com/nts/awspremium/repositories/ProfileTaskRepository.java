@@ -186,13 +186,18 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>15 and running=1 limit 50",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>5 and running=1 limit 50",nativeQuery = true)
     public Integer reset_Task_Error();
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE profile_task SET running=0 where profile_id=?1",nativeQuery = true)
     public Integer reset_Task_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task SET running=0 where device_id=?1",nativeQuery = true)
+    public Integer reset_Task_By_deviceId(String device_id);
 
     @Modifying
     @Transactional
