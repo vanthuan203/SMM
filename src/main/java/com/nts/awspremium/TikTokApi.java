@@ -289,6 +289,9 @@ public class TikTokApi {
                         .getAsJsonObject("data");
 
                 return infoChannel;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followerCount từ data.stats
+                return new JsonObject();
             }
         } catch (Exception e) {
             return null;

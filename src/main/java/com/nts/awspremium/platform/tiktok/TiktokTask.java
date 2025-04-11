@@ -123,6 +123,12 @@ public class TiktokTask {
                     data.put("app", service.getApp());
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
+                    if(orderRunning.getChannel_title()==null){
+                        orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                        data.put("channel_title","");
+                    }else{
+                        data.put("channel_title",orderRunning.getChannel_title());
+                    }
                     if(orderRunning.getDuration()>service.getLimit_time()){
                         data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                     }else{
@@ -219,6 +225,12 @@ public class TiktokTask {
                     return resp;
                 }
                 data.put("task_link","https://www.tiktok.com/"+dataFollowerTiktok.getTiktok_id()+"/video/"+dataFollowerTiktok.getVideo_id());
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
                 if(dataFollowerTiktok.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -302,7 +314,12 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
-
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -388,7 +405,12 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
-
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -475,7 +497,12 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
-
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -555,6 +582,14 @@ public class TiktokTask {
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
+
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
+
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{

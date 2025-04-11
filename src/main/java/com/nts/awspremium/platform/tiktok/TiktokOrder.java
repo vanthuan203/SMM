@@ -53,16 +53,19 @@ public class TiktokOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-            JsonObject channelInfo=TikTokApi.getInfoChannel(tiktok_id.trim().split("@")[1]);
-            if(channelInfo==null){
+            JsonObject channelInfo=TikTokApi.getInfoFullChannel(tiktok_id.trim().split("@")[1]);
+            if(channelInfo==null || channelInfo.size()==0){
                 resp.put("error", "This account cannot be found");
                 return resp;
-            }
-            if(channelInfo.get("videoCount").getAsInt()<1){
+            }else if(channelInfo.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
+                resp.put("error", "This account is private");
+                return resp;
+            }else if(channelInfo.getAsJsonObject("stats").get("videoCount").getAsInt()<1){
                 resp.put("error", "The total number of videos in the account must be greater than or equal to 1 videos");
                 return resp;
             }
-            Integer follower_count=channelInfo.get("followerCount").getAsInt();
+
+            Integer follower_count=channelInfo.getAsJsonObject("stats").get("followerCount").getAsInt();
 
 
             float priceorder = 0;
@@ -76,6 +79,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link("https://www.tiktok.com/"+tiktok_id);
+            orderRunning.setChannel_title(channelInfo.getAsJsonObject("user").get("nickname").getAsString());
             orderRunning.setStart_count(follower_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(tiktok_id.trim());
@@ -104,6 +108,7 @@ public class TiktokOrder {
             orderRunningCheck=orderRunning;
 
             JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],8);
+
             if(videoList==null){
                 resp.put("error", "Unable to get account video information");
                 return resp;
@@ -207,6 +212,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(like_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -312,6 +318,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(share_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -418,6 +425,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(collect_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -523,6 +531,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);
@@ -623,6 +632,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(video_id);

@@ -690,56 +690,63 @@ public class OrderRunningController {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             long currentTime = System.currentTimeMillis();
-            long threshold = 30 * 60 * 1000;
+            long threshold = 15 * 60 * 1000;
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Check_Valid(currentTime,threshold);
             for(int i=0;i<orderRunningList.size();i++){
                 try {
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
-                            Integer followerCount=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().trim().split("@")[1],1);
-                            if(followerCount>0){
-                                Integer videoCount=TikTokApi.getVideoCount(orderRunningList.get(i).getOrder_key().trim().split("@")[1],2);
-                                if(videoCount==0){
-                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
-                                }else{
-                                    JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],3);
-                                    if(videoList==null){
-                                        orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
-                                        continue;
-                                    }
-                                    dataFollowerTiktokRepository.delete_Data_Follower_By_OrderId(orderRunningList.get(i).getOrder_id());
-
-                                    for (JsonElement video: videoList) {
-                                        JsonObject videoObj=video.getAsJsonObject();
-                                        DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
-                                        dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
-                                        Long duration=videoObj.get("duration").getAsLong();
-                                        if(duration==0){
-                                            duration=15L;
-                                        }
-                                        dataFollowerTiktok.setDuration(duration);
-                                        dataFollowerTiktok.setTiktok_id(orderRunningList.get(i).getOrder_key().trim());
-                                        dataFollowerTiktok.setOrderRunning(orderRunningList.get(i));
-                                        dataFollowerTiktok.setState(1);
-                                        dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
-                                        dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
-                                        //dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
-                                        dataFollowerTiktokRepository.save(dataFollowerTiktok);
-                                    }
-                                    orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
-                                }
-                            }else if(followerCount==-1){
-                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
-                            }else{
+                            JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
+                            if(tiktok_account==null){
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
-                            }
+                            }else if(tiktok_account.size()==0){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
+                            }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
+                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){
+                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
+                            }else{
+                                JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],8);
+                                if(videoList==null){
+                                    orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                    continue;
+                                }
+                                dataFollowerTiktokRepository.delete_Data_Follower_By_OrderId(orderRunningList.get(i).getOrder_id());
 
+                                for (JsonElement video: videoList) {
+                                    JsonObject videoObj=video.getAsJsonObject();
+                                    DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
+                                    dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
+                                    Long duration=videoObj.get("duration").getAsLong();
+                                    if(duration==0){
+                                        duration=15L;
+                                    }
+                                    dataFollowerTiktok.setDuration(duration);
+                                    dataFollowerTiktok.setTiktok_id(orderRunningList.get(i).getOrder_key().trim());
+                                    dataFollowerTiktok.setOrderRunning(orderRunningList.get(i));
+                                    dataFollowerTiktok.setState(1);
+                                    dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                                    dataFollowerTiktok.setAdd_time(System.currentTimeMillis());
+                                    //dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
+                                    dataFollowerTiktokRepository.save(dataFollowerTiktok);
+                                }
+                                orderRunningList.get(i).setChannel_title(tiktok_account.getAsJsonObject("user").get("nickname").getAsString());
+                                orderRunningList.get(i).setValid(1);
+                                orderRunningRepository.save(orderRunningList.get(i));
+                            }
                         }else{
                             Integer likeCount=TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
                             if(likeCount==-1){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Video is currently unavailable");
                             }else{
-                                orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                JsonObject infoVideo=TikTokApi.getInfoVideo(orderRunningList.get(i).getOrder_link());
+                                if(infoVideo!=null){
+                                    orderRunningList.get(i).setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
+                                    orderRunningList.get(i).setValid(1);
+                                    orderRunningRepository.save(orderRunningList.get(i));
+                                }else{
+                                    orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                }
                             }
                         }
                     }
