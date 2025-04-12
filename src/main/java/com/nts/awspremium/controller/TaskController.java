@@ -2013,7 +2013,11 @@ public class TaskController {
                 resp.put("status", true);
                 data.put("platform",profileTask.getPlatform());
                 data.put("app",platform_Check.getApp_name().trim());
-                data.put("task", "sign_in");
+                if(accountProfile_Task.getLive()==0 &&accountProfile_Task.getSign_in()==0){
+                    data.put("task", "login");
+                }else {
+                    data.put("task", "sign_in");
+                }
                 data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                 data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                 data.put("password", accountProfile_Task.getPassword().trim());
@@ -2401,24 +2405,11 @@ public class TaskController {
 
             try{
 
-
-                if(updateTaskRequest.getTask().equals("sign_in")&&updateTaskRequest.getIsLogin()==1){
-                    accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
-                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
-                    if(accountProfile!=null){
-                        accountProfile.setSign_in(0);
-                        accountProfile.setRunning(1);
-                        accountProfileRepository.save(accountProfile);
-                    }
-                }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
+                if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
-                        if(updateTaskRequest.getTask().equals("register")){
-                            accountProfile.setLive(-1);
-                        }else{
-                            accountProfile.setLive(0);
-                        }
+                        accountProfile.setLive(updateTaskRequest.getIsLogin());
                         accountProfile.setUpdate_time(System.currentTimeMillis());
                         accountProfileRepository.save(accountProfile);
                     }
@@ -2426,6 +2417,13 @@ public class TaskController {
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
+
+                        accountProfile.setSign_in(0);
+                        accountProfile.setRunning(1);
+                        if(accountProfile.getLogin_time()==0){
+                            accountProfile.setLogin_time(System.currentTimeMillis());
+                        }
+
                         if(updateTaskRequest.getTask_key().length()!=0){
                             if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
@@ -2436,14 +2434,12 @@ public class TaskController {
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
                             }
-                            accountProfile.setRunning(1);
-                            accountProfile.setSign_in(0);
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
 
                             Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
 
-                            if(account==null&&accountProfile.getLive()==1){
+                           if(account==null&&accountProfile.getLive()==1){
                                     account=new Account();
                                     account.setAccount_id(accountProfile.getAccount_id().trim());
                                     account.setLive(1);
@@ -2471,11 +2467,7 @@ public class TaskController {
                                 accountRepository.save(account);
                             }
                         }else if(updateTaskRequest.getTask_key().length()==0){
-                            if(updateTaskRequest.getTask().equals("register")){
-                                accountProfile.setLive(-1);
-                            }else{
-                                accountProfile.setLive(0);
-                            }
+                            accountProfile.setLive(0);
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }
@@ -2507,11 +2499,6 @@ public class TaskController {
                                 }
                             }
                         }
-                        if(accountProfile.getLogin_time()==0){
-                            accountProfile.setLogin_time(System.currentTimeMillis());
-                            accountProfileRepository.save(accountProfile);
-                        }
-
                     }////
 
                 }else if(updateTaskRequest.getIsLogin()>1){
