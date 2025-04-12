@@ -2408,6 +2408,7 @@ public class TaskController {
                     if(accountProfile!=null){
                         accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
+                        accountProfile.setLive(1);
                         accountProfileRepository.save(accountProfile);
                     }
                 }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
