@@ -698,14 +698,13 @@ public class OrderRunningController {
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
                             JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
-                            System.out.println(tiktok_account.getAsJsonObject("stats").get("videoCount"));
                             if(tiktok_account==null){
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                             }else if(tiktok_account.size()==0){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
                             }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
-                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount")==null?true:tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){
+                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").isJsonNull() || tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
                             }else{
                                 JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],8);
@@ -1238,7 +1237,8 @@ public class OrderRunningController {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Pending_ASC();
             for(int i=0;i<orderRunningList.size();i++){
-                if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()+orderRunningList.get(i).getThread()>=settingSystem.getMax_thread()){
+                if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()+orderRunningList.get(i).getThread()>=settingSystem.getMax_thread()&&
+                        orderRunningList.get(i).getService().getTask().equals("follower")){
                     break;
                 }
                 if(orderRunningList.get(i).getService().getTask().equals("comment")){
@@ -1258,6 +1258,7 @@ public class OrderRunningController {
                     }
                 }
                 orderRunningList.get(i).setStart_time(System.currentTimeMillis());
+                orderRunningList.get(i).setPriority(0);
                 orderRunningRepository.save(orderRunningList.get(i));
             }
             resp.put("status",true);
