@@ -156,7 +156,11 @@ public class OrderRunningController {
                 if(orderRunning==null){
                     continue;
                 }
-                orderRunning.setPriority(1);
+                if(orderRunning.getPriority()==0){
+                    orderRunning.setPriority(1);
+                }else if(orderRunning.getPriority()==1){
+                    orderRunning.setPriority(0);
+                }
                 orderRunningRepository.save(orderRunning);
                 OrderRunningShow orderRunningShow=orderRunningRepository.get_Order_Running_By_OrderId(Long.parseLong(order_Arr[i]));
                 JSONObject obj = new JSONObject();
@@ -210,6 +214,82 @@ public class OrderRunningController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping(path = "update_Running", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> update_Running(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String order_id) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            JSONArray jsonArray = new JSONArray();
+            String[] order_Arr = order_id.split(",");
+            for(int i=0;i<order_Arr.length;i++){
+                OrderRunning orderRunning=orderRunningRepository.get_Order_By_Id(Long.parseLong(order_Arr[i]));
+                if(orderRunning==null){
+                    continue;
+                }
+                if(orderRunning.getStart_time()==0){
+                    orderRunning.setStart_time(System.currentTimeMillis());
+                    orderRunningRepository.save(orderRunning);
+                }
+                OrderRunningShow orderRunningShow=orderRunningRepository.get_Order_Running_By_OrderId(Long.parseLong(order_Arr[i]));
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderRunningShow.getOrder_id());
+                obj.put("order_key", orderRunningShow.getOrder_key());
+                obj.put("order_link", orderRunningShow.getOrder_link());
+                obj.put("total_thread", orderRunningShow.getTotal_thread());
+                obj.put("thread", orderRunningShow.getThread());
+                obj.put("insert_time", orderRunningShow.getInsert_time());
+                obj.put("start_time", orderRunningShow.getStart_time());
+                obj.put("update_time", orderRunningShow.getUpdate_time());
+                obj.put("update_current_time",orderRunningShow.getUpdate_current_time());
+                obj.put("start_count", orderRunningShow.getStart_count());
+                obj.put("check_count", orderRunningShow.getCheck_count());
+                obj.put("check_count_time", orderRunningShow.getCheck_count_time());
+                obj.put("current_count",orderRunningShow.getCurrent_count());
+                obj.put("total",orderRunningShow.getTotal());
+                obj.put("quantity",orderRunningShow.getQuantity());
+                obj.put("note", orderRunningShow.getNote());
+                obj.put("service_id", orderRunningShow.getService_id());
+                obj.put("username", orderRunningShow.getUsername());
+                obj.put("charge", orderRunningShow.getCharge());
+                obj.put("task", orderRunningShow.getTask());
+                obj.put("platform", orderRunningShow.getPlatform());
+                obj.put("bonus",orderRunningShow.getBonus());
+                obj.put("mode",orderRunningShow.getMode());
+                obj.put("priority", orderRunningShow.getPriority());
+                jsonArray.add(obj);
+            }
+            resp.put("total", order_Arr.length);
+            resp.put("order_running", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(path = "update_Thread", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update_Thread(@RequestHeader(defaultValue = "") String Authorization, @RequestBody OrderRunning orderRunning_Body) {
@@ -403,6 +483,7 @@ public class OrderRunningController {
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
                 obj.put("mode", orderRunnings.get(i).getMode());
+                obj.put("priority", orderRunnings.get(i).getPriority());
                 jsonArray.add(obj);
             }
 
