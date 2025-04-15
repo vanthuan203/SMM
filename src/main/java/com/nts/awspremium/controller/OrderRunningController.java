@@ -694,7 +694,6 @@ public class OrderRunningController {
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Check_Valid(currentTime,threshold);
             for(int i=0;i<orderRunningList.size();i++){
                 try {
-                    System.out.println(orderRunningList.get(i).getOrder_link());
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
                             JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
