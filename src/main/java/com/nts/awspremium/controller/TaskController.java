@@ -225,7 +225,8 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
 
-            }else if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time() ){
+            }
+            if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time() ){
                 device.setReboot(0);
                 device.setUpdate_time(System.currentTimeMillis());
                 device.setReboot_time(System.currentTimeMillis());
@@ -2308,7 +2309,8 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
 
-            }else if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time() ){
+            }
+            if(device.getReboot()==1 || (System.currentTimeMillis()-device.getReboot_time())/1000/60>=settingSystem.getReboot_time() ){
                 device.setReboot(0);
                 device.setUpdate_time(System.currentTimeMillis());
                 device.setReboot_time(System.currentTimeMillis());
