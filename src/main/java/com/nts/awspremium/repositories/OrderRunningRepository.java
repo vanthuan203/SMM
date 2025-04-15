@@ -63,7 +63,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     ///@Query(value = "select o from OrderRunning o JOIN FETCH o.service where round((UNIX_TIMESTAMP()-o.update_time/1000)/60)>=30")//
     //public List<OrderRunning> get_Order_Check_Valid();
 
-    @Query("select o from OrderRunning o JOIN FETCH o.service where (:currentTime - o.update_time) >= :threshold or o.valid=0")
+    @Query("select o from OrderRunning o JOIN FETCH o.service where o.start_time>0 and ((:currentTime - o.update_time) >= :threshold or o.valid=0)")
     public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
     @Query(value = "SELECT COALESCE(SUM(thread_set), 0) AS total_threads\n" +
@@ -84,7 +84,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
     public Integer get_Count_OrderRunning_By_Service(Integer service_id);
 
-    @Query(value = "select o from OrderRunning o JOIN FETCH o.service where o.start_time=0 ORDER BY o.insert_time ASC")
+    @Query(value = "select o from OrderRunning o JOIN FETCH o.service where o.start_time=0 ORDER BY o.service.task ASC,o.priority DESC,o.insert_time ASC")
     public List<OrderRunning> get_Order_Pending_ASC();
 
     @Query(value = "SELECT service_id from order_running where order_key=?1 and service_id in(select service_id from service where task='view' and platform='youtube')",nativeQuery = true)

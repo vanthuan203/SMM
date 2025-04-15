@@ -694,16 +694,18 @@ public class OrderRunningController {
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Check_Valid(currentTime,threshold);
             for(int i=0;i<orderRunningList.size();i++){
                 try {
+                    System.out.println(orderRunningList.get(i).getOrder_link());
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
                             JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
+                            System.out.println(tiktok_account.getAsJsonObject("stats").get("videoCount"));
                             if(tiktok_account==null){
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                             }else if(tiktok_account.size()==0){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
                             }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
-                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){
+                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount")==null?true:tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
                             }else{
                                 JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],8);
