@@ -3,6 +3,7 @@ package com.nts.awspremium.platform.tiktok;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,8 @@ public class TiktokTask {
     private OrderRunningRepository orderRunningRepository;
     @Autowired
     private OrderThreadCheck orderThreadCheck;
+    @Autowired
+    private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
     @Autowired
@@ -194,6 +197,9 @@ public class TiktokTask {
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
+            if(orderRunning==null){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
@@ -291,6 +297,9 @@ public class TiktokTask {
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
+            if(orderRunning==null){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
@@ -381,6 +390,9 @@ public class TiktokTask {
                 }
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","share",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
+            if(orderRunning==null){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","share",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
@@ -474,6 +486,9 @@ public class TiktokTask {
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","favorites",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
+            if(orderRunning==null){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","favorites",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+            }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
@@ -563,6 +578,9 @@ public class TiktokTask {
                 }
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
+            }
+            if(orderRunning==null){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
