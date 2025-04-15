@@ -83,7 +83,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             "AND service_id IN (SELECT service_id FROM service WHERE mode = 'auto' and task='follower');",nativeQuery = true)
     public Integer get_Sum_Thread_Pending_By_Mode_Auto();
 
-    @Query(value = "SELECT SUM(thread_set) FROM Data.order_running where start_time>0 and service_id in(SELECT service_id FROM service where mode='auto');",nativeQuery = true)
+    @Query(value = "SELECT SUM(thread_set) FROM Data.order_running where start_time>0 and service_id in(SELECT service_id FROM service where mode='auto' and task='follower');",nativeQuery = true)
     public Integer get_Sum_Thread_Order_Running_By_Mode_Auto();
 
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
