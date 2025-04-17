@@ -1321,8 +1321,19 @@ public class OrderRunningController {
                         orderRunningList.get(i).getService().getTask().equals("follower")){
                     break;
                 }
+                Integer start_count=null;
+                if( orderRunningList.get(i).getService().getTask().equals("follower")){
+                    start_count=TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@",""),2);
+                    if(start_count==-1){
+                        delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
+                        continue;
+                    }else if(start_count!=null){
+                        orderRunningList.get(i).setStart_count(start_count);
+                    }
+                }
+
                 if(orderRunningList.get(i).getService().getTask().equals("comment")){
-                    String [] comments=orderRunningList.get(i).getComment_list().split("\n");
+                    String [] comments=orderRunningList.get(i).getComment_list().split("\\R");
                     for (int j=0;j<comments.length;j++){
                         if(comments[j].trim().length()==0){
                             continue;
@@ -1337,6 +1348,7 @@ public class OrderRunningController {
                         dataCommentRepository.save(dataComment);
                     }
                 }
+
                 orderRunningList.get(i).setStart_time(System.currentTimeMillis());
                 orderRunningList.get(i).setPriority(0);
                 orderRunningRepository.save(orderRunningList.get(i));
