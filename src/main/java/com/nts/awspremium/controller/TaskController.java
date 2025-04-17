@@ -2917,7 +2917,7 @@ public class TaskController {
             }
 
             AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
-            if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60/24>=100){
+            if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60/24>=100&&platform_Youtube_Check.getMax_account()>1){
                 accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
                 accountProfile_Task.setRunning(0);
                 accountProfile_Task.setSign_in(1);
