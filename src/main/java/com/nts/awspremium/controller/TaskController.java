@@ -135,9 +135,9 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             if(!device.getBox_id().contains("munti")){
-                return getTask006(Authorization,device_id,tiktok_lite_version,profile_id);
-            }else{
                 return getTaskF(Authorization,device_id,tiktok_lite_version,profile_id);
+            }else{
+                return getTaskNew(Authorization,device_id,tiktok_lite_version,profile_id);
             }
 
         }catch (Exception e){
@@ -2968,6 +2968,9 @@ public class TaskController {
                     }
                     accountProfile_Task.setCode(code);
                     accountProfileRepository.save(accountProfile_Task);
+                    if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
+                        accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
+                    }
                     accountProfile_Dependent.setCode(code);
                     accountProfileRepository.save(accountProfile_Dependent);
                     data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().lastIndexOf("|")));
@@ -3144,6 +3147,9 @@ public class TaskController {
                     }
                     accountProfile_Task.setCode(code);
                     accountProfileRepository.save(accountProfile_Task);
+                    if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
+                        accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
+                    }
                     accountProfile_Dependent.setCode(code);
                     accountProfileRepository.save(accountProfile_Dependent);
                     dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
