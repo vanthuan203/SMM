@@ -356,6 +356,13 @@ public class TaskController {
                 data.put("task_key", settingSystem.getClear_data_package().trim());
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(profileTask.getClear_data()==2){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "uninstall");
+                data.put("task_key", settingSystem.getClear_data_package().trim());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             //changer profile  khi du thoi gian hoạt động
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
