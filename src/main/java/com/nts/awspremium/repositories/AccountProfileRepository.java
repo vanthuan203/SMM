@@ -110,6 +110,11 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Modifying
     @Transactional
+    @Query(value = "update  account_profile set live=0,sign_in=1 where profile_id=?1 and platform='tiktok'",nativeQuery = true)
+    public Integer update_Live_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "update  account_profile set sign_in=1 where profile_id=?1",nativeQuery = true)
     public Integer update_SignIn_By_ProfileId(String profile_id);
 

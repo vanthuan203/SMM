@@ -137,7 +137,7 @@ public class TaskController {
             if(!device.getBox_id().contains("munti")){
                 return getTask006(Authorization,device_id,tiktok_lite_version,profile_id);
             }else{
-                return getTaskNew(Authorization,device_id,tiktok_lite_version,profile_id);
+                return getTaskF(Authorization,device_id,tiktok_lite_version,profile_id);
             }
 
         }catch (Exception e){
@@ -2443,6 +2443,7 @@ public class TaskController {
             }
             //check clear data
             if(profileTask.getClear_data()==1){
+                accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "clear_data");
@@ -2926,18 +2927,20 @@ public class TaskController {
             }
 
             AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
-            if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60/24>=100&&platform_Youtube_Check.getMax_account()>1){
-                accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
-                accountProfile_Task.setRunning(0);
-                accountProfile_Task.setSign_in(1);
-                accountProfileRepository.save(accountProfile_Task);
+            if(platform_Youtube_Check.getMax_account()>1){ //neu num acc >1 on 1 profile
+                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60/24>=100){
+                    accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
+                    accountProfile_Task.setRunning(0);
+                    accountProfile_Task.setSign_in(1);
+                    accountProfileRepository.save(accountProfile_Task);
+                }
+                if(accountProfile_Task.getRunning()==0){
+                    accountProfile_Task.setTask_time(System.currentTimeMillis());
+                    accountProfile_Task.setSign_in(1);
+                    accountProfileRepository.save(accountProfile_Task);
+                }
             }
-            if(accountProfile_Task.getRunning()==0){
-                accountProfile_Task.setTask_time(System.currentTimeMillis());
-                accountProfile_Task.setSign_in(1);
-                accountProfileRepository.save(accountProfile_Task);
-            }
-            if(accountProfile_Task.getSign_in()==1 || accountProfile_Task.getLive()==0){
+            if((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0){
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                 resp.put("status", true);
                 data.put("platform",profileTask.getPlatform());
@@ -2955,7 +2958,19 @@ public class TaskController {
                 if(accountProfile_Task.getRecover().trim().contains("|")){
                     data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().lastIndexOf("|")));
                 }else{
-                    data.put("recover","");
+                    AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
+                    accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
+                    String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                    String code="";
+                    for(int i=0;i<10;i++){
+                        Integer ranver=ran.nextInt(stringrand.length());
+                        code=code+stringrand.charAt(ranver);
+                    }
+                    accountProfile_Task.setCode(code);
+                    accountProfileRepository.save(accountProfile_Task);
+                    accountProfile_Dependent.setCode(code);
+                    accountProfileRepository.save(accountProfile_Dependent);
+                    data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().lastIndexOf("|")));
                 }
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
                 resp.put("data",data);
@@ -3118,7 +3133,20 @@ public class TaskController {
                 if(accountProfile_Task.getRecover().trim().contains("|")){
                     dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                 }else{
-                    dataJson.put("recover","");
+                    Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
+                    AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
+                    accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
+                    String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                    String code="";
+                    for(int i=0;i<10;i++){
+                        Integer ranver=ran.nextInt(stringrand.length());
+                        code=code+stringrand.charAt(ranver);
+                    }
+                    accountProfile_Task.setCode(code);
+                    accountProfileRepository.save(accountProfile_Task);
+                    accountProfile_Dependent.setCode(code);
+                    accountProfileRepository.save(accountProfile_Dependent);
+                    dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                 }
                 dataJson.put("task_index",profileTask.getTask_index());
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
@@ -3402,6 +3430,7 @@ public class TaskController {
                                 account.setRecover_mail(accountProfile.getRecover());
                                 account.setPassword(accountProfile.getPassword());
                                 account.setRunning(1);
+                                account.setLive(1);
                                 account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
                                 account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
                                 accountRepository.save(account);
