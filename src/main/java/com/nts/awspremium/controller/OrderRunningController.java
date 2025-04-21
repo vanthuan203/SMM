@@ -1334,6 +1334,10 @@ public class OrderRunningController {
 
                 if(orderRunningList.get(i).getService().getTask().equals("comment")){
                     String [] comments=orderRunningList.get(i).getComment_list().split("\\R");
+                    if(comments.length==0)
+                    {
+                        continue;
+                    }
                     for (int j=0;j<comments.length;j++){
                         if(comments[j].trim().length()==0){
                             continue;
