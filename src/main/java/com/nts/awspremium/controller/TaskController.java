@@ -2944,14 +2944,16 @@ public class TaskController {
                     (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=mode.getTime_profile()){
 
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
-
+                accountProfileRepository.save(accountProfile_Task);
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                 resp.put("status", true);
                 data.put("platform",profileTask.getPlatform());
                 data.put("app",platform_Check.getApp_name().trim());
                 if(accountProfile_Task.getLive()==0 &&accountProfile_Task.getSign_in()==0){
                     data.put("task", "login");
-                }else {
+                }else if(platform_Youtube_Check.getMax_account()==1) {
+                    data.put("task", "login");
+                }else{
                     data.put("task", "sign_in");
                 }
                 data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
