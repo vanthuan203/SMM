@@ -2945,6 +2945,7 @@ public class TaskController {
 
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
+
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                 resp.put("status", true);
                 data.put("platform",profileTask.getPlatform());
