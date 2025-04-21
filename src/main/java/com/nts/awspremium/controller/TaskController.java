@@ -2940,7 +2940,11 @@ public class TaskController {
                     accountProfileRepository.save(accountProfile_Task);
                 }
             }
-            if((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0){
+            if(((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0)&&
+                    (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=mode.getTime_profile()){
+
+                accountProfile_Task.setLast_time(System.currentTimeMillis());
+
                 Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                 resp.put("status", true);
                 data.put("platform",profileTask.getPlatform());
@@ -2978,7 +2982,15 @@ public class TaskController {
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else{
+            }else if((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0) {
+                profileTask.setAccount_id(accountProfile_Task.getAccount_id().trim());
+                profileTask.setTask_index(profileTask.getTask_index()+1);
+                profileTaskRepository.save(profileTask);
+                resp.put("status", false);
+                data.put("message", "Không thực hiện nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else {
                 profileTask.setAccount_id(accountProfile_Task.getAccount_id().trim());
                 profileTask.setTask_index(profileTask.getTask_index()+1);
                 profileTaskRepository.save(profileTask);
