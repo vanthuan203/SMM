@@ -2458,6 +2458,8 @@ public class TaskController {
                 //accountProfileRepository.update_Running_By_ProfileId(profileTask.getProfile_id().trim());
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
+                    profileTask.setReboot(1);
+                    profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -3388,7 +3390,11 @@ public class TaskController {
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
-                        accountProfile.setLive(updateTaskRequest.getIsLogin());
+                        if(updateTaskRequest.getTask().equals("register")){
+                            accountProfile.setLive(-1);
+                        }else{
+                            accountProfile.setLive(0);
+                        }
                         accountProfile.setUpdate_time(System.currentTimeMillis());
                         accountProfileRepository.save(accountProfile);
                     }
@@ -3446,7 +3452,7 @@ public class TaskController {
                                     account.setGet_time(System.currentTimeMillis());
                                     account.setUpdate_time(System.currentTimeMillis());
                                     accountRepository.save(account);
-                            } else if(account!=null){
+                           } else if(account!=null){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setRecover_mail(accountProfile.getRecover());
                                 account.setPassword(accountProfile.getPassword());
