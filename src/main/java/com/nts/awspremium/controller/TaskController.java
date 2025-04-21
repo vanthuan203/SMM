@@ -2943,7 +2943,7 @@ public class TaskController {
                 }
             }
             if(((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0)&&
-                    (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=mode.getTime_profile()){
+                    (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=mode.getTime_profile()/2F){
 
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
