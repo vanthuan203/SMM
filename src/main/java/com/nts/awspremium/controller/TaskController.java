@@ -3023,9 +3023,9 @@ public class TaskController {
                     }else if(task.trim().contains("view")){
                         get_time=accountTask.getView_time();
                     }else if(task.trim().contains("like")){
-                        get_time=accountTask.getLike_time();
+                        get_time=accountTask.getFollower_time();
                     }else if(task.trim().contains("comment")){
-                        get_time=accountTask.getComment_time();
+                        get_time=accountTask.getFollower_time();
                     }else if(task.trim().contains("repost")){
                         get_time=accountTask.getRepost_time();
                     }else if(task.trim().contains("member")){
@@ -3038,10 +3038,8 @@ public class TaskController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }else if((System.currentTimeMillis()-get_time)/1000/60<modeOption.getTime_get_task()){
-                    resp.put("status",false);
-                    data.put("message","Không có nhiệm vụ!");
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                    while(arrTask.remove(task)) {}
+                    continue;
                 }
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok")){
