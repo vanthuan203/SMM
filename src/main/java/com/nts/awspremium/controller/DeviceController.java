@@ -42,6 +42,10 @@ public class DeviceController {
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
     @Autowired
+    private DeviceIpRepository deviceIpRepository;
+    @Autowired
+    private IpSumRepository ipSumRepository;
+    @Autowired
     private HttpServletRequest request;
 
     @Autowired
@@ -245,6 +249,25 @@ public class DeviceController {
                 if(device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim())){
                     device.setIp_address(ip);
                     device.setIp_changer_time(System.currentTimeMillis());
+                    DeviceIp deviceIp=deviceIpRepository.get_By_DeviceId(device.getDevice_id().trim());
+                    if(deviceIp!=null){
+                        deviceIp.setIp_list(deviceIp.getIp_list()+ip.trim()+",");
+                        deviceIp.setIp_changer_time(System.currentTimeMillis());
+                        deviceIpRepository.save(deviceIp);
+                    }else{
+                        deviceIp=new DeviceIp();
+                        deviceIp.setDevice_id(device.getDevice_id().trim());
+                        deviceIp.setIp_list(ip.trim()+",");
+                        deviceIp.setIp_changer_time(System.currentTimeMillis());
+                        deviceIpRepository.save(deviceIp);
+                    }
+                    IpSum ipSum=ipSumRepository.get_By_IP(ip.trim());
+                    if(ipSum==null){
+                        ipSum=new IpSum();
+                        ipSum.setIp(ip.trim());
+                        ipSum.setAdd_time(System.currentTimeMillis());
+                        ipSumRepository.save(ipSum);
+                    }
                 }
 
                 if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
