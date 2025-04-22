@@ -35,6 +35,37 @@ public class MailApi {
         }
 
     }
+
+    public static String ipCheck(String ip){
+          try{
+              try {
+                  OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+                  Request request = null;
+                  request = new Request.Builder().url("http://ip-api.com/json/" + ip).get().build();
+                  Response response = client.newCall(request).execute();
+                  if(response.isSuccessful()){
+                      String resultJson = response.body().string();
+                      response.body().close();
+                      Object obj = new JSONParser().parse(resultJson);
+                      JSONObject jsonObject = (JSONObject) obj;
+                      if(jsonObject.get("status").toString().equals("success")){
+                          return jsonObject.get("as").toString();
+                      }else{
+                          return null;
+                      }
+                  }else{
+                      return null;
+                  }
+              } catch (IOException | ParseException e) {
+                  return null;
+              }
+          }catch (Exception e){
+              return  null;
+          }
+
+
+    }
+
     public static JSONArray getDomains(){
         try {
             OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();

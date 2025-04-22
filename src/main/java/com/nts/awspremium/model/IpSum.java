@@ -19,4 +19,6 @@ public class IpSum implements Serializable {
     private String ip;
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;
+    @Column(columnDefinition = "varchar(555) default ''")
+    private String info;
 }

@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.nts.awspremium.MailApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
@@ -266,6 +267,10 @@ public class DeviceController {
                         ipSum=new IpSum();
                         ipSum.setIp(ip.trim());
                         ipSum.setAdd_time(System.currentTimeMillis());
+                        String as=MailApi.ipCheck(ip.trim());
+                        if(as!=null){
+                            ipSum.setInfo(as);
+                        }
                         ipSumRepository.save(ipSum);
                     }
                 }
