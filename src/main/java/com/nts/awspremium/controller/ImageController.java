@@ -24,7 +24,7 @@ public class ImageController {
     @GetMapping(value = "random")
     public ResponseEntity<org.springframework.core.io.Resource> random(@RequestHeader(defaultValue = "Vn") String geo) {
         try {
-            Path imageDir = Paths.get("/Data/Image/"+geo).toAbsolutePath().normalize();
+            Path imageDir = Paths.get("/root/Data/Image/"+geo).toAbsolutePath().normalize();
             // Lấy danh sách file trong thư mục
             List<Path> files = Files.list(imageDir)
                     .filter(Files::isRegularFile)
