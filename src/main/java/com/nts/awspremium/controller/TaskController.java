@@ -1836,7 +1836,13 @@ public class TaskController {
                                 accountProfile.setAccount_id(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform());
                                 accountProfile.setPassword(accountProfile_Dependent.getPassword().trim());
                                 if(profileTask.getPlatform().equals("tiktok")){
-                                    String name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
+                                    String name=null;
+                                    if(accountProfile_Dependent.getName().length()!=0){
+                                        name= Openai.nameTiktok2(accountProfile_Dependent.getName().trim(),openAiKeyRepository.get_OpenAI_Key());
+
+                                    }else{
+                                        name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
+                                    }
                                     if(name!=null){
                                         accountProfile.setName(name);
                                     }else {
@@ -2761,7 +2767,6 @@ public class TaskController {
                                     String name=null;
                                     if(accountProfile_Dependent.getName().length()!=0){
                                         name= Openai.nameTiktok2(accountProfile_Dependent.getName().trim(),openAiKeyRepository.get_OpenAI_Key());
-
                                     }else{
                                         name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
                                     }
@@ -2771,7 +2776,6 @@ public class TaskController {
                                         AccountName accountName=accountNameRepository.get_AcountName_By_Platform("tiktok");
                                         accountProfile.setName(accountName.getName());
                                     }
-
                                 }else{
                                     accountProfile.setName("");
                                 }
