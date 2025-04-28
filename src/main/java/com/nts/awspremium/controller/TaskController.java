@@ -2073,15 +2073,19 @@ public class TaskController {
                     }else if(task.trim().contains("subscriber")){
                         get_time=accountTask.getSubscriber_time();
                     }else if(task.trim().contains("view")){
-                        get_time=accountTask.getView_time();
+                        get_time=accountTask.getFollower_time();
                     }else if(task.trim().contains("like")){
-                        get_time=accountTask.getLike_time();
+                        get_time=accountTask.getFollower_time();
                     }else if(task.trim().contains("comment")){
-                        get_time=accountTask.getComment_time();
+                        get_time=accountTask.getFollower_time();
                     }else if(task.trim().contains("repost")){
                         get_time=accountTask.getRepost_time();
                     }else if(task.trim().contains("member")){
                         get_time=accountTask.getMember_time();
+                    }else if(task.trim().contains("share")){
+                        get_time=accountTask.getFollower_time();
+                    }else if(task.trim().contains("favorites")){
+                        get_time=accountTask.getFollower_time();
                     }
                 }
                 if(modeOption==null){
@@ -3040,6 +3044,10 @@ public class TaskController {
                         get_time=accountTask.getRepost_time();
                     }else if(task.trim().contains("member")){
                         get_time=accountTask.getMember_time();
+                    }else if(task.trim().contains("share")){
+                        get_time=accountTask.getFollower_time();
+                    }else if(task.trim().contains("favorites")){
+                        get_time=accountTask.getFollower_time();
                     }
                 }
                 if(modeOption==null){
