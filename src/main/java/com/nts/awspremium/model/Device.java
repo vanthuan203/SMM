@@ -22,6 +22,8 @@ public class Device implements Serializable {
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     @Column(columnDefinition = "bigint default 0")
+    private Long task_time;
+    @Column(columnDefinition = "bigint default 0")
     private Long ip_changer_time;
     @Column(columnDefinition = "bigint default 0")
     private Long reboot_time=0L;
@@ -39,8 +41,16 @@ public class Device implements Serializable {
     private Integer status=1;
     @Column(columnDefinition = "integer default 0")
     private Integer reboot;
+    @Column(columnDefinition = "integer default 0")
+    private Integer running;
     @Column(columnDefinition = "varchar(255) default ''")
     private String ip_address="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String task="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String platform="";
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String profile_running="";
     @Column(columnDefinition = "varchar(255) default ''")
     private String box_id;
     @Column(columnDefinition = "varchar(255) default ''")
@@ -53,4 +63,6 @@ public class Device implements Serializable {
     private String account_live="";
     @Column(columnDefinition = "varchar(1555) default ''")
     private String account_die="";
+    @Column(columnDefinition = "bigint default 0")
+    private Long tiktok_lite_version;
 }

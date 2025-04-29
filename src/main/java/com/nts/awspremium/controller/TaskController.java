@@ -2228,6 +2228,12 @@ public class TaskController {
                 //save get task time 20/12/24
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
+                device.setTask_time(System.currentTimeMillis());
+                device.setProfile_running(profile_id);
+                device.setTask(dataJson.get("task").toString());
+                device.setRunning(1);
+                device.setPlatform(dataJson.get("platform").toString());
+                deviceRepository.save(device);
                 //--------------------------------------------//
                 //dataJson.remove("order_id"); // trả về order_id => 17/3/2025
 
@@ -3204,6 +3210,12 @@ public class TaskController {
                 //save get task time 20/12/24
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
+                device.setTask_time(System.currentTimeMillis());
+                device.setProfile_running(profile_id);
+                device.setTask(dataJson.get("task").toString());
+                device.setPlatform(dataJson.get("platform").toString());
+                device.setRunning(1);
+                deviceRepository.save(device);
                 //--------------------------------------------//
                 //dataJson.remove("order_id"); // trả về order_id => 17/3/2025
 

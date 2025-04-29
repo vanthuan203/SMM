@@ -77,7 +77,7 @@ public class DeviceController {
                 sortable = Sort.by(sort_type).descending();
             }
             Pageable pageable = PageRequest.of(page, size, sortable);
-            Page<DeviceShow> devicePage;
+            Page<Device> devicePage;
             if(state==-1){
                 if(key.length()>0){
                     devicePage=deviceRepository.get_List_Device(pageable,key.trim());
@@ -92,7 +92,7 @@ public class DeviceController {
                 }
             }
 
-            List<DeviceShow> deviceList=devicePage.getContent();
+            List<Device> deviceList=devicePage.getContent();
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
 
@@ -114,9 +114,7 @@ public class DeviceController {
                     Set<String> uniqueAccount = new LinkedHashSet<>(Arrays.asList(account));
                     acc_die = String.join(",", uniqueAccount);
                 }
-
-
-                Long max_version=profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(deviceList.get(i).getDevice_id());
+                Long max_version=deviceList.get(i).getTiktok_lite_version();
                 if(max_version>settingTiktok.getMax_version()) {
                     obj.put("code_tiktok_version",false);
                 }else{
@@ -127,21 +125,21 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("app_version", deviceList.get(i).getApp_version());
-                obj.put("tiktok_version",max_version);
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -286,8 +284,13 @@ public class DeviceController {
                     device.setAccount_live(acc_live==null?"":acc_live);
                     device.setAccount_die(acc_die==null?"":acc_die);
                     device.setCheck_time(System.currentTimeMillis());
+                    device.setTiktok_lite_version(profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(device.getDevice_id()));
                 }
                 device.setNum_profile(profile.size());
+                device.setPlatform("");
+                device.setTask("");
+                device.setRunning(0);
+                device.setProfile_running("");
                 deviceRepository.save(device);
                 //reset running by device_id
                 profileTaskRepository.reset_Task_By_deviceId(device.getDevice_id().trim());
@@ -488,7 +491,7 @@ public class DeviceController {
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
             deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
             deviceRepository.update_State_By_DeviceId(state,arrPlatform);
-            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            List<Device> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             for (int i = 0; i < deviceList.size(); i++) {
@@ -511,7 +514,7 @@ public class DeviceController {
                     acc_die = String.join(",", uniqueAccount);
                 }
 
-                Long max_version=profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(deviceList.get(i).getDevice_id());
+                Long max_version=deviceList.get(i).getTiktok_lite_version();
                 if(max_version>settingTiktok.getMax_version()) {
                     obj.put("code_tiktok_version",false);
                 }else{
@@ -522,22 +525,23 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
                 obj.put("app_version", deviceList.get(i).getApp_version());
-                obj.put("tiktok_version",max_version);
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
+                obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
@@ -584,7 +588,7 @@ public class DeviceController {
             deviceRepository.findAndLockDevices(arrDevice);// Chờ lock trước khi update
             deviceRepository.update_NumProfile_By_ListDevice(1,arrDevice);
             accountRepository.reset_Account_By_ListDevice(arrDevice);
-            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrDevice);
+            List<Device> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrDevice);
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             for (int i = 0; i < deviceList.size(); i++) {
@@ -618,21 +622,21 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
-                obj.put("tiktok_version",max_version);
                 obj.put("app_version", deviceList.get(i).getApp_version());
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -679,7 +683,7 @@ public class DeviceController {
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
             deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
             deviceRepository.update_Mode_By_DeviceId(mode.trim().toLowerCase(),arrPlatform); // Chỉ update khi không có lệnh nào khác
-            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            List<Device> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             for (int i = 0; i < deviceList.size(); i++) {
@@ -713,21 +717,21 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
-                obj.put("tiktok_version",max_version);
                 obj.put("app_version", deviceList.get(i).getApp_version());
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -774,7 +778,7 @@ public class DeviceController {
             List<String> arrPlatform=new ArrayList<>(Arrays.asList(device_id.split(",")));
             deviceRepository.findAndLockDevices(arrPlatform);// Chờ lock trước khi update
             deviceRepository.update_Box_By_DeviceId(box.trim().toLowerCase(),arrPlatform);
-            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            List<Device> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             for (int i = 0; i < deviceList.size(); i++) {
@@ -808,21 +812,21 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
-                obj.put("tiktok_version",max_version);
                 obj.put("app_version", deviceList.get(i).getApp_version());
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
@@ -870,7 +874,7 @@ public class DeviceController {
             deviceRepository.update_Device_By_DeviceId(device_body.getState(),device_body.getBox_id().trim(),device_body.getMode().trim().toLowerCase(),device_body.getNum_profile_set(),device.getDevice_id());
             JSONArray jsonArray = new JSONArray();
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
-            List<DeviceShow> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
+            List<Device> deviceList=deviceRepository.get_List_Device_By_DeviceId(arrPlatform);
             for (int i = 0; i < deviceList.size(); i++) {
                 JSONObject obj = new JSONObject();
 
@@ -902,21 +906,21 @@ public class DeviceController {
                 obj.put("add_time", deviceList.get(i).getAdd_time());
                 obj.put("running", deviceList.get(i).getRunning());
                 obj.put("update_time", deviceList.get(i).getUpdate_time());
-                obj.put("get_time", deviceList.get(i).getGet_time());
+                obj.put("get_time", deviceList.get(i).getTask_time());
                 obj.put("num_profile", deviceList.get(i).getNum_profile());
                 obj.put("num_profile_set", deviceList.get(i).getNum_profile_set());
                 obj.put("num_account", num_account);
                 obj.put("num_account_die", num_account_die);
                 obj.put("acc_live",acc_live );
                 obj.put("acc_die",acc_die );
-                obj.put("profile_id", deviceList.get(i).getProfile_id());
+                obj.put("profile_id", deviceList.get(i).getProfile_running());
                 obj.put("platform", deviceList.get(i).getPlatform());
                 obj.put("task", deviceList.get(i).getTask());
                 obj.put("state", deviceList.get(i).getState());
                 obj.put("box_id", deviceList.get(i).getBox_id());
                 obj.put("rom_version", deviceList.get(i).getRom_version());
-                obj.put("tiktok_version",max_version);
                 obj.put("app_version", deviceList.get(i).getApp_version());
+                obj.put("tiktok_version",deviceList.get(i).getTiktok_lite_version());
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
