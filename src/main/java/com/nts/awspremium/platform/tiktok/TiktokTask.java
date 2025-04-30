@@ -590,7 +590,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","auto","",orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
