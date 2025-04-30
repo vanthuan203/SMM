@@ -230,7 +230,7 @@ public class TiktokTask {
                     if(channelInfo==null || channelInfo.size()==0){
                         data.put("channel_id", "");
                     }else{
-                        orderRunning.setChannel_title(channelInfo.getAsJsonObject("user").get("id").getAsString());
+                        orderRunning.setChannel_id(channelInfo.getAsJsonObject("user").get("id").getAsString());
                         orderRunningRepository.save(orderRunning);
                     }
                 }
