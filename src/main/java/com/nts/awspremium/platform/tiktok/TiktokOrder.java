@@ -80,6 +80,7 @@ public class TiktokOrder {
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link("https://www.tiktok.com/"+tiktok_id);
             orderRunning.setChannel_title(channelInfo.getAsJsonObject("user").get("nickname").getAsString());
+            orderRunning.setChannel_id(channelInfo.getAsJsonObject("user").get("id").getAsString());
             orderRunning.setStart_count(follower_count);
             orderRunning.setTotal(0);
             orderRunning.setOrder_key(tiktok_id.trim());

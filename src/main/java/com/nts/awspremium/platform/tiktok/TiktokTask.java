@@ -1,5 +1,7 @@
 package com.nts.awspremium.platform.tiktok;
 
+import com.google.gson.JsonObject;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -223,6 +225,16 @@ public class TiktokTask {
                 data.put("account_id", account_id.trim());
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject channelInfo= TikTokApi.getInfoFullChannel(orderRunning.getOrder_key().trim().split("@")[1]);
+                    if(channelInfo==null || channelInfo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_title(channelInfo.getAsJsonObject("user").get("id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+                data.put("channel_id", orderRunning.getChannel_id());
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
