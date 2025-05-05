@@ -94,6 +94,7 @@ public class TiktokUpdate {
                 accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
                 if(success==null?true:success){
                     accountTask_New.setFollower_time(System.currentTimeMillis());
+                    accountTask.setTask_success_24h(0);
                 }else{
                     /*
                     accountTask_New.setFollower_time(System.currentTimeMillis()+ 240* 60 * 1000); // lần đầu limit 240m
@@ -106,6 +107,7 @@ public class TiktokUpdate {
             }else{
                 if(success==null?true:success){
                     accountTask.setFollower_time(System.currentTimeMillis());
+                    accountTask.setTask_success_24h(0);
                     //accountTask.setTask_success_24h(0);
                 }else{
                     /*
