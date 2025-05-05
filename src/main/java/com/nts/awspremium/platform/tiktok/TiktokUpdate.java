@@ -99,7 +99,8 @@ public class TiktokUpdate {
                     accountTask_New.setFollower_time(System.currentTimeMillis()+ 240* 60 * 1000); // lần đầu limit 240m
                     accountTask_New.setTask_success_24h(1); //set fail lần 1
                      */
-                    accountTask_New.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
+                    accountTask_New.setFollower_time(System.currentTimeMillis());
+                    accountTask_New.setTask_success_24h(1);
                 }
                 accountTaskRepository.save(accountTask_New);
             }else{
@@ -115,7 +116,13 @@ public class TiktokUpdate {
                             accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
                         }
                      */
-                    accountTask.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
+                    if(accountTask.getTask_success_24h()>=3){
+                        accountTask.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
+                        accountTask.setTask_success_24h(0);
+                    }else{
+                        accountTask.setFollower_time(System.currentTimeMillis());
+                        accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
+                    }
                 }
                 accountTaskRepository.save(accountTask);
             }
