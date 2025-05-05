@@ -235,7 +235,7 @@ public class DeviceController {
                 device_new.setNum_profile(profile.size());
                 device_new.setNum_profile_set(settingSystem.getMax_profile());
                 device_new.setIp_address(ip);
-                device_new.setTask_time(0L);
+                device_new.setTiktok_lite_version(0L);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
