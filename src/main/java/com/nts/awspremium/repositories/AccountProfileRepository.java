@@ -98,6 +98,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "Select * from account_profile where account_id=?1 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id(String account_id);
 
+    @Query(value = "SELECT COALESCE(GROUP_CONCAT(SUBSTRING_INDEX(account_id, '|youtube', 1)),'') FROM account_profile where profile_id=?1 and platform='youtube'",nativeQuery = true)
+    public String get_List_Account_Youtube_By_ProfileId(String profile_id);
+
     @Modifying
     @Transactional
     @Query(value = "delete from account_profile where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)

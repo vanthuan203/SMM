@@ -112,8 +112,8 @@ public class TaskController {
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
-    @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
+    @GetMapping(value = "getTaskOFF", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> getTaskOFF(@RequestHeader(defaultValue = "") String Authorization,
                                                       @RequestParam(defaultValue = "") String device_id,
                                                       @RequestParam(defaultValue = "") Long tiktok_lite_version,
                                                       @RequestParam(defaultValue = "") String profile_id
@@ -135,7 +135,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
             if(!device.getBox_id().contains("munti")){
-                return getTaskF(Authorization,device_id,tiktok_lite_version,profile_id);
+                return getTask(Authorization,device_id,tiktok_lite_version,profile_id);
             }else{
                 return getTaskNew(Authorization,device_id,tiktok_lite_version,profile_id);
             }
@@ -2271,8 +2271,8 @@ public class TaskController {
 
     }
 
-    @GetMapping(value = "getTaskF", produces = "application/hal+json;charset=utf8")
-    public ResponseEntity<Map<String, Object>> getTaskF(@RequestHeader(defaultValue = "") String Authorization,
+    @GetMapping(value = "getTask", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> getTask(@RequestHeader(defaultValue = "") String Authorization,
                                                           @RequestParam(defaultValue = "") String device_id,
                                                           @RequestParam(defaultValue = "") Long tiktok_lite_version,
                                                           @RequestParam(defaultValue = "") String profile_id
@@ -2575,6 +2575,7 @@ public class TaskController {
                             data.put("avatar", account_get.getAvatar()==0?false:true);
                             data.put("recover_mail", account_get.getRecover_mail().trim());
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                            data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
@@ -2601,6 +2602,7 @@ public class TaskController {
                     data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
                     data.put("recover_mail", accountProfile_Live0.getRecover().trim());
                     data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
+                    data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
@@ -2664,6 +2666,7 @@ public class TaskController {
                     data.put("avatar",accountProfile.getAvatar()==0?false:true);
                     data.put("recover_mail",  accountProfile.getRecover().trim());
                     data.put("auth_2fa", "");
+                    data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }else if(accountProfile!=null){
@@ -2686,6 +2689,7 @@ public class TaskController {
                         data.put("avatar",accountProfile.getAvatar()==0?false:true);
                         data.put("recover_mail",  accountProfile.getRecover().trim());
                         data.put("auth_2fa", "");
+                        data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
