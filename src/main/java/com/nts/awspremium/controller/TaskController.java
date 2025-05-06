@@ -2521,6 +2521,8 @@ public class TaskController {
                 profileTask.setOnline_time(System.currentTimeMillis());
                 profileTask.setUpdate_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
+                device.setProfile_time(System.currentTimeMillis());
+                deviceRepository.save(device);
             }else{
                 profileTask.setTiktok_lite_version(tiktok_lite_version);
                 profileTask.setTask_time(System.currentTimeMillis());

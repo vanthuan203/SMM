@@ -143,6 +143,7 @@ public class DeviceController {
                 obj.put("mode", deviceList.get(i).getMode());
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
@@ -236,6 +237,7 @@ public class DeviceController {
                 device_new.setNum_profile_set(settingSystem.getMax_profile());
                 device_new.setIp_address(ip);
                 device_new.setTiktok_lite_version(0L);
+                device_new.setProfile_time(0L);
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
