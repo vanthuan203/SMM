@@ -3,10 +3,7 @@ package com.nts.awspremium.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -25,5 +22,7 @@ public class TaskSum {
     private Boolean status;
     @Column(columnDefinition = "TINYINT default 1")
     private Boolean success;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id",referencedColumnName = "profile_id",updatable = true,insertable = true)
+    private ProfileTask profileTask;
 }

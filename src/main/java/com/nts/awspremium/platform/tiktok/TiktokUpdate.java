@@ -58,58 +58,76 @@ public class TiktokUpdate {
     private TaskSumRepository taskSumRepository;
     @Autowired
     private ModeOptionRepository modeOptionRepository;
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
+    @Autowired
+    private DeviceRepository deviceRepository;
 
-    public Boolean tiktok_follower(String account_id,String task_key,Boolean success){
+    public Boolean tiktok_follower(String account_id,String task_key,Boolean success,Boolean status,String profile_id){
         try{
-            if(success==null?true:success){
-                TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
-                if(tikTokAccountHistory!=null){
-                    tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
-                    tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
-                    tikTokAccountHistoryRepository.save(tikTokAccountHistory);
-                }else{
-                    TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
-                    tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                    tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
-                    tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
-                    tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
-                }
-                TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
-                tiktokFollower24h.setId(account_id.trim()+task_key.trim());
-                tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
-                tikTokFollower24hRepository.save(tiktokFollower24h);
+            if(status){
+                if(success){
+                    TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
+                    if(tikTokAccountHistory!=null){
+                        tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
+                        tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                        tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                    }else{
+                        TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
+                        tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                        tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
+                        tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
+                        tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
+                    }
+                    TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
+                    tiktokFollower24h.setId(account_id.trim()+task_key.trim());
+                    tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
+                    tikTokFollower24hRepository.save(tiktokFollower24h);
 
-                TaskSum taskSum =new TaskSum();
-                taskSum.setId(account_id.trim()+task_key.trim());
-                taskSum.setUpdate_time(System.currentTimeMillis());
-                taskSum.setTask("follower");
-                taskSum.setPlatform("tiktok");
-                taskSumRepository.save(taskSum);
-            }
-            AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
-            if(accountTask==null){
-                AccountTask accountTask_New=new AccountTask();
-                accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
-                accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
-                if(success==null?true:success){
-                    accountTask_New.setFollower_time(System.currentTimeMillis());
-                    accountTask_New.setTask_success_24h(0);
+                    TaskSum taskSum =new TaskSum();
+                    taskSum.setId(account_id.trim()+task_key.trim());
+                    taskSum.setUpdate_time(System.currentTimeMillis());
+                    taskSum.setTask("follower");
+                    taskSum.setPlatform("tiktok");
+                    taskSum.setStatus(true);
+                    taskSum.setSuccess(true);
+                    taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                    taskSumRepository.save(taskSum);
                 }else{
+                    TaskSum taskSum =new TaskSum();
+                    taskSum.setId(account_id.trim()+task_key.trim());
+                    taskSum.setUpdate_time(System.currentTimeMillis());
+                    taskSum.setTask("follower");
+                    taskSum.setPlatform("tiktok");
+                    taskSum.setStatus(true);
+                    taskSum.setSuccess(false);
+                    taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                    taskSumRepository.save(taskSum);
+                }
+                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+                ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
+                if(accountTask==null){
+                    AccountTask accountTask_New=new AccountTask();
+                    accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
+                    accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                    if(success){
+                        accountTask_New.setFollower_time(System.currentTimeMillis());
+                        accountTask_New.setTask_success_24h(0);
+                    }else{
                     /*
                     accountTask_New.setFollower_time(System.currentTimeMillis()+ 240* 60 * 1000); // lần đầu limit 240m
                     accountTask_New.setTask_success_24h(1); //set fail lần 1
                      */
-                    accountTask_New.setFollower_time(System.currentTimeMillis());
-                    accountTask_New.setTask_success_24h(1);
-                }
-                accountTaskRepository.save(accountTask_New);
-            }else{
-                if(success==null?true:success){
-                    accountTask.setFollower_time(System.currentTimeMillis());
-                    accountTask.setTask_success_24h(0);
-                    //accountTask.setTask_success_24h(0);
+                        accountTask_New.setFollower_time(System.currentTimeMillis());
+                        accountTask_New.setTask_success_24h(1);
+                    }
+                    accountTaskRepository.save(accountTask_New);
                 }else{
+                    if(success){
+                        accountTask.setFollower_time(System.currentTimeMillis());
+                        accountTask.setTask_success_24h(0);
+                        //accountTask.setTask_success_24h(0);
+                    }else{
                     /*
                         accountTask.setFollower_time(System.currentTimeMillis()+(modeOption==null?60:((int)(modeOption.getTime_waiting_task()*(0.2*(accountTask.getTask_success_24h()+1))))) * 60 * 1000);
                         if(accountTask.getTask_success_24h()>=4){
@@ -118,15 +136,26 @@ public class TiktokUpdate {
                             accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
                         }
                      */
-                    if(accountTask.getTask_success_24h()>=2){
-                        accountTask.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
-                        accountTask.setTask_success_24h(0);
-                    }else{
-                        accountTask.setFollower_time(System.currentTimeMillis());
-                        accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
+                        if(accountTask.getTask_success_24h()>=2){
+                            accountTask.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
+                            accountTask.setTask_success_24h(0);
+                        }else{
+                            accountTask.setFollower_time(System.currentTimeMillis());
+                            accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
+                        }
                     }
+                    accountTaskRepository.save(accountTask);
                 }
-                accountTaskRepository.save(accountTask);
+            }else{
+                TaskSum taskSum =new TaskSum();
+                taskSum.setId(account_id.trim()+task_key.trim());
+                taskSum.setUpdate_time(System.currentTimeMillis());
+                taskSum.setTask("follower");
+                taskSum.setPlatform("tiktok");
+                taskSum.setStatus(false);
+                taskSum.setSuccess(false);
+                taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                taskSumRepository.save(taskSum);
             }
             return true;
         }catch (Exception e){
