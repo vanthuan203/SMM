@@ -65,6 +65,8 @@ public class Device implements Serializable {
     private String account_live="";
     @Column(columnDefinition = "varchar(1555) default ''")
     private String account_die="";
+    @Column(columnDefinition = "varchar(1555) default ''")
+    private String note="";
     @Column(columnDefinition = "bigint default 0")
     private Long tiktok_lite_version;
 }

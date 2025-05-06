@@ -48,6 +48,8 @@ public class DeviceController {
     private IpSumRepository ipSumRepository;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    private TaskSumRepository taskSumRepository;
 
     @Autowired
     private ModeRepository modeRepository;
@@ -238,6 +240,7 @@ public class DeviceController {
                 device_new.setIp_address(ip);
                 device_new.setTiktok_lite_version(0L);
                 device_new.setProfile_time(0L);
+                device_new.setNote("");
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
@@ -279,6 +282,7 @@ public class DeviceController {
                 if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
                     String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
                     String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
+                    String note=taskSumRepository.task_Sum_By_DeviceId(device.getDevice_id().trim());
                     if(acc_die==null){
                         device.setStatus(1);
                     }else{
@@ -286,6 +290,7 @@ public class DeviceController {
                     }
                     device.setAccount_live(acc_live==null?"":acc_live);
                     device.setAccount_die(acc_die==null?"":acc_die);
+                    device.setNote(note==null?"":note);
                     device.setCheck_time(System.currentTimeMillis());
                     device.setTiktok_lite_version(profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(device.getDevice_id()));
                 }
