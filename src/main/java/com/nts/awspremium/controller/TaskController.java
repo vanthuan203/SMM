@@ -2467,6 +2467,14 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            if(!device.getProfile_running().equals(profile_id.trim())){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "profile_changer");
+                data.put("profile_id", Integer.parseInt(device.getProfile_running()));
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
             //changer profile  khi du thoi gian hoạt động
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
@@ -2476,6 +2484,8 @@ public class TaskController {
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     profileTask.setReboot(1);
                     profileTaskRepository.save(profileTask);
+                    device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
+                    deviceRepository.save(device);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -3215,7 +3225,7 @@ public class TaskController {
                 profileTask.setTask_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
                 device.setTask_time(System.currentTimeMillis());
-                device.setProfile_running(profile_id);
+                //device.setProfile_running(profile_id);
                 device.setTask(dataJson.get("task").toString());
                 device.setPlatform(dataJson.get("platform").toString());
                 device.setRunning(1);

@@ -291,7 +291,7 @@ public class DeviceController {
                 device.setPlatform("");
                 device.setTask("");
                 device.setRunning(0);
-                device.setProfile_running("");
+                //device.setProfile_running("");
                 deviceRepository.save(device);
                 //reset running by device_id
                 profileTaskRepository.reset_Task_By_deviceId(device.getDevice_id().trim());
