@@ -2467,7 +2467,7 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            if(device.getProfile_running().length()!=0&&!device.getProfile_running().equals(profile_id.trim())){
+            if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")){
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");
