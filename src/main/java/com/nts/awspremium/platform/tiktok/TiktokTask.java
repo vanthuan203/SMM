@@ -237,7 +237,7 @@ public class TiktokTask {
                         orderRunningRepository.save(orderRunning);
                     }
                 }
-                if(mode_Fix.equals("auto")){
+                if(ran.nextInt(100)<50){
                     data.put("channel_id", orderRunning.getChannel_id());
                 }else{
                     data.put("channel_id","");
