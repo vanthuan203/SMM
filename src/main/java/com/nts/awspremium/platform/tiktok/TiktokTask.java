@@ -237,7 +237,7 @@ public class TiktokTask {
                         orderRunningRepository.save(orderRunning);
                     }
                 }
-                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_id","");
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());

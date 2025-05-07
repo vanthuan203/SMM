@@ -2908,7 +2908,7 @@ public class TaskController {
                             }
                         }
 
-                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=mode.getTime_profile()&&
+                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=10&&
                             accountProfile_Live0.getLive()==-1){//check last time task login
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
@@ -2979,7 +2979,7 @@ public class TaskController {
                 }
             }
             if(((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0)&&
-                    (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=mode.getTime_profile()/2F){
+                    (System.currentTimeMillis()-accountProfile_Task.getLast_time())/1000/60>=10){
 
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
