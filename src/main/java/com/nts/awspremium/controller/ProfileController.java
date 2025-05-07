@@ -29,6 +29,39 @@ public class ProfileController {
     private UserRepository userRepository;
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
+
+    public String formatStatus(String raw) {
+        if (raw == null || raw.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+
+        Arrays.stream(raw.split("\\?"))
+                .filter(s -> !s.isEmpty())
+                .forEach(entry -> {
+                    String[] parts = entry.split("=>");
+                    if (parts.length != 2) return;
+
+                    String status = parts[0].equals("1") ? "True" : "False";
+
+                    if (parts[0].equals("1")) {
+                        // status = true → hiển thị cả success và failure
+                        String[] values = parts[1].split(",");
+                        String success = values[0].split(":")[1];
+                        String fail = values[1].split(":")[1];
+                        sb.append(String.format("%s: Success: %s, Failure: %s", status, success, fail));
+                    } else {
+                        // status = false → chỉ đếm tổng
+                        int total = Arrays.stream(parts[1].split(","))
+                                .mapToInt(s -> Integer.parseInt(s.split(":")[1]))
+                                .sum();
+                        sb.append(String.format("%s: %d", status, total));
+                    }
+
+                    sb.append("|");
+                });
+
+        return sb.toString();
+    }
     @GetMapping(value = "get_List_Profile", produces = "application/hal+json;charset=utf8")
     private ResponseEntity<Map<String, Object>> get_List_Profile(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id
@@ -43,7 +76,7 @@ public class ProfileController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            List<ProfileShow> profiles =profileTaskRepository.get_Profile_By_DeviceId(device_id.toString());
+            List<ProfileTask> profiles =profileTaskRepository.get_Profile_By_DeviceId(device_id.toString());
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             JSONArray jsonArray = new JSONArray();
 
@@ -72,7 +105,7 @@ public class ProfileController {
                     obj.put("code_tiktok_version",true);
                 }
 
-                obj.put("device_id", profiles.get(i).getDevice_id());
+                obj.put("device_id", profiles.get(i).getDevice().getDevice_id());
                 obj.put("profile_id", profiles.get(i).getProfile_id());
                 obj.put("add_time", profiles.get(i).getAdd_time());
                 obj.put("update_time", profiles.get(i).getUpdate_time());
@@ -89,6 +122,7 @@ public class ProfileController {
                 obj.put("task", profiles.get(i).getTask());
                 obj.put("state", profiles.get(i).getState());
                 obj.put("running", profiles.get(i).getRunning());
+                obj.put("note",formatStatus(profiles.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("profiles", jsonArray);
