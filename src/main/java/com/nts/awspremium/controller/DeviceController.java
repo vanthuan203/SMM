@@ -330,7 +330,7 @@ public class DeviceController {
                     device.setTiktok_lite_version(profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(device.getDevice_id()));
                     ProfileTask profileTask =profileTaskRepository.get_Profile_By_ProfileId(device.getDevice_id().trim()+"_"+device.getProfile_running().trim());
                     if(profileTask!=null){
-                        profileTask.setNote(noteP==null?"":note);
+                        profileTask.setNote(noteP==null?"":noteP);
                         profileTaskRepository.save(profileTask);
                     }
                 }
