@@ -317,6 +317,7 @@ public class DeviceController {
                     String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
                     String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
                     String note=taskSumRepository.task_Sum_By_DeviceId(device.getDevice_id().trim());
+                    String noteP=taskSumRepository.task_Sum_By_ProfileId(device.getDevice_id().trim()+"_"+device.getProfile_running().trim());
                     if(acc_die==null){
                         device.setStatus(1);
                     }else{
@@ -327,6 +328,11 @@ public class DeviceController {
                     device.setNote(note==null?"":note);
                     device.setCheck_time(System.currentTimeMillis());
                     device.setTiktok_lite_version(profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(device.getDevice_id()));
+                    ProfileTask profileTask =profileTaskRepository.get_Profile_By_ProfileId(device.getDevice_id().trim()+"_"+device.getProfile_running().trim());
+                    if(profileTask!=null){
+                        profileTask.setNote(noteP==null?"":note);
+                        profileTaskRepository.save(profileTask);
+                    }
                 }
                 device.setNum_profile(profile.size());
                 device.setPlatform("");
@@ -375,6 +381,7 @@ public class DeviceController {
                     profileTask_new.setTask_index(0);
                     profileTask_new.setTask_index(0);
                     profileTask_new.setValid(1);
+                    profileTask_new.setNote("");
                     profileTask_new.setTiktok_lite_version(0L);
                     profileTaskRepository.save(profileTask_new);
                 }

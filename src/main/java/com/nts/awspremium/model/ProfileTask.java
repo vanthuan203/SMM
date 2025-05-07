@@ -71,4 +71,6 @@ public class ProfileTask implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id",referencedColumnName = "device_id",updatable = true,insertable = true)
     private Device device;
+    @Column(columnDefinition = "varchar(1555) default ''")
+    private String note="";
 }
