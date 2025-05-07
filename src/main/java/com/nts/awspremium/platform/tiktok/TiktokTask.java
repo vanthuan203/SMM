@@ -176,6 +176,7 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            String mode_Fix=mode;
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","follower");
             if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
@@ -236,7 +237,11 @@ public class TiktokTask {
                         orderRunningRepository.save(orderRunning);
                     }
                 }
-                data.put("channel_id", orderRunning.getChannel_id());
+                if(mode_Fix.equals("auto")){
+                    data.put("channel_id", orderRunning.getChannel_id());
+                }else{
+                    data.put("channel_id","");
+                }
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
