@@ -58,4 +58,9 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             "    GROUP BY status\n" +
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from task_sum where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)
+    public Integer deleteAllByThan24h();
 }

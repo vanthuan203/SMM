@@ -473,6 +473,7 @@ public class TiktokUpdate {
             tikTokFollower24hRepository.deleteAllByThan24h();
             tiktokShare24hRepository.deleteAllByThan24h();
             tiktokFavorites24hRepository.deleteAllByThan24h();
+            taskSumRepository.deleteAllByThan24h();
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

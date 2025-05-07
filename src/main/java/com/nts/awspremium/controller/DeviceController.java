@@ -53,6 +53,39 @@ public class DeviceController {
 
     @Autowired
     private ModeRepository modeRepository;
+
+    public String formatStatus(String raw) {
+        if (raw == null || raw.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+
+        Arrays.stream(raw.split("\\?"))
+                .filter(s -> !s.isEmpty())
+                .forEach(entry -> {
+                    String[] parts = entry.split("=>");
+                    if (parts.length != 2) return;
+
+                    String status = parts[0].equals("1") ? "True" : "False";
+
+                    if (parts[0].equals("1")) {
+                        // status = true → hiển thị cả success và failure
+                        String[] values = parts[1].split(",");
+                        String success = values[0].split(":")[1];
+                        String fail = values[1].split(":")[1];
+                        sb.append(String.format("%s: Success: %s, Failure: %s", status, success, fail));
+                    } else {
+                        // status = false → chỉ đếm tổng
+                        int total = Arrays.stream(parts[1].split(","))
+                                .mapToInt(s -> Integer.parseInt(s.split(":")[1]))
+                                .sum();
+                        sb.append(String.format("%s: %d", status, total));
+                    }
+
+                    sb.append("|");
+                });
+
+        return sb.toString();
+    }
     @GetMapping(value = "get_List_Device", produces = "application/hal+json;charset=utf8")
     public ResponseEntity<Map<String, Object>> get_List_Device(@RequestHeader(defaultValue = "") String Authorization,
                                                     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
@@ -146,6 +179,7 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
