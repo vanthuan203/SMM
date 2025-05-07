@@ -586,6 +586,8 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -683,6 +685,8 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -778,6 +782,8 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -873,6 +879,8 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -967,6 +975,8 @@ public class DeviceController {
                 obj.put("status", deviceList.get(i).getStatus());
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("ip_address", deviceList.get(i).getIp_address());
+                obj.put("profile_time", deviceList.get(i).getProfile_time());
+                obj.put("note",formatStatus(deviceList.get(i).getNote()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
