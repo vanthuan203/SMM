@@ -2775,7 +2775,7 @@ public class TaskController {
                     if(accountProfile_Live0==null) {
                         if(platform_Check.getRegister_account()==1 &&
                                 platform_Check.getDependent().trim().length()>0&&platform_Check.getConnection_account()==1&&
-                                historyRegisterRepository.count_Register_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%",platform_Check.getRegister_time())==0&&
+                                historyRegisterRepository.count_Register_By_Platform_And_ProfileId(profileTask.getPlatform().trim(),profileTask.getProfile_id().trim(),platform_Check.getRegister_time())==0&&
                                 accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),profileTask.getPlatform().trim(),7)<platform_Check.getRegister_limit()&&
                                 accountProfileRepository.get_Count_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%")>0
                         ){
