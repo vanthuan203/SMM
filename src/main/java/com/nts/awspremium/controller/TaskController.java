@@ -2912,25 +2912,31 @@ public class TaskController {
 
                     }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=10&&
                             accountProfile_Live0.getLive()==-1){//check last time task login
-                        /*
                         Account account=accountRepository.get_Account_By_Password_And_Platfrom(accountProfile_Live0.getPassword().trim(),accountProfile_Live0.getPlatform());
                         if(account!=null&&accountProfile_Live0.getPlatform().equals("tiktok")){
-                            if(TikTokApi.getFollowerCount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")),1)==-1){
-                                accountProfileRepository.delete(accountProfile_Live0);
-                                accountProfileRepository.delete(accountProfile_Live0);
+                            System.out.println(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""));
+                            if(TikTokApi.checkAccount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1){
+                                account.setLive(2812);
+                                accountRepository.save(account);
                                 Account account_Dep=accountRepository.get_Account_By_Account_id(accountProfile_Live0.getRecover());
                                 if(account_Dep!=null){
-                                    account_Dep.setLive(4);
+                                    account_Dep.setDie_dependent(accountProfile_Live0.getPlatform());
                                     account_Dep.setProfile_id("");
                                     account_Dep.setDevice_id("");
                                     account_Dep.setRunning(0);
+                                    account_Dep.setLive(2812);
                                     accountRepository.save(account_Dep);
                                 }
+                                AccountProfile accountProfile_Dep=accountProfileRepository.get_Account_Youtube_By_ProfileId_And_Code(profileTask.getProfile_id().trim(),accountProfile_Live0.getCode().trim());
+                                accountProfileRepository.delete(accountProfile_Dep);
                                 accountProfileRepository.delete(accountProfile_Live0);
-                                accountProfileRepository.delete(accountProfile_Live0);
+                                historyRegisterRepository.delete_Register_By_Platform_And_ProfileId(accountProfile_Live0.getPlatform().trim(),profileTask.getProfile_id().trim(),24);
+                                resp.put("status", false);
+                                data.put("message", "Không thực hiện nhiệm vụ");
+                                resp.put("data", data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
                         }
-                         */
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
