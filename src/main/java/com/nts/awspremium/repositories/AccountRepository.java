@@ -15,6 +15,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "SELECT * FROM account where profile_id=?1 and running=1 and platform=?2  limit 1",nativeQuery = true)
     public Account get_Account_By_ProfileId_And_Platfrom(String profile_id,String platform);
 
+    @Query(value = "SELECT * FROM account where password=?1 and platform=?2  limit 1",nativeQuery = true)
+    public Account get_Account_By_Password_And_Platfrom(String password,String platform);
+
 
     @Query(value = "SELECT * FROM account where profile_id=?1 and platform=?2 and running=1  limit 1",nativeQuery = true)
     public Account get_Account_Ddependent_By_ProfileId_And_Platfrom(String profile_id,String platform);

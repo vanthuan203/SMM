@@ -2,6 +2,7 @@ package com.nts.awspremium.controller;
 
 import com.nts.awspremium.Openai;
 import com.nts.awspremium.StringUtils;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -2903,6 +2904,7 @@ public class TaskController {
                                 data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                 data.put("recover_mail", account_get.getRecover_mail().trim());
                                 data.put("auth_2fa", account_get.getAuth_2fa().trim());
+                                data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                                 resp.put("data",data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
@@ -2910,6 +2912,25 @@ public class TaskController {
 
                     }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=10&&
                             accountProfile_Live0.getLive()==-1){//check last time task login
+                        /*
+                        Account account=accountRepository.get_Account_By_Password_And_Platfrom(accountProfile_Live0.getPassword().trim(),accountProfile_Live0.getPlatform());
+                        if(account!=null&&accountProfile_Live0.getPlatform().equals("tiktok")){
+                            if(TikTokApi.getFollowerCount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")),1)==-1){
+                                accountProfileRepository.delete(accountProfile_Live0);
+                                accountProfileRepository.delete(accountProfile_Live0);
+                                Account account_Dep=accountRepository.get_Account_By_Account_id(accountProfile_Live0.getRecover());
+                                if(account_Dep!=null){
+                                    account_Dep.setLive(4);
+                                    account_Dep.setProfile_id("");
+                                    account_Dep.setDevice_id("");
+                                    account_Dep.setRunning(0);
+                                    accountRepository.save(account_Dep);
+                                }
+                                accountProfileRepository.delete(accountProfile_Live0);
+                                accountProfileRepository.delete(accountProfile_Live0);
+                            }
+                        }
+                         */
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
@@ -2931,6 +2952,7 @@ public class TaskController {
                             data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
                             data.put("recover_mail", accountProfile_Live0.getRecover().substring(0,accountProfile_Live0.getRecover().lastIndexOf("|")));
                             data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
+                            data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                             resp.put("data",data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
@@ -2966,7 +2988,7 @@ public class TaskController {
 
             AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
             if(platform_Youtube_Check.getMax_account()>1){ //neu num acc >1 on 1 profile
-                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60/24>=100){
+                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getTask_time())/1000/60/60>=24){
                     accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
                     accountProfile_Task.setRunning(0);
                     accountProfile_Task.setSign_in(1);
@@ -3021,6 +3043,7 @@ public class TaskController {
                     data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().lastIndexOf("|")));
                 }
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
+                data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if((accountProfile_Task.getSign_in()==1 &&platform_Youtube_Check.getMax_account()>1) || accountProfile_Task.getLive()==0) {
