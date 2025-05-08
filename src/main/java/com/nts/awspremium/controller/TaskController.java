@@ -3611,11 +3611,20 @@ public class TaskController {
                     }
                     Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
                     if(accountPlatform!=null){
-                        accountPlatform.setRunning(0);
-                        accountPlatform.setUpdate_time(System.currentTimeMillis());
-                        accountPlatform.setDie_time(System.currentTimeMillis());
-                        accountPlatform.setLive(updateTaskRequest.getIsLogin());
-                        accountRepository.save(accountPlatform);
+                        if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
+                            accountPlatform.setRunning(0);
+                            accountPlatform.setUpdate_time(System.currentTimeMillis());
+                            accountPlatform.setProfile_id("");
+                            accountPlatform.setProfile_id("");
+                            accountPlatform.setLive(1);
+                            accountRepository.save(accountPlatform);
+                        }else{
+                            accountPlatform.setRunning(0);
+                            accountPlatform.setUpdate_time(System.currentTimeMillis());
+                            accountPlatform.setDie_time(System.currentTimeMillis());
+                            accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                            accountRepository.save(accountPlatform);
+                        }
                     }
                     profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
