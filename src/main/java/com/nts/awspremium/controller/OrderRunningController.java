@@ -787,8 +787,9 @@ public class OrderRunningController {
                                 }else if(tiktok_account.size()==0){
                                     delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
                                 }else{
-                                    orderRunningList.get(i).setOrder_key("@"+tiktok_account.getAsJsonObject("user").get("uniqueId").toString().trim());
+                                    orderRunningList.get(i).setOrder_key("@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString());
                                     orderRunningList.get(i).setChannel_title(tiktok_account.getAsJsonObject("user").get("nickname").getAsString());
+                                    orderRunningList.get(i).setOrder_link("https://www.tiktok.com/"+"@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString());
                                     orderRunningList.get(i).setValid(1);
                                     orderRunningRepository.save(orderRunningList.get(i));
                                 }
