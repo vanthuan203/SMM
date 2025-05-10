@@ -3475,7 +3475,6 @@ public class TaskController {
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
-
                         accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
                         if(accountProfile.getLogin_time()==0){
@@ -3484,7 +3483,10 @@ public class TaskController {
 
                         if(updateTaskRequest.getTask_key().length()!=0){
 
-                            if(StringUtils.isValidTikTokID(updateTaskRequest.getTask_key().trim())&&updateTaskRequest.getPlatform().equals("tiktok")){
+                            if(updateTaskRequest.getPlatform().equals("tiktok")&&
+                                    updateTaskRequest.getTask_key().trim().startsWith("@")&&
+                                    TikTokApi.getFollowerCount(updateTaskRequest.getTask_key().trim().replace("@",""),1)>=0){
+
                                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                                 if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){
                                     accountProfileRepository.delete(accountProfile_Check);
@@ -3525,7 +3527,7 @@ public class TaskController {
                                     account.setGet_time(System.currentTimeMillis());
                                     account.setUpdate_time(System.currentTimeMillis());
                                     accountRepository.save(account);
-                           } else if(account!=null){
+                           }else if(account!=null&&accountProfile.getLive()==1){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setRecover_mail(accountProfile.getRecover());
                                 account.setPassword(accountProfile.getPassword());
@@ -3534,15 +3536,15 @@ public class TaskController {
                                 account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
                                 account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
                                 accountRepository.save(account);
-                            }
+                           }
                         }else if(updateTaskRequest.getTask_key().length()==0){
                             accountProfile.setLive(0);
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
                         }
                         String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
-                        if(platform_Dependent!=null){
-                            Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
+                        if(platform_Dependent!=null&&!updateTaskRequest.getPlatform().equals("youtube")){
+                            Account accountDependent =accountRepository.get_Account_By_Account_id(accountProfile.getRecover().trim());
                             if(accountDependent!=null){
                                 if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
                                     if(!accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
@@ -3550,11 +3552,6 @@ public class TaskController {
                                             accountDependent.setDependent(updateTaskRequest.getPlatform());
                                         }else{
                                             accountDependent.setDependent(accountDependent.getDependent()+","+updateTaskRequest.getPlatform());
-                                        }
-                                        if(accountDependent.getPassword_dependent().length()==0){
-                                            accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                        }else{
-                                            accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
                                         }
                                         List<String> arrDie=new ArrayList<>(Arrays.asList(accountDependent.getDie_dependent().split(",")));
                                         arrDie.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
@@ -3571,41 +3568,26 @@ public class TaskController {
                     }////
 
                 }else if(updateTaskRequest.getIsLogin()>1){
-
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
 
+                    Boolean check_Die_Tiktok=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
+
                     String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
-                    if(platform_Dependent!=null){
-                        Account accountDependent =accountRepository.get_Account_Ddependent_By_ProfileId_And_Platfrom(accountProfile.getProfileTask().getProfile_id(),platform_Dependent);
+                    if(platform_Dependent!=null&&!updateTaskRequest.getPlatform().equals("youtube")){
+                        if((accountProfile.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountProfile.getPlatform().equals("tiktok")){
+                            Account accountDependent =accountRepository.get_Account_By_Account_id(accountProfile.getRecover().trim());
+                            if(accountDependent!=null){
 
-                        if(accountDependent!=null){
-                            if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
-                                if(accountDependent.getDependent().contains(updateTaskRequest.getPlatform())){
-                                    List<String> arrPlatform =new ArrayList<>(Arrays.asList(accountDependent.getDependent().split(",")));
-                                    arrPlatform.remove(updateTaskRequest.getPlatform());
-                                    accountDependent.setDependent(String.join(",", arrPlatform));
-
-                            /*
-                            List<String> arrPassword =new ArrayList<>(Arrays.asList(account.getPassword_dependent().split(",")));
-                            arrPassword.removeIf(platform -> platform.contains(updateTaskRequest.getPlatform()));
-                            account.setPassword_dependent(String.join(",", arrPassword));
-                             */
-                                }
-                                if(!accountDependent.getDie_dependent().contains(updateTaskRequest.getPlatform())){
-                                    if(accountDependent.getDie_dependent().length()==0){
-                                        accountDependent.setDie_dependent(updateTaskRequest.getPlatform());
-                                    }else{
-                                        accountDependent.setDie_dependent(accountDependent.getDie_dependent()+","+updateTaskRequest.getPlatform());
+                                if(!accountDependent.getPlatform().equals(updateTaskRequest.getPlatform())){
+                                    if(!accountDependent.getDie_dependent().contains(updateTaskRequest.getPlatform())){
+                                        if(accountDependent.getDie_dependent().length()==0){
+                                            accountDependent.setDie_dependent(updateTaskRequest.getPlatform());
+                                        }else{
+                                            accountDependent.setDie_dependent(accountDependent.getDie_dependent()+","+updateTaskRequest.getPlatform());
+                                        }
                                     }
+                                    accountRepository.save(accountDependent);
                                 }
-                                if(!accountDependent.getPassword_dependent().contains(updateTaskRequest.getPlatform()) && accountProfile!=null){
-                                    if(accountDependent.getPassword_dependent().length()==0){
-                                        accountDependent.setPassword_dependent(updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                    }else{
-                                        accountDependent.setPassword_dependent(accountDependent.getPassword_dependent()+","+updateTaskRequest.getPlatform()+"|"+accountProfile.getPassword());
-                                    }
-                                }
-                                accountRepository.save(accountDependent);
                             }
                         }
                     }
@@ -3619,14 +3601,23 @@ public class TaskController {
                             accountPlatform.setLive(1);
                             accountRepository.save(accountPlatform);
                         }else{
-                            accountPlatform.setRunning(0);
-                            accountPlatform.setUpdate_time(System.currentTimeMillis());
-                            accountPlatform.setDie_time(System.currentTimeMillis());
-                            accountPlatform.setLive(updateTaskRequest.getIsLogin());
-                            accountRepository.save(accountPlatform);
+                            if((accountPlatform.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountPlatform.getPlatform().equals("tiktok")){// platform=tiktok & acc die
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setDie_time(System.currentTimeMillis());
+                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                accountRepository.save(accountPlatform);
+                            }else{
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setProfile_id("");
+                                accountPlatform.setProfile_id("");
+                                accountPlatform.setLive(1);
+                                accountRepository.save(accountPlatform);
+                            }
                         }
                     }
-                    profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
+                    //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
                         if(updateTaskRequest.getPlatform().trim().equals("tiktok")){
                             AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(accountProfile.getProfileTask().getProfile_id().trim(),"youtube");

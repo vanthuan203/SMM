@@ -176,7 +176,6 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            String mode_Fix=mode;
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","follower");
             if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
                 resp.put("status", false);
@@ -583,6 +582,8 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
+            }else if(!mode.equals("auto")){
+                mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
@@ -593,7 +594,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view","auto","",orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
