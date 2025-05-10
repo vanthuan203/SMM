@@ -65,20 +65,18 @@ public class DeviceController {
                     String[] parts = entry.split("=>");
                     if (parts.length != 2) return;
 
-                    String status = parts[0].equals("1") ? "True" : "False";
-
                     if (parts[0].equals("1")) {
                         // status = true → hiển thị cả success và failure
                         String[] values = parts[1].split(",");
                         String success = values[0].split(":")[1];
                         String fail = values[1].split(":")[1];
-                        sb.append(String.format("%s: Success: %s, Failure: %s", status, success, fail));
+                        sb.append(String.format("Success[%s],Failure[%s]", success, fail));
                     } else {
                         // status = false → chỉ đếm tổng
                         int total = Arrays.stream(parts[1].split(","))
                                 .mapToInt(s -> Integer.parseInt(s.split(":")[1]))
                                 .sum();
-                        sb.append(String.format("%s: %d", status, total));
+                        sb.append(String.format("False[%d]", total));
                     }
 
                     sb.append("|");

@@ -29,6 +29,8 @@ public class ProfileController {
     private UserRepository userRepository;
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
+    @Autowired
+    private TaskSumRepository taskSumRepository;
 
     public String formatStatus(String raw) {
         if (raw == null || raw.isEmpty()) return "";
@@ -41,20 +43,18 @@ public class ProfileController {
                     String[] parts = entry.split("=>");
                     if (parts.length != 2) return;
 
-                    String status = parts[0].equals("1") ? "True" : "False";
-
                     if (parts[0].equals("1")) {
                         // status = true → hiển thị cả success và failure
                         String[] values = parts[1].split(",");
                         String success = values[0].split(":")[1];
                         String fail = values[1].split(":")[1];
-                        sb.append(String.format("%s: Success: %s, Failure: %s", status, success, fail));
+                        sb.append(String.format("Success[%s],Failure[%s]", success, fail));
                     } else {
                         // status = false → chỉ đếm tổng
                         int total = Arrays.stream(parts[1].split(","))
                                 .mapToInt(s -> Integer.parseInt(s.split(":")[1]))
                                 .sum();
-                        sb.append(String.format("%s: %d", status, total));
+                        sb.append(String.format("False[%d]", total));
                     }
 
                     sb.append("|");
@@ -79,13 +79,35 @@ public class ProfileController {
             List<ProfileTask> profiles =profileTaskRepository.get_Profile_By_DeviceId(device_id.toString());
             SettingTiktok settingTiktok=settingTikTokRepository.get_Setting();
             JSONArray jsonArray = new JSONArray();
+            List<Object[]> acc_Live=profileTaskRepository.get_AccountLive_GroupBy_ProfileId_By_DeviceId(device_id.trim());
+            List<Object[]> acc_Die=profileTaskRepository.get_AccountDie_GroupBy_ProfileId_By_DeviceId(device_id.trim());
+            List<Object[]> task_List=taskSumRepository.task_Sum_By_DeviceId_GroupBy_ProfileId(device_id.trim());
+
+            Map<String, String> profileLiveMap = new HashMap<>();
+            for (Object[] row : acc_Live) {
+                String profileId = (String) row[0];
+                String platforms = (String) row[1];
+                profileLiveMap.put(profileId, platforms);
+            }
+            Map<String, String> profileDieMap = new HashMap<>();
+            for (Object[] row : acc_Die) {
+                String profileId = (String) row[0];
+                String platforms = (String) row[1];
+                profileDieMap.put(profileId, platforms);
+            }
+            Map<String, String> profileTaskMap = new HashMap<>();
+            for (Object[] row : task_List) {
+                String profileId = (String) row[0];
+                String platforms = (String) row[1];
+                profileTaskMap.put(profileId, platforms);
+            }
 
             for (int i = 0; i < profiles.size(); i++) {
                 JSONObject obj = new JSONObject();
                 Integer num_account=0;
                 Integer num_account_die=0;
-                String acc_live=profileTaskRepository.get_AccountLive_By_ProfileId(profiles.get(i).getProfile_id());
-                String acc_die=profileTaskRepository.get_AccountDie_By_ProfileId(profiles.get(i).getProfile_id());
+                String acc_live=profileLiveMap.get(profiles.get(i).getProfile_id());
+                String acc_die=profileDieMap.get(profiles.get(i).getProfile_id());
                 if(acc_live!=null){
                     num_account=acc_live.split(",").length;
                     String[] account = acc_live.split(",");
@@ -122,7 +144,7 @@ public class ProfileController {
                 obj.put("task", profiles.get(i).getTask());
                 obj.put("state", profiles.get(i).getState());
                 obj.put("running", profiles.get(i).getRunning());
-                obj.put("note",formatStatus(profiles.get(i).getNote()));
+                obj.put("note",formatStatus(profileTaskMap.get(profiles.get(i).getProfile_id())==null?"":profileTaskMap.get(profiles.get(i).getProfile_id())));
                 jsonArray.add(obj);
             }
             resp.put("profiles", jsonArray);
