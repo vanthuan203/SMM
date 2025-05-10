@@ -781,7 +781,17 @@ public class OrderRunningController {
                             if(tiktok_account==null){
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                             }else if(tiktok_account.size()==0){
-                                delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
+                                tiktok_account= TikTokApi.getInfoFullChannelByUserId(orderRunningList.get(i).getChannel_id().trim());
+                                if(tiktok_account==null){
+                                    orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                }else if(tiktok_account.size()==0){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
+                                }else{
+                                    orderRunningList.get(i).setOrder_key("@"+tiktok_account.getAsJsonObject("user").get("uniqueId").toString().trim());
+                                    orderRunningList.get(i).setChannel_title(tiktok_account.getAsJsonObject("user").get("nickname").getAsString());
+                                    orderRunningList.get(i).setValid(1);
+                                    orderRunningRepository.save(orderRunningList.get(i));
+                                }
                             }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
                             }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").isJsonNull() || tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){

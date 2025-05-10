@@ -279,7 +279,7 @@ public class TikTokApi {
         return -2;
     }
 
-    public static JsonObject getInfoChannel(String tiktok_id) {
+    public static JsonObject getInfoChannelBy(String tiktok_id) {
 
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -303,6 +303,39 @@ public class TikTokApi {
                         .getAsJsonObject("stats");
 
                 return infoChannel;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    public static JsonObject getInfoFullChannelByUserId(String user_id) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", getKey())
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                JsonObject infoChannel = jsonObject
+                        .getAsJsonObject("data");
+
+                return infoChannel;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followerCount từ data.stats
+                return new JsonObject();
             }
         } catch (Exception e) {
             return null;
