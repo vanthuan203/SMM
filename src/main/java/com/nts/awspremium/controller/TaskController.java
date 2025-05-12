@@ -3208,7 +3208,6 @@ public class TaskController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                /*
                 List<String> ip_List=deviceRepository.get_IP_Running_Task_By_OrderId(Long.parseLong(dataJson.get("order_id").toString()));
                 if(ip_List.size()!=0){
                     Set<String> ipSet = new HashSet<>(ip_List);
@@ -3219,7 +3218,6 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }
-                 */
                 dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                 dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                 dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
