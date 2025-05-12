@@ -85,7 +85,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(300+ran.nextInt(500));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
@@ -204,7 +204,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }else if(tikTokFollower24hRepository.check_Follower_24h_By_Username_And_TiktokId(account_id.trim()+orderRunning.getOrder_key().trim())>0){
@@ -314,7 +314,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
@@ -408,7 +408,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
@@ -503,7 +503,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }

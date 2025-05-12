@@ -6,6 +6,7 @@ import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
 import com.nts.awspremium.platform.Instagram.InstagramTask;
 import com.nts.awspremium.platform.Instagram.InstagramUpdate;
 import com.nts.awspremium.platform.facebook.FacebookTask;
@@ -110,6 +111,9 @@ public class TaskController {
 
     @Autowired
     private OrderThreadCheck orderThreadCheck;
+
+    @Autowired
+    private OrderThreadSpeedUpCheck OrderThreadSpeedUpCheck;
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
@@ -3198,7 +3202,7 @@ public class TaskController {
                 dataJson= (Map<String, Object>) get_task.get("data");
 
                 Thread.sleep(300+ran.nextInt(500));
-                if(!orderThreadCheck.getValue().contains(dataJson.get("order_id").toString())){
+                if(!OrderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())){
                     resp.put("status",false);
                     data.put("message","Không có nhiệm vụ!");
                     resp.put("data",data);
