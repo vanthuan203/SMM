@@ -27,7 +27,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "select order_id from (select order_running.order_id,count(running) as total,thread\n" +
             "                      from order_running left join profile_task on profile_task.order_id=order_running.order_id and running=1\n" +
-            "                       group by order_id having total<2*thread) as t",nativeQuery = true)
+            "                       group by order_id having total<3*thread) as t",nativeQuery = true)
     public List<String> get_List_Order_Thread_SpeedUp_True();
 
     @Query(value = "SELECT o from OrderRunning o JOIN FETCH o.service where o.order_id=?1")
