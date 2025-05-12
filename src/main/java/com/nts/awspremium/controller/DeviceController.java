@@ -178,6 +178,7 @@ public class DeviceController {
                 obj.put("ip_changer_time", deviceList.get(i).getIp_changer_time());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 jsonArray.add(obj);
             }
@@ -314,8 +315,8 @@ public class DeviceController {
                 if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
                     String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
                     String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
-                    String note=taskSumRepository.task_Sum_By_DeviceId(device.getDevice_id().trim());
-                    String noteP=taskSumRepository.task_Sum_By_ProfileId(device.getDevice_id().trim()+"_"+device.getProfile_running().trim());
+                    String noteP=taskSumRepository.task_Sum_By_DeviceId(device.getDevice_id().trim());
+                    String note=taskSumRepository.task_Sum_By_DeviceId_24H(device.getDevice_id().trim());
                     if(acc_die==null){
                         device.setStatus(1);
                     }else{
@@ -324,13 +325,11 @@ public class DeviceController {
                     device.setAccount_live(acc_live==null?"":acc_live);
                     device.setAccount_die(acc_die==null?"":acc_die);
                     device.setNote(note==null?"":note);
+                    device.setNote_sum(noteP==null?"":noteP);
                     device.setCheck_time(System.currentTimeMillis());
                     device.setTiktok_lite_version(profileTaskRepository.get_Max_Version_Tiktok_By_DeviceId(device.getDevice_id()));
                     ProfileTask profileTask =profileTaskRepository.get_Profile_By_ProfileId(device.getDevice_id().trim()+"_"+device.getProfile_running().trim());
-                    if(profileTask!=null){
-                        profileTask.setNote(noteP==null?"":noteP);
-                        profileTaskRepository.save(profileTask);
-                    }
+
                 }
                 device.setNum_profile(profile.size());
                 device.setPlatform("");

@@ -39,6 +39,27 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_DeviceId(String device_id);
 
+    @Query(value = "SELECT \n" +
+            "  GROUP_CONCAT(\n" +
+            "    CONCAT(\n" +
+            "      \"?\",status, '=>true:', success_true,\n" +
+            "      ',false:', success_false\n" +
+            "    ) \n" +
+            "    ORDER BY status DESC\n" +
+            "    SEPARATOR ''\n" +
+            "  ) AS summary\n" +
+            "FROM (\n" +
+            "    SELECT \n" +
+            "        status,\n" +
+            "        SUM(success = true) AS success_true,\n" +
+            "        SUM(success = false) AS success_false\n" +
+            "    FROM task_sum\n" +
+            "    WHERE profile_id in(select profile_id from profile_task where device_id=?1) \n" +
+            " and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24\n"+
+            "    GROUP BY status\n" +
+            ") AS grouped_data;",nativeQuery = true)
+    public String task_Sum_By_DeviceId_24H(String device_id);
+
     @Query(value = "SELECT  \n" +
             "  profile_id,\n" +
             "  GROUP_CONCAT(\n" +
@@ -66,6 +87,33 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             "GROUP BY profile_id;",nativeQuery = true)
     public List<Object[]> task_Sum_By_DeviceId_GroupBy_ProfileId(String device_id);
 
+    @Query(value = "SELECT  \n" +
+            "  profile_id,\n" +
+            "  GROUP_CONCAT(\n" +
+            "    CONCAT(\n" +
+            "      \"?\", status, '=>true:', success_true,\n" +
+            "      ',false:', success_false\n" +
+            "    ) \n" +
+            "    ORDER BY status DESC\n" +
+            "    SEPARATOR ''\n" +
+            "  ) AS summary\n" +
+            "FROM (\n" +
+            "    SELECT \n" +
+            "        profile_id,\n" +
+            "        status,\n" +
+            "        SUM(success = true) AS success_true,\n" +
+            "        SUM(success = false) AS success_false\n" +
+            "    FROM task_sum\n" +
+            "    WHERE profile_id IN (\n" +
+            "        SELECT profile_id \n" +
+            "        FROM profile_task \n" +
+            "        WHERE device_id = ?1\n" +
+            "    )\n" +
+            "and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24\n"+
+            "    GROUP BY profile_id, status\n" +
+            ") AS grouped_data\n" +
+            "GROUP BY profile_id;",nativeQuery = true)
+    public List<Object[]> task_Sum_By_DeviceId_GroupBy_ProfileId_24H(String device_id);
 
     @Query(value = "SELECT \n" +
             "  GROUP_CONCAT(\n" +
@@ -87,8 +135,28 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_ProfileId(String profile_id);
 
+    @Query(value = "SELECT \n" +
+            "  GROUP_CONCAT(\n" +
+            "    CONCAT(\n" +
+            "      \"?\",status, '=>true:', success_true,\n" +
+            "      ',false:', success_false\n" +
+            "    ) \n" +
+            "    ORDER BY status DESC\n" +
+            "    SEPARATOR ''\n" +
+            "  ) AS summary\n" +
+            "FROM (\n" +
+            "    SELECT \n" +
+            "        status,\n" +
+            "        SUM(success = true) AS success_true,\n" +
+            "        SUM(success = false) AS success_false\n" +
+            "    FROM task_sum\n" +
+            "    WHERE profile_id=?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24 \n" +
+            "    GROUP BY status\n" +
+            ") AS grouped_data;",nativeQuery = true)
+    public String task_Sum_By_ProfileId_24H(String profile_id);
+
     @Modifying
     @Transactional
-    @Query(value = "delete from task_sum where round((UNIX_TIMESTAMP()-update_time/1000)/60/60)>24;",nativeQuery = true)
+    @Query(value = "delete from task_sum where round((UNIX_TIMESTAMP()-update_time/1000)/60/60/24)>15;",nativeQuery = true)
     public Integer deleteAllByThan24h();
 }

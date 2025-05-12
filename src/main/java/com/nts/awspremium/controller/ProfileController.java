@@ -81,7 +81,8 @@ public class ProfileController {
             JSONArray jsonArray = new JSONArray();
             List<Object[]> acc_Live=profileTaskRepository.get_AccountLive_GroupBy_ProfileId_By_DeviceId(device_id.trim());
             List<Object[]> acc_Die=profileTaskRepository.get_AccountDie_GroupBy_ProfileId_By_DeviceId(device_id.trim());
-            List<Object[]> task_List=taskSumRepository.task_Sum_By_DeviceId_GroupBy_ProfileId(device_id.trim());
+            List<Object[]> task_List_Sum=taskSumRepository.task_Sum_By_DeviceId_GroupBy_ProfileId(device_id.trim());
+            List<Object[]> task_List=taskSumRepository.task_Sum_By_DeviceId_GroupBy_ProfileId_24H(device_id.trim());
 
             Map<String, String> profileLiveMap = new HashMap<>();
             for (Object[] row : acc_Live) {
@@ -100,6 +101,12 @@ public class ProfileController {
                 String profileId = (String) row[0];
                 String platforms = (String) row[1];
                 profileTaskMap.put(profileId, platforms);
+            }
+            Map<String, String> profileTaskSumMap = new HashMap<>();
+            for (Object[] row : task_List_Sum) {
+                String profileId = (String) row[0];
+                String platforms = (String) row[1];
+                profileTaskSumMap.put(profileId, platforms);
             }
 
             for (int i = 0; i < profiles.size(); i++) {
@@ -145,6 +152,7 @@ public class ProfileController {
                 obj.put("state", profiles.get(i).getState());
                 obj.put("running", profiles.get(i).getRunning());
                 obj.put("note",formatStatus(profileTaskMap.get(profiles.get(i).getProfile_id())==null?"":profileTaskMap.get(profiles.get(i).getProfile_id())));
+                obj.put("note_sum",formatStatus(profileTaskSumMap.get(profiles.get(i).getProfile_id())==null?"":profileTaskSumMap.get(profiles.get(i).getProfile_id())));
                 jsonArray.add(obj);
             }
             resp.put("profiles", jsonArray);
