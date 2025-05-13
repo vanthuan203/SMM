@@ -22,6 +22,8 @@ public class TaskSum {
     private Boolean status;
     @Column(columnDefinition = "TINYINT default 1")
     private Boolean success;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String ip;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id",referencedColumnName = "profile_id",updatable = true,insertable = true)
     private ProfileTask profileTask;
