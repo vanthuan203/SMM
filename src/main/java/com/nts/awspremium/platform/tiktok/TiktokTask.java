@@ -58,6 +58,8 @@ public class TiktokTask {
     private ModeOptionRepository modeOptionRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private IpTask24hRepository ipTask24hRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -172,12 +174,16 @@ public class TiktokTask {
             return resp;
         }
     }
-    public Map<String, Object> tiktok_follower(String account_id,String mode){
+    public Map<String, Object> tiktok_follower(String account_id,String mode,String ip){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","follower");
             if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
+                resp.put("status", false);
+                return resp;
+            }
+            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
                 resp.put("status", false);
                 return resp;
             }
