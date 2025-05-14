@@ -287,18 +287,6 @@ public class DeviceController {
                 if((device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim()))&&!ip.trim().contains(":")&&ip.trim().contains(".")){
                     device.setIp_address(ip);
                     device.setIp_changer_time(System.currentTimeMillis());
-                    DeviceIp deviceIp=deviceIpRepository.get_By_DeviceId(device.getDevice_id().trim());
-                    if(deviceIp!=null){
-                        deviceIp.setIp_list(deviceIp.getIp_list()+ip.trim()+",");
-                        deviceIp.setIp_changer_time(System.currentTimeMillis());
-                        deviceIpRepository.save(deviceIp);
-                    }else{
-                        deviceIp=new DeviceIp();
-                        deviceIp.setDevice_id(device.getDevice_id().trim());
-                        deviceIp.setIp_list(ip.trim()+",");
-                        deviceIp.setIp_changer_time(System.currentTimeMillis());
-                        deviceIpRepository.save(deviceIp);
-                    }
                     IpSum ipSum=ipSumRepository.get_By_IP(ip.trim());
                     if(ipSum==null){
                         ipSum=new IpSum();
@@ -308,6 +296,9 @@ public class DeviceController {
                         if(as!=null){
                             ipSum.setInfo(as);
                         }
+                        ipSumRepository.save(ipSum);
+                    }else{
+                        ipSum.setAdd_time(System.currentTimeMillis());
                         ipSumRepository.save(ipSum);
                     }
                 }

@@ -98,7 +98,6 @@ public class TiktokUpdate {
                     taskSum.setPlatform("tiktok");
                     taskSum.setStatus(true);
                     taskSum.setSuccess(true);
-                    taskSum.setIp(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address());
                     taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
                     taskSumRepository.save(taskSum);
                 }else{
@@ -109,7 +108,6 @@ public class TiktokUpdate {
                     taskSum.setPlatform("tiktok");
                     taskSum.setStatus(true);
                     taskSum.setSuccess(false);
-                    taskSum.setIp(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address());
                     taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
                     taskSumRepository.save(taskSum);
                 }
@@ -163,7 +161,6 @@ public class TiktokUpdate {
                 taskSum.setPlatform("tiktok");
                 taskSum.setStatus(false);
                 taskSum.setSuccess(false);
-                taskSum.setIp(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address());
                 taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
                 taskSumRepository.save(taskSum);
             }
