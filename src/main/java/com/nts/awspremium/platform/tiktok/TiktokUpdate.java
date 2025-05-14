@@ -25,6 +25,8 @@ public class TiktokUpdate {
     @Autowired
     private TikTokFollower24hRepository tikTokFollower24hRepository;
     @Autowired
+    private IpTask24hRepository ipTask24hRepository;
+    @Autowired
     private TikTokLike24hRepository tikTokLike24hRepository;
     @Autowired
     private TiktokShare24hRepository tiktokShare24hRepository;
@@ -83,6 +85,11 @@ public class TiktokUpdate {
                     tiktokFollower24h.setId(account_id.trim()+task_key.trim());
                     tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
                     tikTokFollower24hRepository.save(tiktokFollower24h);
+
+                    IpTask24h ipTask24h =new IpTask24h();
+                    ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+                    ipTask24h.setUpdate_time(System.currentTimeMillis());
+                    ipTask24hRepository.save(ipTask24h);
 
                     TaskSum taskSum =new TaskSum();
                     taskSum.setId(account_id.trim()+task_key.trim());

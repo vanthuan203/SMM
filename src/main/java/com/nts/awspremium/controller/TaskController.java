@@ -105,6 +105,9 @@ public class TaskController {
     private ModeOptionRepository modeOptionRepository;
 
     @Autowired
+    private IpTask24hRepository ipTask24hRepository;
+
+    @Autowired
     private AccountTaskRepository accountTaskRepository;
     @PersistenceContext
     private EntityManager entityManager;
@@ -3077,6 +3080,16 @@ public class TaskController {
                     arrTask.add(priorityTasks.get(i).getTask());
                 }
             }
+
+            if(profileTask.getPlatform().equals("tiktok")&&ipTask24hRepository.count_Task_24h_By_Ip(device.getIp_address())>100){ // reboot đổi ip
+                profileTaskRepository.reset_Reboot_By_ProfileId(profileTask.getProfile_id().trim());
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "reboot");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+
             Map<String, Object> get_task =null;
             String task_index=null;
             while (arrTask.size()>0){

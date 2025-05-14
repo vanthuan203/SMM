@@ -284,7 +284,7 @@ public class DeviceController {
                 }
                 device.setRom_version(rom_version.trim());
                 device.setApp_version(app_version.trim());
-                if((device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim()))&&!ip.trim().contains(":")){
+                if((device.getIp_address().length()==0 || !device.getIp_address().equals(ip.trim()))&&!ip.trim().contains(":")&&ip.trim().contains(".")){
                     device.setIp_address(ip);
                     device.setIp_changer_time(System.currentTimeMillis());
                     DeviceIp deviceIp=deviceIpRepository.get_By_DeviceId(device.getDevice_id().trim());
