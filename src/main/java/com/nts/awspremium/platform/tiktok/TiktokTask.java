@@ -183,10 +183,12 @@ public class TiktokTask {
                 resp.put("status", false);
                 return resp;
             }
+            /*
             if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
                 resp.put("status", false);
                 return resp;
             }
+             */
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
