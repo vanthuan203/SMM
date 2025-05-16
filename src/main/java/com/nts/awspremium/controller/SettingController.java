@@ -165,6 +165,8 @@ public class SettingController {
             obj.put("clear_data_package", settingSystem.getClear_data_package());
             obj.put("time_waiting_task", settingSystem.getTime_waiting_task());
             obj.put("max_thread", settingSystem.getMax_thread());
+            obj.put("max_thread_pending", settingSystem.getMax_thread_pending());
+            obj.put("max_thread_fix", settingSystem.getMax_thread_fix());
             jsonArray.add(obj);
             resp.put("accounts",jsonArray);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
@@ -310,6 +312,8 @@ public class SettingController {
             settingSystem.setClear_data_package(setting_update.getClear_data_package());
             settingSystem.setTime_waiting_task(setting_update.getTime_waiting_task());
             settingSystem.setMax_thread(setting_update.getMax_thread());
+            settingSystem.setMax_thread_pending(setting_update.getMax_thread_pending());
+            settingSystem.setMax_thread_fix(setting_update.getMax_thread_fix());
             settingSystemRepository.save(settingSystem);
             JSONObject obj = new JSONObject();
             obj.put("id",settingSystem.getId());
@@ -319,6 +323,8 @@ public class SettingController {
             obj.put("clear_data_package", settingSystem.getClear_data_package());
             obj.put("time_waiting_task", settingSystem.getTime_waiting_task());
             obj.put("max_thread", settingSystem.getMax_thread());
+            obj.put("max_thread_pending", settingSystem.getMax_thread_pending());
+            obj.put("max_thread_fix", settingSystem.getMax_thread_fix());
             resp.put("account",obj);
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
         }catch (Exception e){
