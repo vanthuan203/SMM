@@ -200,6 +200,8 @@ public class ApiController {
                     }
                     if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()&&service.getTask().equals("follower")){
                         pending=true;
+                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0){
+                        pending=true;
                     }
                     if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()&&service.getTask().equals("follower")){
                         resp.put("error", "System busy try again");
