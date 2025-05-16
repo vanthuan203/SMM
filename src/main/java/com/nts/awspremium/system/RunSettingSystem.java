@@ -24,7 +24,7 @@ public class RunSettingSystem {
                         try {
                             settingController.updateTime_Pending_Task();
                             try {
-                                Thread.sleep(60000);
+                                Thread.sleep(30000);
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }

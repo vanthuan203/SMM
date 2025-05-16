@@ -20,6 +20,8 @@ public class SettingSystem {
     @Column(columnDefinition = "integer default 0")
     private Integer max_thread=0;
     @Column(columnDefinition = "integer default 0")
+    private Integer max_thread_fix=750;
+    @Column(columnDefinition = "integer default 0")
     private Integer max_thread_pending=0;
     @Column(columnDefinition = "integer default 0")
     private Integer max_profile;
@@ -50,11 +52,13 @@ public class SettingSystem {
     public SettingSystem() {
     }
 
-    public SettingSystem(Long id, Integer max_acc, Integer max_task, Integer max_thread, Integer max_profile, Integer max_mysql, Integer max_priority, Long update_time, Long reboot_time, Long update_pi_time, String clear_data_package, Integer time_profile, Integer time_enable_profile, String rom_version, Integer time_get_task, Integer time_waiting_task) {
+    public SettingSystem(Long id, Integer max_acc, Integer max_task, Integer max_thread, Integer max_thread_fix, Integer max_thread_pending, Integer max_profile, Integer max_mysql, Integer max_priority, Long update_time, Long reboot_time, Long update_pi_time, String clear_data_package, Integer time_profile, Integer time_enable_profile, String rom_version, String app_version, Integer time_get_task, Integer time_waiting_task) {
         this.id = id;
         this.max_acc = max_acc;
         this.max_task = max_task;
         this.max_thread = max_thread;
+        this.max_thread_fix = max_thread_fix;
+        this.max_thread_pending = max_thread_pending;
         this.max_profile = max_profile;
         this.max_mysql = max_mysql;
         this.max_priority = max_priority;
@@ -65,6 +69,7 @@ public class SettingSystem {
         this.time_profile = time_profile;
         this.time_enable_profile = time_enable_profile;
         this.rom_version = rom_version;
+        this.app_version = app_version;
         this.time_get_task = time_get_task;
         this.time_waiting_task = time_waiting_task;
     }

@@ -375,17 +375,22 @@ public class SettingController {
         try {
             Integer thread_set= orderRunningRepository.get_Sum_Thread_Order_Running_By_Mode_Auto();
             Integer thread_running= profileTaskRepository.count_Profile_Running_And_Mode_Auto();
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             if(thread_running<thread_set){
-                SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
-                settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()-5)>0?(settingSystem.getTime_waiting_task()-5):0);
-                settingSystem.setMax_thread((settingSystem.getMax_thread()-5)>10?(settingSystem.getMax_thread()-5):10);
+                if(thread_running<thread_set*3){
+                    settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()-5)>0?(settingSystem.getTime_waiting_task()-5):0);
+                }
+                if(thread_running<settingSystem.getMax_thread()){
+                    settingSystem.setMax_thread((settingSystem.getMax_thread()-10)>=0?(settingSystem.getMax_thread()-10):0);
+                }
                 settingSystemRepository.save(settingSystem);
             }else if(thread_running>thread_set){
-                SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
-                if(thread_running>thread_set*2){
+                if(thread_running>thread_set*3.5){
                     settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<100?(settingSystem.getTime_waiting_task()+5):100);
                 }
-                settingSystem.setMax_thread((settingSystem.getMax_thread()+5)<750?(settingSystem.getMax_thread()+5):750);
+                if(thread_running>settingSystem.getMax_thread()){
+                    settingSystem.setMax_thread((settingSystem.getMax_thread()+10)<settingSystem.getMax_thread_fix()?(settingSystem.getMax_thread()+10):settingSystem.getMax_thread_fix());
+                }
                 settingSystemRepository.save(settingSystem);
             }
             return true;
