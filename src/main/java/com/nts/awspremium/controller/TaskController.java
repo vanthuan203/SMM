@@ -3081,7 +3081,7 @@ public class TaskController {
                 }
             }
 
-            if(profileTask.getPlatform().equals("tiktok")&&ipTask24hRepository.count_Task_24h_By_Ip(device.getIp_address()+"%")>1000){ // reboot đổi ip
+            if(profileTask.getPlatform().equals("tiktok")&&ipTask24hRepository.count_Task_24h_By_Ip(device.getIp_address()+"%")>2000){ // reboot đổi ip
                 profileTaskRepository.reset_Reboot_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
                 data.put("platform", "system");
