@@ -1179,7 +1179,7 @@ public class OrderRunningController {
                 }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){ ///////________TIKTOK_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("follower")){
                         int count= TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().split("@")[1],1);
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
@@ -1189,7 +1189,7 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("like")){
                         int count= TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
@@ -1199,7 +1199,7 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
                         int count= TikTokApi.getCountComment(orderRunningList.get(i).getOrder_key());
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
@@ -1209,7 +1209,7 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
                         int count= TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
@@ -1219,7 +1219,7 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("share")){
                         int count= TikTokApi.getCountShare(orderRunningList.get(i).getOrder_key());
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
@@ -1229,7 +1229,7 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("favorites")){
                         int count= TikTokApi.getCountFavorites(orderRunningList.get(i).getOrder_key());
-                        if(count==-2) {
+                        if(count<0) {
                             continue;
                         }else if(count>=0){
                             if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
