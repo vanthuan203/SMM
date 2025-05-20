@@ -583,6 +583,7 @@ public class DeviceController {
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -682,6 +683,7 @@ public class DeviceController {
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -779,6 +781,7 @@ public class DeviceController {
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -876,6 +879,7 @@ public class DeviceController {
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
@@ -972,6 +976,7 @@ public class DeviceController {
                 obj.put("ip_address", deviceList.get(i).getIp_address());
                 obj.put("profile_time", deviceList.get(i).getProfile_time());
                 obj.put("note",formatStatus(deviceList.get(i).getNote()));
+                obj.put("note_sum",formatStatus(deviceList.get(i).getNote_sum()));
                 jsonArray.add(obj);
             }
             resp.put("device", jsonArray);
