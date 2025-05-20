@@ -91,25 +91,35 @@ public class TiktokUpdate {
                     ipTask24h.setUpdate_time(System.currentTimeMillis());
                     ipTask24hRepository.save(ipTask24h);
 
-                    TaskSum taskSum =new TaskSum();
-                    taskSum.setId(account_id.trim()+task_key.trim());
-                    taskSum.setUpdate_time(System.currentTimeMillis());
-                    taskSum.setTask("follower");
-                    taskSum.setPlatform("tiktok");
-                    taskSum.setStatus(true);
-                    taskSum.setSuccess(true);
-                    taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
-                    taskSumRepository.save(taskSum);
+                    try{
+                        TaskSum taskSum =new TaskSum();
+                        taskSum.setId(account_id.trim()+task_key.trim());
+                        taskSum.setUpdate_time(System.currentTimeMillis());
+                        taskSum.setTask("follower");
+                        taskSum.setPlatform("tiktok");
+                        taskSum.setStatus(true);
+                        taskSum.setSuccess(true);
+                        taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                        taskSumRepository.save(taskSum);
+                    }catch (Exception e){
+
+                    }
+
                 }else{
-                    TaskSum taskSum =new TaskSum();
-                    taskSum.setId(account_id.trim()+task_key.trim());
-                    taskSum.setUpdate_time(System.currentTimeMillis());
-                    taskSum.setTask("follower");
-                    taskSum.setPlatform("tiktok");
-                    taskSum.setStatus(true);
-                    taskSum.setSuccess(false);
-                    taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
-                    taskSumRepository.save(taskSum);
+                    try{
+                        TaskSum taskSum =new TaskSum();
+                        taskSum.setId(account_id.trim()+task_key.trim());
+                        taskSum.setUpdate_time(System.currentTimeMillis());
+                        taskSum.setTask("follower");
+                        taskSum.setPlatform("tiktok");
+                        taskSum.setStatus(true);
+                        taskSum.setSuccess(false);
+                        taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                        taskSumRepository.save(taskSum);
+                    }catch (Exception e){
+
+                    }
+
                 }
                 AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
                 ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
@@ -154,15 +164,19 @@ public class TiktokUpdate {
                     accountTaskRepository.save(accountTask);
                 }
             }else{
-                TaskSum taskSum =new TaskSum();
-                taskSum.setId(account_id.trim()+task_key.trim());
-                taskSum.setUpdate_time(System.currentTimeMillis());
-                taskSum.setTask("follower");
-                taskSum.setPlatform("tiktok");
-                taskSum.setStatus(false);
-                taskSum.setSuccess(false);
-                taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
-                taskSumRepository.save(taskSum);
+                try{
+                    TaskSum taskSum =new TaskSum();
+                    taskSum.setId(account_id.trim()+task_key.trim());
+                    taskSum.setUpdate_time(System.currentTimeMillis());
+                    taskSum.setTask("follower");
+                    taskSum.setPlatform("tiktok");
+                    taskSum.setStatus(false);
+                    taskSum.setSuccess(false);
+                    taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
+                    taskSumRepository.save(taskSum);
+                }catch (Exception e){
+
+                }
             }
             return true;
         }catch (Exception e){
