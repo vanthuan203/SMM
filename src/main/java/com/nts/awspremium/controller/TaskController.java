@@ -3488,6 +3488,13 @@ public class TaskController {
                         accountProfile.setUpdate_time(System.currentTimeMillis());
                         accountProfileRepository.save(accountProfile);
                     }
+                    if(updateTaskRequest.getIsLogin()==0){
+                        Device device= deviceRepository.check_DeviceId(updateTaskRequest.getDevice_id().trim());
+                        if(device!=null){
+                            device.setReboot(1);
+                            deviceRepository.save(device);
+                        }
+                    }
                 }else if(updateTaskRequest.getIsLogin()==1&&(updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register")||updateTaskRequest.getTask().equals("sign_in"))){  ///Check khi login hoặc reg thành công !!!!!!!!!!!!!
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
