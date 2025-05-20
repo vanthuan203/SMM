@@ -2424,10 +2424,10 @@ public class TaskController {
                 if(profileTask.getEnabled()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     if(profileTask!=null){
-                        //profileTask.setOnline_time(System.currentTimeMillis());
-                        //profileTaskRepository.save(profileTask);
-                        //profileTask.setReboot(1);
-                        //profileTaskRepository.save(profileTask);
+                        profileTask.setReboot(1);
+                        profileTaskRepository.save(profileTask);
+                        device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
+                        deviceRepository.save(device);
                         resp.put("status", true);
                         data.put("platform", "system");
                         data.put("task", "profile_changer");
