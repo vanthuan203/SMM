@@ -200,7 +200,7 @@ public class ApiController {
                     }
                     if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()&&service.getTask().equals("follower")){
                         pending=true;
-                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0){
+                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0&&service.getTask().equals("follower")){
                         pending=true;
                     }
                     if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()&&service.getTask().equals("follower")){
@@ -445,6 +445,8 @@ public class ApiController {
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
                     if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()&&service.getTask().equals("follower")){
+                        pending=true;
+                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0&&service.getTask().equals("follower")){
                         pending=true;
                     }
                     if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()&&service.getTask().equals("follower")){
