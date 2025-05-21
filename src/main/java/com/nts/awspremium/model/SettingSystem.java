@@ -48,6 +48,8 @@ public class SettingSystem {
     @Column(columnDefinition = "integer default 0")
     private Integer time_get_task;
     @Column(columnDefinition = "integer default 0")
+    private Integer ip_task_24h;
+    @Column(columnDefinition = "integer default 0")
     private Integer time_waiting_task=0;
     public SettingSystem() {
     }
