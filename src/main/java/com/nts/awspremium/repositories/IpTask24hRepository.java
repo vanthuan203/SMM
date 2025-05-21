@@ -15,6 +15,10 @@ public interface IpTask24hRepository extends JpaRepository<IpTask24h,String> {
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from ip_task_24h where id like ?1",nativeQuery = true)
     public Integer count_Task_24h_By_Ip(String ip);
+
+    @Query(value = "select count(*) from ip_task_24h where id like ?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<=?2",nativeQuery = true)
+    public Integer count_Task_Hour_By_Ip(String ip,Integer hour);
+
     @Query(value = "select count(*) from ip_task_24h where id like ?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<1",nativeQuery = true)
     public Integer count_Task_1h_By_Ip(String ip);
 }
