@@ -156,9 +156,6 @@ public class TiktokUpdate {
                         if(accountTask.getTask_success_24h()>=1){
                             accountTask.setFollower_time(System.currentTimeMillis()+modeOption.getTime_waiting_task()* 60 * 1000);
                             accountTask.setTask_success_24h(0);
-                            ProfileTask profileTask =profileTaskRepository.get_Profile_By_ProfileId(profile_id.trim());
-                            profileTask.setReboot(1);
-                            profileTaskRepository.save(profileTask);
                         }else{
                             accountTask.setFollower_time(System.currentTimeMillis());
                             accountTask.setTask_success_24h(accountTask.getTask_success_24h()+1);
