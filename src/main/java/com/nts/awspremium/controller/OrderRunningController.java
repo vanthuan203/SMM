@@ -233,9 +233,18 @@ public class OrderRunningController {
                 if(orderRunning==null){
                     continue;
                 }
-                if(orderRunning.getStart_time()==0){
-                    orderRunning.setStart_time(System.currentTimeMillis());
-                    orderRunningRepository.save(orderRunning);
+                Integer start_count=null;
+                if(orderRunning.getService().getTask().equals("follower")){
+                    start_count=TikTokApi.getFollowerCount(orderRunning.getOrder_key().replace("@",""),2);
+                    if(start_count==-1){
+                        delete_Order_Running("api@gmail.com",orderRunning.getOrder_id().toString(),1,"Could not find this account");
+                        continue;
+                    }else if(start_count>=0){
+                        orderRunning.setStart_count(start_count);
+                        orderRunning.setStart_time(System.currentTimeMillis());
+                        orderRunning.setPriority(0);
+                        orderRunningRepository.save(orderRunning);
+                    }
                 }
                 OrderRunningShow orderRunningShow=orderRunningRepository.get_Order_Running_By_OrderId(Long.parseLong(order_Arr[i]));
                 JSONObject obj = new JSONObject();
