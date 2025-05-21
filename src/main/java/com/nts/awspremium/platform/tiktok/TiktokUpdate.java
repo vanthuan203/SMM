@@ -89,6 +89,7 @@ public class TiktokUpdate {
                     IpTask24h ipTask24h =new IpTask24h();
                     ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
                     ipTask24h.setUpdate_time(System.currentTimeMillis());
+                    ipTask24h.setSuccess(true);
                     ipTask24hRepository.save(ipTask24h);
 
                     try{
@@ -116,6 +117,13 @@ public class TiktokUpdate {
                         taskSum.setSuccess(false);
                         taskSum.setProfileTask(profileTaskRepository.get_Profile_By_ProfileId(profile_id));
                         taskSumRepository.save(taskSum);
+
+                        IpTask24h ipTask24h =new IpTask24h();
+                        ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+                        ipTask24h.setUpdate_time(System.currentTimeMillis());
+                        ipTask24h.setSuccess(false);
+                        ipTask24hRepository.save(ipTask24h);
+
                     }catch (Exception e){
 
                     }

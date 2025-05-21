@@ -15,6 +15,8 @@ import javax.persistence.Table;
 public class IpTask24h {
     @Id
     private String id;
+    @Column(columnDefinition = "TINYINT default 1")
+    private Boolean success=true;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
 }
