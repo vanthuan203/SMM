@@ -3080,6 +3080,7 @@ public class TaskController {
                     arrTask.add(priorityTasks.get(i).getTask());
                 }
             }
+            /*
             if(profileTask.getPlatform().equals("tiktok")&&ipTask24hRepository.count_Task_Hour_By_Ip(device.getIp_address()+"%",4)>settingSystem.getIp_task_24h()){ // reboot đổi ip
                 profileTaskRepository.reset_Reboot_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
@@ -3088,6 +3089,7 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+             */
             Map<String, Object> get_task =null;
             String task_index=null;
             while (arrTask.size()>0){
