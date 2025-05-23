@@ -155,6 +155,12 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_ProfileId_24H(String profile_id);
 
+
+
+
+    @Query(value ="SELECT COALESCE(MIN(update_time), 0) FROM Data.task_sum where profile_id=?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24",nativeQuery = true)
+    public Long Min_Time_By_ProfileId_24H(String profile_id);
+
     @Modifying
     @Transactional
     @Query(value = "delete from task_sum where round((UNIX_TIMESTAMP()-update_time/1000)/60/60/24)>15;",nativeQuery = true)
