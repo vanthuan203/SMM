@@ -25,8 +25,8 @@ public class ModeOption {
     private Integer priority;
     @Column(columnDefinition = "integer default 0")
     private Integer state;
-    @Column(columnDefinition = "integer default 0")
-    private Integer time_get_task=0;
+    @Column(columnDefinition = "float default 2")
+    private Float time_get_task=2F;
     @Column(columnDefinition = "integer default 0")
     private Integer time_waiting_task=0;
     @Column(columnDefinition = "integer default 0")
