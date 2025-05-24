@@ -163,6 +163,7 @@ public class TiktokUpdate {
                                     accountTask.setTask_success_24h(0);
                                 }else if(follower>=0){
                                     accountTask.setTask_done_24h(follower);
+                                    accountTask.setTask_success_24h(0);
                                 }
                             }else{
                                 accountTask.setFollower_time(System.currentTimeMillis());
