@@ -120,6 +120,16 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE order_running set valid=?1,,channel_title=?2 where order_id=?3",nativeQuery = true)
+    public void update_ChannelTitle_And_Valid_By_OrderId(Integer valid,String channel_title,Long order_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE order_running set valid=?1,channel_title=?2,order_key=?3,order_link=?4 where order_id=?5",nativeQuery = true)
+    public void update_OrderInfo_ChannelTitle_And_Valid_By_OrderId(Integer valid,String channel_title,String order_key,String order_link,Long order_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "UPDATE order_running set check_count=1,check_count_time=?1 where order_id=?2",nativeQuery = true)
     public void update_Check_Count(Long check_count_time,Long order_id);
 
@@ -132,6 +142,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Transactional
     @Query(value = "UPDATE order_running set check_count=0;",nativeQuery = true)
     public void reset_Check_Count_ALL();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE order_running set check_count=?1 where order_id=?2 ",nativeQuery = true)
+    public void update_Check_Count_By_OrderId(Integer check_count,Long order_id);
 
     @Modifying
     @Transactional

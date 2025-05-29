@@ -2924,7 +2924,6 @@ public class TaskController {
                             accountProfile_Live0.getLive()==-1){//check last time task login
                         Account account=accountRepository.get_Account_By_Password_And_Platfrom(accountProfile_Live0.getPassword().trim(),accountProfile_Live0.getPlatform());
                         if(account!=null&&accountProfile_Live0.getPlatform().equals("tiktok")){
-                            System.out.println(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""));
                             if(TikTokApi.checkAccount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1){
                                 account.setLive(2812);
                                 accountRepository.save(account);

@@ -38,7 +38,7 @@ public class RunAccountCheck {
                                 throw new RuntimeException(e);
                             }
                             accountRepository.reset_Account_Error();
-                            orderRunningRepository.reset_Check_Count();
+                            //orderRunningRepository.reset_Check_Count();
                         } catch (Exception e) {
                             continue;
                         }

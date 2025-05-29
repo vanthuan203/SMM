@@ -639,8 +639,7 @@ public class OrderRunningController {
                 if(i%50==0){
                     check_count_num=check_count_num+1;
                 }
-                orderRunningList.get(i).setCheck_count(check_count_num);
-                orderRunningRepository.save(orderRunningList.get(i));
+                orderRunningRepository.update_Check_Count_By_OrderId(check_count_num,orderRunningList.get(i).getOrder_id());
             }
 
             return check_count_num;
@@ -796,11 +795,9 @@ public class OrderRunningController {
                                 }else if(tiktok_account.size()==0){
                                     delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Could not find this account");
                                 }else{
-                                    orderRunningList.get(i).setOrder_key("@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString());
-                                    orderRunningList.get(i).setChannel_title(tiktok_account.getAsJsonObject("user").get("nickname").getAsString());
-                                    orderRunningList.get(i).setOrder_link("https://www.tiktok.com/"+"@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString());
-                                    orderRunningList.get(i).setValid(1);
-                                    orderRunningRepository.save(orderRunningList.get(i));
+                                    orderRunningRepository.update_OrderInfo_ChannelTitle_And_Valid_By_OrderId(1,tiktok_account.getAsJsonObject("user").get("nickname").getAsString(),
+                                            "@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString(),"https://www.tiktok.com/"+"@"+tiktok_account.getAsJsonObject("user").get("uniqueId").getAsString(),
+                                            orderRunningList.get(i).getOrder_id() );
                                 }
                             }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
@@ -831,9 +828,7 @@ public class OrderRunningController {
                                     //dataFollowerTiktok.setVideo_title(videoObj.get("title").getAsString());
                                     dataFollowerTiktokRepository.save(dataFollowerTiktok);
                                 }
-                                orderRunningList.get(i).setChannel_title(tiktok_account.getAsJsonObject("user").get("nickname").getAsString());
-                                orderRunningList.get(i).setValid(1);
-                                orderRunningRepository.save(orderRunningList.get(i));
+                                orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,tiktok_account.getAsJsonObject("user").get("nickname").getAsString(),orderRunningList.get(i).getOrder_id());
                             }
                         }else{
                             Integer likeCount=TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
@@ -842,9 +837,7 @@ public class OrderRunningController {
                             }else{
                                 JsonObject infoVideo=TikTokApi.getInfoVideo(orderRunningList.get(i).getOrder_link());
                                 if(infoVideo!=null){
-                                    orderRunningList.get(i).setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
-                                    orderRunningList.get(i).setValid(1);
-                                    orderRunningRepository.save(orderRunningList.get(i));
+                                    orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,infoVideo.get("author").getAsJsonObject().get("nickname").getAsString(),orderRunningList.get(i).getOrder_id());
                                 }else{
                                     orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
                                 }
