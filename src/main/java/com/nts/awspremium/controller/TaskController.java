@@ -378,8 +378,8 @@ public class TaskController {
                 entityManager.clear();
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
-                    profileTask.setReboot(1);
-                    profileTaskRepository.save(profileTask);
+                    //profileTask.setReboot(1);
+                    //profileTaskRepository.save(profileTask);
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -2424,8 +2424,8 @@ public class TaskController {
                 if(profileTask.getEnabled()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     if(profileTask!=null){
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                         deviceRepository.save(device);
                         resp.put("status", true);
@@ -2490,8 +2490,8 @@ public class TaskController {
                 //accountProfileRepository.update_Running_By_ProfileId(profileTask.getProfile_id().trim());
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
-                    profileTask.setReboot(1);
-                    profileTaskRepository.save(profileTask);
+                    //profileTask.setReboot(1);
+                    //profileTaskRepository.save(profileTask);
                     device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                     deviceRepository.save(device);
                     resp.put("status", true);
@@ -2801,6 +2801,9 @@ public class TaskController {
                                     String name=null;
                                     if(accountProfile_Dependent.getName().length()!=0){
                                         name= Openai.nameTiktok2(accountProfile_Dependent.getName().trim(),openAiKeyRepository.get_OpenAI_Key());
+                                        if(name==null){
+                                            name=accountProfile_Dependent.getName();
+                                        }
                                     }else{
                                         name= Openai.nameTiktok(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("@")),openAiKeyRepository.get_OpenAI_Key());
                                     }
