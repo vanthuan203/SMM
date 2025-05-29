@@ -43,12 +43,12 @@ public class Openai {
                     "  • Nếu x > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số z (1-100):\n" +
-                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.( không chứa \") \n" +
+                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.(không chứa dấu ngoặc kép) \n" +
                     "  • Nếu z > 25, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số j (1-100):\n" +
-                    "  • Nếu j ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
-                    "  • Nếu j > 35, tên dùng phông chữ mặc định\n" +
+                    "  • Nếu j ≤ 25, tên dùng phông chữ đặc biệt unicode\n" +
+                    "  • Nếu j > 25, tên dùng phông chữ mặc định\n" +
                     "\n" +
                     "- Bước 4: Tạo ngẫu nhiên 1 số f (1-100):\n" +
                     "  • Nếu f ≤ 20, tên chứa số.(Nhiều nhất là 2 số)\n" +
@@ -60,10 +60,12 @@ public class Openai {
                     "\n" +
                     "LƯU Ý ĐẶC BIỆT:\n" +
                     "- Ngôn ngữ tên Tiktok là tiếng anh(en) có ý nghĩa.\n" +
-                    "- tên Tiktok phải có ít nhất 1 từ khớp với ID TikTok.\n" +
-                    "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
+                    "- tên Tiktok có độ dài tối đa 30 ký tự.\n" +
+                    "- tên Tiktok phải có ít nhất 1 từ khớp với họ tên.\n" +
+                    "- tên Tiktok không chứa dấu ngoặc kép (\")\n" +
+                    "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên Tiktok.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
-                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng.(không chứa \") \n" +
+                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
                     "\n" +
                     "ID TikTok: \"@"+mail+"\"\n" +
                     "Tên TikTok mới:";
@@ -162,12 +164,12 @@ public class Openai {
                     "  • Nếu x > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số z (1-100):\n" +
-                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.( không chứa \") \n" +
+                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.(không chứa dấu ngoặc kép) \n" +
                     "  • Nếu z > 25, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số j (1-100):\n" +
-                    "  • Nếu j ≤ 35, tên dùng phông chữ đặc biệt unicode\n" +
-                    "  • Nếu j > 35, tên dùng phông chữ mặc định\n" +
+                    "  • Nếu j ≤ 25, tên dùng phông chữ đặc biệt unicode\n" +
+                    "  • Nếu j > 25, tên dùng phông chữ mặc định\n" +
                     "\n" +
                     "- Bước 4: Tạo ngẫu nhiên 1 số f (1-100):\n" +
                     "  • Nếu f ≤ 20, tên chứa số.(Nhiều nhất là 2 số)\n" +
@@ -179,10 +181,12 @@ public class Openai {
                     "\n" +
                     "LƯU Ý ĐẶC BIỆT:\n" +
                     "- Ngôn ngữ tên Tiktok là tiếng anh(en) có ý nghĩa.\n" +
+                    "- tên Tiktok có độ dài tối đa 30 ký tự.\n" +
                     "- tên Tiktok phải có ít nhất 1 từ khớp với họ tên.\n" +
-                    "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
+                    "- tên Tiktok không chứa dấu ngoặc kép (\")\n" +
+                    "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên Tiktok.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
-                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng.(không chứa \") \n" +
+                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
                     "\n" +
                     "Họ tên: \""+name+"\"\n" +
                     "Tên TikTok mới:";
