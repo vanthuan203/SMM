@@ -59,7 +59,7 @@ public class Openai {
                     "  • Nếu y > 15, tên không dùng in hoa.\n" +
                     "\n" +
                     "LƯU Ý ĐẶC BIỆT:\n" +
-                    "- Ngôn ngữ tên Tiktok là tiếng việt có ý nghĩa.\n" +
+                    "- Ngôn ngữ tên Tiktok là tiếng anh(en) có ý nghĩa.\n" +
                     "- tên Tiktok phải có ít nhất 1 từ khớp với ID TikTok.\n" +
                     "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
