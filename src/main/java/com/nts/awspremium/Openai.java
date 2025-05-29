@@ -43,7 +43,7 @@ public class Openai {
                     "  • Nếu x > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số z (1-100):\n" +
-                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt. \n" +
+                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.( không chứa \") \n" +
                     "  • Nếu z > 25, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số j (1-100):\n" +
@@ -63,7 +63,7 @@ public class Openai {
                     "- tên Tiktok phải có ít nhất 1 từ khớp với ID TikTok.\n" +
                     "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
-                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
+                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng.(không chứa \") \n" +
                     "\n" +
                     "ID TikTok: \"@"+mail+"\"\n" +
                     "Tên TikTok mới:";
@@ -162,7 +162,7 @@ public class Openai {
                     "  • Nếu x > 3, tên chứa dấu cách.\n" +
                     "\n" +
                     "- Bước 2: Tạo ngẫu nhiên 1 số z (1-100):\n" +
-                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt. \n" +
+                    "  • Nếu z ≤ 25, tên chứa ký tự đặc biệt.( không chứa \") \n" +
                     "  • Nếu z > 25, tên không chứa ký tự đặc biệt.\n" +
                     "\n" +
                     "- Bước 3: Tạo ngẫu nhiên 1 số j (1-100):\n" +
@@ -182,7 +182,7 @@ public class Openai {
                     "- tên Tiktok phải có ít nhất 1 từ khớp với họ tên.\n" +
                     "- Bạn thực hiện đúng theo các bước trên để quyết định ĐẶC ĐIỂM tên.\n" +
                     "- TUYỆT ĐỐI KHÔNG viết thêm giải thích hay trình bày số đã ngẫu nhiên ở từng bước.\n" +
-                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng. \n" +
+                    "- TUYỆT ĐỐI CHỈ trả về đúng duy nhất tên TikTok cuối cùng.(không chứa \") \n" +
                     "\n" +
                     "Họ tên: \""+name+"\"\n" +
                     "Tên TikTok mới:";
