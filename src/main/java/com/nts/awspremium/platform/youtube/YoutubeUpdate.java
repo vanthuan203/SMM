@@ -27,7 +27,8 @@ public class YoutubeUpdate {
     private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private AccountTaskRepository accountTaskRepository;
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
@@ -38,6 +39,10 @@ public class YoutubeUpdate {
     private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
+    @Autowired
+    private ModeOptionRepository modeOptionRepository;
+    @Autowired
+    private AccountProfileRepository accountProfileRepository;
     public Boolean youtube_view(String account_id,String task_key){
         try{
             if(orderRunningRepository.check_No_History(task_key.trim())>0){
@@ -70,6 +75,20 @@ public class YoutubeUpdate {
             youtubeView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             youtubeView24h.setUpdate_time(System.currentTimeMillis());
             youtubeView24hRepository.save(youtubeView24h);
+
+            AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+            if(accountTask==null){
+                AccountTask accountTask_New=new AccountTask();
+                accountTask_New.setPlatform("youtube");
+                accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                accountTask_New.setView_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask_New);
+            }else{
+                accountTask.setView_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+
+
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
@@ -111,6 +130,19 @@ public class YoutubeUpdate {
                 youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
                 youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                 youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
+
+                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+                if(accountTask==null){
+                    AccountTask accountTask_New=new AccountTask();
+                    accountTask_New.setPlatform("youtube");
+                    accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                    accountTask_New.setSubscriber_time(System.currentTimeMillis());
+                    accountTaskRepository.save(accountTask_New);
+                }else{
+                    accountTask.setSubscriber_time(System.currentTimeMillis());
+                    accountTaskRepository.save(accountTask);
+                }
+
             }
             return true;
         }catch (Exception e){
@@ -150,6 +182,19 @@ public class YoutubeUpdate {
             youtubeLike24h.setId(account_id.trim()+task_key.trim());
             youtubeLike24h.setUpdate_time(System.currentTimeMillis());
             youtubeLike24hRepository.save(youtubeLike24h);
+
+            AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+            if(accountTask==null){
+                AccountTask accountTask_New=new AccountTask();
+                accountTask_New.setPlatform("youtube");
+                accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                accountTask_New.setLike_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask_New);
+            }else{
+                accountTask.setLike_time(System.currentTimeMillis());
+                accountTaskRepository.save(accountTask);
+            }
+
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
