@@ -16,7 +16,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) order by rand() limit 1",nativeQuery = true)
     public OrderRunning get_Order_Running_By_Task(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
-    @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and round((UNIX_TIMESTAMP()-update_time/1000)/60)>=2 order by rand() limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and round((UNIX_TIMESTAMP()-update_time/1000)/60)>=15 order by rand() limit 1",nativeQuery = true)
     public OrderRunning get_Order_Running_By_Follower(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and priority>0 order by rand() limit 1",nativeQuery = true)
