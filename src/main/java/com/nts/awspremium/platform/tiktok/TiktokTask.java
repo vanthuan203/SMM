@@ -213,7 +213,7 @@ public class TiktokTask {
             }
              */
             if (orderRunning!=null) {
-                Thread.sleep(ran.nextInt(600));
+                Thread.sleep(150+ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
