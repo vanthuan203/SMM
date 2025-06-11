@@ -76,6 +76,8 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
+            }else if(!mode.equals("auto")){
+                mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
@@ -308,6 +310,8 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
+            }else if(!mode.equals("auto")){
+                mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
@@ -402,6 +406,8 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
+            }else if(!mode.equals("auto")){
+                mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","share",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
@@ -497,6 +503,8 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
+            }else if(!mode.equals("auto")){
+                mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","favorites",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
