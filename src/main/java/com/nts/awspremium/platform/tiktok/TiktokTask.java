@@ -213,7 +213,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(150+ran.nextInt(300));
+                Thread.sleep(200+ran.nextInt(200));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
