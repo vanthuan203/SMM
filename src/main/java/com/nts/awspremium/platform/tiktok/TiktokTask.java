@@ -202,17 +202,19 @@ public class TiktokTask {
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
+            /*
             if(orderRunning==null){
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
+             */
             if (orderRunning!=null) {
                 Thread.sleep(ran.nextInt(300));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }else if(tikTokFollower24hRepository.check_Follower_24h_By_Username_And_TiktokId(account_id.trim()+orderRunning.getOrder_key().trim())>0){
