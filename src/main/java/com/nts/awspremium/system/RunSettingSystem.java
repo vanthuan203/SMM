@@ -14,7 +14,7 @@ public class RunSettingSystem {
     private SettingController settingController;
     @Autowired
     private Environment env;
-    @PostConstruct
+    //@PostConstruct
     public void init() throws InterruptedException {
         try{
             if(Integer.parseInt(env.getProperty("server.port"))==8000){
