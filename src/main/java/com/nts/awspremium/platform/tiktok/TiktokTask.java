@@ -208,7 +208,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Thread.sleep(150+ran.nextInt(300));
