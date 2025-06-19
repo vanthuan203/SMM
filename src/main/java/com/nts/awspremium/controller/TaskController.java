@@ -2476,11 +2476,13 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-
+            /*
             if(profileTask.getState()==0&&profileTask.getAdd_proxy()==1){
                 profileTask.setAdd_proxy(0);
                 profileTaskRepository.save(profileTask);
             }
+
+             */
 
             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0&&profileTask.getDis_proxy()==0){
                 String proxy=ProxyAPI.getSock5();
