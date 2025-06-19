@@ -109,6 +109,13 @@ public class SetupController {
                 profileTask.setClear_data(0);
                 profileTask.setClear_data_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
+            }else if(task.trim().equals("add_proxy")){
+                profileTask.setProxy(task_key.trim());
+                profileTask.setAdd_proxy(1);
+                profileTaskRepository.save(profileTask);
+            }else if(task.trim().equals("del_proxy")){
+                profileTask.setAdd_proxy(0);
+                profileTaskRepository.save(profileTask);
             }
             resp.put("status",true);
             data.put("message", "update thành công");

@@ -66,6 +66,10 @@ public class ProfileTask implements Serializable {
     private Integer clear_data=0;
     @Column(columnDefinition = "integer default 0")
     private Integer update_pi=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer add_proxy=0;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String proxy="";
     @Column(columnDefinition = "bigint default 0")
     private Long task_time=0L;
     @ManyToOne(fetch = FetchType.LAZY)

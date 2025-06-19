@@ -1,8 +1,9 @@
 package com.nts.awspremium.controller;
 
-import com.nts.awspremium.Openai;
-import com.nts.awspremium.StringUtils;
-import com.nts.awspremium.TikTokApi;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.nts.awspremium.*;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -20,7 +21,6 @@ import com.nts.awspremium.platform.x.XUpdate;
 import com.nts.awspremium.platform.youtube.YoutubeTask;
 import com.nts.awspremium.platform.youtube.YoutubeUpdate;
 import com.nts.awspremium.repositories.*;
-import com.nts.awspremium.MailApi;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -2475,6 +2476,24 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
+            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+                String proxy=ProxyAPI.getSock5();
+                if(proxy!=null){
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "add_proxy");
+                    data.put("task_key",proxy);
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else {
+                    resp.put("status", false);
+                    data.put("message", "Không thực hiện nhiệm vụ");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }
+
             if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")){
                 resp.put("status", true);
                 data.put("platform", "system");

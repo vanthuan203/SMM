@@ -20,6 +20,8 @@ public class Mode {
     private Integer max_profile;
     @Column(columnDefinition = "integer default 0")
     private Integer max_account;
+    @Column(columnDefinition = "integer default 0")
+    private Integer add_proxy;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
     public Mode() {
