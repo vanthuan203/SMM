@@ -68,6 +68,8 @@ public class ProfileTask implements Serializable {
     private Integer update_pi=0;
     @Column(columnDefinition = "integer default 0")
     private Integer add_proxy=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer dis_proxy=0;
     @Column(columnDefinition = "varchar(255) default ''")
     private String proxy="";
     @Column(columnDefinition = "bigint default 0")

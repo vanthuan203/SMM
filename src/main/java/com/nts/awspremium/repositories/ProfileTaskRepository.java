@@ -117,7 +117,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,register_index=0,account_id='',platform='',state=0 where device_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,register_index=0,account_id='',platform='',state=0,add_proxy=0 where device_id=?1",nativeQuery = true)
     public Integer reset_Thread_Index_By_DeviceId_While_ChangerProfile(String device_id);
 
     @Modifying

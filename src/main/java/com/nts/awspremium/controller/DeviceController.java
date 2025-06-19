@@ -369,6 +369,9 @@ public class DeviceController {
                     profileTask_new.setTask_index(0);
                     profileTask_new.setTask_index(0);
                     profileTask_new.setValid(1);
+                    profileTask_new.setAdd_proxy(0);
+                    profileTask_new.setDis_proxy(0);
+                    profileTask_new.setProxy("");
                     profileTask_new.setNote("");
                     profileTask_new.setTiktok_lite_version(0L);
                     profileTaskRepository.save(profileTask_new);

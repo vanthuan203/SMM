@@ -2477,7 +2477,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
 
-            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0&&profileTask.getDis_proxy()==0){
                 String proxy=ProxyAPI.getSock5();
                 if(proxy!=null){
                     resp.put("status", true);
@@ -2492,6 +2492,13 @@ public class TaskController {
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
+            }else if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==1&&profileTask.getDis_proxy()==1){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "disconnect_proxy");
+                data.put("task_key",profileTask.getProxy());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
 
             if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")){
