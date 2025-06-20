@@ -122,6 +122,11 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
+    @Query(value = "UPDATE profile_task SET running=0,order_id=0,task='',task_key='',task_index=0,task_list='',request_index=0,register_index=0,account_id='',platform='',state=0 where device_id=?1",nativeQuery = true)
+    public Integer reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(String device_id);
+
+    @Modifying
+    @Transactional
     @Query(value = "DELETE  FROM profile_task  where profile_id not in(?1) and device_id=?2",nativeQuery = true)
     public Integer delete_Profile_Not_In(List<String>  list_profile, String device_id);
     @Modifying
