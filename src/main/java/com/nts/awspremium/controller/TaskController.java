@@ -396,7 +396,7 @@ public class TaskController {
 
             //Task Proxy Sock5
             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0&&profileTask.getDis_proxy()==0){
-                String proxy=ProxyAPI.getSock5();
+                String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
                 if(proxy!=null){
                     resp.put("status", true);
                     data.put("platform", "system");

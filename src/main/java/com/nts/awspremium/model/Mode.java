@@ -24,6 +24,8 @@ public class Mode {
     private Integer add_proxy;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
+    @Column(columnDefinition = "varchar(255) default 'vn'")
+    private String geography;
     public Mode() {
     }
 }

@@ -58,13 +58,13 @@ public class ProxyAPI {
     }
 
 
-    public static String getSock5() {
+    public static String getSock5(String geo) {
 
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://info.proxy.ipmars.com/extractProxyIp?regions=vn&num=1&protocol=socks5&return_type=json&lh=1&st=%5C")
+                    .url("https://info.proxy.ipmars.com/extractProxyIp?regions="+geo+"&num=1&protocol=socks5&return_type=json&lh=1&st=%5C")
                     .get().build();
             Response response = client.newCall(request).execute();
             String resultJson = response.body().string();
