@@ -26,6 +26,8 @@ public class Mode {
     private Long update_time;
     @Column(columnDefinition = "varchar(255) default 'vn'")
     private String geography;
+    @Column(columnDefinition = "integer default 0")
+    private Integer time_waiting_task=90;
     public Mode() {
     }
 }
