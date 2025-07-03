@@ -267,8 +267,8 @@ public class TaskController {
                 if(profileTask.getEnabled()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     if(profileTask!=null){
-                        profileTask.setReboot(1);
-                        profileTaskRepository.save(profileTask);
+                        //profileTask.setReboot(1);
+                        //profileTaskRepository.save(profileTask);
                         device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                         deviceRepository.save(device);
                         resp.put("status", true);
@@ -342,8 +342,8 @@ public class TaskController {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                     entityManager.clear();
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
-                    profileTask.setReboot(1);
-                    profileTaskRepository.save(profileTask);
+                    //profileTask.setReboot(1);
+                    //profileTaskRepository.save(profileTask);
                     device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                     deviceRepository.save(device);
                     resp.put("status", true);
