@@ -699,7 +699,7 @@ public class TaskController {
                                 }else{
                                     accountProfile.setName("");
                                 }
-                                accountProfile.setAvatar(0);
+                                accountProfile.setAvatar(1);
                                 accountProfile.setRecover(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+accountProfile_Dependent.getPlatform());
                                 accountProfile.setPlatform(profileTask.getPlatform());
                                 accountProfile.setLive(-1);
