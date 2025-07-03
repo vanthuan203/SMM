@@ -1493,7 +1493,7 @@ public class TaskController {
                             accountPlatform.setUpdate_time(System.currentTimeMillis());
                             accountPlatform.setProfile_id("");
                             accountPlatform.setProfile_id("");
-                            accountPlatform.setLive(1);
+                            accountPlatform.setLive(updateTaskRequest.getIsLogin());
                             accountRepository.save(accountPlatform);
                         }else{
                             if((accountPlatform.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountPlatform.getPlatform().equals("tiktok")){// platform=tiktok & acc die
@@ -1507,7 +1507,7 @@ public class TaskController {
                                 accountPlatform.setUpdate_time(System.currentTimeMillis());
                                 accountPlatform.setProfile_id("");
                                 accountPlatform.setProfile_id("");
-                                accountPlatform.setLive(1);
+                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                 accountRepository.save(accountPlatform);
                             }
                         }
