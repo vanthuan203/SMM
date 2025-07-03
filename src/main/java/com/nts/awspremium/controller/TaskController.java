@@ -671,7 +671,7 @@ public class TaskController {
                         ){
                             //gioi han time reg by platform and time
                             List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
-                            if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,10)==0){
+                            if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0){
                                 AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%");
                                 AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform(),profileTask.getPlatform());
                                 if(accountCheck!=null){
