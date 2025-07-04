@@ -71,7 +71,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     ///@Query(value = "select o from OrderRunning o JOIN FETCH o.service where round((UNIX_TIMESTAMP()-o.update_time/1000)/60)>=30")//
     //public List<OrderRunning> get_Order_Check_Valid();
 
-    @Query("select o from OrderRunning o JOIN FETCH o.service where o.start_time>0 and ((:currentTime - o.update_time) >= :threshold or o.valid=0)")
+    @Query("select o from OrderRunning o JOIN FETCH o.service where o.start_time>0 and (:currentTime - o.start_time) >= :threshold and ((:currentTime - o.update_time) >= :threshold or o.valid=0)")
     public List<OrderRunning> get_Order_Check_Valid(@Param("currentTime") long currentTime, @Param("threshold") long threshold);
 
     @Query(value = "SELECT COALESCE(SUM(thread_set), 0) AS total_threads\n" +
