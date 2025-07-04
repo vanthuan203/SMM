@@ -28,6 +28,9 @@ public class Mode {
     private String geography;
     @Column(columnDefinition = "integer default 0")
     private Integer time_waiting_task=90;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean profile_reboot=false;
+
     public Mode() {
     }
 }

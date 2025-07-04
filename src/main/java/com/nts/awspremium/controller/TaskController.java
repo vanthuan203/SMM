@@ -267,8 +267,10 @@ public class TaskController {
                 if(profileTask.getEnabled()==0){
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
                     if(profileTask!=null){
-                        //profileTask.setReboot(1);
-                        //profileTaskRepository.save(profileTask);
+                        if(mode.getProfile_reboot()){
+                            profileTask.setReboot(1);
+                            profileTaskRepository.save(profileTask);
+                        }
                         device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                         deviceRepository.save(device);
                         resp.put("status", true);
@@ -342,8 +344,10 @@ public class TaskController {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                     entityManager.clear();
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
-                    //profileTask.setReboot(1);
-                    //profileTaskRepository.save(profileTask);
+                    if(mode.getProfile_reboot()){
+                        profileTask.setReboot(1);
+                        profileTaskRepository.save(profileTask);
+                    }
                     device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
                     deviceRepository.save(device);
                     resp.put("status", true);
@@ -396,6 +400,7 @@ public class TaskController {
 
 
             //Task Proxy Sock5
+           /*
             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0&&profileTask.getDis_proxy()==0){
                 String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
                 if(proxy!=null){
@@ -419,7 +424,17 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-
+            */
+            if(mode.getAdd_proxy()==1&&
+                    accountProfileRepository.get_Account_Tiktok_By_ProfileId(profileTask.getProfile_id().trim())>0&&
+            profileTask.getAdd_proxy()==1){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "disconnect_proxy");
+                data.put("task_key",profileTask.getProxy());
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
 
             //profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
 
@@ -669,6 +684,23 @@ public class TaskController {
                                 accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),profileTask.getPlatform().trim(),7)<platform_Check.getRegister_limit()&&
                                 accountProfileRepository.get_Count_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%")>0
                         ){
+                            //Add proxy
+                            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+                                String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
+                                if(proxy!=null){
+                                    resp.put("status", true);
+                                    data.put("platform", "system");
+                                    data.put("task", "add_proxy");
+                                    data.put("task_key",proxy);
+                                    resp.put("data",data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }else {
+                                    resp.put("status", false);
+                                    data.put("message", "Không thực hiện nhiệm vụ");
+                                    resp.put("data", data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }
+                            }
                             //gioi han time reg by platform and time
                             List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
                             if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0){
@@ -805,6 +837,25 @@ public class TaskController {
 
                     }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=10&&
                             accountProfile_Live0.getLive()==-1){//check last time task login
+
+                        //Add proxy
+                        if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+                            String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
+                            if(proxy!=null){
+                                resp.put("status", true);
+                                data.put("platform", "system");
+                                data.put("task", "add_proxy");
+                                data.put("task_key",proxy);
+                                resp.put("data",data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }else {
+                                resp.put("status", false);
+                                data.put("message", "Không thực hiện nhiệm vụ");
+                                resp.put("data", data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }
+                        }
+
                         Account account=accountRepository.get_Account_By_Password_And_Platfrom(accountProfile_Live0.getPassword().trim(),accountProfile_Live0.getPlatform());
                         if(account!=null&&accountProfile_Live0.getPlatform().equals("tiktok")){
                             if(TikTokApi.checkAccount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1){
