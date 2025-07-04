@@ -88,6 +88,9 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and profile_id=?1",nativeQuery = true)
     public String get_AccountDie_By_ProfileId(String profile_id);
 
+    @Query(value = "SELECT count(*) FROM Data.profile_task where order_id=?1 and running=1 and round((UNIX_TIMESTAMP()-task_time/1000)/60)<=10",nativeQuery = true)
+    public Integer get_Count_Thread_By_OrderId(Long order_id);
+
     @Query(value = "SELECT profile_id,GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and device_id=?1 group by profile_id",nativeQuery = true)
     public List<Object[]> get_AccountDie_GroupBy_ProfileId_By_DeviceId(String device_id);
 

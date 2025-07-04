@@ -32,6 +32,8 @@ public class OrderRunningController {
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
+    private ProfileTaskRepository profileTaskRepository;
+    @Autowired
     private OrderHistoryRepository orderHistoryRepository;
     @Autowired
     private GoogleKeyRepository googleKeyRepository;
@@ -840,6 +842,9 @@ public class OrderRunningController {
                                     orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,infoVideo.get("author").getAsJsonObject().get("nickname").getAsString(),orderRunningList.get(i).getOrder_id());
                                 }else{
                                     orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                }
+                                if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunningList.get(i).getOrder_id())>0&&orderRunningList.get(i).getService().getTask().equals("view")){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This video isn’t available in your country or region");
                                 }
                             }
                         }
