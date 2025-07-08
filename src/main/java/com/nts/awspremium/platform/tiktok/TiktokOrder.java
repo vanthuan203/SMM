@@ -645,8 +645,18 @@ public class TiktokOrder {
             }else{
                 orderRunning.setStart_time(0L);
             }
-            orderRunning.setThread(service.getThread());
-            orderRunning.setThread_set(service.getThread());
+            Float index=data.getQuantity()/1000F;
+            if(index/service.getThread()<=1){
+                orderRunning.setThread(service.getThread());
+                orderRunning.setThread_set(service.getThread());
+            }else{
+                Integer threads=(int)(index/service.getThread());
+                if(threads>7){
+                    threads=7;
+                }
+                orderRunning.setThread(threads);
+                orderRunning.setThread_set(threads);
+            }
             orderRunning.setNote(data.getNote()==null?"":data.getNote());
             orderRunning.setCharge(priceorder);
             orderRunning.setService(service);

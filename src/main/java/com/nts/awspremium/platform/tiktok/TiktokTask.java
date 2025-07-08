@@ -616,6 +616,12 @@ public class TiktokTask {
                 }
             }
             if (orderRunning!=null) {
+                Thread.sleep(ran.nextInt(300));
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
+
                 Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
