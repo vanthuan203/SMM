@@ -125,7 +125,7 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     public Integer update_SignIn_By_ProfileId(String profile_id);
 
 
-    @Query(value = "select count(*) from account_profile where profile_id=?1 and platform='tiktok' and live>=0",nativeQuery = true)
+    @Query(value = "select count(*) from account_profile where profile_id=?1 and platform!='youtube' and live>=0",nativeQuery = true)
     public Integer get_Account_Tiktok_By_ProfileId(String profile_id);
 
 }

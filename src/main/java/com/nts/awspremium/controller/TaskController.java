@@ -729,7 +729,7 @@ public class TaskController {
                                         accountProfile.setName(accountName.getName());
                                     }
                                 }else{
-                                    accountProfile.setName("");
+                                    accountProfile.setName(accountProfile_Dependent.getName().trim());
                                 }
                                 accountProfile.setAvatar(1);
                                 accountProfile.setRecover(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+accountProfile_Dependent.getPlatform());
