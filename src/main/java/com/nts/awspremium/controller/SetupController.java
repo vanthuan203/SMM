@@ -5,10 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
-import com.nts.awspremium.GoogleApi;
-import com.nts.awspremium.Openai;
-import com.nts.awspremium.StringUtils;
-import com.nts.awspremium.TikTokApi;
+import com.nts.awspremium.*;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.jsoup.Jsoup;
@@ -567,8 +564,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            String a =GoogleApi.x("https://x.com/XDevelopers");
-            resp.put("status", true);
+            resp.put("status", ProxyAPI.add_While_List("27.72.103.127"));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

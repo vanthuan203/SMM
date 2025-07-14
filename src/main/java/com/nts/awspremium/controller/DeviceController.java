@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.MailApi;
+import com.nts.awspremium.ProxyAPI;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
@@ -304,6 +305,7 @@ public class DeviceController {
                 }
 
                 if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
+                    ProxyAPI.add_While_List(ip.trim());
                     String acc_live=profileTaskRepository.get_AccountLive_By_DeviceId(device.getDevice_id()+"%");
                     String acc_die=profileTaskRepository.get_AccountDie_By_DeviceId(device.getDevice_id()+"%");
                     String noteP=taskSumRepository.task_Sum_By_DeviceId(device.getDevice_id().trim());

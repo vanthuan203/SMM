@@ -2,15 +2,13 @@ package com.nts.awspremium;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.net.*;
+import java.net.Authenticator;
 
 public class ProxyAPI {
     public static boolean checkProxy(String proxycheck) {
@@ -81,5 +79,50 @@ public class ProxyAPI {
         }
         return null;
     }
+
+    public static Boolean add_While_List(String ip) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8");
+            RequestBody body = RequestBody.create(mediaType, "ip="+ip+"&mark="+ip);
+            Request request = new Request.Builder()
+                    .url("https://webapi.ipmars.com/user/save_white_ip?accept=application/json, text/plain, /&accept-language=en,en-US;q=0.9,vi;q=0.8&authorization=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHByX3RpbWUiOiIxNzUwNDEyODg0IiwidWlkIjoiMTEyOTUifQ.nr-KD7I4BQBu4eQfXWaz2Dv8S0-_sD_IHasFy6ZvesQ&content-type=application/x-www-form-urlencoded;charset=UTF-8&origin=https://www.ipmars.com&priority=u=1, i&referer=https://www.ipmars.com/personal/whitelist&sec-ch-ua=\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"&sec-ch-ua-mobile=?0&sec-ch-ua-platform=\"Linux\"&sec-fetch-dest=empty&sec-fetch-mode=cors&ec-fetch-site=same-site&user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36&x-fingerprint=9e1800ef61ad76787f84116a048f39d9&x-lang=en&x-timezone=Asia/Saigon")
+                    .method("POST", body)
+                    .addHeader("accept", "application/json, text/plain, /")
+                    .addHeader("accept-language", "en,en-US;q=0.9,vi;q=0.8")
+                    .addHeader("authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHByX3RpbWUiOiIxNzUwNDEyODg0IiwidWlkIjoiMTEyOTUifQ.nr-KD7I4BQBu4eQfXWaz2Dv8S0-_sD_IHasFy6ZvesQ")
+                    .addHeader("content-type", "application/x-www-form-urlencoded;charset=UTF-8")
+                    .addHeader("origin", "https://www.ipmars.com")
+                    .addHeader("priority", "u=1, i")
+                    .addHeader("referer", "https://www.ipmars.com/personal/whitelist")
+                    .addHeader("sec-ch-ua", "\"Chromium\";v=\"136\", \"Google Chrome\";v=\"136\", \"Not.A/Brand\";v=\"99\"")
+                    .addHeader("sec-ch-ua-mobile", "?0")
+                    .addHeader("sec-ch-ua-platform", "\"Linux\"")
+                    .addHeader("sec-fetch-dest", "empty")
+                    .addHeader("sec-fetch-mode", "cors")
+                    .addHeader("ec-fetch-site", "same-site")
+                    .addHeader("user-agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36")
+                    .addHeader("x-fingerprint", "9e1800ef61ad76787f84116a048f39d9")
+                    .addHeader("x-lang", "en")
+                    .addHeader("x-timezone", "Asia/Saigon")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if (jsonObject.get("msg").getAsString().equals("success") || jsonObject.get("msg").getAsString().contains("added")) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
 }
