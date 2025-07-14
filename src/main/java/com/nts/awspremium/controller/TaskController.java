@@ -1446,6 +1446,13 @@ public class TaskController {
                                 accountProfile.setLive(1);
                             }else if(updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setLive(0);
+                            }else if(updateTaskRequest.getPlatform().equals("facebook")){
+                                if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
+                                    accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                    accountProfile.setLive(1);
+                                }else{
+                                    accountProfile.setLive(0);
+                                }
                             }else{
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
