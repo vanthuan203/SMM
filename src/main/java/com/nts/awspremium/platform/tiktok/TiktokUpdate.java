@@ -414,7 +414,7 @@ public class TiktokUpdate {
         }
     }
 
-    public Boolean tiktok_view(String account_id,String task_key){
+    public Boolean tiktok_view(String account_id,String task_key,String bonus){
         try{
             TikTokViewHistory tikTokViewHistory=tikTokViewHistoryRepository.get_By_AccountId(account_id.trim());
             if(tikTokViewHistory!=null){
@@ -443,6 +443,50 @@ public class TiktokUpdate {
             tiktokView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             tiktokView24h.setUpdate_time(System.currentTimeMillis());
             tikTokView24hRepository.save(tiktokView24h);
+
+
+            if(bonus.length()>0){
+                if(bonus.equals("like")){
+                    TikTokLikeHistory tikTokLikeHistory=tikTokLikeHistoryRepository.get_By_AccountId(account_id.trim());
+                    if(tikTokLikeHistory!=null){
+                        tikTokLikeHistory.setList_id(tikTokLikeHistory.getList_id()+task_key.trim()+"|");
+                        tikTokLikeHistory.setUpdate_time(System.currentTimeMillis());
+                        tikTokLikeHistoryRepository.save(tikTokLikeHistory);
+                    }else{
+                        TikTokLikeHistory tikTokLikeHistory_New=new TikTokLikeHistory();
+                        tikTokLikeHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                        tikTokLikeHistory_New.setUpdate_time(System.currentTimeMillis());
+                        tikTokLikeHistory_New.setList_id(task_key.trim()+"|");
+                        tikTokLikeHistoryRepository.save(tikTokLikeHistory_New);
+                    }
+                }else if(bonus.equals("share")){
+                    TiktokShareHistory tiktokShareHistory=tiktokShareHistoryRepository.get_By_AccountId(account_id.trim());
+                    if(tiktokShareHistory!=null){
+                        tiktokShareHistory.setList_id(tiktokShareHistory.getList_id()+task_key.trim()+"|");
+                        tiktokShareHistory.setUpdate_time(System.currentTimeMillis());
+                        tiktokShareHistoryRepository.save(tiktokShareHistory);
+                    }else{
+                        TiktokShareHistory tiktokShareHistory_New=new TiktokShareHistory();
+                        tiktokShareHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                        tiktokShareHistory_New.setUpdate_time(System.currentTimeMillis());
+                        tiktokShareHistory_New.setList_id(task_key.trim()+"|");
+                        tiktokShareHistoryRepository.save(tiktokShareHistory_New);
+                    }
+                }else if(bonus.equals("favorites")){
+                    TiktokFavoritesHistory tiktokFavoritesHistory=tiktokFavoritesHistoryRepository.get_By_AccountId(account_id.trim());
+                    if(tiktokFavoritesHistory!=null){
+                        tiktokFavoritesHistory.setList_id(tiktokFavoritesHistory.getList_id()+task_key.trim()+"|");
+                        tiktokFavoritesHistory.setUpdate_time(System.currentTimeMillis());
+                        tiktokFavoritesHistoryRepository.save(tiktokFavoritesHistory);
+                    }else{
+                        TiktokFavoritesHistory tiktokFavoritesHistory_New=new TiktokFavoritesHistory();
+                        tiktokFavoritesHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                        tiktokFavoritesHistory_New.setUpdate_time(System.currentTimeMillis());
+                        tiktokFavoritesHistory_New.setList_id(task_key.trim()+"|");
+                        tiktokFavoritesHistoryRepository.save(tiktokFavoritesHistory_New);
+                    }
+                }
+            }
 
 
             AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());

@@ -17,4 +17,5 @@ public class UpdateTaskRequest {
     private String platform="";
     private Integer isLogin=-1;
     private Integer viewing_time=0;
+    private String bonus="";
 }

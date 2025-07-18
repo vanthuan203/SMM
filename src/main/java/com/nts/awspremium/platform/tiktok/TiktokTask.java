@@ -628,7 +628,24 @@ public class TiktokTask {
                 }else{
                     if(ran.nextInt(100)<service.getBonus_list_percent()){
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+
+                        String bonus=bonus_list[ran.nextInt(bonus_list.length)];
+                        if(bonus.equals("like")){
+                            String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                            if(list_History_Like.contains(orderRunning.getOrder_key())){
+                                data.put("bonus",bonus);
+                            }
+                        }else if(bonus.equals("share")){
+                            String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                            if(list_History_Share.contains(orderRunning.getOrder_key())){
+                                data.put("bonus",bonus);
+                            }
+                        }else if(bonus.equals("favorites")){
+                            String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                            if(list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                data.put("bonus",bonus);
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
