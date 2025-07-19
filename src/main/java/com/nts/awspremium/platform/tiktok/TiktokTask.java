@@ -598,7 +598,7 @@ public class TiktokTask {
 
             if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
-            }else if(!mode.equals("auto")){
+            }else if(!mode.equals("auto")&&!mode.contains("dev")){
                 mode="auto";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
