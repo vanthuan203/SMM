@@ -95,6 +95,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "select count(*) from account_profile where platform=?1 and profile_id like ?2 and live=-1",nativeQuery = true)
     public Integer count_Register_Task_By_Platform_And_DeviceId(String platform,String device_id);
 
+    @Query(value = "select count(*) from account_profile where platform=?1 and profile_id=?2 and account_id like '%@gmail%'",nativeQuery = true)
+    public Integer count_Gmail_By_Platform_And_PrfoileId(String platform,String profile_id);
+
     @Query(value = "Select * from account_profile where account_id=?1 limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Account_id(String account_id);
 
