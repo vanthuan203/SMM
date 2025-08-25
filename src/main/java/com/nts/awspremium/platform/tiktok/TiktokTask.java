@@ -204,13 +204,13 @@ public class TiktokTask {
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Follower("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
