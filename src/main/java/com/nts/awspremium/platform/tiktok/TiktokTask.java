@@ -246,7 +246,7 @@ public class TiktokTask {
                         orderRunningRepository.save(orderRunning);
                     }
                 }
-                data.put("channel_id","");
+                data.put("channel_id",orderRunning.getOrder_key());
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
@@ -355,6 +355,18 @@ public class TiktokTask {
                 }else{
                     data.put("channel_title",orderRunning.getChannel_title());
                 }
+
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject infoVideo= TikTokApi.getInfoVideo(orderRunning.getOrder_link());
+                    if(infoVideo==null || infoVideo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_id("@"+infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+                data.put("channel_id",orderRunning.getChannel_id());
+
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -451,6 +463,18 @@ public class TiktokTask {
                 }else{
                     data.put("channel_title",orderRunning.getChannel_title());
                 }
+
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject infoVideo= TikTokApi.getInfoVideo(orderRunning.getOrder_link());
+                    if(infoVideo==null || infoVideo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_id("@"+infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+                data.put("channel_id",orderRunning.getChannel_id());
+
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -548,6 +572,18 @@ public class TiktokTask {
                 }else{
                     data.put("channel_title",orderRunning.getChannel_title());
                 }
+
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject infoVideo= TikTokApi.getInfoVideo(orderRunning.getOrder_link());
+                    if(infoVideo==null || infoVideo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_id("@"+infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+                data.put("channel_id",orderRunning.getChannel_id());
+
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
                 }else{
@@ -686,6 +722,17 @@ public class TiktokTask {
                 }else{
                     data.put("channel_title",orderRunning.getChannel_title());
                 }
+
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject infoVideo= TikTokApi.getInfoVideo(orderRunning.getOrder_link());
+                    if(infoVideo==null || infoVideo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_id("@"+infoVideo.get("author").getAsJsonObject().get("unique_id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+                data.put("channel_id",orderRunning.getChannel_id());
 
                 if(orderRunning.getDuration()>service.getLimit_time()){
                     data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));

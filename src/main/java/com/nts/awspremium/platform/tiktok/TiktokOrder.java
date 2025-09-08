@@ -213,6 +213,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_id(unique_id.trim());
             orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(like_count);
             orderRunning.setTotal(0);
@@ -319,6 +320,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_id(unique_id.trim());
             orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(share_count);
             orderRunning.setTotal(0);
@@ -426,6 +428,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_id(unique_id.trim());
             orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(collect_count);
             orderRunning.setTotal(0);
@@ -532,6 +535,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_id(unique_id.trim());
             orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(comment_count);
             orderRunning.setTotal(0);
@@ -633,6 +637,7 @@ public class TiktokOrder {
             orderRunning.setInsert_time(System.currentTimeMillis());
             orderRunning.setQuantity(data.getQuantity());
             orderRunning.setOrder_link(link);
+            orderRunning.setChannel_id(unique_id.trim());
             orderRunning.setChannel_title(infoVideo.get("author").getAsJsonObject().get("nickname").getAsString());
             orderRunning.setStart_count(view_count);
             orderRunning.setTotal(0);
