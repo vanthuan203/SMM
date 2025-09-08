@@ -60,6 +60,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2  limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
     public AccountProfile get_Account_By_ProfileId_And_Platform(String profile_id,String platform);
 
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and code=?3  limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
+    public AccountProfile get_Account_By_ProfileId_And_Platform_And_Code(String profile_id,String platform,String code);
+
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and connection_platform not like ?3  and live=1 limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
     public AccountProfile get_Account_DependentLive_By_ProfileId_And_Platform(String profile_id,String platform,String platform_connection);
 

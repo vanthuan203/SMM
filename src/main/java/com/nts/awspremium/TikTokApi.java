@@ -667,6 +667,41 @@ public class TikTokApi {
         }
     }
 
+    public static JsonArray getInfoVideoByChannelByUserId(String user_id,Integer count) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/posts?user_id="+user_id+"&count="+count)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", getKey())
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                JsonArray jsonData = jsonObject
+                        .getAsJsonObject("data").getAsJsonArray("videos");
+                if(jsonData.size()==0){
+                    return null;
+                }else{
+                    return jsonData;
+                }
+            }else{
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
     public static JsonElement getUserByKeyword(String keyword,Integer count) {
 
         try {
