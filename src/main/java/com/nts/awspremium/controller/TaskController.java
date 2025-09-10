@@ -99,6 +99,10 @@ public class TaskController {
     private ThreadsUpdate threadsUpdate;
     @Autowired
     private InstagramUpdate instagramUpdate;
+
+    @Autowired
+    private IpRegisterRepository ipRegisterRepository;
+
     @Autowired
     private HistoryRegisterRepository historyRegisterRepository;
 
@@ -709,8 +713,18 @@ public class TaskController {
                                 }
                             }
                             //gioi han time reg by platform and time
-                            List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
-                            if(historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0){
+                            //List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
+                            //historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0
+                            Boolean check_Register=false;
+                            IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),profileTask.getPlatform().trim());
+                            if(ipRegister_old==null){
+                                check_Register=true;
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=4) {
+                                check_Register=true;
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=48) {
+                                check_Register=true;
+                            }
+                            if(check_Register){
                                 AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%");
                                 AccountProfile accountCheck=accountProfileRepository.get_Account_By_Account_id_And_Platform(accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|"))+"|"+profileTask.getPlatform(),profileTask.getPlatform());
                                 if(accountCheck!=null){
@@ -761,9 +775,21 @@ public class TaskController {
                                 historyRegister.setProfileTask(profileTask);
                                 historyRegister.setPlatform(profileTask.getPlatform().trim());
                                 historyRegister.setState(0);
+                                historyRegister.setIp_address(device.getIp_address());
                                 historyRegister.setUpdate_time(System.currentTimeMillis());
                                 historyRegisterRepository.save(historyRegister);
-
+                                if(ipRegister_old!=null){
+                                    ipRegister_old.setSuccess(false);
+                                    ipRegister_old.setUpdate_time(System.currentTimeMillis());
+                                    ipRegisterRepository.save(ipRegister_old);
+                                }else{
+                                    IpRegister ipRegister=new IpRegister();
+                                    ipRegister.setId(device.getIp_address());
+                                    ipRegister.setSuccess(false);
+                                    ipRegister.setPlatform(profileTask.getPlatform().trim());
+                                    ipRegister.setUpdate_time(System.currentTimeMillis());
+                                    ipRegisterRepository.save(ipRegister);
+                                }
                                 profileTask.setRequest_index(1);
                                 profileTaskRepository.save(profileTask);
 
@@ -1505,6 +1531,15 @@ public class TaskController {
                     }
                      */
                 }else if(updateTaskRequest.getIsLogin()==1&&(updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register")||updateTaskRequest.getTask().equals("sign_in"))){  ///Check khi login hoặc reg thành công !!!!!!!!!!!!!
+                    Device device= deviceRepository.check_DeviceId(updateTaskRequest.getDevice_id().trim());
+                    if(device!=null){
+                        IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),updateTaskRequest.getPlatform().trim());
+                        if(ipRegister_old!=null&&updateTaskRequest.getTask().equals("register")){
+                            ipRegister_old.setUpdate_time(System.currentTimeMillis());
+                            ipRegister_old.setSuccess(true);
+                            ipRegisterRepository.save(ipRegister_old);
+                        }
+                    }
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
                         accountProfile.setSign_in(0);

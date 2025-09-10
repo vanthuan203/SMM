@@ -20,6 +20,8 @@ public class HistoryRegister implements Serializable {
     private ProfileTask profileTask;
     @Column(columnDefinition = "varchar(255) default ''")
     private String platform;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String ip_address="";
     @Column(columnDefinition = "integer default 0")
     private Integer state=0;
     @Column(columnDefinition = "bigint default 0")
