@@ -735,7 +735,6 @@ public class TikTokApi {
                                 user.getAsJsonObject().getAsJsonObject("user").get("privateAccount").getAsBoolean()==false&&
                                 accountCloneRepository.check_Id_Clone_By_Id_Clone(user.getAsJsonObject().getAsJsonObject("user").get("id").getAsString())==0
                         ){
-                            System.out.println(user);
                             return user;
                         }
 
