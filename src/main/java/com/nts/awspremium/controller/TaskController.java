@@ -1049,6 +1049,7 @@ public class TaskController {
                 data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                 data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                 data.put("password", accountProfile_Task.getPassword().trim());
+                data.put("app", platform_Check.getApp_name().trim());
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
@@ -1062,6 +1063,7 @@ public class TaskController {
                         data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                         data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                         data.put("task_link", accountClone.getAvatar_link());
+                        data.put("app", platform_Check.getApp_name().trim());
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(platform_Check.getAdd_post()==1&&
@@ -1078,6 +1080,7 @@ public class TaskController {
                                 data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                                 data.put("task_key", videoObj.get("video_id").getAsString());
                                 data.put("task_link", videoObj.get("play").getAsString());
+                                data.put("app", platform_Check.getApp_name().trim());
                                 resp.put("data",data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
