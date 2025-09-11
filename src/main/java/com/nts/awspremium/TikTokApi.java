@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import com.nts.awspremium.repositories.AccountCloneRepository;
 import okhttp3.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,6 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,7 +31,6 @@ import java.util.regex.Pattern;
 
 
 public class TikTokApi {
-
     public static Integer getFollowerCountOFF(String tiktok_id,Integer index) {
 
         try {
@@ -702,7 +703,7 @@ public class TikTokApi {
     }
 
 
-    public static JsonElement getUserByKeyword(String keyword,Integer count) {
+    public static JsonElement getUserByKeyword(String keyword, Integer count, AccountCloneRepository accountCloneRepository) {
 
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -728,11 +729,13 @@ public class TikTokApi {
                 }else{
                     for (JsonElement user :jsonData
                          ) {
-                        if(user.getAsJsonObject().getAsJsonObject("stats").get("videoCount").getAsInt()>3&&
+                        if(user.getAsJsonObject().getAsJsonObject("stats").get("videoCount").getAsInt()>5&&
                                 user.getAsJsonObject().getAsJsonObject("stats").get("followerCount").getAsInt()<5000&&
                                 user.getAsJsonObject().getAsJsonObject("user").get("verified").getAsBoolean()==false&&
-                                user.getAsJsonObject().getAsJsonObject("user").get("privateAccount").getAsBoolean()==false
+                                user.getAsJsonObject().getAsJsonObject("user").get("privateAccount").getAsBoolean()==false&&
+                                accountCloneRepository.check_Id_Clone_By_Id_Clone(user.getAsJsonObject().getAsJsonObject("user").get("id").getAsString())==0
                         ){
+                            System.out.println(user);
                             return user;
                         }
 
@@ -913,5 +916,4 @@ public class TikTokApi {
         }
         return null;
     }
-
 }

@@ -227,17 +227,13 @@ public class AccountController {
                  ) {
                 String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
                 tiktok_id=tiktok_id.replace("|tiktok","");
-                JsonObject object= TikTokApi.getInfoFullChannel(tiktok_id);
-                if(object==null){
-                    continue;
-                }
-                JsonElement jsonElement= TikTokApi.getUserByKeyword(object.getAsJsonObject("user").get("nickname").getAsString(),10);
+                JsonElement jsonElement= TikTokApi.getUserByKeyword(tiktok_id,20,accountCloneRepository);
                 if(jsonElement==null){
                     continue;
                 }
                 AccountClone accountClone = new AccountClone();
                 accountClone.setAccount_id(account.getAccount_id().trim());
-                accountClone.setName(object.getAsJsonObject("user").get("nickname").getAsString());
+                accountClone.setName(account.getName());
                 accountClone.setId_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
                 accountClone.setUnique_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString());
                 accountClone.setAvatar_link(jsonElement.getAsJsonObject().getAsJsonObject("user").get("avatarLarger").getAsString());
@@ -283,7 +279,7 @@ public class AccountController {
                 if(object==null){
                     continue;
                 }
-                JsonElement jsonElement= TikTokApi.getUserByKeyword(object.getAsJsonObject("user").get("nickname").getAsString(),10);
+                JsonElement jsonElement= TikTokApi.getUserByKeyword(object.getAsJsonObject("user").get("nickname").getAsString(),10,accountCloneRepository);
                 if(jsonElement==null){
                     continue;
                 }
