@@ -1068,7 +1068,7 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }else if(platform_Check.getAdd_post()==1&&
                             (System.currentTimeMillis()-accountClone.getUpdate_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
-                        JsonArray videoList=TikTokApi.getInfoVideoByChannelByUserId(accountClone.getId_clone(),18);
+                        JsonArray videoList=TikTokApi.getInfoVideoByChannelByUserId(accountClone.getId_clone(),100);
                         for (JsonElement video: videoList) {
                             JsonObject videoObj=video.getAsJsonObject();
                             DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
@@ -1693,6 +1693,7 @@ public class TaskController {
                     //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
                         if(updateTaskRequest.getPlatform().trim().equals("tiktok")){
+                            profileTaskRepository.update_Valid0_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                             AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(accountProfile.getProfileTask().getProfile_id().trim(),"youtube");
                             if(accountProfile_Check!=null){
                                 accountProfileRepository.delete(accountProfile_Check);
