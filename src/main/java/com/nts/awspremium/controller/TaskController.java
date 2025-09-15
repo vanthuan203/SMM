@@ -164,7 +164,12 @@ public class TaskController {
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             Device device=deviceRepository.check_DeviceId(device_id.trim());
             ProfileTask profileTask=null;
-
+            if(device==null) {
+                resp.put("status", false);
+                data.put("message", "device_id không tồn tại");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
             Mode mode =modeRepository.get_Mode_Info(device.getMode().trim());
             if(mode==null){
                 resp.put("status", false);
@@ -173,12 +178,7 @@ public class TaskController {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
 
-            if(device==null){
-                resp.put("status", false);
-                data.put("message", "device_id không tồn tại");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
-            }else if((System.currentTimeMillis()-device.getUpdate_time())/1000<mode.getTime_waiting_task()&&!device.getMode().contains("dev")&&!profile_id.trim().equals("0")){
+            if((System.currentTimeMillis()-device.getUpdate_time())/1000<mode.getTime_waiting_task()&&!device.getMode().contains("dev")&&!profile_id.trim().equals("0")){
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
