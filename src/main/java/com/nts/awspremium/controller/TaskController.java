@@ -339,7 +339,8 @@ public class TaskController {
              */
 
 
-            if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")){
+            if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")&&
+            profileTaskRepository.check_Profile_Exist(device_id.trim()+"_"+device.getProfile_running().trim())>0){
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");

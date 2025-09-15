@@ -16,6 +16,9 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "Select * from profile_task where profile_id=?1 limit 1",nativeQuery = true)
     public ProfileTask check_ProfileId(String profile_id);
 
+    @Query(value = "Select count(*) from profile_task where profile_id=?1 limit 1",nativeQuery = true)
+    public Integer check_Profile_Exist(String profile_id);
+
     @Query(value = "select count(*) from profile_task where enabled=0 and  device_id=?1",nativeQuery = true)
     public Integer count_Profile_Not_Enable(String device_id);
 
