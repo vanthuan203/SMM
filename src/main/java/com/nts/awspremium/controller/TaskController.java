@@ -1074,6 +1074,9 @@ public class TaskController {
                             JsonObject videoObj=video.getAsJsonObject();
                             DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
                             dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
+                            if(!videoObj.get("play").getAsString().contains("video")){
+                                continue;
+                            }
                             if(!accountClone.getVideo_list().contains(videoObj.get("video_id").getAsString())){
                                 resp.put("status", true);
                                 data.put("platform", profileTask.getPlatform().trim());
@@ -1086,6 +1089,8 @@ public class TaskController {
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
                         }
+                        accountClone.setUpdate_time(System.currentTimeMillis());
+                        accountCloneRepository.save(accountClone);
                     }
                 }
             }
