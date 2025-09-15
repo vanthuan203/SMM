@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.net.*;
 import java.net.Authenticator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -689,11 +690,7 @@ public class TikTokApi {
                 // Lấy followerCount từ data.stats
                 JsonArray jsonData = jsonObject
                         .getAsJsonObject("data").getAsJsonArray("videos");
-                if(jsonData.size()==0){
-                    return null;
-                }else{
-                    return jsonData;
-                }
+                return jsonData;
             }else{
                 return null;
             }
@@ -727,7 +724,12 @@ public class TikTokApi {
                 if(jsonData.size()==0){
                     return null;
                 }else{
-                    for (JsonElement user :jsonData
+                    List<JsonElement> list = new ArrayList<>();
+                    for (JsonElement e : jsonData) {
+                        list.add(e);
+                    }
+                    Collections.shuffle(list);
+                    for (JsonElement user :list
                          ) {
                         if(user.getAsJsonObject().getAsJsonObject("stats").get("videoCount").getAsInt()>5&&
                                 user.getAsJsonObject().getAsJsonObject("stats").get("followerCount").getAsInt()<5000&&

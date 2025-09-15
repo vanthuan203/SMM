@@ -1089,8 +1089,9 @@ public class TaskController {
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
                         }
-                        accountClone.setUpdate_time(System.currentTimeMillis());
-                        accountCloneRepository.save(accountClone);
+                        if(videoList!=null){
+                            accountCloneRepository.delete(accountClone);
+                        }
                     }
                 }
             }
