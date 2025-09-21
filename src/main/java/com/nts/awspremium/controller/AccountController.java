@@ -227,7 +227,7 @@ public class AccountController {
                  ) {
                 String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
                 tiktok_id=tiktok_id.replace("|tiktok","");
-                JsonElement jsonElement= TikTokApi.getUserByKeyword(tiktok_id,20,accountCloneRepository);
+                JsonElement jsonElement= TikTokApi.getUserByKeyword(tiktok_id,50,accountCloneRepository);
                 if(jsonElement==null){
                     continue;
                 }
