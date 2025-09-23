@@ -720,9 +720,9 @@ public class TaskController {
                             IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),profileTask.getPlatform().trim());
                             if(ipRegister_old==null){
                                 check_Register=true;
-                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=4) {
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=2) {
                                 check_Register=true;
-                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=12) {
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=4) {
                                 check_Register=true;
                             }
                             if(check_Register){
