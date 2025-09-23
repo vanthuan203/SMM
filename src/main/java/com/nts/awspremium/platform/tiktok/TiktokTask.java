@@ -242,7 +242,25 @@ public class TiktokTask {
                         orderRunningRepository.save(orderRunning);
                     }
                 }
+
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external_video");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search_channel");
+                }
+                for (int i = 0; i < service.getYoutube_direct(); i++) {
+                    arrSource.add("external_channel");
+                }
+                if(arrSource.size()==0){
+                    arrSource.add("external_video");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
+
                 data.put("channel_id",orderRunning.getOrder_key());
+                data.put("user_id",orderRunning.getChannel_id());
                 data.put("app", service.getApp());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
