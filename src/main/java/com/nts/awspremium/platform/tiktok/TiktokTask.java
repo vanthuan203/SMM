@@ -253,6 +253,9 @@ public class TiktokTask {
                 for (int i = 0; i < service.getYoutube_direct(); i++) {
                     arrSource.add("external_channel");
                 }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("trending_video");
+                }
                 if(arrSource.size()==0){
                     arrSource.add("external_video");
                 }
