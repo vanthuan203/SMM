@@ -1488,7 +1488,7 @@ public class TaskController {
                 if(updateTaskRequest.getTask().equals("add_post") &&updateTaskRequest.getStatus()==true){
                     AccountClone accountClone=accountCloneRepository.get_Account_Clone_By_Account_id(accountProfile.getAccount_id().trim());
                     if(accountClone!=null) {
-                        accountClone.setVideo_list(updateTaskRequest.getTask_key()+",");
+                        accountClone.setVideo_list(accountClone.getVideo_list()+updateTaskRequest.getTask_key()+",");
                         accountClone.setUpdate_time(System.currentTimeMillis());
                         accountCloneRepository.save(accountClone);
                     }
