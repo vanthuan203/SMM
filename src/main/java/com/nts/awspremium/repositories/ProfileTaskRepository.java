@@ -114,7 +114,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "update profile_task set enabled=0,enabled_time=0 where profile_id not in (SELECT profile_id FROM Data.account_profile where live=1 and platform='tiktok' and profile_id like ?1) and enabled=1 and device_id=?2",nativeQuery = true)
+    @Query(value = "update profile_task set enabled=0,enabled_time=0 where profile_id not in (SELECT profile_id FROM Data.account_profile where platform='tiktok' and profile_id like ?1) and enabled=1 and device_id=?2",nativeQuery = true)
     public Integer reset_Enabled0_By_DeviceId(String profile_id,String device_id);
 
     @Modifying
