@@ -111,6 +111,12 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "UPDATE profile_task SET reboot=0 where device_id=?1",nativeQuery = true)
     public Integer reset_Reboot_By_DeviceId(String device_id);
 
+
+    @Modifying
+    @Transactional
+    @Query(value = "update profile_task set enabled=0,enabled_time=0 where profile_id not in (SELECT profile_id FROM Data.account_profile where live=1 and platform='tiktok' and profile_id like ?1) and enabled=1 and device_id=?2",nativeQuery = true)
+    public Integer reset_Enabled0_By_DeviceId(String profile_id,String device_id);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE profile_task SET reboot=0 where profile_id=?1",nativeQuery = true)

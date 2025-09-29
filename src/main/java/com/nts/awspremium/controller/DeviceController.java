@@ -305,6 +305,9 @@ public class DeviceController {
                 }
 
                 if((System.currentTimeMillis()-device.getCheck_time())/1000/60>15&&device.getState()==1){
+
+                    profileTaskRepository.reset_Enabled0_By_DeviceId(device.getDevice_id().trim()+"%",device.getDevice_id().trim());
+
                     if(mode.getAdd_proxy()==1){
                         ProxyAPI.add_While_List(ip.trim());
                     }
