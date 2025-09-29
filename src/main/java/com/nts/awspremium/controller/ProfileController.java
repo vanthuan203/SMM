@@ -244,7 +244,8 @@ public class ProfileController {
             for (Device device:devices) {
                 ProfileTask profileTask =profileTaskRepository.get_Profile_Rand_Enable0(device.getDevice_id().trim(),device.getMode().trim());
                 //if (profileTask !=null&&profileTaskRepository.check_Profile_Enabled_And_GoogleLogin(device.getDevice_id().trim())==0){ //&&profileTaskRepository.check_Profile_Enabled_And_GoogleLogin(device.getDevice_id().trim())==0
-                if (profileTask !=null&&accountProfileRepository.count_Reg_Tiktok_DeviceId(device.getDevice_id().trim()+"%")==0){
+                if (profileTask !=null&&accountProfileRepository.count_Reg_Tiktok_DeviceId(device.getDevice_id().trim()+"%")==0&&
+                        profileTaskRepository.check_Profile_Enabled_And_GoogleLogin(device.getDevice_id().trim())==0){
                     profileTask.setEnabled(1);
                     //profileTask.setClear_data(1);
                     profileTask.setEnabled_time(System.currentTimeMillis());
