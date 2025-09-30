@@ -243,7 +243,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(profile_id.trim().equals("0")){
-                if(profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())<mode.getMax_profile()){ //device.getNum_profile()<mode.getMax_profile()
+                if(profileTaskRepository.get_Count_Profile_Valid_1_By_DeviceId(device_id.trim())<mode.getMax_profile()){ //device.getNum_profile()<mode.getMax_profile()
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "create_profile");
