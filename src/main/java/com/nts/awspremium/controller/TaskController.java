@@ -243,19 +243,19 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }else if(profile_id.trim().equals("0")){
+                if(profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())<mode.getMax_profile()){ //device.getNum_profile()<mode.getMax_profile()
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "create_profile");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 if(profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0){
                     String profile_remove=profileTaskRepository.get_ProfileId_Valid_0_By_DeviceId(device_id.trim());
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "remove_profile");
                     data.put("profile_id",Integer.parseInt(profile_remove.split(device_id.trim()+"_")[1]));
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                }
-                if(device.getNum_profile()<mode.getMax_profile()){
-                    resp.put("status", true);
-                    data.put("platform", "system");
-                    data.put("task", "create_profile");
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
@@ -511,7 +511,7 @@ public class TaskController {
                         }
                     }
 
-                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=1){
+                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=0){
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
 
