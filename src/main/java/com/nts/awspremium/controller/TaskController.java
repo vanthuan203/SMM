@@ -1700,7 +1700,7 @@ public class TaskController {
                     //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
                         if(updateTaskRequest.getPlatform().trim().equals("tiktok")){
-                            profileTaskRepository.update_Valid0_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                            profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                             AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_ProfileId_And_Platform(accountProfile.getProfileTask().getProfile_id().trim(),"youtube");
                             if(accountProfile_Check!=null){
                                 accountProfileRepository.delete(accountProfile_Check);
