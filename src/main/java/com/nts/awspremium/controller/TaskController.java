@@ -1173,7 +1173,11 @@ public class TaskController {
                     continue;
                 }
                 while(arrTask.remove(task)) {}
-                if(profileTask.getPlatform().equals("tiktok")){
+                if(profileTask.getPlatform().equals("tiktok") && !profileTask.getAccount_id().contains("@")){
+                    if(task.equals("view")){
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
+                    }
+                } else if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("follower")){
                         get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim(),device.getIp_address());
                     }else if(task.equals("like")){
