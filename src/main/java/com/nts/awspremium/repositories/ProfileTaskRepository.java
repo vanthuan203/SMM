@@ -185,7 +185,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task set clear_data=1,enabled=0,enabled_time=0 where profile_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task set clear_data=1 where profile_id=?1",nativeQuery = true)
     public Integer update_Clear_Data_Profile_By_ProfileId(String profile_id);
 
 
