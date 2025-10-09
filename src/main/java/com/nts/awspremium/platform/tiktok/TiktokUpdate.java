@@ -519,6 +519,11 @@ public class TiktokUpdate {
 
                     }
                 }
+            }else{
+                TiktokView24h tiktokView24h =new TiktokView24h();
+                tiktokView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+                tiktokView24h.setUpdate_time(System.currentTimeMillis());
+                tikTokView24hRepository.save(tiktokView24h);
             }
             return true;
         }catch (Exception e){
