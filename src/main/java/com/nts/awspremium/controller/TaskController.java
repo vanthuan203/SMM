@@ -1509,7 +1509,12 @@ public class TaskController {
             }catch (Exception e){
 
             }
-
+            if(updateTaskRequest.getPlatform().equals("tiktok")&&updateTaskRequest.getAccount_id().trim().equals(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim())&&updateTaskRequest.getTask().equals("view")){
+                resp.put("status", true);
+                data.put("message", "Update thành công!");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
             try{
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                 String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
