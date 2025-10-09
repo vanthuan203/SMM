@@ -58,6 +58,8 @@ public class ProfileTask implements Serializable {
     private Integer reboot=0;
     @Column(columnDefinition = "bigint default 0")
     private Long order_id;
+    @Column(columnDefinition = "bigint default 0")
+    private Long get_account_time=0L;
     @Column(columnDefinition = "varchar(255) default ''")
     private String platform;
     @Column(columnDefinition = "bigint default 0")

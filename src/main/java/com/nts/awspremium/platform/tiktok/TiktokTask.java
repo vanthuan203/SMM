@@ -643,7 +643,7 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
+            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
                 mode="activity";
             }else if(!mode.equals("auto")&&!mode.contains("dev")){
                 mode="auto";
