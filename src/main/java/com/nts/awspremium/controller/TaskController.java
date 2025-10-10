@@ -737,7 +737,7 @@ public class TaskController {
                                 check_Register=true;
                             }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=4) {
                                 check_Register=true;
-                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=48) {
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=12) {
                                 check_Register=true;
                             }
                             if(check_Register){
@@ -1074,7 +1074,7 @@ public class TaskController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                if(platform_Check.getClone_info()==1&&(System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=7){
+                if(platform_Check.getClone_info()==1&&(System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
                     AccountClone accountClone=accountCloneRepository.get_Account_Clone_By_Account_id(accountProfile_Task.getAccount_id().trim());
                     if(accountClone!=null){
                         if(accountProfile_Task.getAvatar()==0){
