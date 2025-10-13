@@ -1175,15 +1175,15 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok") && !profileTask.getAccount_id().contains("@")){
                     if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("follower")){
-                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim(),device.getIp_address());
+                        get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim(),device.getIp_address(),device);
                     }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim());
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
                     }else if(task.equals("comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("share")){

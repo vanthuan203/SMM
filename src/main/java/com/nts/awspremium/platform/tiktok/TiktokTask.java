@@ -61,6 +61,8 @@ public class TiktokTask {
     @Autowired
     private AccountTaskRepository accountTaskRepository;
     @Autowired
+    private DeviceRepository deviceRepository;
+    @Autowired
     private IpTask24hRepository ipTask24hRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -176,7 +178,7 @@ public class TiktokTask {
             return resp;
         }
     }
-    public Map<String, Object> tiktok_follower(String account_id,String mode,String ip){
+    public Map<String, Object> tiktok_follower(String account_id,String mode,String ip,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -289,11 +291,8 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
-                if(accountTask!=null){
-                    accountTask.setFollower_time(System.currentTimeMillis() + 60 * 1000);
-                    accountTaskRepository.save(accountTask);
-                }
+                device.setUpdate_time(System.currentTimeMillis() + 60 * 1000);
+                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
@@ -637,7 +636,7 @@ public class TiktokTask {
         }
     }
 
-    public Map<String, Object> tiktok_view(String account_id,String mode){
+    public Map<String, Object> tiktok_view(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -760,11 +759,8 @@ public class TiktokTask {
                 resp.put("data",data);
                 return resp;
             } else {
-                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
-                if(accountTask!=null){
-                    accountTask.setView_time(System.currentTimeMillis() + 60 * 1000);
-                    accountTaskRepository.save(accountTask);
-                }
+                device.setUpdate_time(System.currentTimeMillis() + 60 * 1000);
+                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
