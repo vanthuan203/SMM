@@ -635,7 +635,12 @@ public class TiktokTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
-            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
+            mode="auto";
+            Integer max_Task=modeOption.getMax_task();
+            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
+                max_Task=10;
+            }
+            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
                 resp.put("status", false);
                 return resp;
             }
@@ -643,11 +648,6 @@ public class TiktokTask {
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
-                mode="activity";
-            }else if(!mode.equals("auto")&&!mode.contains("dev")){
-                mode="auto";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
                 if(orderRunning==null){

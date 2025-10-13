@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.GoogleKey;
 import com.nts.awspremium.model.LogError;
@@ -257,6 +258,46 @@ public class UserController {
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(path = "check_tiktok",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> check_tiktok(@RequestBody String list){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] tiktok =list.split("\\r\\n");
+            Integer count_live=0;
+            for (int i=0;i<tiktok.length;i++){
+                if(TikTokApi.getFollowingCount(tiktok[i])>=0){
+                    count_live=count_live+1;
+                    System.out.println(tiktok[i]+"|live");
+                }else{
+                    System.out.println(tiktok[i]+"|die");
+                }
+
+            }
+            resp.put("count_live",count_live.toString()+"/"+tiktok.length);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @PostMapping(path = "add_User",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> add_User(@RequestHeader(defaultValue = "") String Authorization,@RequestBody User user_body){
         JSONObject resp = new JSONObject();
