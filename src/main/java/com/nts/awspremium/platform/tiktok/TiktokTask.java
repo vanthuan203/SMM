@@ -59,6 +59,8 @@ public class TiktokTask {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private AccountTaskRepository accountTaskRepository;
+    @Autowired
     private IpTask24hRepository ipTask24hRepository;
     public Map<String, Object> tiktok_comment(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -287,6 +289,11 @@ public class TiktokTask {
                 return resp;
 
             } else {
+                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+                if(accountTask!=null){
+                    accountTask.setFollower_time(System.currentTimeMillis() + 60 * 1000);
+                    accountTaskRepository.save(accountTask);
+                }
                 resp.put("status", false);
                 return resp;
             }
@@ -753,6 +760,11 @@ public class TiktokTask {
                 resp.put("data",data);
                 return resp;
             } else {
+                AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
+                if(accountTask!=null){
+                    accountTask.setView_time(System.currentTimeMillis() + 60 * 1000);
+                    accountTaskRepository.save(accountTask);
+                }
                 resp.put("status", false);
                 return resp;
             }
