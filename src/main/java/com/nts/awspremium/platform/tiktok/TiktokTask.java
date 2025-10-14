@@ -291,7 +291,7 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + 60 * 1000);
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                 deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
@@ -759,7 +759,7 @@ public class TiktokTask {
                 resp.put("data",data);
                 return resp;
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + 60 * 1000);
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                 deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;

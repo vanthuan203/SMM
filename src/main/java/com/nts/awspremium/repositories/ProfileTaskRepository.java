@@ -22,7 +22,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "select count(*) from profile_task where enabled=0 and  device_id=?1",nativeQuery = true)
     public Integer count_Profile_Not_Enable(String device_id);
 
-    @Query(value = "SELECT count(*) FROM Data.profile_task where running=1 and order_id in(select order_id from order_running where service_id in (SELECT service_id FROM service where mode='auto' and task='follower'));",nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM Data.profile_task where running=1 and order_id in(select order_id from order_running where service_id in (SELECT service_id FROM service where mode='auto' and task='view'));",nativeQuery = true)
     public Integer count_Profile_Running_And_Mode_Auto();
 
     @Query(value = "select count(*) from profile_task where device_id=?1",nativeQuery = true)

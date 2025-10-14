@@ -18,4 +18,7 @@ public interface SettingSystemRepository extends JpaRepository<SettingSystem,Lon
     @Query(value = "select * from setting_system where id=1",nativeQuery = true)
     public SettingSystem get_Setting_System();
 
+    @Query(value = "select time_waiting_task from setting_system where id=1",nativeQuery = true)
+    public Integer get_Time_Waiting_Task();
+
 }
