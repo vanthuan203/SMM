@@ -392,7 +392,7 @@ public class SettingController {
                 settingSystemRepository.save(settingSystem);
             }else if(thread_running>thread_set){
                 if(thread_running>thread_set*3.5){
-                    settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<100?(settingSystem.getTime_waiting_task()+5):100);
+                    settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<200?(settingSystem.getTime_waiting_task()+5):200);
                 }
                 if(thread_running>settingSystem.getMax_thread()){
                     settingSystem.setMax_thread((settingSystem.getMax_thread()+10)<settingSystem.getMax_thread_fix()?(settingSystem.getMax_thread()+10):settingSystem.getMax_thread_fix());
