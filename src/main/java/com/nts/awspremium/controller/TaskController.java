@@ -735,9 +735,9 @@ public class TaskController {
                             IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),profileTask.getPlatform().trim());
                             if(ipRegister_old==null){
                                 check_Register=true;
-                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=4) {
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=12) {
                                 check_Register=true;
-                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=12) {
+                            }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==true && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=24) {
                                 check_Register=true;
                             }
                             if(check_Register){
@@ -884,7 +884,7 @@ public class TaskController {
                             }
                         }
 
-                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=10&&
+                    }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60/60>=10&&
                             accountProfile_Live0.getLive()==-1){//check last time task login
 
                         //Add proxy
@@ -1560,7 +1560,7 @@ public class TaskController {
                 }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
-                        if(updateTaskRequest.getTask().equals("register")){
+                        if(!updateTaskRequest.getAccount_id().trim().startsWith("@")){
                             accountProfile.setLive(-1);
                         }else{
                             accountProfile.setLive(0);
