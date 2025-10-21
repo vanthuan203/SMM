@@ -266,7 +266,7 @@ public class UserController {
             String[] tiktok =list.split("\\r\\n");
             Integer count_live=0;
             for (int i=0;i<tiktok.length;i++){
-                if(TikTokApi.getFollowingCount(tiktok[i])>=0){
+                if(TikTokApi.checkAccount(tiktok[i],2)==1){
                     count_live=count_live+1;
                     System.out.println(tiktok[i]+"|live");
                 }else{

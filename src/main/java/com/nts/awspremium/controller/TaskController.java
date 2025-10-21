@@ -713,7 +713,8 @@ public class TaskController {
                         ){
                             //Add proxy
                             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
-                                String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
+                                String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
+                                String proxy=ProxyAPI.getSock5Luna(geo[ran.nextInt(geo.length)]);
                                 if(proxy!=null){
                                     resp.put("status", true);
                                     data.put("platform", "system");
@@ -889,7 +890,8 @@ public class TaskController {
 
                         //Add proxy
                         if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
-                            String proxy=ProxyAPI.getSock5(mode.getGeography().trim());
+                            String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
+                            String proxy=ProxyAPI.getSock5Luna(geo[ran.nextInt(geo.length)]);
                             if(proxy!=null){
                                 resp.put("status", true);
                                 data.put("platform", "system");
@@ -1560,10 +1562,14 @@ public class TaskController {
                 }else if(updateTaskRequest.getIsLogin()==0 || updateTaskRequest.getIsLogin()==-1){
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
-                        if(!updateTaskRequest.getAccount_id().trim().startsWith("@")){
+                        if(updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
                             accountProfile.setLive(-1);
                         }else{
-                            accountProfile.setLive(0);
+                            if(updateTaskRequest.getTask().equals("register")){
+                                accountProfile.setLive(-1);
+                            }else{
+                                accountProfile.setLive(0);
+                            }
                         }
                         accountProfile.setUpdate_time(System.currentTimeMillis());
                         accountProfileRepository.save(accountProfile);

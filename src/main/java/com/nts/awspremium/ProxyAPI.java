@@ -80,6 +80,12 @@ public class ProxyAPI {
         return null;
     }
 
+
+    public static String getSock5Luna(String geo) {
+        return "socks://user-tiktok_B5onO-region-"+geo+":u89JGqCh3Mv6uin@as.lunaproxy.com:12233";
+    }
+
+
     public static Boolean add_While_List(String ip) {
 
         try {

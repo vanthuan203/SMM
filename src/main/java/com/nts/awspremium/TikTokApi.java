@@ -143,14 +143,18 @@ public class TikTokApi {
             String resultJson = response.body().string();
             response.body().close();
             JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
-
             // Kiểm tra nếu msg là "success"
             if ("success".equals(jsonObject.get("msg").getAsString())) {
                 // Lấy followerCount từ data.stats
-                Boolean check = jsonObject
+                Boolean check=false;
+                JsonObject check_jsonObject = jsonObject
                         .getAsJsonObject("data")
-                        .getAsJsonObject("user")
-                        .getAsJsonObject("general_permission").isJsonNull();
+                        .getAsJsonObject("user");
+                JsonElement generalPermission = check_jsonObject.get("general_permission");
+
+                if (generalPermission == null || generalPermission.isJsonNull()) {
+                    check=true;
+                }
                 if(check){
                     return 1;
                 }else{
