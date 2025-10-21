@@ -734,7 +734,9 @@ public class TaskController {
                             //historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0
                             Boolean check_Register=false;
                             IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),profileTask.getPlatform().trim());
-                            if(ipRegister_old==null){
+                            if(mode.getAdd_proxy()==1){
+                                check_Register=true;
+                            }else if(ipRegister_old==null){
                                 check_Register=true;
                             }else if(ipRegister_old!=null &&ipRegister_old.getSuccess()==false && (System.currentTimeMillis()-ipRegister_old.getUpdate_time())/1000/60/60>=12) {
                                 check_Register=true;
