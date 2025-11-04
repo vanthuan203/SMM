@@ -1223,6 +1223,8 @@ public class TaskController {
                         get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("subscriber")){
                         get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim());
+                    }else if(task.equals("comment")){
+                        get_task=youtubeTask.youtube_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }
                 } else if(profileTask.getPlatform().equals("facebook")){
                     if(task.equals("follower")){
@@ -1455,6 +1457,8 @@ public class TaskController {
                         youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
                         youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                    } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")&&updateTaskRequest.getStatus()==true){
+                        youtubeUpdate.youtube_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
                     }
                 }else if(platform_Check.equals("tiktok")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("follower")){

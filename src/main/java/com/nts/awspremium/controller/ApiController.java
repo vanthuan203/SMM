@@ -215,6 +215,8 @@ public class ApiController {
                         get_task=youtubeOrder.youtube_like(data,service,user);
                     }else if(service.getTask().trim().equals("subscriber")){
                         get_task=youtubeOrder.youtube_subscriber(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=youtubeOrder.youtube_comment(data,service,user);
                     }
                 }else if(service.getPlatform().trim().equals("tiktok")){
                     if(service.getTask().trim().equals("follower")){
@@ -461,6 +463,8 @@ public class ApiController {
                         get_task=youtubeOrder.youtube_like(data,service,user);
                     }else if(service.getTask().trim().equals("subscriber")){
                         get_task=youtubeOrder.youtube_subscriber(data,service,user);
+                    }else if(service.getTask().trim().equals("comment")){
+                        get_task=youtubeOrder.youtube_comment(data,service,user);
                     }
                 }else if(service.getPlatform().trim().equals("tiktok")){
                     if(service.getTask().trim().equals("follower")){
