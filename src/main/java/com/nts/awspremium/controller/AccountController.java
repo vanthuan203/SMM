@@ -60,6 +60,9 @@ public class AccountController {
                 account_New.setRecover_mail(account.getRecover_mail().trim());
                 account_New.setPlatform(account.getPlatform().trim());
                 account_New.setDevice_mode(account.getDevice_mode().trim());
+                account_New.setLive(1);
+                account_New.setGet_time(0L);
+                account_New.setAuth_2fa(account.getAuth_2fa().trim().replaceAll("\\s+", ""));
                 account_New.setMode("login");
                 account_New.setRunning(0);
                 account_New.setAdd_time(0L);

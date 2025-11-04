@@ -435,7 +435,7 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            */
+
             if(mode.getAdd_proxy()==1&&
                     accountProfileRepository.get_Account_Tiktok_By_ProfileId(profileTask.getProfile_id().trim())>0&&
             profileTask.getAdd_proxy()==1){
@@ -446,6 +446,25 @@ public class TaskController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            */
+
+            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+                String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
+                String proxy=ProxyAPI.getSock5Luna("id");
+                if(proxy!=null){
+                    resp.put("status", true);
+                    data.put("platform", "system");
+                    data.put("task", "add_proxy");
+                    data.put("task_key",proxy);
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else {
+                    resp.put("status", false);
+                    data.put("message", "Không thực hiện nhiệm vụ");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }
 
             //profileTask=profileTaskRepository.get_Profile_By_ProfileId(profileTask.getProfile_id());
 
@@ -455,7 +474,7 @@ public class TaskController {
             platform_Youtube_Check.getLogin_account()==1){ //check xem đủ tài khoản youtbe live=1 chưa
                 AccountProfile accountProfile_Live0=accountProfileRepository.get_AccountLive0_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Live0==null){ // If account null or not live then get new acc
-                    if(platform_Youtube_Check.getLogin_account()==1&& (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=60&&
+                    if(platform_Youtube_Check.getLogin_account()==1&& (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=15&&
                             accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&& //check acc die in 24h
                             accountProfileRepository.count_Login_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getLogin_time())==0 // check time login gần nhất
                     ){
@@ -712,6 +731,7 @@ public class TaskController {
                                 accountProfileRepository.get_Count_Account_DependentLive_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim(),"%"+profileTask.getPlatform().trim()+"%")>0
                         ){
                             //Add proxy
+                            /*
                             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
                                 String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
                                 String proxy=ProxyAPI.getSock5Luna(geo[ran.nextInt(geo.length)]);
@@ -729,6 +749,7 @@ public class TaskController {
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }
                             }
+                             */
                             //gioi han time reg by platform and time
                             //List<String> list_device =deviceRepository.get_All_Device_By_IP(device.getIp_address().trim());
                             //historyRegisterRepository.count_Register_By_Platform_And_Time(profileTask.getPlatform().trim(),list_device,1)==0
