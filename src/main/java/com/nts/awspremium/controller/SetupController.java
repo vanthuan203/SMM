@@ -564,7 +564,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status", ProxyAPI.add_While_List("27.72.103.127"));
+            resp.put("status", StringUtils.getName());
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

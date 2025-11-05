@@ -496,6 +496,12 @@ public class TaskController {
                             accountProfile.setAccount_id(account_get.getAccount_id());
                             accountProfile.setPassword(account_get.getPassword());
                             accountProfile.setRecover(account_get.getRecover_mail());
+                            if(account_get.getName().length()==0){
+                                String name=StringUtils.getName();
+                                accountProfile.setName(name);
+                                account_get.setName(name);
+                                accountRepository.save(account_get);
+                            }
                             accountProfile.setName(account_get.getName());
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
