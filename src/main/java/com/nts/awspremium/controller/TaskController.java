@@ -935,7 +935,7 @@ public class TaskController {
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
                         }
-
+                        /*
                         Account account=accountRepository.get_Account_By_Password_And_Platfrom(accountProfile_Live0.getPassword().trim(),accountProfile_Live0.getPlatform());
                         if(account!=null&&accountProfile_Live0.getPlatform().equals("tiktok")){
                             if(TikTokApi.checkAccount(account.getAccount_id().substring(0,account.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1){
@@ -960,6 +960,7 @@ public class TaskController {
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
                             }
                         }
+                         */
                         if(!(platformRepository.get_Register_Account_Platform_And_Mode(profileTask.getPlatform(),device.getMode())==0&&accountProfile_Live0.getLive()==-1)){
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
@@ -1596,6 +1597,8 @@ public class TaskController {
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         if(updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
+                            accountProfile.setLive(0);
+                        }else if(!updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
                             accountProfile.setLive(-1);
                         }else{
                             if(updateTaskRequest.getTask().equals("register")){
