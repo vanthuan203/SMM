@@ -1097,7 +1097,7 @@ public class TaskController {
                     continue;
                 }
                 while(arrTask.remove(task)) {}
-                if(profileTask.getPlatform().equals("tiktok") && accountProfile_Task.getLive()<1){
+                if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1)){
                     if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
                     }
