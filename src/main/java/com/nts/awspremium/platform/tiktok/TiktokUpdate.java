@@ -434,11 +434,13 @@ public class TiktokUpdate {
                     tikTokViewHistory.setUpdate_time(System.currentTimeMillis());
                     tikTokViewHistoryRepository.save(tikTokViewHistory);
                 }else{
-                    TikTokViewHistory tikTokViewHistory_new=new TikTokViewHistory();
-                    tikTokViewHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
-                    tikTokViewHistory_new.setUpdate_time(System.currentTimeMillis());
-                    tikTokViewHistory_new.setList_id(task_key.trim()+"|");
-                    tikTokViewHistoryRepository.save(tikTokViewHistory_new);
+                    if(accountRepository.get_Account_By_Account_id(account_id.trim())!=null){
+                        TikTokViewHistory tikTokViewHistory_new=new TikTokViewHistory();
+                        tikTokViewHistory_new.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
+                        tikTokViewHistory_new.setUpdate_time(System.currentTimeMillis());
+                        tikTokViewHistory_new.setList_id(task_key.trim()+"|");
+                        tikTokViewHistoryRepository.save(tikTokViewHistory_new);
+                    }
                 }
                 TiktokView24h tiktokView24h =new TiktokView24h();
                 tiktokView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
@@ -448,11 +450,13 @@ public class TiktokUpdate {
 
                 AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
                 if(accountTask==null){
-                    AccountTask accountTask_New=new AccountTask();
-                    accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
-                    accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
-                    accountTask_New.setView_time(System.currentTimeMillis());
-                    accountTaskRepository.save(accountTask_New);
+                    if(accountProfileRepository.get_Account_By_Account_id(account_id.trim())!=null){
+                        AccountTask accountTask_New=new AccountTask();
+                        accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
+                        accountTask_New.setAccount(accountProfileRepository.get_Account_By_Account_id(account_id.trim()));
+                        accountTask_New.setView_time(System.currentTimeMillis());
+                        accountTaskRepository.save(accountTask_New);
+                    }
                 }else{
                     accountTask.setView_time(System.currentTimeMillis());
                     accountTaskRepository.save(accountTask);
