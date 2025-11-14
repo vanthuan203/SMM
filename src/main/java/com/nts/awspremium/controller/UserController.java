@@ -1,6 +1,7 @@
 package com.nts.awspremium.controller;
 
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.MailApi;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.Balance;
 import com.nts.awspremium.model.GoogleKey;
@@ -144,6 +145,71 @@ public class UserController {
             logErrorRepository.save(logError);
             resp.put("status",false);
             return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+
+    @PostMapping(path = "getCodeTiktokTM",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<Map<String, Object>>  getCodeTiktokTM(@RequestBody JSONObject account){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try {
+            if(account==null){
+                resp.put("status", false);
+                data.put("error", "account is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(account.get("email").toString().length()==0){
+                resp.put("status", false);
+                data.put("error", "email is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            if(account.get("password").toString().length()==0){
+                resp.put("status", false);
+                data.put("error", "password is null");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+            String code= MailApi.getCode(account.get("email").toString().trim(),account.get("password").toString().trim());
+            if(code!=null){
+                if(code.matches("\\d+")){
+                    resp.put("status", true);
+                    data.put("code", code.trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else{
+                    resp.put("status", false);
+                    data.put("error", code.trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }else{
+                resp.put("status", false);
+                data.put("error","Error servser");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
         }
 
     }

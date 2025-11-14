@@ -564,7 +564,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status", StringUtils.getName());
+            resp.put("status", MailApi.getCode("4213worldwide@tiffincrane.com","5%3YOF+>aw"));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
