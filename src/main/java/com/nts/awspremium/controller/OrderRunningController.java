@@ -1216,6 +1216,9 @@ public class OrderRunningController {
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
                         int count= orderRunningList.get(i).getCurrent_count();
+                        if(orderRunningList.get(i).getStart_count()>orderRunningList.get(i).getCurrent_count()){
+                            count=orderRunningList.get(i).getStart_count()+orderRunningList.get(i).getTotal();
+                        }
                         if(count<0) {
                             continue;
                         }else if(count>=0){
