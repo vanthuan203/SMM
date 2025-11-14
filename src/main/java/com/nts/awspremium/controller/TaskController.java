@@ -466,7 +466,7 @@ public class TaskController {
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
                             accountProfile.setRunning(0);
-                            accountProfile.setSign_in(1);
+                            accountProfile.setSign_in(0);
                             accountProfile.setCode(code);
                             accountProfile.setTask_time(System.currentTimeMillis());
                             accountProfile.setConnection_platform("");
@@ -485,7 +485,7 @@ public class TaskController {
                             resp.put("status", true);
                             data.put("platform", "youtube");
                             data.put("app", platform_Youtube_Check.getApp_name().trim());
-                            data.put("task", "sign_in");
+                            data.put("task", "login");
                             data.put("task_key", account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("account_id",account_get.getAccount_id().substring(0,account_get.getAccount_id().lastIndexOf("|")));
                             data.put("password", account_get.getPassword().trim());
@@ -511,7 +511,7 @@ public class TaskController {
                         resp.put("data", data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
-                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=0){
+                }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=15){
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
 
@@ -523,7 +523,7 @@ public class TaskController {
                     if(accountProfile_Live0.getAccount_id().contains("register")){
                         data.put("task", "register");
                     }else{
-                        data.put("task", "sign_in");
+                        data.put("task", "login");
                     }
                     data.put("task_key", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
                     data.put("account_id", accountProfile_Live0.getAccount_id().substring(0,accountProfile_Live0.getAccount_id().lastIndexOf("|")));
@@ -563,7 +563,7 @@ public class TaskController {
                     accountProfile.setName("");
                     accountProfile.setAvatar(0);
                     accountProfile.setRunning(0);
-                    accountProfile.setSign_in(1);
+                    accountProfile.setSign_in(0);
                     accountProfile.setRecover("");
                     accountProfile.setPlatform("youtube");
                     accountProfile.setLive(-1);
