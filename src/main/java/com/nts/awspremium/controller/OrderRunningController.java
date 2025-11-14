@@ -708,7 +708,7 @@ public class OrderRunningController {
                             }else if(current_Count==-1){
                                 orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
                             }
-                        } else if (orderRunningList.get(i).getService().getTask().equals("view")) {
+                        } else if (orderRunningList.get(i).getService().getTask().equals("view")&&(System.currentTimeMillis()-orderRunningList.get(i).getUpdate_current_time())/1000/60>=5) {
                             int current_Count = TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
                             if (current_Count >= 0) {
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
@@ -1215,7 +1215,7 @@ public class OrderRunningController {
                         }
                         count_check=count;
                     }else if(orderRunningList.get(i).getService().getTask().equals("view")){
-                        int count= TikTokApi.getCountView(orderRunningList.get(i).getOrder_key());
+                        int count= orderRunningList.get(i).getCurrent_count();
                         if(count<0) {
                             continue;
                         }else if(count>=0){
