@@ -80,6 +80,31 @@ public class ProxyAPI {
         return null;
     }
 
+    public static String getHttpV6(String geo) {
+
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("http://server1.idnetwork.com.vn/proxy/getRandProxyByGeo?geo="+geo)
+                    .addHeader("Authorization", "t6AsJBTL5WZEJFI2vReFTRCQ5biPQT")
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+
+            // Kiểm tra nếu msg là "success"
+            if (!jsonObject.get("proxy").isJsonNull()) {
+                String[] proxy= jsonObject.get("proxy").getAsString().split(":");
+                return proxy[2]+":"+proxy[3]+"@"+proxy[0]+":"+proxy[1];
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
 
     public static String getSock5Luna(String geo) {
         return "socks://user-tiktok_B5onO-region-"+geo+":u89JGqCh3Mv6uin@as.lunaproxy.com:12233";

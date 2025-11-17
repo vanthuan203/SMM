@@ -411,7 +411,8 @@ public class TaskController {
 
             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
                 String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
-                String proxy=ProxyAPI.getSock5Luna("id");
+                //String proxy=ProxyAPI.getSock5Luna("id");
+                String proxy=ProxyAPI.getHttpV6(mode.getGeography().trim());
                 if(proxy!=null){
                     resp.put("status", true);
                     data.put("platform", "system");
