@@ -61,6 +61,7 @@ public class AccountController {
                 account_New.setPlatform(account.getPlatform().trim());
                 account_New.setDevice_mode(account.getDevice_mode().trim());
                 account_New.setLive(1);
+                account_New.setNote(account.getNote());
                 account_New.setGet_time(0L);
                 account_New.setAuth_2fa(account.getAuth_2fa().trim().replaceAll("\\s+", ""));
                 account_New.setMode("login");
