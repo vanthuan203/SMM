@@ -685,6 +685,11 @@ public class OrderRunningController {
                             if(current_Count>=0){
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
                             }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("comment")&&(System.currentTimeMillis()-orderRunningList.get(i).getUpdate_current_time())/1000/60>=5){
+                            int current_Count=GoogleApi.getCountCommentCurrent(orderRunningList.get(i).getOrder_key());
+                            if(current_Count>=0){
+                                orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                            }
                         }
                     }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
                         if (orderRunningList.get(i).getService().getTask().equals("follower")) {
