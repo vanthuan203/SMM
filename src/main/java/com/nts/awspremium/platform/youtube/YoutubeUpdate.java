@@ -288,6 +288,7 @@ public class YoutubeUpdate {
             youtubeView24hRepository.deleteAllByThan24h();
             youtubeLike24hRepository.deleteAllByThan24h();
             youtubeSubscribe24hRepository.deleteAllByThan24h();
+            youtubeComment24hRepository.deleteAllByThan24h();
             return true;
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

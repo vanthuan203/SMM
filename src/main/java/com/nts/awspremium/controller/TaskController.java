@@ -1077,7 +1077,7 @@ public class TaskController {
                     }else if(task.trim().contains("like")){
                         get_time=accountTask.getLike_time();
                     }else if(task.trim().contains("comment")){
-                        get_time=accountTask.getFollower_time();
+                        get_time=accountTask.getComment_time();
                     }else if(task.trim().contains("repost")){
                         get_time=accountTask.getRepost_time();
                     }else if(task.trim().contains("member")){
