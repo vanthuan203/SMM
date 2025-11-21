@@ -168,9 +168,9 @@ public class GoogleApi {
                 return jsonObject.get("commentsCount").getAsInt();
             }
         } catch (Exception e) {
-            return -1;
+            return -2;
         }
-        return -1;
+        return -2;
     }
 
 

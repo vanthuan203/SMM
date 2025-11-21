@@ -1190,6 +1190,21 @@ public class OrderRunningController {
                             }
                         }
                         count_check=count;
+                    }else if(orderRunningList.get(i).getService().getTask().equals("comment")){
+                        if(orderRunningList.get(i).getTotal()<orderRunningList.get(i).getQuantity()*1.5){
+                            int count=GoogleApi.getCountCommentCurrent(orderRunningList.get(i).getOrder_key());
+                            if(count==-2)
+                            {
+                                continue;
+                            }else if(count>=0) {
+                                if(count-orderRunningList.get(i).getStart_count()<orderRunningList.get(i).getQuantity()+(orderRunningList.get(i).getService().getBonus()/100F)*orderRunningList.get(i).getQuantity()){
+                                    continue;
+                                }
+                            }
+                            count_check=count;
+                        }else{
+                            count_check=orderRunningList.get(i).getCurrent_count();
+                        }
                     }
                 }else if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){ ///////________TIKTOK_______//////
                     if(orderRunningList.get(i).getService().getTask().equals("follower")){
@@ -1365,7 +1380,7 @@ public class OrderRunningController {
                     if(orderComment==null){
                         continue;
                     }else if(orderComment.getAi_uuid().length()==0){
-                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
                         count_render=count_render>=100?100:count_render;
                         String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
                         if(uuid!=null){
@@ -1387,7 +1402,7 @@ public class OrderRunningController {
                         orderComment.setAi_uuid("");
                         orderCommentRepository.save(orderComment);
                     }else  if(status!=null&&status.equals("failed"))  {
-                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
                         count_render=count_render>=100?100:count_render;
                         String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
                         if(uuid!=null){
@@ -1413,8 +1428,8 @@ public class OrderRunningController {
                         dataCommentRepository.save(dataComment);
                     }
                     orderComment.setCount_render(dataCommentRepository.count_All_By_OrderId(orderRunningList.get(i).getOrder_id()));
-                    if(orderComment.getCount_render()< orderRunningList.get(i).getQuantity()){
-                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                    if(orderComment.getCount_render()< orderRunningList.get(i).getQuantity()*2){
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
                         count_render=count_render>=100?100:count_render;
                         String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
                         if(uuid!=null){
