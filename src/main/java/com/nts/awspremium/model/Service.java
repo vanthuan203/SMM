@@ -107,6 +107,8 @@ public class Service implements Serializable {
     private Integer bonus_list_percent=0;
     @Column(columnDefinition = "varchar(255) default ''")
     private String app;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean ai=false;
 
     public Service() {
     }

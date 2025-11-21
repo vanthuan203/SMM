@@ -29,6 +29,8 @@ public class YoutubeOrder {
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
+    private OrderCommentRepository orderCommentRepository;
+    @Autowired
     private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
@@ -214,7 +216,7 @@ public class YoutubeOrder {
             Request request1 = null;
             Iterator k = null;
             String[] key={"AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,channelTitle,liveBroadcastContent),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,description,channelId,channelTitle,liveBroadcastContent),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -286,6 +288,11 @@ public class YoutubeOrder {
                     orderRunning.setVideo_title(snippet.get("title").toString());
                     orderRunning.setOrder_key(video.get("id").toString());
                     orderRunning.setStart_count(Integer.parseInt(statistics.get("commentCount").toString()));
+                    if(snippet.get("description")!=null&&snippet.get("description").toString().length()>0){
+                        orderRunning.setVideo_descriptions(snippet.get("description").toString());
+                    }else{
+                        orderRunning.setVideo_descriptions("");
+                    }
                     ////////////////
                     orderRunning.setCharge(priceorder);
                     orderRunning.setUpdate_time(0L);
@@ -307,6 +314,15 @@ public class YoutubeOrder {
                         orderRunning.setKeyword_list(data.getList());
                     }
                     orderRunningRepository.save(orderRunning);
+
+                    if(service.getAi()){
+                        OrderComment orderComment=new OrderComment();
+                        orderComment.setOrderRunning(orderRunning);
+                        orderComment.setAi_uuid("");
+                        orderComment.setCount_render(0);
+                        orderComment.setUpdate_time(0L);
+                        orderCommentRepository.save(orderComment);
+                    }
 
                     Float balance_update=balanceRepository.update_Balance(-priceorder,user.getUsername().trim());
                     Balance balance = new Balance();

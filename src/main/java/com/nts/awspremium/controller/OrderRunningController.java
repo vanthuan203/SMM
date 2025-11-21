@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.GoogleApi;
+import com.nts.awspremium.Openai;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
@@ -35,6 +36,8 @@ public class OrderRunningController {
     private ProfileTaskRepository profileTaskRepository;
     @Autowired
     private OrderHistoryRepository orderHistoryRepository;
+    @Autowired
+    private OrderCommentRepository orderCommentRepository;
     @Autowired
     private GoogleKeyRepository googleKeyRepository;
     @Autowired
@@ -1356,9 +1359,75 @@ public class OrderRunningController {
                     }else if(start_count!=null){
                         orderRunningList.get(i).setStart_count(start_count);
                     }
-                }
+                }else if(orderRunningList.get(i).getService().getTask().equals("comment")&&orderRunningList.get(i).getService().getAi()){
+                    OrderComment orderComment=orderCommentRepository.get_OrderComment_By_OrderId(orderRunningList.get(i).getOrder_id());
+                    String[] comments;
+                    if(orderComment==null){
+                        continue;
+                    }else if(orderComment.getAi_uuid().length()==0){
+                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                        continue;
+                    }
 
-                if(orderRunningList.get(i).getService().getTask().equals("comment")){
+                    String status=Openai.statusTask(orderComment.getAi_uuid());
+                    if(status!=null&&status.equals("completed")) {
+
+                        String list_Comment = Openai.getTask(orderComment.getAi_uuid());
+                        if (list_Comment == null) {
+                            continue;
+                        } else {
+                            comments = list_Comment.split("\\R");
+                        }
+                        orderComment.setAi_uuid("");
+                        orderCommentRepository.save(orderComment);
+                    }else  if(status!=null&&status.equals("failed"))  {
+                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                        continue;
+                    }else{
+                        continue;
+                    }
+
+                    for (int j=0;j<comments.length;j++){
+                        if(comments[j].trim().length()==0){
+                            continue;
+                        }
+                        DataComment dataComment=new DataComment();
+                        dataComment.setComment(comments[j].trim());
+                        dataComment.setOrderRunning(orderRunningList.get(i));
+                        dataComment.setGet_time(0L);
+                        dataComment.setAccount_id("");
+                        dataComment.setDevice_id("");
+                        dataComment.setRunning(0);
+                        dataCommentRepository.save(dataComment);
+                    }
+                    orderComment.setCount_render(dataCommentRepository.count_All_By_OrderId(orderRunningList.get(i).getOrder_id()));
+                    if(orderComment.getCount_render()< orderRunningList.get(i).getQuantity()){
+                        Integer count_render=orderRunningList.get(i).getQuantity()-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                    }else{
+                        orderRunningList.get(i).setStart_time(System.currentTimeMillis());
+                        orderRunningList.get(i).setPriority(0);
+                        orderRunningRepository.save(orderRunningList.get(i));
+                    }
+
+                }else if(orderRunningList.get(i).getService().getTask().equals("comment")&&!orderRunningList.get(i).getService().getAi()){
                     String [] comments=orderRunningList.get(i).getComment_list().split("\\R");
                     if(comments.length==0)
                     {
@@ -1377,11 +1446,10 @@ public class OrderRunningController {
                         dataComment.setRunning(0);
                         dataCommentRepository.save(dataComment);
                     }
+                    orderRunningList.get(i).setStart_time(System.currentTimeMillis());
+                    orderRunningList.get(i).setPriority(0);
+                    orderRunningRepository.save(orderRunningList.get(i));
                 }
-
-                orderRunningList.get(i).setStart_time(System.currentTimeMillis());
-                orderRunningList.get(i).setPriority(0);
-                orderRunningRepository.save(orderRunningList.get(i));
             }
             resp.put("status",true);
             data.put("message", "update thành công");

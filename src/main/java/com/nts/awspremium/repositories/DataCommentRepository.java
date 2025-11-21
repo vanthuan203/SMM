@@ -45,6 +45,9 @@ public interface DataCommentRepository extends JpaRepository<DataComment,Long> {
     @Query(value = "update data_comment set running=0,account_id='' where  running=1 and account_id=?1 order by get_time desc limit 1",nativeQuery = true)
     public void update_Task_Comment_Fail(String account_id);
 
+    @Query(value = "SELECT count(*) FROM data_comment WHERE order_id=?1",nativeQuery = true)
+    public Integer count_All_By_OrderId(Long orderid);
+
     @Modifying
     @Transactional
     @Query(value = "update data_comment set running=0,account_id='' where  running=1  and (account_id in(select account_id from profile_task where (running=0 or task!='comment')) or account_id not in (select account_id from profile_task))",nativeQuery = true)
