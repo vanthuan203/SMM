@@ -2613,7 +2613,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            if (updateTaskRequest.getTask_key().length()==0&&!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")) {
+            if (updateTaskRequest.getTask_key().length()==0&&!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")&&!updateTaskRequest.getTask().equals("sign_in")) {
                 resp.put("status", false);
                 data.put("message", "task_key không để trống");
                 resp.put("data", data);
