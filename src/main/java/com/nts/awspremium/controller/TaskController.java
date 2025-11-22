@@ -829,6 +829,10 @@ public class TaskController {
                                 accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%",platform_Check.getLogin_time())==0&&
                                 accountProfileRepository.count_Login_Time_Null_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%")==0
                         ){
+
+                            profileTask.setGet_account_time(System.currentTimeMillis());
+                            profileTaskRepository.save(profileTask);
+
                             String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
                             String code="";
                             for(int i=0;i<10;i++){
