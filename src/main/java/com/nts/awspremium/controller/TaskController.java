@@ -3040,11 +3040,20 @@ public class TaskController {
                                 accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                 accountRepository.save(accountPlatform);
                             }else{
-                                accountPlatform.setRunning(0);
-                                accountPlatform.setUpdate_time(System.currentTimeMillis());
-                                accountPlatform.setDie_time(System.currentTimeMillis());
-                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
-                                accountRepository.save(accountPlatform);
+                                if(accountProfile.getLogin_time()!=0){
+                                    accountPlatform.setRunning(0);
+                                    accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                    accountPlatform.setDie_time(System.currentTimeMillis());
+                                    accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                    accountRepository.save(accountPlatform);
+                                }else{
+                                    accountPlatform.setRunning(0);
+                                    accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                    accountPlatform.setProfile_id("");
+                                    accountPlatform.setProfile_id("");
+                                    accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                    accountRepository.save(accountPlatform);
+                                }
                             }
                         }
                         if(accountProfile!=null){
