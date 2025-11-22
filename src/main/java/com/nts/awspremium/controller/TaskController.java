@@ -3049,6 +3049,7 @@ public class TaskController {
                                 }else{
                                     accountPlatform.setRunning(0);
                                     accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                    accountPlatform.setDie_time(System.currentTimeMillis());
                                     accountPlatform.setProfile_id("");
                                     accountPlatform.setProfile_id("");
                                     accountPlatform.setLive(updateTaskRequest.getIsLogin());
