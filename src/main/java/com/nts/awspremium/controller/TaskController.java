@@ -893,8 +893,6 @@ public class TaskController {
                             accountProfile_Live0.setLast_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile_Live0);
 
-                            accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
-
                             resp.put("status", true);
                             data.put("platform",profileTask.getPlatform());
                             data.put("app",platform_Check.getApp_name().trim());
@@ -984,7 +982,11 @@ public class TaskController {
                         data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
                     }
                 }else{
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                    if (accountProfile_Task.getRecover().trim().contains("|")) {
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+                    }else{
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                    }
                 }
 
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
@@ -1224,27 +1226,36 @@ public class TaskController {
                     dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                     dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                     dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
-                    if(accountProfile_Task.getRecover().trim().contains("|")){
-                        dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                    if(accountProfile_Task.getSign_in() == 0){
+                        if(accountProfile_Task.getRecover().trim().contains("|")){
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }else{
+                            //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
+                            AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
+                            accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<10;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            accountProfile_Task.setCode(code);
+                            accountProfileRepository.save(accountProfile_Task);
+                            if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
+                                accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
+                            }
+                            accountProfile_Dependent.setCode(code);
+                            accountProfileRepository.save(accountProfile_Dependent);
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }
                     }else{
-                        //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
-                        AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
-                        accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
-                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        String code="";
-                        for(int i=0;i<10;i++){
-                            Integer ranver=ran.nextInt(stringrand.length());
-                            code=code+stringrand.charAt(ranver);
+                        if(accountProfile_Task.getRecover().trim().contains("|")){
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }else{
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim());
                         }
-                        accountProfile_Task.setCode(code);
-                        accountProfileRepository.save(accountProfile_Task);
-                        if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
-                            accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
-                        }
-                        accountProfile_Dependent.setCode(code);
-                        accountProfileRepository.save(accountProfile_Dependent);
-                        dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                     }
+
                 }
                 dataJson.put("task_index",profileTask.getTask_index());
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
@@ -2500,27 +2511,36 @@ public class TaskController {
                     dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
                     dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
                     dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
-                    if(accountProfile_Task.getRecover().trim().contains("|")){
-                        dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                    if(accountProfile_Task.getSign_in()==0){
+                        if(accountProfile_Task.getRecover().trim().contains("|")){
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }else{
+                            //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
+                            AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
+                            accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
+                            String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                            String code="";
+                            for(int i=0;i<10;i++){
+                                Integer ranver=ran.nextInt(stringrand.length());
+                                code=code+stringrand.charAt(ranver);
+                            }
+                            accountProfile_Task.setCode(code);
+                            accountProfileRepository.save(accountProfile_Task);
+                            if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
+                                accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
+                            }
+                            accountProfile_Dependent.setCode(code);
+                            accountProfileRepository.save(accountProfile_Dependent);
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }
                     }else{
-                        //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
-                        AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
-                        accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
-                        String stringrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                        String code="";
-                        for(int i=0;i<10;i++){
-                            Integer ranver=ran.nextInt(stringrand.length());
-                            code=code+stringrand.charAt(ranver);
+                        if(accountProfile_Task.getRecover().trim().contains("|")){
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                        }else{
+                            dataJson.put("recover",accountProfile_Task.getRecover().trim());
                         }
-                        accountProfile_Task.setCode(code);
-                        accountProfileRepository.save(accountProfile_Task);
-                        if(!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())){
-                            accountProfile_Dependent.setConnection_platform(profileTask.getPlatform()+"|");
-                        }
-                        accountProfile_Dependent.setCode(code);
-                        accountProfileRepository.save(accountProfile_Dependent);
-                        dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                     }
+
                 }
                 dataJson.put("task_index",profileTask.getTask_index());
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
