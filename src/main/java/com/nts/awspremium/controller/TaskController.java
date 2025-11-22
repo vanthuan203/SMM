@@ -3020,13 +3020,33 @@ public class TaskController {
                         accountProfileRepository.delete(accountProfile);
                     }
                 }else if(updateTaskRequest.getIsLogin()>1&&accountProfile.getSign_in()==1){
-                    Boolean check_Die_Tiktok=true;
-                    if(accountProfile!=null&&accountProfile.getPlatform().equals("tiktok")){
-                        check_Die_Tiktok=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
+                    Boolean check_Die=true;
+                    if(accountProfile!=null&&accountProfile.getPlatform().equals("tiktok")&&updateTaskRequest.getIsLogin()!=7){
+                        check_Die=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
                     }
-                    if(accountProfile!=null&&check_Die_Tiktok){
-                        accountProfileRepository.delete(accountProfile);
+                    if(check_Die){
+                        Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
+                        if(accountPlatform!=null){
+                            if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setProfile_id("");
+                                accountPlatform.setProfile_id("");
+                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                accountRepository.save(accountPlatform);
+                            }else{
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setDie_time(System.currentTimeMillis());
+                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                accountRepository.save(accountPlatform);
+                            }
+                        }
+                        if(accountProfile!=null){
+                            accountProfileRepository.delete(accountProfile);
+                        }
                     }
+
                 }
             }catch (Exception e){
                 StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
