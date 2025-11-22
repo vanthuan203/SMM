@@ -2787,7 +2787,7 @@ public class TaskController {
                         }
                     }
                      */
-                }else if(updateTaskRequest.getIsLogin()==1&&(updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register")||updateTaskRequest.getTask().equals("sign_in"))){  ///Check khi login hoặc reg thành công !!!!!!!!!!!!!
+                }else if(updateTaskRequest.getIsLogin()==1&&(updateTaskRequest.getTask().equals("login")||updateTaskRequest.getTask().equals("register"))){  ///Check khi login hoặc reg thành công !!!!!!!!!!!!!
                     Device device= deviceRepository.check_DeviceId(updateTaskRequest.getDevice_id().trim());
                     if(device!=null){
                         IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),updateTaskRequest.getPlatform().trim());
@@ -2799,7 +2799,7 @@ public class TaskController {
                     }
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
-                        accountProfile.setSign_in(0);
+                        //accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
                         if(accountProfile.getLogin_time()==0){
                             accountProfile.setLogin_time(System.currentTimeMillis());
@@ -2901,8 +2901,97 @@ public class TaskController {
                         }
                     }////
 
-                }else if(updateTaskRequest.getIsLogin()>1){
+                }else if(updateTaskRequest.getIsLogin()==1&&updateTaskRequest.getTask().equals("sign_in")){  ///Check khi sign_in hoặc reg thành công !!!!!!!!!!!!!
+                    Device device= deviceRepository.check_DeviceId(updateTaskRequest.getDevice_id().trim());
+                    if(device!=null){
+                        IpRegister ipRegister_old=ipRegisterRepository.get_Ip_By_Ip_And_Platform(device.getIp_address(),updateTaskRequest.getPlatform().trim());
+                        if(ipRegister_old!=null&&updateTaskRequest.getTask().equals("register")){
+                            ipRegister_old.setUpdate_time(System.currentTimeMillis());
+                            ipRegister_old.setSuccess(true);
+                            ipRegisterRepository.save(ipRegister_old);
+                        }
+                    }
+                    accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                    if(accountProfile!=null){
+                        accountProfile.setRunning(1);
+                        if(accountProfile.getLogin_time()==0){
+                            accountProfile.setLogin_time(System.currentTimeMillis());
+                        }
 
+                        if(updateTaskRequest.getTask_key().length()!=0){
+
+                            if(updateTaskRequest.getPlatform().equals("tiktok")&&
+                                    updateTaskRequest.getTask_key().trim().startsWith("@")&&
+                                    TikTokApi.getFollowerCount(updateTaskRequest.getTask_key().trim().replace("@",""),1)>=0){
+
+                                AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                                if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){
+                                    accountProfileRepository.delete(accountProfile_Check);
+                                    accountProfileRepository.delete(accountProfile);
+                                    resp.put("status", true);
+                                    data.put("message", "Update thành công!");
+                                    resp.put("data", data);
+                                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                                }
+                                accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                accountProfile.setLive(1);
+                            }else if(updateTaskRequest.getPlatform().equals("tiktok")){
+                                accountProfile.setLive(0);
+                            }else if(updateTaskRequest.getPlatform().equals("facebook")){
+                                if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
+                                    accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                    accountProfile.setLive(1);
+                                }else{
+                                    accountProfile.setLive(0);
+                                }
+                            }else{
+                                accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                accountProfile.setLive(1);
+                            }
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
+
+                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
+
+                            if(account==null&&accountProfile.getLive()==1){
+                                account=new Account();
+                                account.setAccount_id(accountProfile.getAccount_id().trim());
+                                account.setLive(1);
+                                account.setPassword(accountProfile.getPassword());
+                                account.setName(accountProfile.getName());
+                                account.setAvatar(accountProfile.getAvatar());
+                                account.setRecover_mail(accountProfile.getRecover());
+                                account.setPlatform(accountProfile.getPlatform());
+                                if(accountProfile.getSign_in()==1){
+                                    account.setMode("login");
+                                }else{
+                                    account.setMode("register");
+                                }
+                                account.setRunning(1);
+                                account.setAuth_2fa("");
+                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
+                                account.setAdd_time(System.currentTimeMillis());
+                                account.setGet_time(System.currentTimeMillis());
+                                account.setUpdate_time(System.currentTimeMillis());
+                                accountRepository.save(account);
+                            }else if(account!=null&&accountProfile.getLive()==1){
+                                account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                account.setRecover_mail(accountProfile.getRecover());
+                                account.setPassword(accountProfile.getPassword());
+                                account.setRunning(1);
+                                account.setLive(1);
+                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
+                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
+                                accountRepository.save(account);
+                            }
+                        }else if(updateTaskRequest.getTask_key().length()==0){
+                            accountProfile.setLive(0);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
+                        }
+                    }
+                }else if(updateTaskRequest.getIsLogin()>1&&accountProfile.getSign_in()==0){
                     Boolean check_Die_Tiktok=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
                     if(platform_Dependent!=null&&!updateTaskRequest.getPlatform().equals("youtube")){
                         if((accountProfile.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountProfile.getPlatform().equals("tiktok")){
@@ -2950,6 +3039,14 @@ public class TaskController {
                     }
                     //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
                     if(accountProfile!=null){
+                        accountProfileRepository.delete(accountProfile);
+                    }
+                }else if(updateTaskRequest.getIsLogin()>1&&accountProfile.getSign_in()==1){
+                    Boolean check_Die_Tiktok=true;
+                    if(accountProfile!=null&&accountProfile.getPlatform().equals("tiktok")){
+                        check_Die_Tiktok=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
+                    }
+                    if(accountProfile!=null&&check_Die_Tiktok){
                         accountProfileRepository.delete(accountProfile);
                     }
                 }
