@@ -956,26 +956,31 @@ public class TaskController {
                 data.put("password", accountProfile_Task.getPassword().trim());
                 data.put("name", accountProfile_Task.getName().trim());
                 data.put("avatar", accountProfile_Task.getAvatar() == 0 ? false : true);
-                if (accountProfile_Task.getRecover().trim().contains("|")) {
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
-                } else {
-                    AccountProfile accountProfile_Dependent = accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), platform_Check.getDependent().trim());
-                    accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
-                    String stringrand = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
-                    String code = "";
-                    for (int i = 0; i < 10; i++) {
-                        Integer ranver = ran.nextInt(stringrand.length());
-                        code = code + stringrand.charAt(ranver);
+                if(accountProfile_Task.getSign_in() == 0){
+                    if (accountProfile_Task.getRecover().trim().contains("|")) {
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+                    } else {
+                        AccountProfile accountProfile_Dependent = accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(), platform_Check.getDependent().trim());
+                        accountProfile_Task.setRecover(accountProfile_Dependent.getAccount_id());
+                        String stringrand = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
+                        String code = "";
+                        for (int i = 0; i < 10; i++) {
+                            Integer ranver = ran.nextInt(stringrand.length());
+                            code = code + stringrand.charAt(ranver);
+                        }
+                        accountProfile_Task.setCode(code);
+                        accountProfileRepository.save(accountProfile_Task);
+                        if (!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())) {
+                            accountProfile_Dependent.setConnection_platform(profileTask.getPlatform() + "|");
+                        }
+                        accountProfile_Dependent.setCode(code);
+                        accountProfileRepository.save(accountProfile_Dependent);
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
                     }
-                    accountProfile_Task.setCode(code);
-                    accountProfileRepository.save(accountProfile_Task);
-                    if (!accountProfile_Dependent.getConnection_platform().contains(profileTask.getPlatform())) {
-                        accountProfile_Dependent.setConnection_platform(profileTask.getPlatform() + "|");
-                    }
-                    accountProfile_Dependent.setCode(code);
-                    accountProfileRepository.save(accountProfile_Dependent);
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+                }else{
+                    data.put("recover_mail", accountProfile_Task.getRecover().trim());
                 }
+
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
                 data.put("account_list", accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                 resp.put("data", data);
