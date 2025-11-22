@@ -2999,7 +2999,7 @@ public class TaskController {
                         if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
                             accountPlatform.setRunning(0);
                             accountPlatform.setUpdate_time(System.currentTimeMillis());
-                            accountPlatform.setProfile_id("");
+                            accountPlatform.setDevice_id("");
                             accountPlatform.setProfile_id("");
                             accountPlatform.setLive(updateTaskRequest.getIsLogin());
                             accountRepository.save(accountPlatform);
@@ -3013,7 +3013,7 @@ public class TaskController {
                             }else{
                                 accountPlatform.setRunning(0);
                                 accountPlatform.setUpdate_time(System.currentTimeMillis());
-                                accountPlatform.setProfile_id("");
+                                accountPlatform.setDevice_id("");
                                 accountPlatform.setProfile_id("");
                                 accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                 accountRepository.save(accountPlatform);
@@ -3035,7 +3035,7 @@ public class TaskController {
                             if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
                                 accountPlatform.setRunning(0);
                                 accountPlatform.setUpdate_time(System.currentTimeMillis());
-                                accountPlatform.setProfile_id("");
+                                accountPlatform.setDevice_id("");
                                 accountPlatform.setProfile_id("");
                                 accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                 accountRepository.save(accountPlatform);
@@ -3050,7 +3050,7 @@ public class TaskController {
                                     accountPlatform.setRunning(0);
                                     accountPlatform.setUpdate_time(System.currentTimeMillis());
                                     accountPlatform.setDie_time(System.currentTimeMillis());
-                                    accountPlatform.setProfile_id("");
+                                    accountPlatform.setDevice_id("");
                                     accountPlatform.setProfile_id("");
                                     accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                     accountRepository.save(accountPlatform);
