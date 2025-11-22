@@ -435,7 +435,8 @@ public class TaskController {
             platform_Youtube_Check.getLogin_account()==1){ //check xem đủ tài khoản youtbe live=1 chưa
                 AccountProfile accountProfile_Live0=accountProfileRepository.get_AccountLive0_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Live0==null){ // If account null or not live then get new acc
-                    if(platform_Youtube_Check.getLogin_account()==1&& (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=15&&
+                    if(platform_Youtube_Check.getLogin_account()==1&&
+                            (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=15&&
                             accountRepository.check_Count_AccountDie24H_By_Platform_And_ProfileId(profileTask.getProfile_id().trim(),"youtube")<3&& //check acc die in 24h
                             accountProfileRepository.count_Login_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getLogin_time())==0 // check time login gần nhất
                     ){
@@ -822,8 +823,9 @@ public class TaskController {
                                 return new ResponseEntity<>(resp, HttpStatus.OK);
 
                             }
-                        }else if(accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&&
-                                platform_Check.getLogin_account()==1&&
+                        }else if(platform_Check.getLogin_account()==1&&
+                                (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=30&&
+                                accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&&
                                 accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%",platform_Check.getLogin_time())==0&&
                                 accountProfileRepository.count_Login_Time_Null_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%")==0
                         ){
