@@ -2953,29 +2953,7 @@ public class TaskController {
 
                             Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
 
-                            if(account==null&&accountProfile.getLive()==1){
-                                account=new Account();
-                                account.setAccount_id(accountProfile.getAccount_id().trim());
-                                account.setLive(1);
-                                account.setPassword(accountProfile.getPassword());
-                                account.setName(accountProfile.getName());
-                                account.setAvatar(accountProfile.getAvatar());
-                                account.setRecover_mail(accountProfile.getRecover());
-                                account.setPlatform(accountProfile.getPlatform());
-                                if(accountProfile.getSign_in()==1){
-                                    account.setMode("login");
-                                }else{
-                                    account.setMode("register");
-                                }
-                                account.setRunning(1);
-                                account.setAuth_2fa("");
-                                account.setProfile_id(accountProfile.getProfileTask().getProfile_id());
-                                account.setDevice_id(accountProfile.getProfileTask().getDevice().getDevice_id());
-                                account.setAdd_time(System.currentTimeMillis());
-                                account.setGet_time(System.currentTimeMillis());
-                                account.setUpdate_time(System.currentTimeMillis());
-                                accountRepository.save(account);
-                            }else if(account!=null&&accountProfile.getLive()==1){
+                            if(account!=null&&accountProfile.getLive()==1){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setRecover_mail(accountProfile.getRecover());
                                 account.setPassword(accountProfile.getPassword());
