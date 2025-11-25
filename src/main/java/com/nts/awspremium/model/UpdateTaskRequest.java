@@ -16,6 +16,7 @@ public class UpdateTaskRequest {
     private Long order_id=0L;
     private String platform="";
     private String recover_mail="";
+    private String recover_mail_password="";
     private String password="";
     private Integer isLogin=-1;
     private Integer viewing_time=0;

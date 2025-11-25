@@ -472,7 +472,8 @@ public class TaskController {
                             accountProfile.setCode(code);
                             accountProfile.setTask_time(System.currentTimeMillis());
                             accountProfile.setConnection_platform("");
-                            accountProfile.setChanged(0);
+                            accountProfile.setChanged(account_get.getChanged());
+                            accountProfile.setAvatar(account_get.getAvatar());
                             accountProfile.setAuth_2fa(account_get.getAuth_2fa());
                             accountProfile.setProfileTask(profileTask);
                             accountProfile.setAdd_time(System.currentTimeMillis());
@@ -494,6 +495,7 @@ public class TaskController {
                             data.put("name", account_get.getName());
                             data.put("avatar", account_get.getAvatar()==0?false:true);
                             data.put("recover_mail", account_get.getRecover_mail().trim());
+                            data.put("recover_mail_password", account_get.getRecover_mail_password().trim());
                             data.put("auth_2fa", account_get.getAuth_2fa().trim());
                             data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                             resp.put("data",data);
@@ -533,6 +535,7 @@ public class TaskController {
                     data.put("name", accountProfile_Live0.getName());
                     data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
                     data.put("recover_mail", accountProfile_Live0.getRecover().trim());
+                    data.put("recover_mail_password", accountProfile_Live0.getRecover_password().trim());
                     data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
                     data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                     resp.put("data",data);
@@ -603,6 +606,7 @@ public class TaskController {
                     data.put("name",accountProfile.getName());
                     data.put("avatar",accountProfile.getAvatar()==0?false:true);
                     data.put("recover_mail",  accountProfile.getRecover().trim());
+                    data.put("recover_mail_password",  accountProfile.getRecover_password().trim());
                     data.put("auth_2fa", "");
                     data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                     resp.put("data",data);
@@ -626,6 +630,7 @@ public class TaskController {
                         data.put("name",accountProfile.getName());
                         data.put("avatar",accountProfile.getAvatar()==0?false:true);
                         data.put("recover_mail",  accountProfile.getRecover().trim());
+                        data.put("recover_mail_password",  accountProfile.getRecover_password().trim());
                         data.put("auth_2fa", "");
                         data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                         resp.put("data",data);
@@ -816,6 +821,7 @@ public class TaskController {
                                 data.put("account_id",  accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
                                 data.put("password",accountProfile_Dependent.getPassword().trim());
                                 data.put("recover_mail", accountProfile_Dependent.getAccount_id().substring(0,accountProfile_Dependent.getAccount_id().lastIndexOf("|")));
+                                data.put("recover_mail_password", accountProfile_Dependent.getRecover_password().trim());
                                 data.put("name",  accountProfile.getName());
                                 data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                 data.put("auth_2fa", "");
@@ -855,7 +861,8 @@ public class TaskController {
                                 accountProfile.setRecover(account_get.getRecover_mail());
                                 accountProfile.setPlatform(profileTask.getPlatform().trim());
                                 accountProfile.setLive(0);
-                                accountProfile.setChanged(0);
+                                accountProfile.setChanged(account_get.getChanged());
+                                accountProfile.setAvatar(account_get.getAvatar());
                                 accountProfile.setRunning(0);
                                 accountProfile.setSign_in(1);
                                 accountProfile.setCode(code);
@@ -879,6 +886,7 @@ public class TaskController {
                                 data.put("name", account_get.getName().trim());
                                 data.put("avatar", accountProfile.getAvatar()==0?false:true);
                                 data.put("recover_mail", account_get.getRecover_mail().trim());
+                                data.put("recover_mail_password", account_get.getRecover_mail_password().trim());
                                 data.put("auth_2fa", account_get.getAuth_2fa().trim());
                                 data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                                 resp.put("data",data);
@@ -903,6 +911,7 @@ public class TaskController {
                             data.put("name", accountProfile_Live0.getName().trim());
                             data.put("avatar", accountProfile_Live0.getAvatar()==0?false:true);
                             data.put("recover_mail", accountProfile_Live0.getRecover().substring(0,accountProfile_Live0.getRecover().lastIndexOf("|")));
+                            data.put("recover_mail_password", accountProfile_Live0.getRecover_password().trim());
                             data.put("auth_2fa", accountProfile_Live0.getAuth_2fa().trim());
                             data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                             resp.put("data",data);
@@ -988,7 +997,7 @@ public class TaskController {
                         data.put("recover_mail", accountProfile_Task.getRecover().trim());
                     }
                 }
-
+                data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
                 data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
                 data.put("account_list", accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                 resp.put("data", data);
@@ -1010,8 +1019,27 @@ public class TaskController {
                     data.put("app", platform_Check.getApp_name().trim());
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
+                }else if(accountProfile_Task.getLogin_time()!=0 &&accountProfile_Task.getChanged()==0 && platform_Check.getChange_info()==1 &&
+                        (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
+                        (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
+                    accountProfile_Task.setChanged_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile_Task);
+                    resp.put("status", true);
+                    data.put("platform", profileTask.getPlatform().trim());
+                    data.put("task", "add_recovery_mail");
+                    data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    data.put("password", accountProfile_Task.getPassword().trim());
+                    data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                    data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
+                    data.put("app", platform_Check.getApp_name().trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                if(platform_Check.getClone_info()==1&&(System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
+                if(platform_Check.getClone_info()==1&&
+                        (System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=platform_Check.getAdd_post_time()&&
+                        (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6
+                ){
                     AccountClone accountClone=accountCloneRepository.get_Account_Clone_By_Account_id(accountProfile_Task.getAccount_id().trim());
                     if(accountClone!=null){
                         if(accountProfile_Task.getAvatar()==0){
@@ -1228,7 +1256,7 @@ public class TaskController {
                     dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                     if(accountProfile_Task.getSign_in() == 0){
                         if(accountProfile_Task.getRecover().trim().contains("|")){
-                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                            dataJson.put("recover_mail",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                         }else{
                             //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
                             AccountProfile accountProfile_Dependent=accountProfileRepository.get_Account_By_ProfileId_And_Platform(profileTask.getProfile_id(),platform_Check.getDependent().trim());
@@ -1246,13 +1274,13 @@ public class TaskController {
                             }
                             accountProfile_Dependent.setCode(code);
                             accountProfileRepository.save(accountProfile_Dependent);
-                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                            dataJson.put("recover_mail",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                         }
                     }else{
                         if(accountProfile_Task.getRecover().trim().contains("|")){
-                            dataJson.put("recover",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
+                            dataJson.put("recover_mail",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
                         }else{
-                            dataJson.put("recover",accountProfile_Task.getRecover().trim());
+                            dataJson.put("recover_mail",accountProfile_Task.getRecover().trim());
                         }
                     }
 
@@ -2654,7 +2682,7 @@ public class TaskController {
             }
 
 
-            if(!updateTaskRequest.getTask().equals("login")&&!updateTaskRequest.getTask().equals("register")&&!updateTaskRequest.getTask().equals("sign_in")&&!updateTaskRequest.getTask().equals("update_info")){
+            if(!Set.of("login", "register", "sign_in","add_post","update_info","add_recovery_mail","update_avatar").contains(updateTaskRequest.getTask().trim())){
                 String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
                 if(platform_Check.equals("youtube")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
@@ -2787,6 +2815,33 @@ public class TaskController {
                         if(account!=null){
                             account.setPassword(updateTaskRequest.getPassword().trim());
                             account.setRecover_mail(updateTaskRequest.getRecover_mail().trim());
+                            account.setChanged(1);
+                            account.setChanged_time(System.currentTimeMillis());
+                            accountRepository.save(account);
+                        }
+                    }
+                }else if(updateTaskRequest.getTask().equals("add_recovery_mail") &&updateTaskRequest.getStatus()==true){
+                    if(accountProfile!=null&&updateTaskRequest.getRecover_mail().trim().equals("@")) {
+                        //accountProfile.setPassword(updateTaskRequest.getPassword().trim());
+                        accountProfile.setRecover(updateTaskRequest.getRecover_mail().trim());
+                        if(updateTaskRequest.getRecover_mail_password().trim().length()>0){
+                            accountProfile.setRecover_password(updateTaskRequest.getRecover_mail_password().trim());
+                        }else{
+                            accountProfile.setRecover_password("");
+                        }
+                        accountProfile.setChanged(1);
+                        accountProfile.setChanged_time(System.currentTimeMillis());
+                        accountProfileRepository.save(accountProfile);
+
+                        Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
+                        if(account!=null){
+                            //account.setPassword(updateTaskRequest.getPassword().trim());
+                            account.setRecover_mail(updateTaskRequest.getRecover_mail().trim());
+                            if(updateTaskRequest.getRecover_mail_password().trim().length()>0){
+                                account.setRecover_mail_password(updateTaskRequest.getRecover_mail_password().trim());
+                            }else{
+                                account.setRecover_mail_password("");
+                            }
                             account.setChanged(1);
                             account.setChanged_time(System.currentTimeMillis());
                             accountRepository.save(account);

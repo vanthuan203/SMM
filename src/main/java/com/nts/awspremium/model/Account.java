@@ -30,6 +30,9 @@ public class Account implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String recover_mail;
 
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String recover_mail_password="";
+
     @Column(columnDefinition = "integer default 1")
     private Integer live;
 

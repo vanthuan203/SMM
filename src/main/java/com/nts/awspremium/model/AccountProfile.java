@@ -18,7 +18,7 @@ public class AccountProfile implements Serializable {
     @Column(nullable = false)
     private String account_id;
     @Column(nullable = false)
-    private String password;
+    private String password="";
     @Column(columnDefinition = "varchar(255) default ''")
     private String name="";
 
@@ -26,7 +26,10 @@ public class AccountProfile implements Serializable {
     private Integer avatar=0;
 
     @Column(columnDefinition = "varchar(255) default ''")
-    private String recover;
+    private String recover="";
+
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String recover_password="";
 
     @Column(columnDefinition = "integer default 1")
     private Integer live;
@@ -44,7 +47,10 @@ public class AccountProfile implements Serializable {
     private Long add_time;
 
     @Column(columnDefinition = "bigint default 0")
-    private Long update_time;
+    private Long update_time=0L;
+
+    @Column(columnDefinition = "bigint default 0")
+    private Long changed_time=0L;
 
     @Column(columnDefinition = "bigint default 0")
     private Long task_time;
