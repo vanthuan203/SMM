@@ -619,8 +619,9 @@ public class TiktokOrder {
             link="https://www.tiktok.com/@"+unique_id.trim()+"/video/"+video_id.trim();
             Integer view_count=infoVideo.get("play_count").getAsInt();
             Long duration=infoVideo.get("duration").getAsLong();
-            if(duration==0){
-                duration=infoVideo.getAsJsonObject("music_info").get("duration").getAsLong();
+            if (duration == 0) {
+                String v = infoVideo.getAsJsonObject("music_info").get("duration").getAsString();
+                duration = (v == null || v.trim().isEmpty()) ? service.getLimit_time() : Long.parseLong(v);
             }
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
                 resp.put("error", "This ID in process");
