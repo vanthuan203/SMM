@@ -2832,10 +2832,6 @@ public class TaskController {
                     if(accountProfile!=null){
                         //accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
-                        if(accountProfile.getLogin_time()==0){
-                            accountProfile.setLogin_time(System.currentTimeMillis());
-                        }
-
                         if(updateTaskRequest.getTask_key().length()!=0){
 
                             if(updateTaskRequest.getPlatform().equals("tiktok")&&
@@ -2851,18 +2847,27 @@ public class TaskController {
                                     resp.put("data", data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }
+                                if(accountProfile.getLogin_time()==0){
+                                    accountProfile.setLogin_time(System.currentTimeMillis());
+                                }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
                             }else if(updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("facebook")){
                                 if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
+                                    if(accountProfile.getLogin_time()==0){
+                                        accountProfile.setLogin_time(System.currentTimeMillis());
+                                    }
                                     accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                     accountProfile.setLive(1);
                                 }else{
                                     accountProfile.setLive(0);
                                 }
                             }else{
+                                if(accountProfile.getLogin_time()==0){
+                                    accountProfile.setLogin_time(System.currentTimeMillis());
+                                }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
                             }
@@ -2945,10 +2950,6 @@ public class TaskController {
                     accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
                         accountProfile.setRunning(1);
-                        if(accountProfile.getLogin_time()==0){
-                            accountProfile.setLogin_time(System.currentTimeMillis());
-                        }
-
                         if(updateTaskRequest.getTask_key().length()!=0){
 
                             if(updateTaskRequest.getPlatform().equals("tiktok")&&
@@ -2964,18 +2965,27 @@ public class TaskController {
                                     resp.put("data", data);
                                     return new ResponseEntity<>(resp, HttpStatus.OK);
                                 }
+                                if(accountProfile.getLogin_time()==0){
+                                    accountProfile.setLogin_time(System.currentTimeMillis());
+                                }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
                             }else if(updateTaskRequest.getPlatform().equals("tiktok")){
                                 accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("facebook")){
                                 if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
+                                    if(accountProfile.getLogin_time()==0){
+                                        accountProfile.setLogin_time(System.currentTimeMillis());
+                                    }
                                     accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                     accountProfile.setLive(1);
                                 }else{
                                     accountProfile.setLive(0);
                                 }
                             }else{
+                                if(accountProfile.getLogin_time()==0){
+                                    accountProfile.setLogin_time(System.currentTimeMillis());
+                                }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
                             }
