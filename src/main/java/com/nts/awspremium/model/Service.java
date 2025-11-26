@@ -25,6 +25,8 @@ public class Service implements Serializable {
     private String service_category;
     @Column(columnDefinition = "float default 0")
     private Float service_rate;
+    @Column(columnDefinition = "float default 0")
+    private Float service_rate_old;
     @Column(columnDefinition = "integer default 0")
     private Integer min_quantity;
     @Column(columnDefinition = "integer default 0")

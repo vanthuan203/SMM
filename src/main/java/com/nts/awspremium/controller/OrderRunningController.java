@@ -72,7 +72,7 @@ public class OrderRunningController {
         JSONObject resp = new JSONObject();
         //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
         User users=userRepository.find_User_By_Token(Authorization.trim());
-        if(Authorization.length()==0|| user==null){
+        if(Authorization.length()==0|| users==null){
             resp.put("status","fail");
             resp.put("message", "Token expired");
             return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
@@ -108,7 +108,12 @@ public class OrderRunningController {
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service_id", orderRunnings.get(i).getService_id());
                 obj.put("username", orderRunnings.get(i).getUsername());
-                obj.put("charge", orderRunnings.get(i).getCharge());
+                if(users.getUsername().contains("admin") || users.getRole().equals("ROLE_USER") || users.getRole().equals("ROLE_SUPPORT")){
+                    obj.put("charge", orderRunnings.get(i).getCharge());
+                }else{
+                    Service service =serviceRepository.get_Service(orderRunnings.get(i).getService_id());
+                    obj.put("charge",Math.round(((orderRunnings.get(i).getQuantity() / 1000F) * service.getService_rate_old() * ((float) (users.getRate()) / 100) * ((float) (100 - users.getDiscount()) / 100))*100)/100f);
+                }
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
@@ -492,7 +497,12 @@ public class OrderRunningController {
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service_id", orderRunnings.get(i).getService_id());
                 obj.put("username", orderRunnings.get(i).getUsername());
-                obj.put("charge", orderRunnings.get(i).getCharge());
+                if(users.getUsername().contains("admin") || users.getRole().equals("ROLE_USER")){
+                    obj.put("charge", orderRunnings.get(i).getCharge());
+                }else{
+                    Service service =serviceRepository.get_Service(orderRunnings.get(i).getService_id());
+                    obj.put("charge",Math.round(((orderRunnings.get(i).getQuantity() / 1000F) * service.getService_rate_old() * ((float) (users.getRate()) / 100) * ((float) (100 - users.getDiscount()) / 100))*100)/100f);
+                }
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());
@@ -560,7 +570,12 @@ public class OrderRunningController {
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service_id", orderRunnings.get(i).getService_id());
                 obj.put("username", orderRunnings.get(i).getUsername());
-                obj.put("charge", orderRunnings.get(i).getCharge());
+                if(users.getUsername().contains("admin") || users.getRole().equals("ROLE_USER")){
+                    obj.put("charge", orderRunnings.get(i).getCharge());
+                }else{
+                    Service service =serviceRepository.get_Service(orderRunnings.get(i).getService_id());
+                    obj.put("charge",Math.round(((orderRunnings.get(i).getQuantity() / 1000F) * service.getService_rate_old() * ((float) (users.getRate()) / 100) * ((float) (100 - users.getDiscount()) / 100))*100)/100f);
+                }
                 obj.put("task", orderRunnings.get(i).getTask());
                 obj.put("platform", orderRunnings.get(i).getPlatform());
                 obj.put("bonus", orderRunnings.get(i).getBonus());

@@ -39,6 +39,8 @@ public class OrderHistoryController {
     private LogErrorRepository logErrorRepository;
     @Autowired
     private ApiController apiController;
+    @Autowired
+    private ServiceRepository serviceRepository;
 
     String get_key(){
         try{
@@ -91,7 +93,12 @@ public class OrderHistoryController {
                 obj.put("note", orderHistories.get(i).getNote());
                 obj.put("service_id", orderHistories.get(i).getService_id());
                 obj.put("username", orderHistories.get(i).getUsername());
-                obj.put("charge", orderHistories.get(i).getCharge());
+                if(users.getUsername().contains("admin") || users.getRole().equals("ROLE_USER") || users.getRole().equals("ROLE_SUPPORT")){
+                    obj.put("charge", orderHistories.get(i).getCharge());
+                }else{
+                    Service service =serviceRepository.get_Service(orderHistories.get(i).getService_id());
+                    obj.put("charge",Math.round(((orderHistories.get(i).getQuantity() / 1000F) * service.getService_rate_old() * ((float) (users.getRate()) / 100) * ((float) (100 - users.getDiscount()) / 100))*100)/100f);
+                }
                 obj.put("task", orderHistories.get(i).getTask());
                 obj.put("platform", orderHistories.get(i).getPlatform());
                 obj.put("bonus", orderHistories.get(i).getBonus());
