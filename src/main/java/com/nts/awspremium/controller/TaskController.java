@@ -458,6 +458,7 @@ public class TaskController {
                             accountProfile.setAccount_id(account_get.getAccount_id());
                             accountProfile.setPassword(account_get.getPassword());
                             accountProfile.setRecover(account_get.getRecover_mail());
+                            accountProfile.setRecover_password(account_get.getRecover_mail_password());
                             if(account_get.getName().length()==0){
                                 String name=StringUtils.getName();
                                 accountProfile.setName(name);
@@ -859,6 +860,7 @@ public class TaskController {
                                 accountProfile.setAccount_id(account_get.getAccount_id());
                                 accountProfile.setPassword(account_get.getPassword());
                                 accountProfile.setRecover(account_get.getRecover_mail());
+                                accountProfile.setRecover_password(account_get.getRecover_mail_password());
                                 accountProfile.setPlatform(profileTask.getPlatform().trim());
                                 accountProfile.setLive(0);
                                 accountProfile.setChanged(account_get.getChanged());

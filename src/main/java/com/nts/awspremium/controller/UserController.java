@@ -363,6 +363,44 @@ public class UserController {
         }
     }
 
+    @PostMapping(path = "check_Die_Tiktok",produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> check_Die_Tiktok(@RequestBody String list){
+        JSONObject resp = new JSONObject();
+        try{
+            String[] tiktok =list.split("\\r\\n");
+            Integer count_live=0;
+            Integer count_die=0;
+            for (int i=0;i<tiktok.length;i++){
+                if(TikTokApi.checkLive(tiktok[i])==true){
+                    count_live=count_live+1;
+                }else if(TikTokApi.checkLive(tiktok[i])==false){
+                    count_die=count_die+1;
+                    System.out.println(count_die+"|"+tiktok[i]+"|"+i);
+                }
+            }
+            resp.put("count_live",count_live.toString()+"/"+tiktok.length);
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+            resp.put("status",false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @PostMapping(path = "add_User",produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> add_User(@RequestHeader(defaultValue = "") String Authorization,@RequestBody User user_body){

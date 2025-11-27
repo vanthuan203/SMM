@@ -125,6 +125,26 @@ public class TikTokApi {
         return -2;
     }
 
+    public static Boolean checkLive(String tiktok_id) {
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://www.tiktok.com/oembed?url=https://www.tiktok.com/@"+tiktok_id)
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            response.body().close();
+            // Kiểm tra nếu msg là "success"
+            if (response.isSuccessful()) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static Integer checkAccount(String tiktok_id,Integer index) {
 
         try {
