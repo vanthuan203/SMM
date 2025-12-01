@@ -394,7 +394,7 @@ public class SettingController {
                 if(thread_running<thread_set*3){
                     settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()-5)>0?(settingSystem.getTime_waiting_task()-5):0);
                 }else if(thread_running>thread_set*3.5){
-                    settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<300?(settingSystem.getTime_waiting_task()+5):300);
+                    settingSystem.setTime_waiting_task((settingSystem.getTime_waiting_task()+5)<500?(settingSystem.getTime_waiting_task()+5):500);
                 }
                 if(thread_running>settingSystem.getMax_thread()){
                     settingSystem.setMax_thread((settingSystem.getMax_thread()+10)<settingSystem.getMax_thread_fix()?(settingSystem.getMax_thread()+10):settingSystem.getMax_thread_fix());
