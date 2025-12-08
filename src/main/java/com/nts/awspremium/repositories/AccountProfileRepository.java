@@ -95,7 +95,8 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "select count(*) from account_profile where platform=?1 and profile_id like ?2 and login_time=0",nativeQuery = true)
     public Integer count_Login_Time_Null_By_Platform_And_DeviceId(String platform,String device_id);
 
-
+    @Query(value = "SELECT count(*) FROM Data.account_profile where round((UNIX_TIMESTAMP()-login_time/1000)/60/60/24)>=?1 and platform=?2 and account_id=?3",nativeQuery = true)
+    public Integer check_Account_Task_True(Integer day,String platform,String account_id);
     @Query(value = "SELECT count(*) FROM Data.account_profile where profile_id like ?1 and platform='tiktok' and  account_id not LIKE '@%' ",nativeQuery = true)
     public Integer count_Reg_Tiktok_DeviceId(String device_id);
 

@@ -59,6 +59,8 @@ public class TiktokTask {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private AccountProfileRepository accountProfileRepository;
+    @Autowired
     private AccountTaskRepository accountTaskRepository;
     @Autowired
     private DeviceRepository deviceRepository;
@@ -198,7 +200,7 @@ public class TiktokTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
+            if(accountProfileRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
