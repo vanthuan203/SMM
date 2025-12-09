@@ -15,8 +15,9 @@ public class AccountClone implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
-    private String account_id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id",referencedColumnName = "account_id",updatable = true,insertable = true)
+    private Account account;
     @Column(nullable = false)
     private String id_clone;
     @Column(nullable = false)

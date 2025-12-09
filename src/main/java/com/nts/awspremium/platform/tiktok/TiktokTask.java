@@ -335,7 +335,7 @@ public class TiktokTask {
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
+            if(accountProfileRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 mode="activity";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){

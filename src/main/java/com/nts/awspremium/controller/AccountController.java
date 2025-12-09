@@ -2,6 +2,7 @@ package com.nts.awspremium.controller;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.nts.awspremium.Openai;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/account")
 public class AccountController {
-
+    @Autowired
+    private OpenAiKeyRepository openAiKeyRepository;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -229,14 +231,20 @@ public class AccountController {
         List<Account> accounts=accountRepository.get_Account_NotIn_Clone("tiktok");
             for (Account account:accounts
                  ) {
+                /*
                 String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
                 tiktok_id=tiktok_id.replace("|tiktok","");
-                JsonElement jsonElement= TikTokApi.getUserByKeyword(tiktok_id,50,accountCloneRepository);
+                 */
+                String username= Openai.IdTiktok(openAiKeyRepository.get_OpenAI_Key());
+                if(username==null || username.trim().length()>24){
+                    continue;
+                }
+                JsonElement jsonElement= TikTokApi.getUserByKeyword(username,50,accountCloneRepository);
                 if(jsonElement==null){
                     continue;
                 }
                 AccountClone accountClone = new AccountClone();
-                accountClone.setAccount_id(account.getAccount_id().trim());
+                accountClone.setAccount(account);
                 accountClone.setName(account.getName());
                 accountClone.setId_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
                 accountClone.setUnique_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString());
@@ -288,7 +296,7 @@ public class AccountController {
                     continue;
                 }
                 AccountClone accountClone = new AccountClone();
-                accountClone.setAccount_id(account.getAccount_id().trim());
+                accountClone.setAccount(account);
                 accountClone.setName(object.getAsJsonObject("user").get("nickname").getAsString());
                 accountClone.setId_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
                 accountClone.setUnique_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString());

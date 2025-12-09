@@ -12,6 +12,7 @@ public class UpdateTaskRequest {
     private Boolean status=false;
     private Boolean success=null;
     private String task="";
+    private String name="";
     private String task_key="";
     private Long order_id=0L;
     private String platform="";

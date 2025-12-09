@@ -177,13 +177,15 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-
+            /*
             if((System.currentTimeMillis()-device.getUpdate_time())/1000<mode.getTime_waiting_task()&&!device.getMode().contains("dev")&&!profile_id.trim().equals("0")){
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else if(device.getState()==0){
+            }else */
+            if(device.getState()==0){
+
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
                 resp.put("status", false);
@@ -1011,52 +1013,76 @@ public class TaskController {
             }
 
             if(accountProfile_Task!=null){
-                if(accountProfile_Task.getChanged()==0 && true==false){ // update changer off
-                    resp.put("status", true);
-                    data.put("platform", profileTask.getPlatform().trim());
-                    data.put("task", "update_info");
-                    data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                    data.put("password", accountProfile_Task.getPassword().trim());
-                    data.put("app", platform_Check.getApp_name().trim());
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if(accountProfile_Task.getLogin_time()!=0 &&accountProfile_Task.getChanged()==0 && platform_Check.getChange_info()==1 &&
+                if(accountProfile_Task.getChanged()==0 && accountProfile_Task.getAccount_id().startsWith("@user") && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
+                        (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
+                        (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
+                    accountProfile_Task.setChanged_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile_Task);
+                    String username=Openai.IdTiktok(openAiKeyRepository.get_OpenAI_Key());
+                    if(username!=null && username.trim().length()<=24){
+                        if(!TikTokApi.checkLive(username)){
+                            String name=Openai.nameTiktok(username.trim(),openAiKeyRepository.get_OpenAI_Key());
+                            if(name!=null && name.trim().length()<=30){
+                                resp.put("status", true);
+                                data.put("platform", profileTask.getPlatform().trim());
+                                data.put("task", "update_username");
+                                data.put("task_key","@"+username.trim());
+                                data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                                data.put("name", name.trim());
+                                data.put("app", platform_Check.getApp_name().trim());
+                                resp.put("data",data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }else{
+                                resp.put("status",false);
+                                data.put("message","Không thực hiện nhiệm vụ!");
+                                resp.put("data",data);
+                                return new ResponseEntity<>(resp, HttpStatus.OK);
+                            }
+                        }
+                    }else{
+                        resp.put("status",false);
+                        data.put("message","Không thực hiện nhiệm vụ!");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
+                }else if(accountProfile_Task.getAvatar()==0 && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
                         (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
                     accountProfile_Task.setChanged_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Task);
                     resp.put("status", true);
                     data.put("platform", profileTask.getPlatform().trim());
-                    data.put("task", "add_recovery_mail");
+                    data.put("task", "update_avatar");
                     data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                     data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                    data.put("password", accountProfile_Task.getPassword().trim());
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim());
-                    data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
+                    //data.put("task_link", accountClone.getAvatar_link());
+                    data.put("task_link", "http://api.idnetwork.com.vn/image/random?geo=Us");
                     data.put("app", platform_Check.getApp_name().trim());
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
+                    /*
+                    else if(true==false){
+                        resp.put("status", true);
+                        data.put("platform", profileTask.getPlatform().trim());
+                        data.put("task", "add_recovery_mail");
+                        data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                        data.put("password", accountProfile_Task.getPassword().trim());
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                        data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
+                        data.put("app", platform_Check.getApp_name().trim());
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
+                     */
                 }
-                if(platform_Check.getClone_info()==1&&
+                if(platform_Check.getClone_info()==1 && platform_Check.getChange_info()==1 && platform_Check.getAdd_post()==1 &&
                         (System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=platform_Check.getAdd_post_time()&&
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6
                 ){
                     AccountClone accountClone=accountCloneRepository.get_Account_Clone_By_Account_id(accountProfile_Task.getAccount_id().trim());
                     if(accountClone!=null){
-                        if(accountProfile_Task.getAvatar()==0){
-                            resp.put("status", true);
-                            data.put("platform", profileTask.getPlatform().trim());
-                            data.put("task", "update_avatar");
-                            data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                            data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                            //data.put("task_link", accountClone.getAvatar_link());
-                            data.put("task_link", "http://api.idnetwork.com.vn/image/random?geo=Us");
-                            data.put("app", platform_Check.getApp_name().trim());
-                            resp.put("data",data);
-                            return new ResponseEntity<>(resp, HttpStatus.OK);
-                        }else if(platform_Check.getAdd_post()==1&&
-                                (System.currentTimeMillis()-accountClone.getUpdate_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
+                        if((System.currentTimeMillis()-accountClone.getUpdate_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
                             JsonArray videoList=TikTokApi.getInfoVideoByChannelByUserId(accountClone.getId_clone(),100);
                             for (JsonElement video: videoList) {
                                 JsonObject videoObj=video.getAsJsonObject();
@@ -2684,7 +2710,7 @@ public class TaskController {
             }
 
 
-            if(!Set.of("login", "register", "sign_in","add_post","update_info","add_recovery_mail","update_avatar").contains(updateTaskRequest.getTask().trim())){
+            if(!Set.of("login", "register", "sign_in","add_post","update_info","add_recovery_mail","update_avatar","update_username").contains(updateTaskRequest.getTask().trim())){
                 String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
                 if(platform_Check.equals("youtube")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
@@ -2805,21 +2831,22 @@ public class TaskController {
                             accountRepository.save(account);
                         }
                     }
-                }else if(updateTaskRequest.getTask().equals("update_info") &&updateTaskRequest.getStatus()==true){
+                }else if(updateTaskRequest.getTask().equals("update_username") &&updateTaskRequest.getStatus()==true){
                     if(accountProfile!=null) {
-                        accountProfile.setPassword(updateTaskRequest.getPassword().trim());
-                        accountProfile.setRecover(updateTaskRequest.getRecover_mail().trim());
-                        accountProfile.setChanged(1);
-                        accountProfile.setCode("");
-                        accountProfileRepository.save(accountProfile);
+                        if(updateTaskRequest.getTask_key().trim().length()==0 || !updateTaskRequest.getTask_key().trim().startsWith("@")){
+                            accountProfile.setLive(0);
+                            accountProfileRepository.save(accountProfile);
+                        }else{
+                            accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                            accountProfile.setName(updateTaskRequest.getName().trim());
+                            accountProfileRepository.save(accountProfile);
 
-                        Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
-                        if(account!=null){
-                            account.setPassword(updateTaskRequest.getPassword().trim());
-                            account.setRecover_mail(updateTaskRequest.getRecover_mail().trim());
-                            account.setChanged(1);
-                            account.setChanged_time(System.currentTimeMillis());
-                            accountRepository.save(account);
+                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
+                            if(account!=null){
+                                account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
+                                account.setName(updateTaskRequest.getName().trim());
+                                accountRepository.save(account);
+                            }
                         }
                     }
                 }else if(updateTaskRequest.getTask().equals("add_recovery_mail") &&updateTaskRequest.getStatus()==true){
@@ -2893,7 +2920,7 @@ public class TaskController {
 
                             if(updateTaskRequest.getPlatform().equals("tiktok")&&
                                     updateTaskRequest.getTask_key().trim().startsWith("@")&&
-                                    TikTokApi.getFollowerCount(updateTaskRequest.getTask_key().trim().replace("@",""),1)>=0){
+                                    TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
 
                                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                                 if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){

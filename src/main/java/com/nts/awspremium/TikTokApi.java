@@ -141,7 +141,7 @@ public class TikTokApi {
                 return false;
             }
         } catch (Exception e) {
-            return null;
+            return true;
         }
     }
 
