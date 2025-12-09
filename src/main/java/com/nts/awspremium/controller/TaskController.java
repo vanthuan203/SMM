@@ -1012,7 +1012,37 @@ public class TaskController {
             }
 
             if(accountProfile_Task!=null){
-                if(accountProfile_Task.getChanged()==0 && accountProfile_Task.getAccount_id().startsWith("@user") && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
+                if(accountProfile_Task.getAvatar()==0 && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
+                        (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
+                        (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
+                    accountProfile_Task.setChanged_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile_Task);
+                    resp.put("status", true);
+                    data.put("platform", profileTask.getPlatform().trim());
+                    data.put("task", "update_avatar");
+                    data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    //data.put("task_link", accountClone.getAvatar_link());
+                    data.put("task_link", "http://api.idnetwork.com.vn/image/random?geo=Us");
+                    data.put("app", platform_Check.getApp_name().trim());
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                    /*
+                    else if(true==false){
+                        resp.put("status", true);
+                        data.put("platform", profileTask.getPlatform().trim());
+                        data.put("task", "add_recovery_mail");
+                        data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                        data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                        data.put("password", accountProfile_Task.getPassword().trim());
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                        data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
+                        data.put("app", platform_Check.getApp_name().trim());
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
+                     */
+                }else if(accountProfile_Task.getChanged()==0 && accountProfile_Task.getAccount_id().startsWith("@user") && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
                         (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
                     accountProfile_Task.setChanged_time(System.currentTimeMillis());
@@ -1044,36 +1074,6 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
-                }else if(accountProfile_Task.getAvatar()==0 && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
-                        (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
-                        (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
-                    accountProfile_Task.setChanged_time(System.currentTimeMillis());
-                    accountProfileRepository.save(accountProfile_Task);
-                    resp.put("status", true);
-                    data.put("platform", profileTask.getPlatform().trim());
-                    data.put("task", "update_avatar");
-                    data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                    //data.put("task_link", accountClone.getAvatar_link());
-                    data.put("task_link", "http://api.idnetwork.com.vn/image/random?geo=Us");
-                    data.put("app", platform_Check.getApp_name().trim());
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                    /*
-                    else if(true==false){
-                        resp.put("status", true);
-                        data.put("platform", profileTask.getPlatform().trim());
-                        data.put("task", "add_recovery_mail");
-                        data.put("task_key", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                        data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                        data.put("password", accountProfile_Task.getPassword().trim());
-                        data.put("recover_mail", accountProfile_Task.getRecover().trim());
-                        data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
-                        data.put("app", platform_Check.getApp_name().trim());
-                        resp.put("data",data);
-                        return new ResponseEntity<>(resp, HttpStatus.OK);
-                    }
-                     */
                 }
                 if(platform_Check.getClone_info()==1 &&  platform_Check.getAdd_post()==1 && accountProfile_Task.getLogin_time()!=0 &&
                         (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getAdd_post_time()&&
