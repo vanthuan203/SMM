@@ -1075,8 +1075,8 @@ public class TaskController {
                     }
                      */
                 }
-                if(platform_Check.getClone_info()==1 &&  platform_Check.getAdd_post()==1 &&
-                        (System.currentTimeMillis()-accountProfile_Task.getAdd_time())/1000/60/60/24>=platform_Check.getAdd_post_time()&&
+                if(platform_Check.getClone_info()==1 &&  platform_Check.getAdd_post()==1 && accountProfile_Task.getLogin_time()!=0 &&
+                        (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getAdd_post_time()&&
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6
                 ){
                     accountProfile_Task.setChanged_time(System.currentTimeMillis());
