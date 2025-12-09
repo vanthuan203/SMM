@@ -177,14 +177,13 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            /*
+
             if((System.currentTimeMillis()-device.getUpdate_time())/1000<mode.getTime_waiting_task()&&!device.getMode().contains("dev")&&!profile_id.trim().equals("0")){
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else */
-            if(device.getState()==0){
+            }else if(device.getState()==0){
 
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
