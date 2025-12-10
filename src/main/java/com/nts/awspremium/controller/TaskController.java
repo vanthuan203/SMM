@@ -1058,6 +1058,7 @@ public class TaskController {
                                 data.put("task_key","@"+username.trim());
                                 data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
                                 data.put("name", name.trim());
+                                data.put("task_link", "http://api.idnetwork.com.vn/image/random?geo=Us");
                                 data.put("app", platform_Check.getApp_name().trim());
                                 resp.put("data",data);
                                 return new ResponseEntity<>(resp, HttpStatus.OK);

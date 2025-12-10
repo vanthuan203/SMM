@@ -826,7 +826,7 @@ public class OrderRunningController {
                                 }
                             }else if(tiktok_account.getAsJsonObject("user").get("privateAccount").getAsBoolean()){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account is private");
-                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){ //tiktok_account.getAsJsonObject("stats").get("videoCount").isJsonNull() ||
+                            }else if(tiktok_account.getAsJsonObject("stats").get("videoCount").getAsString().equals("0") && tiktok_account.getAsJsonObject("stats").get("videoCount").getAsInt()==0){ //tiktok_account.getAsJsonObject("stats").get("videoCount").isJsonNull() ||
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This account has no videos");
                             }else{
                                 JsonArray videoList=TikTokApi.getInfoVideoByChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1],8);
