@@ -31,6 +31,12 @@ public class RunAccountClone {
                                 throw new RuntimeException(e);
                             }
                             accountController.updateAccountClone();
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            accountController.updateAccountTiktok();
                             //orderRunningRepository.reset_Check_Count();
                         } catch (Exception e) {
                             continue;

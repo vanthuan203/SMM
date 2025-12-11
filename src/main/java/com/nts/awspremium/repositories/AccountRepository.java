@@ -25,6 +25,9 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "SELECT * FROM Data.account where platform=?1 and device_id in (select device_id from device where mode in (select mode from platform where clone_info=1 and platform=?1))  and account_id not in (select account_id from account_clone) and running=1 order by add_time asc limit 10;",nativeQuery = true)
     public List<Account> get_Account_NotIn_Clone(String platform);
 
+    @Query(value = "SELECT * FROM Data.account where platform=?1 and live=1 and uuid='' order by add_time asc limit 10;",nativeQuery = true)
+    public List<Account> get_Account_Not_UUID(String platform);
+
     @Query(value = "Select count(*) from account where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account where live=1 and device_id=?1)",nativeQuery = true)
     public Integer Check_Get_Account_By_DeviceId(String device_id);
 

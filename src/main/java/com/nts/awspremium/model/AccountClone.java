@@ -25,13 +25,22 @@ public class AccountClone implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String name="";
 
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String tiktok_id="";
+
     @Column(columnDefinition = "integer default 0")
     private Integer avatar=0;
 
     @Column(columnDefinition = "varchar(5555) default ''")
     private String avatar_link;
-    @Column(columnDefinition = "varchar(5555) default ''")
+    @Column(columnDefinition = "TEXT")
     private String video_list;
+
+    @Column(columnDefinition = "TEXT")
+    private String video_tiktok;
+
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean check_video=false;
 
     @Column(columnDefinition = "bigint default 0")
     private Long add_time;

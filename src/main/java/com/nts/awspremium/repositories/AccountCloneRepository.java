@@ -6,9 +6,16 @@ import com.nts.awspremium.model.AccountSave;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface AccountCloneRepository extends JpaRepository<AccountClone,Long> {
     @Query(value = "SELECT * FROM account_clone where account_id=?1 limit 1",nativeQuery = true)
     public AccountClone get_Account_Clone_By_Account_id(String account_id);
+
+
+    @Query(value = "SELECT * FROM account_clone where check_video=1 order by add_time asc limit 10",nativeQuery = true)
+    public List<AccountClone> get_Account_Clone_By_CheckVideo(String account_id);
+
 
     @Query(value = "SELECT count(*) FROM account_clone where id_clone=?1 limit 1",nativeQuery = true)
     public Integer check_Id_Clone_By_Id_Clone(String id_clone);

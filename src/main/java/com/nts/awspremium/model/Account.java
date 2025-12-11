@@ -22,6 +22,8 @@ public class Account implements Serializable {
     @Column(nullable = false)
     private String password;
     @Column(columnDefinition = "varchar(255) default ''")
+    private String uuid="";
+    @Column(columnDefinition = "varchar(255) default ''")
     private String name="";
 
     @Column(columnDefinition = "integer default 0")

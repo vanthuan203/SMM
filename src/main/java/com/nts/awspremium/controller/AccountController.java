@@ -282,32 +282,22 @@ public class AccountController {
 
     public void updateAccountTiktok(){
         try{
-            List<Account> accounts=accountRepository.get_Account_NotIn_Clone("tiktok");
+            List<Account> accounts=accountRepository.get_Account_Not_UUID("tiktok");
             for (Account account:accounts
             ) {
                 String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
                 tiktok_id=tiktok_id.replace("|tiktok","");
                 JsonObject object= TikTokApi.getInfoFullChannel(tiktok_id);
                 if(object==null){
-                    continue;
+                    if(!TikTokApi.checkLive(tiktok_id)){
+                        account.setUuid("4");
+                        accountRepository.save(account);
+                    }else{
+                        continue;
+                    }
                 }
-                JsonElement jsonElement= TikTokApi.getUserByKeyword(object.getAsJsonObject("user").get("nickname").getAsString(),10,accountCloneRepository);
-                if(jsonElement==null){
-                    continue;
-                }
-                AccountClone accountClone = new AccountClone();
-                accountClone.setAccount(account);
-                accountClone.setName(object.getAsJsonObject("user").get("nickname").getAsString());
-                accountClone.setId_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
-                accountClone.setUnique_clone(jsonElement.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString());
-                accountClone.setAvatar_link(jsonElement.getAsJsonObject().getAsJsonObject("user").get("avatarLarger").getAsString());
-                accountClone.setAdd_time(System.currentTimeMillis());
-                accountClone.setAvatar(0);
-                accountClone.setPlatform("tiktok");
-                accountClone.setUpdate_time(0L);
-                accountClone.setVideo_list("");
-                accountCloneRepository.save(accountClone);
-
+                account.setUuid(object.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
+                accountRepository.save(account);
             }
 
 
