@@ -216,7 +216,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
                     resp.put("status", false);
