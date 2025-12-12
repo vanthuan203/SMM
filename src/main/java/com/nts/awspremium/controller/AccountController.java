@@ -289,6 +289,8 @@ public class AccountController {
                 tiktok_id=tiktok_id.replace("|tiktok","");
                 JsonObject object= TikTokApi.getInfoFullChannel(tiktok_id);
                 if(object==null){
+                    continue;
+                }else if(object.size()==0){
                     if(!TikTokApi.checkLive(tiktok_id)){
                         account.setUuid("4");
                         accountRepository.save(account);
