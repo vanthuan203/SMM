@@ -5,6 +5,7 @@ import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.model_system.OrderThreadFollowerCheck;
 import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class TiktokTask {
     private OrderRunningRepository orderRunningRepository;
     @Autowired
     private OrderThreadCheck orderThreadCheck;
+    @Autowired
+    private OrderThreadFollowerCheck orderThreadFollowerCheck;
     @Autowired
     private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
     @Autowired
@@ -93,7 +96,7 @@ public class TiktokTask {
             }
             if (orderRunning!=null) {
                 Thread.sleep(300+ran.nextInt(500));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
@@ -204,19 +207,21 @@ public class TiktokTask {
                 mode="activity";
             }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
             }
+            /*
             if(orderRunning==null){
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
+             */
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
                     resp.put("status", false);
@@ -321,6 +326,125 @@ public class TiktokTask {
             return resp;
         }
     }
+
+    public Map<String, Object> tiktok_follower_view(String account_id,String mode,Device device){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
+            Integer max_Task=modeOption.getMax_task();
+            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
+                max_Task=10;
+            }
+            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
+                resp.put("status", false);
+                return resp;
+            }
+            /*
+            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
+                resp.put("status", false);
+                return resp;
+            }
+             */
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
+            }
+            if (orderRunning!=null) {
+                Thread.sleep(200+ran.nextInt(200));
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                    deviceRepository.save(device);
+                    resp.put("status", false);
+                    return resp;
+                }
+                Service service=orderRunning.getService();
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
+                resp.put("status", true);
+                data.put("order_id", orderRunning.getOrder_id());
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", "view");
+                if( orderRunning.getChannel_id()==null){
+                    JsonObject channelInfo= TikTokApi.getInfoFullChannel(orderRunning.getOrder_key().trim().split("@")[1]);
+                    if(channelInfo==null || channelInfo.size()==0){
+                        data.put("channel_id", "");
+                    }else{
+                        orderRunning.setChannel_id(channelInfo.getAsJsonObject("user").get("id").getAsString());
+                        orderRunningRepository.save(orderRunning);
+                    }
+                }
+
+                data.put("channel_id",orderRunning.getOrder_key());
+                //data.put("user_id",orderRunning.getChannel_id());
+                data.put("app", service.getApp());
+                data.put("task_key",orderRunning.getOrder_key());
+                DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
+                if(dataFollowerTiktok==null){
+                    resp.put("status", false);
+                    return resp;
+                }
+                data.put("task_link","https://www.tiktok.com/"+dataFollowerTiktok.getTiktok_id()+"/video/"+dataFollowerTiktok.getVideo_id());
+                data.put("task_key",dataFollowerTiktok.getVideo_id());
+                if(orderRunning.getChannel_title()==null){
+                    orderRunningRepository.update_Valid_By_OrderId(0,orderRunning.getOrder_id());
+                    data.put("channel_title","");
+                }else{
+                    data.put("channel_title",orderRunning.getChannel_title());
+                }
+                if(dataFollowerTiktok.getDuration()>service.getLimit_time()){
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
+                }else{
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*dataFollowerTiktok.getDuration()));
+                }
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                deviceRepository.save(device);
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
     public Map<String, Object> tiktok_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -644,6 +768,7 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
+            String mode_=mode;
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
             mode="auto";
             Integer max_Task=modeOption.getMax_task();
@@ -668,14 +793,20 @@ public class TiktokTask {
             }
             if(orderRunning==null){
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadSpeedUpCheck.getValue());
+                if(orderRunning==null){
+                    return tiktok_follower_view(account_id,mode_,device);
+                }
             }
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    return tiktok_follower_view(account_id,mode_,device);
+                    /*
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
                     resp.put("status", false);
                     return resp;
+                     */
                 }
 
                 Service service=orderRunning.getService();

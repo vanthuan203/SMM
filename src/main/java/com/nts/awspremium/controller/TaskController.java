@@ -177,14 +177,12 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-
             if((System.currentTimeMillis()-device.getUpdate_time())/1000<mode.getTime_waiting_task()&&!device.getMode().contains("dev")&&!profile_id.trim().equals("0")){
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }else if(device.getState()==0){
-
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
                 resp.put("status", false);
@@ -2788,7 +2786,7 @@ public class TaskController {
                 if(updateTaskRequest.getStatus()==true){
                     try {
                         OrderRunning orderRunning= orderRunningRepository.find_Order_By_OrderId(updateTaskRequest.getOrder_id());
-                        if(orderRunning!=null){
+                        if(orderRunning!=null&&orderRunning.getService().getTask().equals(updateTaskRequest.getTask().trim())){
                             HistorySum historySum=new HistorySum();
                             historySum.setOrderRunning(orderRunning);
                             historySum.setAccount_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim());
@@ -2839,11 +2837,12 @@ public class TaskController {
                             accountProfile.setLive(0);
                             accountProfileRepository.save(accountProfile);
                         }else{
+                            String account_id_old=accountProfile.getAccount_id().trim();
                             accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                             accountProfile.setName(updateTaskRequest.getName().trim());
                             accountProfileRepository.save(accountProfile);
 
-                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
+                            Account account=accountRepository.get_Account_By_Account_id(account_id_old);
                             if(account!=null){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setName(updateTaskRequest.getName().trim());

@@ -1,6 +1,7 @@
 package com.nts.awspremium.system;
 
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.model_system.OrderThreadFollowerCheck;
 import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
 import com.nts.awspremium.repositories.OrderRunningRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ public class RunOrderThreadCheck {
     @Autowired
     private OrderThreadCheck orderThreadCheck;
     @Autowired
+    private OrderThreadFollowerCheck orderThreadFollowerCheck;
+    @Autowired
     private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
     @PostConstruct
     public void init() throws InterruptedException {
@@ -26,6 +29,7 @@ public class RunOrderThreadCheck {
                     while (true) {
                         try {
                             orderThreadCheck.setValue(orderRunningRepository.get_List_Order_Thread_True());
+                            orderThreadFollowerCheck.setValue(orderRunningRepository.get_List_Order_Thread_By_Task_True("follower"));
                             orderThreadSpeedUpCheck.setValue(orderRunningRepository.get_List_Order_Thread_SpeedUp_True());
                             //System.out.println(orderFollowerTrue.getValue());
                             try {
