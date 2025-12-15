@@ -127,11 +127,11 @@ public class Openai {
         }
     }
 
-    public static String IdTiktok(String key) {
+    public static String IdTiktok(String name,String key) {
 
         try {
             Random random=new Random();
-            String prompt= "Tạo một username TikTok theo đúng quy tắc trên.";
+            String prompt= "Name: "+name;
             OkHttpClient client = new OkHttpClient.Builder()
                     .connectTimeout(300, TimeUnit.SECONDS) // Time to establish the connection
                     .readTimeout(600, TimeUnit.SECONDS)    // Time to read the response
@@ -147,7 +147,7 @@ public class Openai {
             // First message (developer role)
             JsonObject developerMessage = new JsonObject();
             developerMessage.addProperty("role", "system");
-            developerMessage.addProperty("content", "Bạn là hệ thống tạo TikTok username chuyên nghiệp.\n" +
+            developerMessage.addProperty("content", "Bạn là hệ thống tạo TikTok username chuyên nghiệp, với Name do người dùng cung cấp.\n" +
                     "\n" +
                     "Hãy thực hiện đúng quy trình:\n" +
                     "\n" +
@@ -169,7 +169,7 @@ public class Openai {
                     "    15. Thiên nhiên, nhẹ nhàng\n" +
                     "    16. Nghiêm túc, trưởng thành, lịch sự\n" +
                     "\n" +
-                    "- Bước 2: Dựa vào phong cách đã random, tạo 1 username TikTok.\n" +
+                    "- Bước 2: Dựa vào phong cách đã random, tạo 1 username TikTok liên quan tới Name.\n" +
                     "\n" +
                     "Quy tắc bắt buộc:\n" +
                     "- Username phải dùng tiếng Anh\n" +

@@ -1045,7 +1045,7 @@ public class TaskController {
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
                     accountProfile_Task.setChanged_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Task);
-                    String username=Openai.IdTiktok(openAiKeyRepository.get_OpenAI_Key());
+                    String username=Openai.IdTiktok(StringUtils.getName(),openAiKeyRepository.get_OpenAI_Key());
                     if(username!=null && username.trim().length()<=24){
                         if(!TikTokApi.checkLive(username)){
                             String name=Openai.nameTiktok(username.trim(),openAiKeyRepository.get_OpenAI_Key());

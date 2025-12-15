@@ -3,6 +3,7 @@ package com.nts.awspremium.controller;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.Openai;
+import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
@@ -235,7 +236,7 @@ public class AccountController {
                 String tiktok_id=account.getAccount_id().trim().split("@")[1].trim();
                 tiktok_id=tiktok_id.replace("|tiktok","");
                  */
-                String username= Openai.IdTiktok(openAiKeyRepository.get_OpenAI_Key());
+                String username= Openai.IdTiktok(StringUtils.getName(),openAiKeyRepository.get_OpenAI_Key());
                 if(username==null || username.trim().length()>24){
                     continue;
                 }
