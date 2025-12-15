@@ -2833,7 +2833,7 @@ public class TaskController {
                     }
                 }else if(updateTaskRequest.getTask().equals("update_username") &&updateTaskRequest.getStatus()==true){
                     if(accountProfile!=null) {
-                        if(updateTaskRequest.getTask_key().trim().length()==0 || !updateTaskRequest.getTask_key().trim().startsWith("@")){
+                        if(updateTaskRequest.getTask_key().trim().length()==0 || !updateTaskRequest.getTask_key().trim().startsWith("@") || !TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
                             accountProfile.setLive(0);
                             accountProfileRepository.save(accountProfile);
                         }else{
@@ -3039,7 +3039,7 @@ public class TaskController {
 
                             if(updateTaskRequest.getPlatform().equals("tiktok")&&
                                     updateTaskRequest.getTask_key().trim().startsWith("@")&&
-                                    TikTokApi.getFollowerCount(updateTaskRequest.getTask_key().trim().replace("@",""),1)>=0){
+                                    TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
 
                                 AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                                 if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){
