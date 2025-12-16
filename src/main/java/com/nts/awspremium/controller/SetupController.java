@@ -564,7 +564,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x() {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status", ProxyAPI.getHttpV6("us"));
+            accountController.updateVideoAccount();
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

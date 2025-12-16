@@ -67,6 +67,12 @@ public class TiktokOrder {
 
             Integer follower_count=channelInfo.getAsJsonObject("stats").get("followerCount").getAsInt();
 
+            JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],8);
+
+            if(videoList==null){
+                resp.put("error", "Unable to get account video information");
+                return resp;
+            }
 
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
@@ -108,12 +114,7 @@ public class TiktokOrder {
             orderRunningRepository.save(orderRunning);
             orderRunningCheck=orderRunning;
 
-            JsonArray videoList=TikTokApi.getInfoVideoByChannel(tiktok_id.trim().split("@")[1],8);
 
-            if(videoList==null){
-                resp.put("error", "Unable to get account video information");
-                return resp;
-            }
 
             for (JsonElement video: videoList) {
                 JsonObject videoObj=video.getAsJsonObject();

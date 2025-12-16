@@ -1,5 +1,6 @@
 package com.nts.awspremium.controller;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.Openai;
@@ -257,6 +258,58 @@ public class AccountController {
                 accountClone.setVideo_list("");
                 accountCloneRepository.save(accountClone);
 
+            }
+
+
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+        }
+    }
+
+    public void updateVideoAccount(){
+        try{
+            List<AccountClone> accounts=accountCloneRepository.get_Account_Clone_By_CheckVideo();
+            for (AccountClone account:accounts
+            ) {
+                if(!TikTokApi.checkLive(account.getAccount().getAccount_id().replace("|tiktok","").split("@")[1])){
+                    AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id(account.getAccount().getAccount_id());
+                    if(accountProfile!=null&&accountProfile.getLive()==1){
+                        accountProfile.setLive(0);
+                        accountProfileRepository.save(accountProfile);
+                    }
+                    account.setCheck_video(false);
+                    accountCloneRepository.save(account);
+                    continue;
+                }
+                JsonArray videoList=TikTokApi.getInfoVideoByChannel(account.getAccount().getAccount_id().replace("|tiktok","").split("@")[1],1);
+                if(videoList==null){
+                    continue;
+                }
+                for (JsonElement video: videoList) {
+                    JsonObject videoObj=video.getAsJsonObject();
+                    JsonObject author=videoObj.get("author").getAsJsonObject();
+                    account.setVideo_tiktok(videoObj.get("video_id").getAsString());
+                    account.setName(author.get("nickname").getAsString());
+                    account.setTiktok_id(author.get("id").getAsString());
+                    account.setCheck_video(false);
+                    accountCloneRepository.save(account);
+                    break;
+                }
             }
 
 

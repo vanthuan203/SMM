@@ -12,9 +12,12 @@ public interface AccountCloneRepository extends JpaRepository<AccountClone,Long>
     @Query(value = "SELECT * FROM account_clone where account_id=?1 limit 1",nativeQuery = true)
     public AccountClone get_Account_Clone_By_Account_id(String account_id);
 
+    @Query(value = "SELECT * FROM Data.account_clone where video_tiktok!='' order by rand() limit 1 ;",nativeQuery = true)
+    public AccountClone get_Account_Clone_By_Task_View();
 
-    @Query(value = "SELECT * FROM account_clone where check_video=1 order by add_time asc limit 10",nativeQuery = true)
-    public List<AccountClone> get_Account_Clone_By_CheckVideo(String account_id);
+
+    @Query(value = "SELECT * FROM account_clone where check_video=1 and round((UNIX_TIMESTAMP()-update_time/1000)/60)>5 order by add_time asc limit 10",nativeQuery = true)
+    public List<AccountClone> get_Account_Clone_By_CheckVideo();
 
 
     @Query(value = "SELECT count(*) FROM account_clone where id_clone=?1 limit 1",nativeQuery = true)

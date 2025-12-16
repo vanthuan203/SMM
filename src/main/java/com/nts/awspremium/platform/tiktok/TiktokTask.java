@@ -62,6 +62,8 @@ public class TiktokTask {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private AccountCloneRepository accountCloneRepository;
+    @Autowired
     private AccountProfileRepository accountProfileRepository;
     @Autowired
     private AccountTaskRepository accountTaskRepository;
@@ -348,23 +350,15 @@ public class TiktokTask {
              */
             Random ran = new Random();
             OrderRunning orderRunning=null;
-            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
 
-            if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
-                if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
-                }
-            }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadSpeedUpCheck.getValue());
-            }
+            orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadCheck.getValue());
+
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
-                    resp.put("status", false);
-                    return resp;
+                    return tiktok_view_system(account_id,mode,device);
                 }
                 Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
@@ -420,6 +414,75 @@ public class TiktokTask {
             } else {
                 device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                 deviceRepository.save(device);
+                return tiktok_view_system(account_id,mode,device);
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
+
+    public Map<String, Object> tiktok_view_system(String account_id,String mode,Device device){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
+            Integer max_Task=modeOption.getMax_task();
+            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
+                max_Task=10;
+            }
+            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
+                resp.put("status", false);
+                return resp;
+            }
+            /*
+            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
+                resp.put("status", false);
+                return resp;
+            }
+             */
+            Random ran = new Random();
+            AccountClone orderRunning=null;
+            orderRunning = accountCloneRepository.get_Account_Clone_By_Task_View();
+
+            if (orderRunning!=null) {
+                data.put("bonus","");
+                resp.put("status", true);
+                data.put("order_id",-1);
+                data.put("account_id", account_id.trim());
+                data.put("platform", "tiktok");
+                data.put("task", "view");
+                data.put("channel_id",orderRunning.getAccount().getAccount_id().replace("|tiktok",""));
+                //data.put("user_id",orderRunning.getChannel_id());
+                data.put("app", "tiktok-lite");
+                data.put("task_key",orderRunning.getVideo_tiktok().trim());
+                data.put("task_link","https://www.tiktok.com/"+orderRunning.getAccount().getAccount_id().replace("|tiktok","")+"/video/"+orderRunning.getVideo_tiktok().trim());
+                data.put("task_key",orderRunning.getVideo_tiktok().trim());
+                data.put("channel_title",orderRunning.getName());
+                data.put("viewing_time",(int)(((ran.nextInt(110 - 60 + 1) + 60)/100F)*15));
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
@@ -444,6 +507,7 @@ public class TiktokTask {
             return resp;
         }
     }
+
 
     public Map<String, Object> tiktok_like(String account_id,String mode){
         Map<String, Object> resp = new LinkedHashMap<>();
