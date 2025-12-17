@@ -2919,31 +2919,28 @@ public class TaskController {
                             ipRegisterRepository.save(ipRegister_old);
                         }
                     }
-                    accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                    //accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
                         //accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
                         if(updateTaskRequest.getTask_key().length()!=0){
 
-                            if(updateTaskRequest.getPlatform().equals("tiktok")&&
-                                    updateTaskRequest.getTask_key().trim().startsWith("@")&&
-                                    TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
+                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
 
-                                AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
-                                if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){
-                                    accountProfileRepository.delete(accountProfile_Check);
-                                    accountProfileRepository.delete(accountProfile);
-                                    resp.put("status", true);
-                                    data.put("message", "Update thành công!");
-                                    resp.put("data", data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                                }
+                            Boolean checkLive=updateTaskRequest.getTask_key().trim().startsWith("@") && TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""));
+
+                            String uniqueId=account!=null?(account.getUuid().length()>5?TikTokApi.checkUsername(account.getUuid(),2):"NULL-LL"):"NULL-LL";
+
+                            if(updateTaskRequest.getPlatform().equals("tiktok")&& checkLive && updateTaskRequest.getTask_key().trim().contains(uniqueId) ){
                                 if(accountProfile.getLogin_time()==0){
                                     accountProfile.setLogin_time(System.currentTimeMillis());
                                 }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
+                            }else if(updateTaskRequest.getPlatform().equals("tiktok") && (!checkLive || uniqueId.equals("NULL-LL"))){
+                                accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("tiktok")){
+                                profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                                 accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("facebook")){
                                 if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
@@ -2964,8 +2961,6 @@ public class TaskController {
                             }
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
-
-                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
 
                             if(account==null&&accountProfile.getLive()==1){
                                 account=new Account();
@@ -3038,30 +3033,27 @@ public class TaskController {
                             ipRegisterRepository.save(ipRegister_old);
                         }
                     }
-                    accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                    //accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
                         accountProfile.setRunning(1);
                         if(updateTaskRequest.getTask_key().length()!=0){
 
-                            if(updateTaskRequest.getPlatform().equals("tiktok")&&
-                                    updateTaskRequest.getTask_key().trim().startsWith("@")&&
-                                    TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
+                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
 
-                                AccountProfile accountProfile_Check=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
-                                if(accountProfile_Check!=null&&!updateTaskRequest.getTask_key().trim().equals(updateTaskRequest.getAccount_id().trim())){
-                                    accountProfileRepository.delete(accountProfile_Check);
-                                    accountProfileRepository.delete(accountProfile);
-                                    resp.put("status", true);
-                                    data.put("message", "Update thành công!");
-                                    resp.put("data", data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                                }
+                            Boolean checkLive=updateTaskRequest.getTask_key().trim().startsWith("@") && TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""));
+
+                            String uniqueId=account!=null?(account.getUuid().length()>5?TikTokApi.checkUsername(account.getUuid(),2):"NULL-LL"):"NULL-LL";
+
+                            if(updateTaskRequest.getPlatform().equals("tiktok")&& checkLive && updateTaskRequest.getTask_key().trim().contains(uniqueId) ){
                                 if(accountProfile.getLogin_time()==0){
                                     accountProfile.setLogin_time(System.currentTimeMillis());
                                 }
                                 accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 accountProfile.setLive(1);
+                            }else if(updateTaskRequest.getPlatform().equals("tiktok") && (!checkLive || uniqueId.equals("NULL-LL"))){
+                                accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("tiktok")){
+                                profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                                 accountProfile.setLive(0);
                             }else if(updateTaskRequest.getPlatform().equals("facebook")){
                                 if(updateTaskRequest.getTask_key().trim().matches("\\d+")){
@@ -3083,8 +3075,6 @@ public class TaskController {
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
 
-                            Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
-
                             if(account!=null&&accountProfile.getLive()==1){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
                                 account.setRecover_mail(accountProfile.getRecover());
@@ -3102,9 +3092,12 @@ public class TaskController {
                         }
                     }
                 }else if(updateTaskRequest.getIsLogin()>1&&accountProfile.getSign_in()==0){
-                    Boolean check_Die_Tiktok=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
+                    Boolean check_Die=true;
+                    if(accountProfile!=null&&accountProfile.getPlatform().equals("tiktok")&&updateTaskRequest.getIsLogin()!=7){
+                        check_Die=accountProfile.getPlatform().equals("tiktok")&&!TikTokApi.checkLive(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""));
+                    }
                     if(platform_Dependent!=null&&!updateTaskRequest.getPlatform().equals("youtube")){
-                        if((accountProfile.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountProfile.getPlatform().equals("tiktok")){
+                        if((accountProfile.getPlatform().equals("tiktok")&&check_Die) || !accountProfile.getPlatform().equals("tiktok")){
                             Account accountDependent =accountRepository.get_Account_By_Account_id(accountProfile.getRecover().trim());
                             if(accountDependent!=null){
 
@@ -3121,40 +3114,43 @@ public class TaskController {
                             }
                         }
                     }
-                    Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
-                    if(accountPlatform!=null){
-                        if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
-                            accountPlatform.setRunning(0);
-                            accountPlatform.setUpdate_time(System.currentTimeMillis());
-                            accountPlatform.setDevice_id("");
-                            accountPlatform.setProfile_id("");
-                            accountPlatform.setLive(updateTaskRequest.getIsLogin());
-                            accountRepository.save(accountPlatform);
-                        }else{
-                            if((accountPlatform.getPlatform().equals("tiktok")&&check_Die_Tiktok) || !accountPlatform.getPlatform().equals("tiktok")){// platform=tiktok & acc die
-                                accountPlatform.setRunning(0);
-                                accountPlatform.setUpdate_time(System.currentTimeMillis());
-                                accountPlatform.setDie_time(System.currentTimeMillis());
-                                accountPlatform.setLive(updateTaskRequest.getIsLogin());
-                                accountRepository.save(accountPlatform);
-                            }else{
+                    if(check_Die){
+                        Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
+                        if(accountPlatform!=null){
+                            if(accountPlatform.getPlatform().equals("youtube")&&!updateTaskRequest.getTask().equals("register")){
                                 accountPlatform.setRunning(0);
                                 accountPlatform.setUpdate_time(System.currentTimeMillis());
                                 accountPlatform.setDevice_id("");
                                 accountPlatform.setProfile_id("");
                                 accountPlatform.setLive(updateTaskRequest.getIsLogin());
                                 accountRepository.save(accountPlatform);
+                            }else{
+                                if(accountProfile.getLogin_time()!=0){
+                                    accountPlatform.setRunning(0);
+                                    accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                    accountPlatform.setDie_time(System.currentTimeMillis());
+                                    accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                    accountRepository.save(accountPlatform);
+                                }else{
+                                    accountPlatform.setRunning(0);
+                                    accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                    accountPlatform.setDie_time(System.currentTimeMillis());
+                                    accountPlatform.setDevice_id("");
+                                    accountPlatform.setProfile_id("");
+                                    accountPlatform.setLive(updateTaskRequest.getIsLogin());
+                                    accountRepository.save(accountPlatform);
+                                }
                             }
+                        }
+                        if(accountProfile!=null){
+                            accountProfileRepository.delete(accountProfile);
                         }
                     }
                     //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
-                    if(accountProfile!=null){
-                        accountProfileRepository.delete(accountProfile);
-                    }
                 }else if(updateTaskRequest.getIsLogin()>1&&accountProfile.getSign_in()==1){
                     Boolean check_Die=true;
                     if(accountProfile!=null&&accountProfile.getPlatform().equals("tiktok")&&updateTaskRequest.getIsLogin()!=7){
-                        check_Die=accountProfile.getPlatform().equals("tiktok")&&TikTokApi.checkAccount(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""),1)==-1;
+                        check_Die=accountProfile.getPlatform().equals("tiktok")&&!TikTokApi.checkLive(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""));
                     }
                     if(check_Die){
                         Account accountPlatform=accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform());
