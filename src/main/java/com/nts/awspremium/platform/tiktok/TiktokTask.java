@@ -357,6 +357,8 @@ public class TiktokTask {
                 Thread.sleep(200+ran.nextInt(200));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                        deviceRepository.save(device);
                         return tiktok_view_system(account_id,mode,device);
                     }else{
                         device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
@@ -418,6 +420,8 @@ public class TiktokTask {
 
             } else {
                 if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                    deviceRepository.save(device);
                     return tiktok_view_system(account_id,mode,device);
                 }else{
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
