@@ -350,15 +350,20 @@ public class TiktokTask {
              */
             Random ran = new Random();
             OrderRunning orderRunning=null;
-
+            SettingTiktok settingTiktok =settingTikTokRepository.get_Setting();
             orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadCheck.getValue());
 
             if (orderRunning!=null) {
                 Thread.sleep(200+ran.nextInt(200));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
-                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                    deviceRepository.save(device);
-                    return tiktok_view_system(account_id,mode,device);
+                    if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                        return tiktok_view_system(account_id,mode,device);
+                    }else{
+                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                        deviceRepository.save(device);
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
@@ -412,9 +417,14 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                deviceRepository.save(device);
-                return tiktok_view_system(account_id,mode,device);
+                if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                    return tiktok_view_system(account_id,mode,device);
+                }else{
+                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                    deviceRepository.save(device);
+                    resp.put("status", false);
+                    return resp;
+                }
             }
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

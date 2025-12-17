@@ -2849,6 +2849,11 @@ public class TaskController {
                                 account.setName(updateTaskRequest.getName().trim());
                                 accountRepository.save(account);
                             }
+                            AccountClone accountClone =accountCloneRepository.get_Account_Clone_By_Account_id(account.getAccount_id());
+                            if(accountClone!=null){
+                                accountClone.setCheck_video(true);
+                                accountCloneRepository.save(accountClone);
+                            }
                         }
                     }
                 }else if(updateTaskRequest.getTask().equals("add_recovery_mail") &&updateTaskRequest.getStatus()==true){
