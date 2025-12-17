@@ -236,9 +236,54 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
+                        if(bonus.equals("like")){
+                            ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Like==null?true:!list_History_Like.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("share")){
+                            ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Share==null?true:!list_History_Share.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("favorites")){
+                            ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Favorites==null?true:!list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
@@ -371,9 +416,54 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
+                        if(bonus.equals("like")){
+                            ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Like==null?true:!list_History_Like.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("share")){
+                            ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Share==null?true:!list_History_Share.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("favorites")){
+                            ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Favorites==null?true:!list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
@@ -561,9 +651,54 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
+                        if(bonus.equals("like")){
+                            ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Like==null?true:!list_History_Like.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("share")){
+                            ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Share==null?true:!list_History_Share.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("favorites")){
+                            ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Favorites==null?true:!list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
@@ -667,9 +802,54 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
+                        if(bonus.equals("like")){
+                            ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Like==null?true:!list_History_Like.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("share")){
+                            ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Share==null?true:!list_History_Share.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("favorites")){
+                            ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Favorites==null?true:!list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
@@ -774,9 +954,54 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
+                        if(bonus.equals("like")){
+                            ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Like=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Like==null?true:!list_History_Like.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("share")){
+                            ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Share=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Share==null?true:!list_History_Share.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }else if(bonus.equals("favorites")){
+                            ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
+                                data.put("bonus","");
+                            }else{
+                                String list_History_Favorites=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+                                if(list_History_Favorites==null?true:!list_History_Favorites.contains(orderRunning.getOrder_key())){
+                                    data.put("bonus",bonus);
+                                }else{
+                                    data.put("bonus","");
+                                }
+                            }
+                        }
                     }else{
                         data.put("bonus","");
                     }
@@ -850,7 +1075,7 @@ public class TiktokTask {
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
             mode="auto";
             Integer max_Task=modeOption.getMax_task();
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.startsWith("@")){
+            if(account_id.startsWith("@") && accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
                 max_Task=10;
             }
             if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
@@ -891,10 +1116,17 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent() && account_id.startsWith("@")){
+                    if(account_id.startsWith("@") && ran.nextInt(100)<service.getBonus_list_percent() ){
+                        List<String> bonusArr = new ArrayList<>();
                         String [] bonus_list=service.getBonus_list().split(",");
-
-                        String bonus=bonus_list[ran.nextInt(bonus_list.length)];
+                        Integer index=100;
+                        for (int i=0;i<bonus_list.length;i++){
+                            for(int j=0;j<index;j++){
+                                bonusArr.add(bonus_list[i]);
+                            }
+                            index=index/2;
+                        }
+                        String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
