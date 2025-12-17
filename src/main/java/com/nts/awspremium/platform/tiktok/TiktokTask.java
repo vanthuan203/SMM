@@ -850,7 +850,7 @@ public class TiktokTask {
             ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
             mode="auto";
             Integer max_Task=modeOption.getMax_task();
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
+            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.startsWith("@")){
                 max_Task=10;
             }
             if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
@@ -891,7 +891,7 @@ public class TiktokTask {
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
-                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                    if(ran.nextInt(100)<service.getBonus_list_percent() && account_id.startsWith("@")){
                         String [] bonus_list=service.getBonus_list().split(",");
 
                         String bonus=bonus_list[ran.nextInt(bonus_list.length)];
