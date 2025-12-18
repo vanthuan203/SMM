@@ -117,12 +117,11 @@ public class TikTokApi {
                 // Lấy followerCount từ data.stats
               return -1;
             }else{
-                getFollowerCount(tiktok_id,index-1);
+                return getFollowerCount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
         }
-        return -2;
     }
 
     public static Boolean checkLive(String tiktok_id) {
@@ -188,12 +187,11 @@ public class TikTokApi {
                 // Lấy followerCount từ data.stats
                 return -1;
             }else{
-                checkAccount(tiktok_id,index-1);
+               return checkAccount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
         }
-        return -2;
     }
 
     public static String checkUsername(String uuid,Integer index) {
@@ -225,12 +223,53 @@ public class TikTokApi {
                 // Lấy followerCount từ data.stats
                 return "NULL-LL";
             }else{
-                checkUsername(uuid,index-1);
+                return checkUsername(uuid,index-1);
             }
         } catch (Exception e) {
             return "NULL-LL";
         }
-        return "NULL-LL";
+    }
+
+    public static List<String> checkUsernameNickname(String uuid,Integer index) {
+
+        try {
+            List<String> info = new ArrayList<>();
+            if(index<=0){
+                return null;
+            }
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+uuid)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", getKey())
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                info.add(jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("user")
+                        .get("uniqueId").getAsString());
+                info.add(jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("user")
+                        .get("nickname").getAsString());
+                return info;
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followerCount từ data.stats
+                return null;
+            }else{
+                return checkUsernameNickname(uuid,index-1);
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 
@@ -263,12 +302,11 @@ public class TikTokApi {
                         .getAsInt();
                 return followerCount;
             }else{
-                getFollowerCountByUserId(user_id,index-1);
+                return getFollowerCountByUserId(user_id,index-1);
             }
         } catch (Exception e) {
             return -2;
         }
-        return -2;
     }
 
     public static Integer getVideoCount(String tiktok_id,Integer index) {
@@ -303,12 +341,11 @@ public class TikTokApi {
                 // Lấy videoCount từ data.stats
                 return -1;
             }else{
-                getVideoCount(tiktok_id,index-1);
+                return getVideoCount(tiktok_id,index-1);
             }
         } catch (Exception e) {
             return -2;
         }
-        return -2;
     }
 
     public static Integer getFollowingCount(String tiktok_id) {

@@ -2834,19 +2834,21 @@ public class TaskController {
                     }
                 }else if(updateTaskRequest.getTask().equals("update_username") &&updateTaskRequest.getStatus()==true){
                     if(accountProfile!=null) {
-                        if(updateTaskRequest.getTask_key().trim().length()==0 || !updateTaskRequest.getTask_key().trim().startsWith("@") || !TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""))){
-                            accountProfile.setLive(0);
-                            accountProfileRepository.save(accountProfile);
-                        }else{
-                            String account_id_old=accountProfile.getAccount_id().trim();
+
+                        Account account=accountRepository.get_Account_By_Account_id(accountProfile.getAccount_id().trim());
+
+                        Boolean checkLive=updateTaskRequest.getTask_key().trim().startsWith("@") && TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""));
+
+                        List<String> info=account!=null?(account.getUuid().length()>5?TikTokApi.checkUsernameNickname(account.getUuid(),2):null):null;
+                        checkLive=checkLive && (info!=null?updateTaskRequest.getTask_key().trim().contains(info.get(0)):true);
+                        if(updateTaskRequest.getPlatform().equals("tiktok")&& checkLive){
                             accountProfile.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                            accountProfile.setName(updateTaskRequest.getName().trim());
+                            accountProfile.setName(info!=null?info.get(1):"");
                             accountProfileRepository.save(accountProfile);
 
-                            Account account=accountRepository.get_Account_By_Account_id(account_id_old);
                             if(account!=null){
                                 account.setAccount_id(updateTaskRequest.getTask_key().trim()+"|"+updateTaskRequest.getPlatform().trim());
-                                account.setName(updateTaskRequest.getName().trim());
+                                account.setName(info!=null?info.get(1):"");
                                 accountRepository.save(account);
                             }
                             AccountClone accountClone =accountCloneRepository.get_Account_Clone_By_Account_id(account.getAccount_id());
@@ -2854,6 +2856,10 @@ public class TaskController {
                                 accountClone.setCheck_video(true);
                                 accountCloneRepository.save(accountClone);
                             }
+                        }else{
+                            accountProfile.setName(info!=null?info.get(1):"");
+                            accountProfile.setLive(0);
+                            accountProfileRepository.save(accountProfile);
                         }
                     }
                 }else if(updateTaskRequest.getTask().equals("add_recovery_mail") &&updateTaskRequest.getStatus()==true){

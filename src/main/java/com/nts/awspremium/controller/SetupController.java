@@ -564,7 +564,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") String uuid) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            System.out.println(TikTokApi.checkUsername(uuid,2));
+            System.out.println(TikTokApi.checkUsernameNickname(uuid,2));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
