@@ -73,12 +73,14 @@ public class TiktokUpdate {
                     if(tikTokAccountHistory!=null){
                         tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
                         tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                        tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
                         tikTokAccountHistoryRepository.save(tikTokAccountHistory);
                     }else{
                         TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
                         tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                         tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
                         tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
+                        tikTokAccountHistory_New.setFollowing_count(1);
                         tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
                     }
                     TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
