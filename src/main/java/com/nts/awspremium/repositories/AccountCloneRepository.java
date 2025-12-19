@@ -16,7 +16,7 @@ public interface AccountCloneRepository extends JpaRepository<AccountClone,Long>
     public AccountClone get_Account_Clone_By_Task_View();
 
 
-    @Query(value = "SELECT * FROM account_clone where check_video=1 and round((UNIX_TIMESTAMP()-update_time/1000)/60)>5 order by add_time asc limit 30",nativeQuery = true)
+    @Query(value = "SELECT * FROM account_clone where check_video=1 and update_time!=0 and round((UNIX_TIMESTAMP()-update_time/1000)/60)>5 order by add_time asc limit 30",nativeQuery = true)
     public List<AccountClone> get_Account_Clone_By_CheckVideo();
 
 
