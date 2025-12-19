@@ -300,6 +300,9 @@ public class AccountController {
                     JsonArray videoList=TikTokApi.getInfoVideoByChannel(account.getAccount().getAccount_id().replace("|tiktok","").split("@")[1],1);
                     if(videoList==null){
                         continue;
+                    }else if(videoList.size()==0){
+                        account.setCheck_video(false);
+                        accountCloneRepository.save(account);
                     }
                     for (JsonElement video: videoList) {
                         JsonObject videoObj=video.getAsJsonObject();

@@ -759,7 +759,7 @@ public class TikTokApi {
                 JsonArray jsonData = jsonObject
                         .getAsJsonObject("data").getAsJsonArray("videos");
                 if(jsonData.size()==0){
-                    return null;
+                    return new JsonArray();
                 }else{
                     return jsonData;
                 }
