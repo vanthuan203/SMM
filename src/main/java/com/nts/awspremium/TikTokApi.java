@@ -763,6 +763,9 @@ public class TikTokApi {
                 }else{
                     return jsonData;
                 }
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy digg_count từ data.stats
+                return new JsonArray();
             }else{
                 return null;
             }
@@ -793,6 +796,9 @@ public class TikTokApi {
                 JsonArray jsonData = jsonObject
                         .getAsJsonObject("data").getAsJsonArray("videos");
                 return jsonData;
+            }else if (jsonObject.get("msg").getAsString().contains("userinfo is failed")) {
+                // Lấy digg_count từ data.stats
+                return new JsonArray();
             }else{
                 return null;
             }

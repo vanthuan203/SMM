@@ -1084,28 +1084,32 @@ public class TaskController {
                     if(accountClone!=null){
                         if((System.currentTimeMillis()-accountClone.getUpdate_time())/1000/60/60/24>=platform_Check.getAdd_post_time()){
                             JsonArray videoList=TikTokApi.getInfoVideoByChannelByUserId(accountClone.getId_clone(),100);
-                            for (JsonElement video: videoList) {
-                                JsonObject videoObj=video.getAsJsonObject();
-                                DataFollowerTiktok dataFollowerTiktok =new DataFollowerTiktok();
-                                dataFollowerTiktok.setVideo_id(videoObj.get("video_id").getAsString());
-                                if(!videoObj.get("play").getAsString().contains("video")){
-                                    continue;
+                            if(videoList!=null){ //null bỏ qua
+                                if(videoList.size()==0){ // size=0 acc die
+                                    accountCloneRepository.delete(accountClone);
+                                }else{
+                                    for (JsonElement video: videoList) {
+                                        JsonObject videoObj=video.getAsJsonObject();
+                                        if(!videoObj.get("play").getAsString().contains("video")){ //photo thì bỏ qua
+                                            continue;
+                                        }
+                                        if(!accountClone.getVideo_list().contains(videoObj.get("video_id").getAsString())){
+                                            resp.put("status", true);
+                                            data.put("platform", profileTask.getPlatform().trim());
+                                            data.put("task", "add_post");
+                                            data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                                            data.put("task_key", videoObj.get("video_id").getAsString());
+                                            data.put("task_link", videoObj.get("play").getAsString());
+                                            data.put("app", platform_Check.getApp_name().trim());
+                                            resp.put("data",data);
+                                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                                        }
+                                    }
+                                    if(videoList!=null){ //qua for mà chạy đến đây chứng tỏ hết acc
+                                        accountCloneRepository.delete(accountClone);
+                                    }
                                 }
-                                if(!accountClone.getVideo_list().contains(videoObj.get("video_id").getAsString())){
-                                    resp.put("status", true);
-                                    data.put("platform", profileTask.getPlatform().trim());
-                                    data.put("task", "add_post");
-                                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                                    data.put("task_key", videoObj.get("video_id").getAsString());
-                                    data.put("task_link", videoObj.get("play").getAsString());
-                                    data.put("app", platform_Check.getApp_name().trim());
-                                    resp.put("data",data);
-                                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                                }
-                            }
-                            if(videoList!=null){
-                                accountCloneRepository.delete(accountClone);
-                            }
+                            } //pass
                         }
                     }
                 }
