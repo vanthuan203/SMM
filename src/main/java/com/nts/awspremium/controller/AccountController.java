@@ -296,20 +296,25 @@ public class AccountController {
                     accountCloneRepository.save(account);
                     continue;
                 }
-                JsonArray videoList=TikTokApi.getInfoVideoByChannel(account.getAccount().getAccount_id().replace("|tiktok","").split("@")[1],1);
-                if(videoList==null){
+                try {
+                    JsonArray videoList=TikTokApi.getInfoVideoByChannel(account.getAccount().getAccount_id().replace("|tiktok","").split("@")[1],1);
+                    if(videoList==null){
+                        continue;
+                    }
+                    for (JsonElement video: videoList) {
+                        JsonObject videoObj=video.getAsJsonObject();
+                        JsonObject author=videoObj.get("author").getAsJsonObject();
+                        account.setVideo_tiktok(videoObj.get("video_id").getAsString());
+                        account.setName(author.get("nickname").getAsString());
+                        account.setTiktok_id(author.get("id").getAsString());
+                        account.setCheck_video(false);
+                        accountCloneRepository.save(account);
+                        break;
+                    }
+                }catch (Exception e){
                     continue;
                 }
-                for (JsonElement video: videoList) {
-                    JsonObject videoObj=video.getAsJsonObject();
-                    JsonObject author=videoObj.get("author").getAsJsonObject();
-                    account.setVideo_tiktok(videoObj.get("video_id").getAsString());
-                    account.setName(author.get("nickname").getAsString());
-                    account.setTiktok_id(author.get("id").getAsString());
-                    account.setCheck_video(false);
-                    accountCloneRepository.save(account);
-                    break;
-                }
+
             }
 
 
