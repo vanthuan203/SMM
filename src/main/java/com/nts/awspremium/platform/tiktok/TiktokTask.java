@@ -635,8 +635,8 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                deviceRepository.save(device);
+                //device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                //deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
