@@ -468,7 +468,7 @@ public class TaskController {
                             accountProfile.setPlatform("youtube");
                             accountProfile.setLive(0);
                             accountProfile.setRunning(0);
-                            accountProfile.setSign_in(0);
+                            accountProfile.setSign_in(1);
                             accountProfile.setCode(code);
                             accountProfile.setTask_time(System.currentTimeMillis());
                             accountProfile.setConnection_platform("");
@@ -480,7 +480,7 @@ public class TaskController {
                             accountProfile.setUpdate_time(0L);
                             accountProfileRepository.save(accountProfile);
 
-                            accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
+                            //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                             profileTask.setGet_account_time(System.currentTimeMillis());
                             profileTaskRepository.save(profileTask);
@@ -519,7 +519,7 @@ public class TaskController {
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
 
-                    accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
+                    //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                     resp.put("status", true);
                     data.put("platform", "youtube");
@@ -593,7 +593,7 @@ public class TaskController {
                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                     profileTaskRepository.save(profileTask);
 
-                    accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
+                    //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
 
                     resp.put("status", true);
@@ -811,7 +811,7 @@ public class TaskController {
                                 profileTask.setRequest_index(1);
                                 profileTaskRepository.save(profileTask);
 
-                                accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
+                                //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                                 resp.put("status", true);
                                 data.put("platform", profileTask.getPlatform());
@@ -875,7 +875,7 @@ public class TaskController {
                                 accountProfile.setUpdate_time(0L);
                                 accountProfileRepository.save(accountProfile);
 
-                                accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
+                                //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                                 resp.put("status", true);
                                 data.put("platform", profileTask.getPlatform().trim());
