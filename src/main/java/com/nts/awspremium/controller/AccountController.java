@@ -373,13 +373,18 @@ public class AccountController {
                     account.setUuid("4");
                     accountRepository.save(account);
                 }else{
-                    account.setAccount_id("@"+object.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString()+"|"+account.getPlatform().trim());
-                    account.setRunning(0);
-                    account.setLive(1);
-                    account.setDie_time(0L);
-                    account.setProfile_id("");
-                    account.setDevice_id("");
-                    accountRepository.save(account);
+                    if(account.getAccount_id().contains(object.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString().trim())){
+                        account.setLive(77);
+                        accountRepository.save(account);
+                    }else{
+                        account.setAccount_id("@"+object.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString().trim()+"|"+account.getPlatform().trim());
+                        account.setRunning(0);
+                        account.setLive(1);
+                        account.setDie_time(0L);
+                        account.setProfile_id("");
+                        account.setDevice_id("");
+                        accountRepository.save(account);
+                    }
                 }
             }
 
