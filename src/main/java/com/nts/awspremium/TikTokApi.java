@@ -479,11 +479,23 @@ public class TikTokApi {
 
             // Kiểm tra nếu msg là "success"
             if ("success".equals(jsonObject.get("msg").getAsString())) {
-                // Lấy followerCount từ data.stats
-                JsonObject infoChannel = jsonObject
-                        .getAsJsonObject("data");
+                Boolean check=false;
+                JsonObject check_jsonObject = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("user");
+                JsonElement generalPermission = check_jsonObject.get("general_permission");
 
-                return infoChannel;
+                if (generalPermission == null || generalPermission.isJsonNull()) {
+                    check=true;
+                }
+                if(check){
+                    JsonObject infoChannel = jsonObject
+                            .getAsJsonObject("data");
+                    return infoChannel;
+                }else{
+                    return new JsonObject();
+                }
+
             }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
                 // Lấy followerCount từ data.stats
                 return new JsonObject();
@@ -512,11 +524,22 @@ public class TikTokApi {
 
             // Kiểm tra nếu msg là "success"
             if ("success".equals(jsonObject.get("msg").getAsString())) {
-                // Lấy followerCount từ data.stats
-                JsonObject infoChannel = jsonObject
-                        .getAsJsonObject("data");
+                Boolean check=false;
+                JsonObject check_jsonObject = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("user");
+                JsonElement generalPermission = check_jsonObject.get("general_permission");
 
-                return infoChannel;
+                if (generalPermission == null || generalPermission.isJsonNull()) {
+                    check=true;
+                }
+                if(check){
+                    JsonObject infoChannel = jsonObject
+                            .getAsJsonObject("data");
+                    return infoChannel;
+                }else{
+                    return new JsonObject();
+                }
             }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
                 // Lấy followerCount từ data.stats
                 return new JsonObject();
