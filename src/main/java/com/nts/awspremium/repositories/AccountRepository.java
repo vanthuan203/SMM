@@ -28,6 +28,10 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "SELECT * FROM Data.account where platform=?1 and live=1 and uuid='' order by add_time asc limit 30;",nativeQuery = true)
     public List<Account> get_Account_Not_UUID(String platform);
 
+    @Query(value = "SELECT * FROM Data.account where platform=?1 and live>1 and (uuid!='4' or uuid!='') order by add_time asc limit 30;",nativeQuery = true)
+    public List<Account> get_Account_Check_Die(String platform);
+
+
     @Query(value = "Select count(*) from account where  device_id=?1 and (select max_reg from setting_tiktok limit 1)>(Select count(*) as total from account where live=1 and device_id=?1)",nativeQuery = true)
     public Integer Check_Get_Account_By_DeviceId(String device_id);
 

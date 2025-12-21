@@ -194,6 +194,53 @@ public class TikTokApi {
         }
     }
 
+    public static Integer checkAccountByUserId(String user_id,Integer index) {
+
+        try {
+            if(index<=0){
+                return -2;
+            }
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            Request request = new Request.Builder()
+                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .addHeader("x-rapidapi-key", getKey())
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+            // Kiểm tra nếu msg là "success"
+            if ("success".equals(jsonObject.get("msg").getAsString())) {
+                // Lấy followerCount từ data.stats
+                Boolean check=false;
+                JsonObject check_jsonObject = jsonObject
+                        .getAsJsonObject("data")
+                        .getAsJsonObject("user");
+                JsonElement generalPermission = check_jsonObject.get("general_permission");
+
+                if (generalPermission == null || generalPermission.isJsonNull()) {
+                    check=true;
+                }
+                if(check){
+                    return 1;
+                }else{
+                    return -1;
+                }
+
+            }else if (jsonObject.get("msg").getAsString().contains("unique_id is invalid")) {
+                // Lấy followerCount từ data.stats
+                return -1;
+            }else{
+                return checkAccountByUserId(user_id,index-1);
+            }
+        } catch (Exception e) {
+            return -2;
+        }
+    }
+
     public static String checkUsername(String uuid,Integer index) {
 
         try {

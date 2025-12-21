@@ -356,12 +356,31 @@ public class AccountController {
                     if(!TikTokApi.checkLive(tiktok_id)){
                         account.setUuid("4");
                         accountRepository.save(account);
-                    }else{
-                        continue;
                     }
+                }else{
+                    account.setUuid(object.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
+                    accountRepository.save(account);
                 }
-                account.setUuid(object.getAsJsonObject().getAsJsonObject("user").get("id").getAsString());
-                accountRepository.save(account);
+            }
+
+            List<Account> accountCheckDie=accountRepository.get_Account_Check_Die("tiktok");
+            for (Account account:accountCheckDie
+            ) {
+                JsonObject object= TikTokApi.getInfoFullChannelByUserId(account.getUuid());
+                if(object==null){
+                    continue;
+                }else if(object.size()==0){
+                    account.setUuid("4");
+                    accountRepository.save(account);
+                }else{
+                    account.setAccount_id("@"+object.getAsJsonObject().getAsJsonObject("user").get("uniqueId").getAsString()+"|"+account.getPlatform().trim());
+                    account.setRunning(0);
+                    account.setLive(1);
+                    account.setDie_time(0L);
+                    account.setProfile_id("");
+                    account.setDevice_id("");
+                    accountRepository.save(account);
+                }
             }
 
 
