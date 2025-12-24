@@ -73,7 +73,8 @@ public class Openai {
                     " \n" +
                     " LƯU Ý ĐẶC BIỆT:                \n" +
                     " - Ngôn ngữ tên Tiktok là tiếng anh(en) có ý nghĩa.\n" +
-                    " - tên không chứa số.\n" +
+                    " - tên Tiktok không chứa số.\n" +
+                    " - tên Tiktok không chứa @.\n" +
                     " - tên Tiktok có độ dài tối đa 30 ký tự.  \n" +
                     " - tên Tiktok phải có ít nhất 1 từ khớp với họ tên.\n" +
                     " - tên Tiktok không chứa dấu ngoặc kép ()\n" +
