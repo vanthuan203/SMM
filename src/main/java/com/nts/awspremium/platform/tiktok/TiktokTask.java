@@ -249,6 +249,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -261,6 +264,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -273,6 +279,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -429,6 +438,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -441,6 +453,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -453,6 +468,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -580,6 +598,9 @@ public class TiktokTask {
                     String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                     if(bonus.equals("like")){
                         ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                        if(modeOptionLike==null){
+                            modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                        }
                         if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                             data.put("bonus","");
                         }else{
@@ -592,6 +613,9 @@ public class TiktokTask {
                         }
                     }else if(bonus.equals("share")){
                         ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                        if(modeOptionShare==null){
+                            modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                        }
                         if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                             data.put("bonus","");
                         }else{
@@ -604,6 +628,9 @@ public class TiktokTask {
                         }
                     }else if(bonus.equals("favorites")){
                         ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                        if(modeOptionFavorites==null){
+                            modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                        }
                         if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                             data.put("bonus","");
                         }else{
@@ -714,6 +741,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -726,6 +756,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -738,6 +771,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -865,6 +901,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -877,6 +916,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -889,6 +931,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1017,6 +1062,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1029,6 +1077,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1041,6 +1092,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1179,6 +1233,9 @@ public class TiktokTask {
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
                             ModeOption modeOptionLike=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
+                            if(modeOptionLike==null){
+                                modeOptionLike=modeOptionRepository.get_Mode_Option("auto","tiktok","like");
+                            }
                             if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOptionLike.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1191,6 +1248,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("share")){
                             ModeOption modeOptionShare=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
+                            if(modeOptionShare==null){
+                                modeOptionShare=modeOptionRepository.get_Mode_Option("auto","tiktok","share");
+                            }
                             if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOptionShare.getMax_task()){
                                 data.put("bonus","");
                             }else{
@@ -1203,6 +1263,9 @@ public class TiktokTask {
                             }
                         }else if(bonus.equals("favorites")){
                             ModeOption modeOptionFavorites=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
+                            if(modeOptionFavorites==null){
+                                modeOptionFavorites=modeOptionRepository.get_Mode_Option("auto","tiktok","favorites");
+                            }
                             if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOptionFavorites.getMax_task()){
                                 data.put("bonus","");
                             }else{

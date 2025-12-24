@@ -124,7 +124,7 @@ public class TiktokUpdate {
 
                 }
                 AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(account_id.trim());
-                ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_AccountId_And_Platform(account_id.trim(),"tiktok");
+                ModeOption modeOption=modeOptionRepository.get_Mode_Option_By_ProfileId_And_Platform(profile_id.trim(),"tiktok","follower");
                 if(accountTask==null){
                     AccountTask accountTask_New=new AccountTask();
                     accountTask_New.setPlatform(account_id.trim().split("\\|")[1]);
