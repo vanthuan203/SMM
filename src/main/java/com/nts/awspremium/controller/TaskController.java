@@ -548,11 +548,21 @@ public class TaskController {
                 }
             }else if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
+                if(historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=5 && accountProfile==null){
+                    profileTask.setRegister_index(profileTask.getRegister_index()+1);
+                    profileTask.setRequest_index(profileTask.getRequest_index()+1);
+                    profileTaskRepository.save(profileTask);
+
+                    resp.put("status", false);
+                    data.put("message", "Không thực hiện nhiệm vụ");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 if(historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getRegister_time())==0&&
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
                         accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
-                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim())==0&& // check 1 profile 1 gmail
+                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),7)==0&& // check 1 profile 1 gmail
                         accountProfile==null
                 ){
                     String password="Cmc#";
@@ -1828,7 +1838,7 @@ public class TaskController {
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
                         accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
-                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim())==0&& // check 1 profile 1 gmail
+                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),7)==0&& // check 1 profile 1 gmail
                         accountProfile==null
                 ){
                     String password="Cmc#";
