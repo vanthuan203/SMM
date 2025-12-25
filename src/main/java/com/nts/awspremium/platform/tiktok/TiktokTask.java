@@ -96,7 +96,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -228,7 +228,7 @@ public class TiktokTask {
             }
 
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         return tiktok_view_system(account_id,mode,device);
@@ -418,7 +418,7 @@ public class TiktokTask {
             orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadCheck.getValue());
 
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         //device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
@@ -729,7 +729,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -889,7 +889,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","share",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -1050,7 +1050,7 @@ public class TiktokTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","favorites",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -1219,7 +1219,7 @@ public class TiktokTask {
                 }
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<50){
                         return tiktok_follower_view(account_id,mode_,device);
