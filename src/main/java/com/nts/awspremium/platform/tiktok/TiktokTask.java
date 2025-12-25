@@ -202,6 +202,7 @@ public class TiktokTask {
              */
             Random ran = new Random();
             OrderRunning orderRunning=null;
+            SettingTiktok settingTiktok =settingTikTokRepository.get_Setting();
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
 
@@ -216,18 +217,28 @@ public class TiktokTask {
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
             }
-            /*
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
-            }
-             */
-            if (orderRunning!=null) {
-                Thread.sleep(200+ran.nextInt(200));
-                if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                    return tiktok_view_system(account_id,mode,device);
+                }else{
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
                     resp.put("status", false);
                     return resp;
+                }
+            }
+
+            if (orderRunning!=null) {
+                Thread.sleep(200+ran.nextInt(200));
+                if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                        return tiktok_view_system(account_id,mode,device);
+                    }else{
+                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                        deviceRepository.save(device);
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }else if(tikTokFollower24hRepository.check_Follower_24h_By_Username_And_TiktokId(account_id.trim()+orderRunning.getOrder_key().trim())>0){
                     resp.put("status", false);
                     return resp;
