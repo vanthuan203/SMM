@@ -3,10 +3,7 @@ package com.nts.awspremium.platform.tiktok;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
-import com.nts.awspremium.model_system.MySQLCheck;
-import com.nts.awspremium.model_system.OrderThreadCheck;
-import com.nts.awspremium.model_system.OrderThreadFollowerCheck;
-import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
+import com.nts.awspremium.model_system.*;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +18,8 @@ public class TiktokTask {
     private OrderRunningRepository orderRunningRepository;
     @Autowired
     private OrderThreadCheck orderThreadCheck;
+    @Autowired
+    private AccountCloneVideoCheck accountCloneVideoCheck;
     @Autowired
     private OrderThreadFollowerCheck orderThreadFollowerCheck;
     @Autowired
@@ -593,7 +592,7 @@ public class TiktokTask {
              */
             Random ran = new Random();
             AccountClone orderRunning=null;
-            orderRunning = accountCloneRepository.get_Account_Clone_By_Task_View();
+            orderRunning = accountCloneRepository.get_Account_Clone_By_Id(accountCloneVideoCheck.getValue().get(ran.nextInt(accountCloneVideoCheck.getValue().size())));
 
             if (orderRunning!=null) {
                 if(account_id.startsWith("@") && ran.nextInt(100)<3){
