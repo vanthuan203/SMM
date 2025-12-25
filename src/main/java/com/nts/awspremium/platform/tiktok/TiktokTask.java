@@ -419,7 +419,7 @@ public class TiktokTask {
             orderRunning = orderRunningRepository.get_Order_Running_By_Task_No_Mode("tiktok","follower","",orderThreadCheck.getValue());
 
             if (orderRunning!=null) {
-                Thread.sleep(200+ran.nextInt(200));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         //device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
@@ -673,8 +673,8 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                //device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                //deviceRepository.save(device);
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
@@ -1216,7 +1216,7 @@ public class TiktokTask {
                 }
             }
             if (orderRunning!=null) {
-                Thread.sleep(200+ran.nextInt(200));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     return tiktok_follower_view(account_id,mode_,device);
                     /*
