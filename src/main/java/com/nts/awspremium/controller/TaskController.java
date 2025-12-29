@@ -1186,7 +1186,7 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1)){
                     if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("follower") && accountProfile_Task.getSign_in()==1){
@@ -1194,7 +1194,7 @@ public class TaskController {
                     }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device, accountProfile_Task.getLive());
                     }else if(task.equals("comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("share")){
@@ -2471,7 +2471,7 @@ public class TaskController {
                 while(arrTask.remove(task)) {}
                 if(profileTask.getPlatform().equals("tiktok") && !profileTask.getAccount_id().contains("@")){
                     if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("follower")){
@@ -2479,7 +2479,7 @@ public class TaskController {
                     }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("view")){
-                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device);
+                        get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,accountProfile_Task.getLive());
                     }else if(task.equals("comment")){
                         get_task=tiktokTask.tiktok_comment(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("share")){
