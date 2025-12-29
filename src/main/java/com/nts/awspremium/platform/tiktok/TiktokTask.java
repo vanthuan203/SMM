@@ -595,7 +595,7 @@ public class TiktokTask {
             orderRunning = accountCloneRepository.get_Account_Clone_By_Id(accountCloneVideoCheck.getValue().get(ran.nextInt(accountCloneVideoCheck.getValue().size())));
 
             if (orderRunning!=null) {
-                if(account_id.startsWith("@") && ran.nextInt(100)<3){
+                if(account_id.startsWith("@") && ran.nextInt(100)<1){
                     List<String> bonusArr = new ArrayList<>();
                     String [] bonus_list="like,favorites,share".split(",");
                     Integer index=100;
@@ -1221,7 +1221,7 @@ public class TiktokTask {
             if (orderRunning!=null) {
                 Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
-                    if(ran.nextInt(100)<50){
+                    if(ran.nextInt(100)<10){
                         return tiktok_follower_view(account_id,mode_,device);
                     }else{
                         return tiktok_view_system(account_id,mode_,device);
