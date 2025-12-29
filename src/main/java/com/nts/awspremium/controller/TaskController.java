@@ -348,7 +348,7 @@ public class TaskController {
             }
             //changer profile  khi du thoi gian hoạt động
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
-                //accountProfileRepository.update_Running_By_ProfileId(profileTask.getProfile_id().trim());
+                accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                     entityManager.clear();

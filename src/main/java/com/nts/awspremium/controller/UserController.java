@@ -373,6 +373,7 @@ public class UserController {
             for (int i=0;i<tiktok.length;i++){
                 if(TikTokApi.checkLive(tiktok[i])==true){
                     count_live=count_live+1;
+                    //System.out.println(tiktok[i]+"|"+i);
                 }else if(TikTokApi.checkLive(tiktok[i])==false){
                     count_die=count_die+1;
                     System.out.println(count_die+"|"+tiktok[i]+"|"+i);
