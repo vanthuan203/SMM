@@ -28,7 +28,7 @@ public interface AccountRepository extends JpaRepository<Account,String> {
     @Query(value = "SELECT * FROM Data.account where platform=?1 and live=1 and uuid='' order by add_time asc limit 30;",nativeQuery = true)
     public List<Account> get_Account_Not_UUID(String platform);
 
-    @Query(value = "SELECT * FROM Data.account where platform=?1 and live>1 and (uuid!='4' or uuid!='') order by add_time asc limit 30;",nativeQuery = true)
+    @Query(value = "SELECT * FROM Data.account where platform=?1 and live>1 and uuid!='' and uuid!='4'  order by add_time asc limit 30;",nativeQuery = true)
     public List<Account> get_Account_Check_Die(String platform);
 
 

@@ -3479,7 +3479,7 @@ public class TaskController {
                             ipRegisterRepository.save(ipRegister_old);
                         }
                     }
-                    accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                    //accountProfileRepository.update_Running_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                     if(accountProfile!=null){
                         accountProfile.setSign_in(0);
                         accountProfile.setRunning(1);
