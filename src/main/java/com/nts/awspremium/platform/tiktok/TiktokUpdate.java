@@ -422,17 +422,32 @@ public class TiktokUpdate {
                 TikTokViewHistory tikTokViewHistory=tikTokViewHistoryRepository.get_By_AccountId(account_id.trim());
                 if(tikTokViewHistory!=null){
                     char target = '|';
-                    long count = tikTokViewHistory.getList_id().trim().chars().filter(ch -> ch == target).count();
-                    if(count>=4){
-                        int occurrence = (int)count-2;  // Lần xuất hiện thứ n cần tìm
-                        OptionalInt position = IntStream.range(0, tikTokViewHistory.getList_id().trim().length())
-                                .filter(i -> tikTokViewHistory.getList_id().trim().charAt(i) == target)
-                                .skip(occurrence - 1)
-                                .findFirst();
-                        tikTokViewHistory.setList_id(tikTokViewHistory.getList_id().trim().substring(position.getAsInt()+1)+task_key.trim()+"|");
-                    }else{
-                        tikTokViewHistory.setList_id(tikTokViewHistory.getList_id()+task_key.trim()+"|");
+                    int MAX = 6;
+                    String list = tikTokViewHistory.getList_id().trim();
+                    String newTask = task_key.trim() + "|";
+
+                    long count = list.chars().filter(ch -> ch == target).count();
+                    if (count >= MAX) {
+                        int needRemove = (int) (count - (MAX - 1)); // ⭐ mấu chốt
+
+                        int found = 0;
+                        int index = -1;
+
+                        for (int i = 0; i < list.length(); i++) {
+                            if (list.charAt(i) == target) {
+                                found++;
+                                if (found == needRemove) {
+                                    index = i;
+                                    break;
+                                }
+                            }
+                        }
+                        if (index != -1) {
+                            list = list.substring(index + 1);
+                        }
                     }
+
+                    tikTokViewHistory.setList_id(list + newTask);
                     tikTokViewHistory.setUpdate_time(System.currentTimeMillis());
                     tikTokViewHistoryRepository.save(tikTokViewHistory);
                 }else{

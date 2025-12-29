@@ -51,6 +51,8 @@ public class TiktokTask {
     @Autowired
     private TikTokCommentHistoryRepository tikTokCommentHistoryRepository;
     @Autowired
+    private TikTokViewHistoryRepository tikTokViewHistoryRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private DataCommentRepository dataCommentRepository;
@@ -1199,17 +1201,17 @@ public class TiktokTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
-
+            String list_History=tikTokViewHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,"",orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("tiktok","view",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
                 if(orderRunning==null){
                     if(ran.nextInt(100)<50){
                         return tiktok_follower_view(account_id,mode_,device);
