@@ -348,11 +348,13 @@ public class TaskController {
             }
             //changer profile  khi du thoi gian hoạt động
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
-                accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                     entityManager.clear();
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
+
+                    accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
+
                     if(mode.getProfile_reboot()){
                         profileTask.setReboot(1);
                         profileTaskRepository.save(profileTask);
@@ -369,6 +371,7 @@ public class TaskController {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(device_id.trim());
                     entityManager.clear();
                     profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                    accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
                 }
             }else if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&mode.getMode().contains("dev")) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(device_id.trim());
