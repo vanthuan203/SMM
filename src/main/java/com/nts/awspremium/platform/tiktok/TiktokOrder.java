@@ -657,7 +657,7 @@ public class TiktokOrder {
                 orderRunning.setThread(service.getThread());
                 orderRunning.setThread_set(service.getThread());
             }else{
-                Integer threads=(int)(index*service.getThread());
+                Integer threads=(int)(index*service.getThread())+1;
                 if(threads>7*service.getThread()){
                         threads=7*service.getThread();
                 }
