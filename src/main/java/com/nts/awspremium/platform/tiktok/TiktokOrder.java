@@ -652,14 +652,14 @@ public class TiktokOrder {
             }else{
                 orderRunning.setStart_time(0L);
             }
-            Float index=data.getQuantity()/1000F;
+            Float index=data.getQuantity()/2000F;
             if(index/service.getThread()<=1){
                 orderRunning.setThread(service.getThread());
                 orderRunning.setThread_set(service.getThread());
             }else{
                 Integer threads=(int)(index*service.getThread());
                 if(threads>7*service.getThread()){
-                    threads=7*service.getThread();
+                        threads=7*service.getThread();
                 }
                 orderRunning.setThread(threads);
                 orderRunning.setThread_set(threads);
