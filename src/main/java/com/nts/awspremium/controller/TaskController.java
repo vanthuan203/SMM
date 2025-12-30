@@ -1022,7 +1022,7 @@ public class TaskController {
                 profileTaskRepository.save(profileTask);
             }
 
-            if(accountProfile_Task!=null){
+            if(profileTask.getPlatform().equals("tiktok")&&accountProfile_Task!=null&&accountProfile_Task.getLive()==1){
                 if(accountProfile_Task.getAvatar()==0 && accountProfile_Task.getLogin_time()!=0 && platform_Check.getChange_info()==1 &&
                         (System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=platform_Check.getChanger_time()&&
                         (System.currentTimeMillis()-accountProfile_Task.getChanged_time())/1000/60/60>=6){ // add_recovery_mail
