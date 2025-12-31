@@ -3,14 +3,8 @@ package com.nts.awspremium.controller;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.MailApi;
 import com.nts.awspremium.TikTokApi;
-import com.nts.awspremium.model.Balance;
-import com.nts.awspremium.model.GoogleKey;
-import com.nts.awspremium.model.LogError;
-import com.nts.awspremium.model.User;
-import com.nts.awspremium.repositories.BalanceRepository;
-import com.nts.awspremium.repositories.GoogleKeyRepository;
-import com.nts.awspremium.repositories.LogErrorRepository;
-import com.nts.awspremium.repositories.UserRepository;
+import com.nts.awspremium.model.*;
+import com.nts.awspremium.repositories.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +22,9 @@ import java.util.stream.Collectors;
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private MicrosoftMailRepository microsoftMailRepository;
     @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
@@ -173,7 +170,21 @@ public class UserController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            String code= MailApi.getCode(account.get("email").toString().trim(),account.get("password").toString().trim());
+            String code=null;
+            if(account.get("email").toString().contains("@outlook") || account.get("email").toString().contains("@hotmail")
+                    || account.get("email").toString().contains("@live") || account.get("email").toString().contains("@msn")){
+                MicrosoftMail mail=microsoftMailRepository.get_Mail_By_Username(account.get("email").toString().trim());
+                if(mail!=null){
+                    code= MailApi.getCodeMailMicrosoft(mail);
+                }else{
+                    resp.put("status", false);
+                    data.put("error", "mail không có API");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }else{
+                code= MailApi.getCode(account.get("email").toString().trim(),account.get("password").toString().trim());
+            }
             if(code!=null){
                 if(code.matches("\\d+")){
                     resp.put("status", true);

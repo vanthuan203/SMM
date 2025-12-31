@@ -1,11 +1,14 @@
 package com.nts.awspremium;
 
 import com.google.gson.JsonObject;
+import com.nts.awspremium.model.MicrosoftMail;
+import com.nts.awspremium.repositories.MicrosoftMailRepository;
 import okhttp3.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -15,7 +18,6 @@ import java.util.regex.Pattern;
 
 
 public class MailApi {
-
 
       public static Boolean createMail(String mail){
             try {
@@ -122,6 +124,93 @@ public class MailApi {
 
     }
 
+    public static String getTokenMailMicrosoft(MicrosoftMail mail){
+        try {
+
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+            RequestBody body = new FormBody.Builder()
+                    .add("client_id", mail.getClient_id().trim())
+                    .add("grant_type", "refresh_token")
+                    .add("refresh_token", mail.getRefresh_token1().trim())
+                    .add("scope", "https://graph.microsoft.com/.default")
+                    .build();
+            OkHttpClient client = new OkHttpClient();
+
+            Request request = new Request.Builder()
+                    .url("https://login.microsoftonline.com/common/oauth2/v2.0/token")
+                    .post(body)
+                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson = response.body().string();
+                response.body().close();
+                Object obj = new JSONParser().parse(resultJson);
+                JSONObject jsonObject = (JSONObject) obj;
+                return jsonObject.get("access_token").toString();
+            }else{
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static String getMessagesMicrosoft(String token){
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=10&$select=id,from,receivedDateTime")
+                    .addHeader("Authorization", "Bearer "+token.trim()).get()
+                    .build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson = response.body().string();
+                response.body().close();
+                Object obj = new JSONParser().parse(resultJson);
+                JSONObject jsonObject = (JSONObject) obj;
+                JSONArray messages = (JSONArray) jsonObject.get("value");
+
+                String targetAddress = "noreply@account.tiktok.com";
+                long now = System.currentTimeMillis();
+                long limitMillis = now - 48 * 60 * 1000; // 15 phút
+                for (int i = 0; i < messages.size(); i++) {
+                    JSONObject msg = (JSONObject) messages.get(i);
+                    String createdAtStr = msg.get("receivedDateTime").toString();  // ví dụ: 2025-11-14T12:57:45+00:00
+
+                    // Parse ISO 8601
+                    Instant createdInstant = Instant.parse(createdAtStr.replace("+00:00", "Z"));
+                    long createdMillis = createdInstant.toEpochMilli();
+
+                    // Check điều kiện trong 15 phút
+                    if (createdMillis < limitMillis) {
+                        continue;
+                    }
+                    String fromAddress = ((JSONObject)((JSONObject)msg.get("from"))
+                            .get("emailAddress"))
+                            .get("address")
+                            .toString();
+
+                    if (fromAddress.equalsIgnoreCase(targetAddress)) {
+                        return msg.get("id").toString();
+                    }
+                }
+            }else{
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
     public static String getMessages(String token){
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -204,6 +293,49 @@ public class MailApi {
                 }
             }else{
                 return "Sai email/password";
+            }
+
+        } catch (IOException e) {
+            return null;
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static String getCodeMailMicrosoft(MicrosoftMail mail){
+        try {
+            String token =getTokenMailMicrosoft(mail);
+            if(token!=null){
+                String id=getMessagesMicrosoft(token);
+                if(id!=null){
+                    OkHttpClient client = new OkHttpClient().newBuilder()
+                            .build();
+                    Request request = new Request.Builder()
+                            .url("https://graph.microsoft.com/v1.0/me/messages/"+id.trim())
+                            .addHeader("Authorization", "Bearer "+token.trim())
+                            .get()
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    if(response.isSuccessful()){
+                        String resultJson = response.body().string();
+                        response.body().close();
+                        Object obj = new JSONParser().parse(resultJson);
+                        JSONObject jsonObject = (JSONObject) obj;
+                        Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
+                        Matcher matcher = pattern.matcher(jsonObject.get("bodyPreview").toString());
+                        if (matcher.find()) {
+                            return matcher.group();  // trả về mã ví dụ "851752"
+                        }
+                        return "Không lấy đc code! Thử lại";
+                    }else{
+                        return null;
+                    }
+                }else{
+                    return "Không có message trong 48h gần nhất! Thử lại";
+                }
+            }else{
+                return "Sai Authorization";
             }
 
         } catch (IOException e) {

@@ -49,7 +49,8 @@ public class SetupController {
 
     @Autowired
     private OrderRunningRepository orderRunningRepository;
-
+    @Autowired
+    private MicrosoftMailRepository microsoftMailRepository;
     @Autowired
     private AccountNameRepository accountNameRepository;
 
@@ -564,7 +565,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") String uuid) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            System.out.println(TikTokApi.checkUsernameNickname(uuid,2));
+            System.out.println(MailApi.getCodeMailMicrosoft(microsoftMailRepository.get_Mail_By_AccountId()));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
