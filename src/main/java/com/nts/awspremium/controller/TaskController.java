@@ -565,7 +565,7 @@ public class TaskController {
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
                         accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
-                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),7)==0&& // check 1 profile 1 gmail
+                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),14)==0&& // check 1 profile 1 gmail
                         accountProfile==null
                 ){
                     String password="Cmc#";

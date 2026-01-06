@@ -565,7 +565,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") String uuid) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            System.out.println(MailApi.getCodeMailMicrosoft(microsoftMailRepository.get_Mail_By_AccountId()));
+            resp.put("status",MailApi.checkLiveGmail(uuid));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

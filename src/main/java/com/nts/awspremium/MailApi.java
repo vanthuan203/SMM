@@ -1,6 +1,8 @@
 package com.nts.awspremium;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.nts.awspremium.model.MicrosoftMail;
 import com.nts.awspremium.repositories.MicrosoftMailRepository;
 import okhttp3.*;
@@ -32,6 +34,7 @@ public class MailApi {
                 JSONObject jsonObject = (JSONObject) obj;
                 return Boolean.parseBoolean(jsonObject.get("success").toString());
             }else{
+                response.body().close();
                 return false;
             }
         } catch (IOException | ParseException e) {
@@ -58,6 +61,7 @@ public class MailApi {
                           return null;
                       }
                   }else{
+                      response.body().close();
                       return null;
                   }
               } catch (IOException | ParseException e) {
@@ -84,6 +88,7 @@ public class MailApi {
                 JSONArray data = (JSONArray) jsonObject.get("data");
                 return data;
             }else{
+                response.body().close();
                 return null;
             }
         } catch (IOException | ParseException e) {
@@ -114,6 +119,7 @@ public class MailApi {
                 JSONObject jsonObject = (JSONObject) obj;
                 return jsonObject.get("token").toString();
             }else{
+                response.body().close();
                 return null;
             }
         } catch (IOException e) {
@@ -123,6 +129,48 @@ public class MailApi {
         }
 
     }
+
+
+    public static String checkLiveGmail(String mail){
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("application/json");
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("api_key", "29d01e61bd90b602b687ede8eb32c4fd");
+            jsonBody.put("fastCheck", false);
+
+            JSONArray emails = new JSONArray();
+            emails.add(mail.trim());
+            jsonBody.put("emails", emails);
+            RequestBody body = RequestBody.create(mediaType, jsonBody.toString());
+            Request request = new Request.Builder()
+                    .url("https://checkmail.live/check/")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson = response.body().string();
+                response.body().close();
+                JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+                JsonArray data = jsonObject.getAsJsonArray("data");
+                if (data != null && data.size() > 0) {
+                    JsonObject firstChoice = data.get(0).getAsJsonObject();
+                    return firstChoice.get("status").getAsString().toLowerCase();
+                }else {
+                    return  null;
+                }
+            }else{
+                response.body().close();
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+
+    }
+
 
     public static String getTokenMailMicrosoft(MicrosoftMail mail){
         try {
@@ -150,6 +198,7 @@ public class MailApi {
                 JSONObject jsonObject = (JSONObject) obj;
                 return jsonObject.get("access_token").toString();
             }else{
+                response.body().close();
                 return null;
             }
         } catch (IOException e) {
@@ -165,7 +214,7 @@ public class MailApi {
             OkHttpClient client = new OkHttpClient().newBuilder()
                     .build();
             Request request = new Request.Builder()
-                    .url("https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=10&$select=id,from,receivedDateTime")
+                    .url("https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$top=10&$select=id,from,bodyPreview,receivedDateTime")
                     .addHeader("Authorization", "Bearer "+token.trim()).get()
                     .build();
             Response response = client.newCall(request).execute();
@@ -176,9 +225,10 @@ public class MailApi {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONArray messages = (JSONArray) jsonObject.get("value");
 
-                String targetAddress = "noreply@account.tiktok.com";
+                String targetAddress1 = "noreply@account.tiktok.com";
+                String targetAddress2 = "register@account.tiktok.com";
                 long now = System.currentTimeMillis();
-                long limitMillis = now - 48 * 60 * 1000; // 15 phút
+                long limitMillis = now - 48 * 60 * 60 * 1000; // 15 phút
                 for (int i = 0; i < messages.size(); i++) {
                     JSONObject msg = (JSONObject) messages.get(i);
                     String createdAtStr = msg.get("receivedDateTime").toString();  // ví dụ: 2025-11-14T12:57:45+00:00
@@ -196,11 +246,18 @@ public class MailApi {
                             .get("address")
                             .toString();
 
-                    if (fromAddress.equalsIgnoreCase(targetAddress)) {
-                        return msg.get("id").toString();
+                    if (fromAddress.equalsIgnoreCase(targetAddress1) || fromAddress.equalsIgnoreCase(targetAddress2)) {
+                        Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
+                        Matcher matcher = pattern.matcher(msg.get("bodyPreview").toString());
+                        if (matcher.find()) {
+                            return msg.get("id").toString();
+                        }else{
+                            continue;
+                        }
                     }
                 }
             }else{
+                response.body().close();
                 return null;
             }
         } catch (IOException e) {
@@ -227,9 +284,10 @@ public class MailApi {
                 JSONObject jsonObject = (JSONObject) obj;
                 JSONArray messages = (JSONArray) jsonObject.get("hydra:member");
 
-                String targetAddress = "noreply@account.tiktok.com";
+                String targetAddress1 = "noreply@account.tiktok.com";
+                String targetAddress2 = "register@account.tiktok.com";
                 long now = System.currentTimeMillis();
-                long limitMillis = now - 48 * 60 * 1000; // 15 phút
+                long limitMillis = now -  48 * 60 * 60 * 1000 ; // 15 phút
                 for (int i = 0; i < messages.size(); i++) {
                     JSONObject msg = (JSONObject) messages.get(i);
                     String createdAtStr = msg.get("createdAt").toString();  // ví dụ: 2025-11-14T12:57:45+00:00
@@ -245,11 +303,12 @@ public class MailApi {
                     JSONObject from = (JSONObject) msg.get("from");
                     String fromAddress = from.get("address").toString();
 
-                    if (fromAddress.equalsIgnoreCase(targetAddress)) {
+                    if (fromAddress.equalsIgnoreCase(targetAddress1) || fromAddress.equalsIgnoreCase(targetAddress2)) {
                         return msg.get("id").toString();
                     }
                 }
             }else{
+                response.body().close();
                 return null;
             }
         } catch (IOException e) {
@@ -286,6 +345,7 @@ public class MailApi {
                         }
                         return "Không lấy đc code! Thử lại";
                     }else{
+                        response.body().close();
                         return null;
                     }
                 }else{
@@ -329,6 +389,7 @@ public class MailApi {
                         }
                         return "Không lấy đc code! Thử lại";
                     }else{
+                        response.body().close();
                         return null;
                     }
                 }else{
