@@ -76,10 +76,10 @@ public class TikTokApi {
 
         try {
             Random random = new Random();
-            return random.nextInt(10)<=5?"199c73e9e3msh0138b95e7755c65p1c4d6ajsn9330b60a69c8":"4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a";
+            return random.nextInt(10)<=5?"199c73e9e3msh0138b95e7755c65p1c4d6ajsn9330b60a69c8":"199c73e9e3msh0138b95e7755c65p1c4d6ajsn9330b60a69c8";
 
         } catch (Exception e) {
-            return "4010c38bfamsh398346af7e9f654p1492c2jsn20af8f084b5a";
+            return "199c73e9e3msh0138b95e7755c65p1c4d6ajsn9330b60a69c8";
         }
     }
 
@@ -95,8 +95,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -157,8 +157,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -204,8 +204,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -251,8 +251,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+uuid)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?user_id="+uuid)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -288,8 +288,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+uuid)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?user_id="+uuid)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -330,8 +330,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -366,8 +366,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -402,8 +402,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -437,8 +437,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -468,8 +468,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?user_id="+user_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?user_id="+user_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -513,8 +513,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -558,8 +558,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/info?unique_id="+tiktok_id)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/info?unique_id="+tiktok_id)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -680,8 +680,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -715,8 +715,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -750,8 +750,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -784,8 +784,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -814,8 +814,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/posts?unique_id="+tiktok_id+"&count="+count)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/posts?unique_id="+tiktok_id+"&count="+count)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -851,8 +851,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/posts?user_id="+user_id+"&count="+count)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/posts?user_id="+user_id+"&count="+count)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -885,8 +885,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/user/search?keywords="+keyword+"&count="+count)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/user/search?keywords="+keyword+"&count="+count)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -937,8 +937,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();
@@ -971,8 +971,8 @@ public class TikTokApi {
                     .build();
             MediaType mediaType = MediaType.parse("text/plain");
             Request request = new Request.Builder()
-                    .url("https://tiktok-video-feature-summary.p.rapidapi.com/?url="+link)
-                    .addHeader("x-rapidapi-host", "tiktok-video-feature-summary.p.rapidapi.com")
+                    .url("https://tiktok-scraper7.p.rapidapi.com/?url="+link)
+                    .addHeader("x-rapidapi-host", "tiktok-scraper7.p.rapidapi.com")
                     .addHeader("x-rapidapi-key", getKey())
                     .get().build();
             Response response = client.newCall(request).execute();

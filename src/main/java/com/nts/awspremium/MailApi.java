@@ -304,7 +304,14 @@ public class MailApi {
                     String fromAddress = from.get("address").toString();
 
                     if (fromAddress.equalsIgnoreCase(targetAddress1) || fromAddress.equalsIgnoreCase(targetAddress2)) {
-                        return msg.get("id").toString();
+
+                        Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
+                        Matcher matcher = pattern.matcher(msg.get("intro").toString());
+                        if (matcher.find()) {
+                            return msg.get("id").toString();
+                        }else{
+                            continue;
+                        }
                     }
                 }
             }else{
