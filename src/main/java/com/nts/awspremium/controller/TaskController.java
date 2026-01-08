@@ -650,11 +650,6 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }
-            }else{
-                resp.put("status", false);
-                data.put("message", "Không thực hiện nhiệm vụ");
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
 
 
