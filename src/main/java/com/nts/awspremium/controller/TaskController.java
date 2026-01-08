@@ -320,7 +320,7 @@ public class TaskController {
             }
             //check clear data
             if(profileTask.getClear_data()==1){
-                accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());
+                accountProfileRepository.update_Live_Tiktok_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "clear_data");
@@ -353,7 +353,7 @@ public class TaskController {
                     entityManager.clear();
                     profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask.getProfile_id());
 
-                    accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
+                    accountProfileRepository.update_Live_Tiktok_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
 
                     if(mode.getProfile_reboot()){
                         profileTask.setReboot(1);
@@ -371,7 +371,7 @@ public class TaskController {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(device_id.trim());
                     entityManager.clear();
                     profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
-                    accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
+                    accountProfileRepository.update_Live_Tiktok_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
                 }
             }else if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&mode.getMode().contains("dev")) {
                 profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(device_id.trim());
@@ -1581,7 +1581,7 @@ public class TaskController {
             }
             //check clear data
             if(profileTask.getClear_data()==1){
-                accountProfileRepository.update_Live_By_ProfileId(profileTask.getProfile_id().trim());
+                accountProfileRepository.update_Live_Tiktok_By_ProfileId(profileTask.getProfile_id().trim());
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "clear_data");

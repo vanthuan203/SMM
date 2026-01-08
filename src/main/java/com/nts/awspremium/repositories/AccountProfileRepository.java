@@ -128,8 +128,8 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
 
     @Modifying
     @Transactional
-    @Query(value = "update  account_profile set live=0 where profile_id=?1 and platform='tiktok' and live=1",nativeQuery = true)
-    public Integer update_Live_By_ProfileId(String profile_id);
+    @Query(value = "update  account_profile set live=0,last_time=0 where profile_id=?1 and platform='tiktok' and live=1",nativeQuery = true)
+    public Integer update_Live_Tiktok_By_ProfileId(String profile_id);
 
     @Modifying
     @Transactional
