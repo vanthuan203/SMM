@@ -1184,7 +1184,7 @@ public class TaskController {
                     continue;
                 }
                 while(arrTask.remove(task)) {}
-                if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1) && accountProfileRepository.check_Count_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")>0){
+                if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1) && accountProfileRepository.check_Count_Account_Logged_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")>0){
                     if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }

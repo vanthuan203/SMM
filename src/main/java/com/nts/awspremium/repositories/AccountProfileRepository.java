@@ -50,6 +50,9 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2  and live>=0",nativeQuery = true) //and account_id not like '%@gmail%'
     public Integer check_Count_AccountLive_By_ProfileId_And_Platform(String profile_id,String platform);
 
+    @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2  and login_time>0",nativeQuery = true) //and account_id not like '%@gmail%'
+    public Integer check_Count_Account_Logged_By_ProfileId_And_Platform(String profile_id,String platform);
+
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2  and live=1",nativeQuery = true) //and account_id not like '%@gmail%'
     public Integer check_Count_AccountLive1_By_ProfileId_And_Platform(String profile_id,String platform);
 
