@@ -513,12 +513,15 @@ public class TaskController {
                             return new ResponseEntity<>(resp, HttpStatus.OK);
                         }
 
-                    }else{
+                    }
+                    /*
+                    else{
                         resp.put("status", false);
                         data.put("message", "Không thực hiện nhiệm vụ");
                         resp.put("data", data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
+                     */
                 }else if((System.currentTimeMillis()-accountProfile_Live0.getLast_time())/1000/60>=15){
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
@@ -544,15 +547,19 @@ public class TaskController {
                     data.put("account_list",accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else{
+                }
+                /*
+                else{
                     resp.put("status", false);
                     data.put("message", "Không thực hiện nhiệm vụ");
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
+                 */
             }else if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
-                if(historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=15 && accountProfile==null){
+                if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=15){
+                    /*
                     profileTask.setRegister_index(profileTask.getRegister_index()+1);
                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                     profileTaskRepository.save(profileTask);
@@ -561,13 +568,13 @@ public class TaskController {
                     data.put("message", "Không thực hiện nhiệm vụ");
                     resp.put("data", data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
-                }
-                if(historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getRegister_time())==0&&
+
+                     */
+                }else if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_DeviceId("youtube",device.getDevice_id().trim()+"%",platform_Youtube_Check.getRegister_time())==0&&
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
                         accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
-                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),14)==0&& // check 1 profile 1 gmail
-                        accountProfile==null
+                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),14)==0
                 ){
                     String password="Cmc#";
                     String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
@@ -632,6 +639,10 @@ public class TaskController {
                         accountProfileRepository.delete(accountProfile);
                     }else{
 
+                        profileTask.setRegister_index(profileTask.getRegister_index()+1);
+                        profileTask.setRequest_index(profileTask.getRequest_index()+1);
+                        profileTaskRepository.save(profileTask);
+
                         //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                         resp.put("status", true);
@@ -652,14 +663,18 @@ public class TaskController {
                     }
                 }
             }
-
-            if(profileTask.getGoogle_time()==0 &&accountProfileRepository.check_Count_Account_Logged_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")>0){
+            boolean hasLoggedYoutube =accountProfileRepository.check_Count_AccountLive1_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")>0;
+            if(profileTask.getGoogle_time()==0 && hasLoggedYoutube){
                 profileTask.setGoogle_time(System.currentTimeMillis());
-            }else{
+            }else if(!hasLoggedYoutube){
                 profileTask.setGoogle_time(0L);
+                device.setUpdate_time(System.currentTimeMillis() + 300 * 1000);
+                deviceRepository.save(device);
+                resp.put("status", false);
+                data.put("message", "Không thực hiện nhiệm vụ");
+                resp.put("data", data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-
-
             // check tài khoản các nền tảng khác
             if(profileTask.getPlatform().length()==0){
                 profileTaskRepository.reset_Thread_Index_By_DeviceId(device_id.trim());
@@ -962,7 +977,7 @@ public class TaskController {
             }
 
             AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
-            if((accountProfile_Task==null)&&profileTask.getPlatform().equals("tiktok")&&profileTask.getGoogle_time()>0){
+            if((accountProfile_Task==null)&&profileTask.getPlatform().equals("tiktok")){
                 profileTask.setAccount_id(profileTask.getProfile_id().trim());
                 profileTask.setTask_index(profileTask.getTask_index()+1);
                 profileTaskRepository.save(profileTask);
