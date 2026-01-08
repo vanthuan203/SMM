@@ -73,6 +73,12 @@ public class RunOrderRunning {
                                 throw new RuntimeException(e);
                             }
                             orderRunningController.update_Running_Order_Pending();
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            orderRunningController.check_Valid_OrderRunning();
                         } catch (Exception e) {
                             continue;
                         }

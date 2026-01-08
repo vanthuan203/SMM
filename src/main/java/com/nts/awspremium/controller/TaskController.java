@@ -551,7 +551,7 @@ public class TaskController {
                 }
             }else if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
-                if(historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=5 && accountProfile==null){
+                if(historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=15 && accountProfile==null){
                     profileTask.setRegister_index(profileTask.getRegister_index()+1);
                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                     profileTaskRepository.save(profileTask);
@@ -651,7 +651,6 @@ public class TaskController {
                     }
                 }
             }
-
 
             if(profileTask.getGoogle_time()==0){
                 profileTask.setGoogle_time(System.currentTimeMillis());
