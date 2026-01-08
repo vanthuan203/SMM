@@ -432,6 +432,7 @@ public class TaskController {
 
 
             //check acc youtube
+            AccountProfile accountYoutube=null;
             Platform platform_Youtube_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
             if(accountProfileRepository.check_Count_AccountLive1_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")<platform_Youtube_Check.getMax_account()&&
             platform_Youtube_Check.getLogin_account()==1){ //check xem đủ tài khoản youtbe live=1 chưa
@@ -1183,7 +1184,7 @@ public class TaskController {
                     continue;
                 }
                 while(arrTask.remove(task)) {}
-                if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1)){
+                if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1) && accountProfileRepository.check_Count_AccountLive_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")>0){
                     if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
