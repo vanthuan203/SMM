@@ -2951,7 +2951,7 @@ public class TaskController {
 
                             Boolean checkLive=updateTaskRequest.getTask_key().trim().startsWith("@") && TikTokApi.checkLive(updateTaskRequest.getTask_key().trim().replace("@",""));
 
-                            String uniqueId=account!=null?(account.getUuid().length()>5?TikTokApi.checkUsername(account.getUuid(),2):"NULL-LL"):"TRUE";
+                            String uniqueId=account!=null?(account.getUuid().length()>5?TikTokApi.checkUsername(account.getUuid(),2):"NULL-LL"): updateTaskRequest.getTask_key().trim();
 
                             if(updateTaskRequest.getPlatform().equals("tiktok")&& checkLive && updateTaskRequest.getTask_key().trim().contains(uniqueId) ){
                                 if(accountProfile.getLogin_time()==0){
