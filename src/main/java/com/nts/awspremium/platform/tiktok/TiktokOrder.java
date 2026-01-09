@@ -185,6 +185,11 @@ public class TiktokOrder {
                 link=data.getLink().trim();
             }
 
+            if(!TikTokApi.checkGeoBlock(link)){
+                resp.put("error", "This video is not available in some countries or regions OR This video cannot be found");
+                return resp;
+            }
+
             JsonObject infoVideo=TikTokApi.getInfoVideo(link);
             if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
@@ -291,7 +296,10 @@ public class TiktokOrder {
                 }
                 link=data.getLink().trim();
             }
-
+            if(!TikTokApi.checkGeoBlock(link)){
+                resp.put("error", "This video is not available in some countries or regions OR This video cannot be found");
+                return resp;
+            }
             JsonObject infoVideo=TikTokApi.getInfoVideo(link);
             if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
@@ -399,7 +407,10 @@ public class TiktokOrder {
                 }
                 link=data.getLink().trim();
             }
-
+            if(!TikTokApi.checkGeoBlock(link)){
+                resp.put("error", "This video is not available in some countries or regions OR This video cannot be found");
+                return resp;
+            }
             JsonObject infoVideo=TikTokApi.getInfoVideo(link);
             if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
@@ -506,7 +517,10 @@ public class TiktokOrder {
                 }
                 link=data.getLink().trim();
             }
-
+            if(!TikTokApi.checkGeoBlock(link)){
+                resp.put("error", "This video is not available in some countries or regions OR This video cannot be found");
+                return resp;
+            }
             JsonObject infoVideo=TikTokApi.getInfoVideo(link);
             if(infoVideo==null){
                 resp.put("error", "This video cannot be found");
@@ -609,7 +623,10 @@ public class TiktokOrder {
                 }
                 link=data.getLink().trim();
             }
-
+            if(!TikTokApi.checkGeoBlock(link)){
+                resp.put("error", "This video is not available in some countries or regions OR This video cannot be found");
+                return resp;
+            }
             JsonObject infoVideo=TikTokApi.getInfoVideo(link);
             if(infoVideo==null){
                 resp.put("error", "This video cannot be found");

@@ -860,15 +860,21 @@ public class OrderRunningController {
                             if(likeCount==-1){
                                 delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Video is currently unavailable");
                             }else{
-                                JsonObject infoVideo=TikTokApi.getInfoVideo(orderRunningList.get(i).getOrder_link());
-                                if(infoVideo!=null){
-                                    orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,infoVideo.get("author").getAsJsonObject().get("nickname").getAsString(),orderRunningList.get(i).getOrder_id());
+                                if(!TikTokApi.checkGeoBlock(orderRunningList.get(i).getOrder_link())){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This video isn’t available in your country or region");
                                 }else{
-                                    orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                    JsonObject infoVideo=TikTokApi.getInfoVideo(orderRunningList.get(i).getOrder_link());
+                                    if(infoVideo!=null){
+                                        orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,infoVideo.get("author").getAsJsonObject().get("nickname").getAsString(),orderRunningList.get(i).getOrder_id());
+                                    }else{
+                                        orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
+                                    }
                                 }
+                                /*
                                 if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunningList.get(i).getOrder_id())>0&&orderRunningList.get(i).getService().getTask().equals("view")){
                                     delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This video isn’t available in your country or region");
                                 }
+                                 */
                             }
                         }
                     }
