@@ -508,10 +508,12 @@ public class TaskController {
                         }else{
                             profileTask.setGet_account_time(System.currentTimeMillis());
                             profileTaskRepository.save(profileTask);
+                             /*
                             resp.put("status", false);
                             data.put("message", "Không thực hiện nhiệm vụ");
                             resp.put("data", data);
                             return new ResponseEntity<>(resp, HttpStatus.OK);
+                              */
                         }
 
                     }
@@ -668,6 +670,7 @@ public class TaskController {
                 profileTask.setGoogle_time(System.currentTimeMillis());
             }else if(!hasLoggedYoutube){
                 profileTask.setGoogle_time(0L);
+                profileTaskRepository.save(profileTask);
                 device.setUpdate_time(System.currentTimeMillis() + 300 * 1000);
                 deviceRepository.save(device);
                 resp.put("status", false);
