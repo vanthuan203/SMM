@@ -434,8 +434,9 @@ public class TaskController {
             //check acc youtube
             AccountProfile accountYoutube=null;
             Platform platform_Youtube_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
-            if(accountProfileRepository.check_Count_AccountLive1_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")<platform_Youtube_Check.getMax_account()&&
-            platform_Youtube_Check.getLogin_account()==1){ //check xem đủ tài khoản youtbe live=1 chưa
+            if(platform_Youtube_Check.getLogin_account()==1 &&
+                    accountProfileRepository.check_Count_AccountLive1_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube")<platform_Youtube_Check.getMax_account() //check xem đủ tài khoản youtbe live=1 chưa
+            ){
                 AccountProfile accountProfile_Live0=accountProfileRepository.get_AccountLive0_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
                 if(accountProfile_Live0==null){ // If account null or not live then get new acc
                     if(platform_Youtube_Check.getLogin_account()==1&&
@@ -556,7 +557,8 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
                  */
-            }else if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
+            }
+            if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
                 if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=15){
                     profileTask.setRegister_index(profileTask.getRegister_index()+1);
@@ -2926,17 +2928,45 @@ public class TaskController {
                     if(accountProfile!=null){
                         if(updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
                             accountProfile.setLive(0);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
                         }else if(!updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
                             accountProfile.setLive(-1);
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
+                        }else if(updateTaskRequest.getAccount_id().trim().contains("@")&&updateTaskRequest.getPlatform().equals("youtube")){
+                            if(!MailApi.checkStatusGmail(updateTaskRequest.getAccount_id().trim())) {
+                                Account accountPlatform = accountRepository.get_Account_By_Account_id(updateTaskRequest.getAccount_id().trim() + "|" + updateTaskRequest.getPlatform());
+                                if (accountPlatform != null) {
+                                    if (accountProfile.getLogin_time() != 0) {
+                                        accountPlatform.setRunning(0);
+                                        accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                        accountPlatform.setDie_time(System.currentTimeMillis());
+                                        accountPlatform.setLive(44);
+                                        accountRepository.save(accountPlatform);
+                                    } else {
+                                        accountPlatform.setRunning(0);
+                                        accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                        accountPlatform.setDie_time(System.currentTimeMillis());
+                                        accountPlatform.setDevice_id("");
+                                        accountPlatform.setProfile_id("");
+                                        accountPlatform.setLive(44);
+                                        accountRepository.save(accountPlatform);
+                                    }
+                                }
+                                if(accountProfile!=null){
+                                    accountProfileRepository.delete(accountProfile);
+                                }
+                            }
                         }else{
                             if(updateTaskRequest.getTask().equals("register")){
                                 accountProfile.setLive(-1);
                             }else{
                                 accountProfile.setLive(0);
                             }
+                            accountProfile.setUpdate_time(System.currentTimeMillis());
+                            accountProfileRepository.save(accountProfile);
                         }
-                        accountProfile.setUpdate_time(System.currentTimeMillis());
-                        accountProfileRepository.save(accountProfile);
                     }
                     /*
                     if(updateTaskRequest.getIsLogin()==0){

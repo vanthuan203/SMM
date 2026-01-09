@@ -171,6 +171,50 @@ public class MailApi {
 
     }
 
+    public static Boolean checkStatusGmail(String mail){
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            MediaType mediaType = MediaType.parse("application/json");
+            JSONObject jsonBody = new JSONObject();
+            jsonBody.put("api_key", "29d01e61bd90b602b687ede8eb32c4fd");
+            jsonBody.put("fastCheck", true);
+
+            JSONArray emails = new JSONArray();
+            emails.add(mail.trim());
+            jsonBody.put("emails", emails);
+            RequestBody body = RequestBody.create(mediaType, jsonBody.toString());
+            Request request = new Request.Builder()
+                    .url("https://checkmail.live/check/")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson = response.body().string();
+                response.body().close();
+                JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+                JsonArray data = jsonObject.getAsJsonArray("data");
+                if (data != null && data.size() > 0) {
+                    JsonObject firstChoice = data.get(0).getAsJsonObject();
+                    if(firstChoice.get("status").getAsString().toLowerCase().equals("live")){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                }else {
+                    return  true;
+                }
+            }else{
+                response.body().close();
+                return true;
+            }
+        } catch (IOException e) {
+            return true;
+        }
+
+    }
+
 
     public static String getTokenMailMicrosoft(MicrosoftMail mail){
         try {
