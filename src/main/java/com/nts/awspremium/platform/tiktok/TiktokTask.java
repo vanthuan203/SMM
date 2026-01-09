@@ -1230,7 +1230,7 @@ public class TiktokTask {
                 }
             }
             if (orderRunning!=null) {
-                Thread.sleep(300+ran.nextInt(300));
+                Thread.sleep(150+ran.nextInt(250));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         if(ran.nextInt(100)<10){
