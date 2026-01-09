@@ -127,7 +127,7 @@ public class TaskController {
     private OrderThreadCheck orderThreadCheck;
 
     @Autowired
-    private OrderThreadSpeedUpCheck OrderThreadSpeedUpCheck;
+    private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
 
     @Autowired
     private OpenAiKeyRepository openAiKeyRepository;
@@ -1295,14 +1295,16 @@ public class TaskController {
             if(get_task.get("status").equals(true)){
 
                 dataJson= (Map<String, Object>) get_task.get("data");
-
-                Thread.sleep(300+ran.nextInt(500));
-                if(!OrderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
-                    resp.put("status",false);
-                    data.put("message","Không có nhiệm vụ!");
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                if(!dataJson.get("task").toString().equals("view")){
+                    Thread.sleep(300+ran.nextInt(500));
+                    if(!orderThreadCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
+                        resp.put("status",false);
+                        data.put("message","Không có nhiệm vụ!");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
                 }
+                /* 1 ip không cùng làm cùng nv của 1 order running
                 List<String> ip_List=deviceRepository.get_IP_Running_Task_By_OrderId(Long.parseLong(dataJson.get("order_id").toString()));
                 if(ip_List.size()!=0){
                     Set<String> ipSet = new HashSet<>(ip_List);
@@ -1313,6 +1315,7 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }
+                 */
                 if(profileTask.getPlatform().equals("tiktok")&&profileTask.getProfile_id().equals(profileTask.getAccount_id())){
                     dataJson.put("account_id",profileTask.getAccount_id());
                 }else{
@@ -2582,7 +2585,7 @@ public class TaskController {
                 dataJson= (Map<String, Object>) get_task.get("data");
 
                 Thread.sleep(300+ran.nextInt(500));
-                if(!OrderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())){
+                if(!orderThreadCheck.getValue().contains(dataJson.get("order_id").toString())){
                     resp.put("status",false);
                     data.put("message","Không có nhiệm vụ!");
                     resp.put("data",data);
