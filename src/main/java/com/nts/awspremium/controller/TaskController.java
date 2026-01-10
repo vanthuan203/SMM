@@ -674,8 +674,6 @@ public class TaskController {
             if(profileTask.getGoogle_time()==0 && hasLoggedYoutube){
                 profileTask.setGoogle_time(System.currentTimeMillis());
             }else if(!hasLoggedYoutube){
-                profileTask.setGoogle_time(0L);
-                profileTaskRepository.save(profileTask);
                 device.setUpdate_time(System.currentTimeMillis() + 300 * 1000);
                 deviceRepository.save(device);
                 resp.put("status", false);
