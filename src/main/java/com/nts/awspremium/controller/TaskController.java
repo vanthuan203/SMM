@@ -567,8 +567,10 @@ public class TaskController {
             }
             if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
-                if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=15){
-                    profileTask.setRegister_index(profileTask.getRegister_index()+1);
+                if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=25){
+                    if(profileTask.getRequest_index()>0){
+                        profileTask.setRegister_index(profileTask.getRegister_index()+1);
+                    }
                     profileTask.setRequest_index(profileTask.getRequest_index()+1);
                     profileTaskRepository.save(profileTask);
                     /*
@@ -581,7 +583,7 @@ public class TaskController {
                         accountRepository.check_Count_Register_LessDay_By_DeviceId_And_Platform(device.getDevice_id().trim(),"youtube",7)<platform_Youtube_Check.getRegister_limit()&&
                         accountRepository.check_Count_Register_LessDay_By_ProfileId_And_Platform(device.getDevice_id().trim(),"youtube",7)==0&&
                         accountProfileRepository.count_Register_Task_By_Platform_And_DeviceId("youtube",device.getDevice_id()+"%")==0&&
-                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),14)==0
+                        accountProfileRepository.count_Gmail_By_Platform_And_PrfoileId("youtube",profileTask.getProfile_id().trim(),28)==0
                 ){
                     String password="Cmc#";
                     String passrand="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefhijkprstuvwx0123456789";
