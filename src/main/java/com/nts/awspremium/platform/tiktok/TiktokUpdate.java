@@ -90,6 +90,11 @@ public class TiktokUpdate {
                             tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
                             tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
                             tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                        }else{
+                            tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
+                            tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                            tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
+                            tikTokAccountHistoryRepository.save(tikTokAccountHistory);
                         }
                     }else{
                         int following= TikTokApi.getFollowingCount(account_id.trim().replace("|tiktok","").split("@")[1]);
