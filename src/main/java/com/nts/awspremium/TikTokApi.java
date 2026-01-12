@@ -50,7 +50,7 @@ public class TikTokApi {
             JSONObject jsonObject = (JSONObject) obj;
             //System.out.println(jsonObject);
             if(jsonObject.get("sec_uid")==null){
-                return getFollowerCount(tiktok_id,index-1);
+                return getFollowerCountOFF(tiktok_id,index-1);
             }else{
                 request = new Request.Builder().url("https://countik.com/api/userinfo?sec_user_id=" + jsonObject.get("sec_uid").toString()).get().build();
 

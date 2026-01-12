@@ -22,4 +22,7 @@ public class TikTokFollowerHistory {
     private Long update_time;
     @Column(columnDefinition = "integer default 0")
     private Integer following_count=0;
+    @Column(columnDefinition = "integer default -1")
+    private Integer following_realtime=-1;
+
 }

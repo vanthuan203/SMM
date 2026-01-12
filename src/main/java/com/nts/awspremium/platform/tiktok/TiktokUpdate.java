@@ -1,5 +1,6 @@
 package com.nts.awspremium.platform.tiktok;
 
+import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -71,16 +72,35 @@ public class TiktokUpdate {
                 if(success){
                     TikTokFollowerHistory tikTokAccountHistory=tikTokAccountHistoryRepository.get_By_AccountId(account_id.trim());
                     if(tikTokAccountHistory!=null){
-                        tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
-                        tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
-                        tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
-                        tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                        if(tikTokAccountHistory.getFollowing_realtime()==-1){
+                            int following= TikTokApi.getFollowingCount(account_id.trim().replace("|tiktok","").split("@")[1]);
+                            if(following>=0){
+                                tikTokAccountHistory.setFollowing_realtime(following);
+                                tikTokAccountHistory.setFollowing_count(following);
+                            }
+                            tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
+                            tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                            tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                        }else if((System.currentTimeMillis()-tikTokAccountHistory.getUpdate_time())/1000/60/60>=6){
+                            int following= TikTokApi.getFollowingCount(account_id.trim().replace("|tiktok","").split("@")[1]);
+                            if(following>=0){
+                                tikTokAccountHistory.setFollowing_realtime(following);
+                            }
+                            tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
+                            tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
+                            tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
+                            tikTokAccountHistoryRepository.save(tikTokAccountHistory);
+                        }
                     }else{
+                        int following= TikTokApi.getFollowingCount(account_id.trim().replace("|tiktok","").split("@")[1]);
+                        if(following>=0){
+                            tikTokAccountHistory.setFollowing_realtime(following);
+                            tikTokAccountHistory.setFollowing_count(following);
+                        }
                         TikTokFollowerHistory tikTokAccountHistory_New=new TikTokFollowerHistory();
                         tikTokAccountHistory_New.setAccount(accountRepository.get_Account_By_Account_id(account_id.trim()));
                         tikTokAccountHistory_New.setUpdate_time(System.currentTimeMillis());
                         tikTokAccountHistory_New.setList_id(task_key.trim()+"|");
-                        tikTokAccountHistory_New.setFollowing_count(1);
                         tikTokAccountHistoryRepository.save(tikTokAccountHistory_New);
                     }
                     TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
