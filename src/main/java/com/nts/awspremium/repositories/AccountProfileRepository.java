@@ -116,7 +116,7 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform='youtube' and code=?2 limit 1",nativeQuery = true)
     public AccountProfile get_Account_Youtube_By_ProfileId_And_Code(String profile_id,String code);
 
-    @Query(value = "SELECT COALESCE(GROUP_CONCAT(SUBSTRING_INDEX(account_id, '|youtube', 1)),'') FROM account_profile where profile_id=?1 and platform='youtube'",nativeQuery = true)
+    @Query(value = "SELECT COALESCE(GROUP_CONCAT(SUBSTRING_INDEX(account_id, '|youtube', 1)),'') FROM account_profile where profile_id=?1 and live>=0 and platform='youtube'",nativeQuery = true)
     public String get_List_Account_Youtube_By_ProfileId(String profile_id);
 
     @Modifying
@@ -138,6 +138,16 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Transactional
     @Query(value = "update  account_profile set sign_in=1 where profile_id=?1",nativeQuery = true)
     public Integer update_SignIn_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update  account_profile set live=0 where profile_id=?1 and platform='youtube' and live=1",nativeQuery = true)
+    public Integer update_Live0_Youtube_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update  account_profile set live=0 where profile_id=?1 and platform='youtube' and live=1 and account_id in (?2)",nativeQuery = true)
+    public Integer update_Live0_Youtube_By_ProfileId_And_ListAccount(String profile_id, List<String> account_id);
 
 
     @Query(value = "select count(*) from account_profile where profile_id=?1 and platform!='youtube' and live>=0",nativeQuery = true)

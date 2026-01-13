@@ -184,6 +184,7 @@ public class ProfileController {
     private ResponseEntity<Map<String, Object>> update_Account_Profile(@RequestHeader(defaultValue = "") String Authorization,
                                                                  @RequestParam(name = "device_id", required = false, defaultValue = "") String device_id,
                                                                  @RequestParam(name = "profile_id", required = false, defaultValue = "") String profile_id,
+                                                                 @RequestParam(name = "account_sign_out", required = false, defaultValue = "") String account_sign_out,
                                                                  @RequestParam(name = "live", required = false, defaultValue = "-1") Integer live
     ) throws InterruptedException {
         Map<String, Object> resp = new LinkedHashMap<>();
@@ -202,11 +203,23 @@ public class ProfileController {
                 resp.put("data",data);
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
-            AccountProfile accountProfile =accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
-            if(accountProfile!=null){
-                accountProfile.setLive(live);
-                accountProfile.setUpdate_time(System.currentTimeMillis());
-                accountProfileRepository.save(accountProfile);
+            if(account_sign_out.trim().length()>0){
+                List<String> accounts = Arrays.stream(account_sign_out.trim().split(","))
+                        .map(String::trim)
+                        .map(s -> s + "|youtube")
+                        .collect(Collectors.toList());
+                //System.out.println(accounts);
+                accountProfileRepository.update_Live0_Youtube_By_ProfileId_And_ListAccount(device_id.trim()+"_"+profile_id.trim(),accounts);
+            }else{
+                accountProfileRepository.update_Live0_Youtube_By_ProfileId(device_id.trim()+"_"+profile_id.trim());
+                /*
+                AccountProfile accountProfile =accountProfileRepository.get_Account_By_ProfileId_And_Platform(device_id.trim()+"_"+profile_id.trim(),"youtube");
+                if(accountProfile!=null){
+                    accountProfile.setLive(live);
+                    accountProfile.setUpdate_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile);
+                }
+                 */
             }
 
             resp.put("status", true);
