@@ -14,19 +14,36 @@ import java.util.List;
 
 public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long> {
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_By_Task_OFF(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
+    @Query(value = "SELECT o.* FROM order_running o JOIN service s ON s.service_id=o.service_id WHERE o.start_time>0 AND s.platform=?1 AND s.task=?2 AND s.mode=?3 AND INSTR(?4,CONCAT(o.order_key,'|'))=0 AND o.order_id IN (?5) ORDER BY RAND() LIMIT 1", nativeQuery = true)
     public OrderRunning get_Order_Running_By_Task(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2) and INSTR(?3,CONCAT(order_key,'|'))=0 and order_id in (?4) order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_By_Task_No_Mode_OFF(String platform,String task,String list_tiktok_id, List<String> order_id);
+
+    @Query(value = "SELECT o.* FROM order_running o JOIN service s ON s.service_id=o.service_id WHERE o.start_time>0 AND s.platform=?1 AND s.task=?2 AND INSTR(?3,CONCAT(o.order_key,'|'))=0 AND o.order_id IN (?4) ORDER BY RAND() LIMIT 1", nativeQuery = true)
     public OrderRunning get_Order_Running_By_Task_No_Mode(String platform,String task,String list_tiktok_id, List<String> order_id);
 
-    @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and round((UNIX_TIMESTAMP()-update_time/1000)/60)>=5 order by rand() limit 1",nativeQuery = true)
+
+    @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and update_time <= (UNIX_TIMESTAMP() - 5*60) * 1000 order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_By_Task_And_Limit_Time_OFF(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
+
+    @Query(value = "SELECT o.* FROM order_running o JOIN service s ON s.service_id=o.service_id WHERE o.start_time>0 AND s.platform=?1 AND s.task=?2 AND s.mode=?3 AND INSTR(?4,CONCAT(o.order_key,'|'))=0 AND o.order_id IN (?5) AND o.update_time <= (UNIX_TIMESTAMP()-300)*1000 ORDER BY RAND() LIMIT 1", nativeQuery = true)
     public OrderRunning get_Order_Running_By_Task_And_Limit_Time(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
+
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2 and mode=?3) and INSTR(?4,CONCAT(order_key,'|'))=0 and order_id in (?5) and priority>0 order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_Priority_By_Task_OFF(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
+
+    @Query(value = "SELECT o.* FROM order_running o JOIN service s ON s.service_id=o.service_id WHERE o.start_time>0 AND s.platform=?1 AND s.task=?2 AND s.mode=?3 AND INSTR(?4,CONCAT(o.order_key,'|'))=0 AND o.order_id IN (?5) AND o.priority>0 ORDER BY RAND() LIMIT 1", nativeQuery = true)
     public OrderRunning get_Order_Running_Priority_By_Task(String platform,String task,String mode,String list_tiktok_id, List<String> order_id);
 
 
+
     @Query(value = "SELECT * FROM order_running where start_time>0 and service_id in(select service_id from service where platform=?1 and task=?2) and INSTR(?3,CONCAT(order_key,'|'))=0 and order_id in (?4) and priority>0 order by rand() limit 1",nativeQuery = true)
+    public OrderRunning get_Order_Running_Priority_By_Task_No_Mode_OFF(String platform,String task,String list_tiktok_id, List<String> order_id);
+
+    @Query(value = "SELECT o.* FROM order_running o JOIN service s ON s.service_id=o.service_id WHERE o.start_time>0 AND s.platform=?1 AND s.task=?2 AND INSTR(?3,CONCAT(o.order_key,'|'))=0 AND o.order_id IN (?4) AND o.priority>0 ORDER BY RAND() LIMIT 1", nativeQuery = true)
     public OrderRunning get_Order_Running_Priority_By_Task_No_Mode(String platform,String task,String list_tiktok_id, List<String> order_id);
 
 

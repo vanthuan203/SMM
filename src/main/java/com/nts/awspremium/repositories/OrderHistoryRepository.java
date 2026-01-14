@@ -68,7 +68,7 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.refund,o.refund_time,o.refill,o.refill_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task,s.mode from order_history o left join service s on o.service_id=s.service_id\n" +
-            "order by o.end_time desc",nativeQuery = true)
+            "WHERE o.end_time >= (UNIX_TIMESTAMP()-7*86400)*1000 order by o.end_time desc",nativeQuery = true)
     public List<OrderHistoryShow> get_Order_History();
 
 
@@ -77,7 +77,7 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +
             "o.update_time,o.update_current_time,o.refund,o.refund_time,o.refill,o.refill_time,o.charge,o.service_id,s.platform,s.check_count,s.bonus,\n" +
             "s.task,s.mode from order_history o left join service s on o.service_id=s.service_id where  o.username=?1 \n" +
-            "order by o.end_time desc",nativeQuery = true)
+            "WHERE o.end_time >= (UNIX_TIMESTAMP()-7*86400)*1000 order by o.end_time desc",nativeQuery = true)
     public List<OrderHistoryShow> get_Order_History(String username);
 
     @Query(value = "Select o.order_id,o.order_key,o.order_link,o.insert_time,o.start_time,o.end_time,o.cancel,o.note,\n" +
