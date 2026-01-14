@@ -994,30 +994,51 @@ public class TaskController {
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
 
-                //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
-                resp.put("status", true);
-                data.put("platform", profileTask.getPlatform());
-                data.put("app", platform_Check.getApp_name().trim());
-                if (accountProfile_Task.getLive() == 0 && accountProfile_Task.getSign_in() == 1) {
-                    data.put("task", "sign_in");
-                } else {
-                    data.put("task", "login");
+                Boolean check_Login=true;
+                if(profileTask.getPlatform().equals("tiktok")&&accountProfile_Task.getSign_in()==0){
+                    AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getAccount_id());
+                    if(accountRecover!=null&&accountRecover.getLive()!=1){
+                        check_Login=false;
+                    }else if(accountRecover==null&&accountProfile_Task.getRecover().contains("|youtube")){
+                        accountProfileRepository.delete(accountProfile_Task);
+                        check_Login=false;
+                    }
                 }
-                data.put("task_key", accountProfile_Task.getAccount_id().substring(0, accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                data.put("account_id", accountProfile_Task.getAccount_id().substring(0, accountProfile_Task.getAccount_id().lastIndexOf("|")));
-                data.put("password", accountProfile_Task.getPassword().trim());
-                data.put("name", accountProfile_Task.getName().trim());
-                data.put("avatar", accountProfile_Task.getAvatar() == 0 ? false : true);
-                if (accountProfile_Task.getRecover().trim().contains("|")) {
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+
+                if(check_Login){
+                    accountProfile_Task.setLast_time(System.currentTimeMillis());
+                    accountProfileRepository.save(accountProfile_Task);
+
+                    //Platform platform_Check=platformRepository.get_Platform_By_Platform_And_Mode(profileTask.getPlatform().trim(),device.getMode().trim());
+                    resp.put("status", true);
+                    data.put("platform", profileTask.getPlatform());
+                    data.put("app", platform_Check.getApp_name().trim());
+                    if (accountProfile_Task.getLive() == 0 && accountProfile_Task.getSign_in() == 1) {
+                        data.put("task", "sign_in");
+                    } else {
+                        data.put("task", "login");
+                    }
+                    data.put("task_key", accountProfile_Task.getAccount_id().substring(0, accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    data.put("account_id", accountProfile_Task.getAccount_id().substring(0, accountProfile_Task.getAccount_id().lastIndexOf("|")));
+                    data.put("password", accountProfile_Task.getPassword().trim());
+                    data.put("name", accountProfile_Task.getName().trim());
+                    data.put("avatar", accountProfile_Task.getAvatar() == 0 ? false : true);
+                    if (accountProfile_Task.getRecover().trim().contains("|")) {
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim().substring(0, accountProfile_Task.getRecover().trim().lastIndexOf("|")));
+                    }else{
+                        data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                    }
+                    data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
+                    data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
+                    data.put("account_list", accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
                 }else{
-                    data.put("recover_mail", accountProfile_Task.getRecover().trim());
+                    resp.put("status", false);
+                    data.put("message", "Không thực hiện nhiệm vụ");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-                data.put("recover_mail_password", accountProfile_Task.getRecover_password().trim());
-                data.put("auth_2fa", accountProfile_Task.getAuth_2fa().trim());
-                data.put("account_list", accountProfileRepository.get_List_Account_Youtube_By_ProfileId(profileTask.getProfile_id().trim()));
-                resp.put("data", data);
-                return new ResponseEntity<>(resp, HttpStatus.OK);
             } else {
                 profileTask.setAccount_id(accountProfile_Task.getAccount_id().trim());
                 profileTask.setTask_index(profileTask.getTask_index() + 1);
