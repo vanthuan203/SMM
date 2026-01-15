@@ -996,7 +996,7 @@ public class TaskController {
 
                 Boolean check_Login=true;
                 if(profileTask.getPlatform().equals("tiktok")&&accountProfile_Task.getSign_in()==0){
-                    AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getRecover().trim());
+                    AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getRecover().trim()); // cần thiết check theo cả profile_id nữa!!!
                     if(accountRecover!=null&&accountRecover.getLive()!=1){
                         check_Login=false;
                     }else if(accountRecover==null&&accountProfile_Task.getRecover().contains("|youtube")){
@@ -1150,7 +1150,7 @@ public class TaskController {
                     }
                 }
             }
-
+            //#task
             List<ModeOption> priorityTasks =modeOptionRepository.get_Priority_Task_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode());
             List<String> arrTask = new ArrayList<>();
 
@@ -1288,6 +1288,8 @@ public class TaskController {
                 }
             }
             if(get_task==null){
+                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                deviceRepository.save(device);
                 resp.put("status",false);
                 data.put("message","Không có nhiệm vụ!");
                 resp.put("data",data);

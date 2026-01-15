@@ -222,8 +222,10 @@ public class TiktokTask {
                 if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                     return tiktok_view_system(account_id,mode,device,1);
                 }else{
+                    /*
                     device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
                     deviceRepository.save(device);
+                     */
                     resp.put("status", false);
                     return resp;
                 }
@@ -235,8 +237,6 @@ public class TiktokTask {
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         return tiktok_view_system(account_id,mode,device,1);
                     }else{
-                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                        deviceRepository.save(device);
                         resp.put("status", false);
                         return resp;
                     }
@@ -368,8 +368,6 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
@@ -423,12 +421,8 @@ public class TiktokTask {
                 Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
-                        //device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                        //deviceRepository.save(device);
                         return tiktok_view_system(account_id,mode,device,live);
                     }else{
-                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                        deviceRepository.save(device);
                         resp.put("status", false);
                         return resp;
                     }
@@ -540,12 +534,8 @@ public class TiktokTask {
 
             } else {
                 if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
-                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                    deviceRepository.save(device);
                     return tiktok_view_system(account_id,mode,device,live);
                 }else{
-                    device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                    deviceRepository.save(device);
                     resp.put("status", false);
                     return resp;
                 }
@@ -674,8 +664,6 @@ public class TiktokTask {
                 return resp;
 
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
@@ -1221,8 +1209,6 @@ public class TiktokTask {
                             return tiktok_view_system(account_id,mode_,device,live);
                         }
                     }else{
-                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                        deviceRepository.save(device);
                         resp.put("status", false);
                         return resp;
                     }
@@ -1239,8 +1225,6 @@ public class TiktokTask {
                             return tiktok_view_system(account_id,mode_,device,live);
                         }
                     }else{
-                        device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                        deviceRepository.save(device);
                         resp.put("status", false);
                         return resp;
                     }
@@ -1354,8 +1338,6 @@ public class TiktokTask {
                 resp.put("data",data);
                 return resp;
             } else {
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
-                deviceRepository.save(device);
                 resp.put("status", false);
                 return resp;
             }
