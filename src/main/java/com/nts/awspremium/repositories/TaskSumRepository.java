@@ -55,7 +55,7 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             "        SUM(success = false) AS success_false\n" +
             "    FROM task_sum\n" +
             "    WHERE profile_id in(select profile_id from profile_task where device_id=?1) \n" +
-            " and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24\n"+
+            " and update_time >= (UNIX_TIMESTAMP() - 24*3600) * 1000\n"+
             "    GROUP BY status\n" +
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_DeviceId_24H(String device_id);

@@ -251,8 +251,8 @@ public class DeviceController {
             }
 
             Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
+            SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             if(device==null){
-                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Device device_new=new Device();
                 device_new.setDevice_id(device_id.trim());
                 device_new.setAdd_time(System.currentTimeMillis());
@@ -278,7 +278,6 @@ public class DeviceController {
                 deviceRepository.save(device_new);
                 device=device_new;
             }else{
-                SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
                 Mode mode=modeRepository.get_Mode_Info(device.getMode().trim());
                 if(mode!=null){
                     device.setNum_profile_set(mode.getMax_profile());
