@@ -996,7 +996,7 @@ public class TaskController {
 
                 Boolean check_Login=true;
                 if(profileTask.getPlatform().equals("tiktok")&&accountProfile_Task.getSign_in()==0){
-                    AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getAccount_id());
+                    AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getRecover().trim());
                     if(accountRecover!=null&&accountRecover.getLive()!=1){
                         check_Login=false;
                     }else if(accountRecover==null&&accountProfile_Task.getRecover().contains("|youtube")){
