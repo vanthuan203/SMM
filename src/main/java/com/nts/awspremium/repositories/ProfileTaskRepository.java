@@ -94,7 +94,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
     @Query(value = "SELECT GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and profile_id=?1",nativeQuery = true)
     public String get_AccountDie_By_ProfileId(String profile_id);
 
-    @Query(value = "SELECT count(*) FROM Data.profile_task where order_id=?1 and running=1 and round((UNIX_TIMESTAMP()-task_time/1000)/60)<=10",nativeQuery = true)
+    @Query(value = "SELECT count(*) FROM Data.profile_task where order_id=?1 and running=1 and task_time >= (UNIX_TIMESTAMP() - 10*60) * 1000;",nativeQuery = true)
     public Integer get_Count_Thread_By_OrderId(Long order_id);
 
     @Query(value = "SELECT profile_id,GROUP_CONCAT(platform) AS concatenated_rows FROM Data.account where live>1 and device_id=?1 group by profile_id",nativeQuery = true)
@@ -227,7 +227,7 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET running=0 where round((UNIX_TIMESTAMP()-get_time/1000)/60)>5 and running=1 limit 50",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET running=0 where get_time < (UNIX_TIMESTAMP() - 10*60) * 1000 and running=1 limit 50",nativeQuery = true)
     public Integer reset_Task_Error();
 
     @Modifying
