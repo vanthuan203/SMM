@@ -1288,7 +1288,7 @@ public class TaskController {
                 }
             }
             if(get_task==null){
-                device.setUpdate_time(System.currentTimeMillis() + settingSystemRepository.get_Time_Waiting_Task() * 1000);
+                device.setUpdate_time(System.currentTimeMillis() + settingSystem.getTime_waiting_task() * 1000);
                 deviceRepository.save(device);
                 resp.put("status",false);
                 data.put("message","Không có nhiệm vụ!");

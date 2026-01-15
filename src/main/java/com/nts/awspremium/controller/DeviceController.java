@@ -241,6 +241,14 @@ public class DeviceController {
                 return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
             }
 
+            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
+
+            if(device!=null&&(System.currentTimeMillis()-device.getUpdate_time())/1000<0){
+                resp.put("status",true);
+                data.put("message", "Check đã hoàn tất");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
 
             List<String> profileId = new ArrayList<>();
             profileId.addAll(Arrays.asList(profile_list.trim().split(",")));
@@ -250,7 +258,6 @@ public class DeviceController {
                 profile.add(device_id.trim()+"_"+profileId.get(i).toString().trim());
             }
 
-            Device device=deviceRepository.check_DeviceIdLock(device_id.trim());
             SettingSystem settingSystem=settingSystemRepository.get_Setting_System();
             if(device==null){
                 Device device_new=new Device();
