@@ -810,6 +810,9 @@ public class OrderRunningController {
                 try {
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
+                            if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunningList.get(i).getOrder_id())<=0){
+                                continue;
+                            }
                             JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
                             if(tiktok_account==null){
                                 orderRunningRepository.update_Valid_By_OrderId(1,orderRunningList.get(i).getOrder_id());
