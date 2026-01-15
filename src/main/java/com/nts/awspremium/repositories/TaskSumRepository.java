@@ -109,7 +109,7 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             "        FROM profile_task \n" +
             "        WHERE device_id = ?1\n" +
             "    )\n" +
-            "and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24\n"+
+            "and update_time >= (UNIX_TIMESTAMP() - 24*3600) * 1000\n"+
             "    GROUP BY profile_id, status\n" +
             ") AS grouped_data\n" +
             "GROUP BY profile_id;",nativeQuery = true)
@@ -150,7 +150,7 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
             "        SUM(success = true) AS success_true,\n" +
             "        SUM(success = false) AS success_false\n" +
             "    FROM task_sum\n" +
-            "    WHERE profile_id=?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24 \n" +
+            "    WHERE profile_id=?1 and update_time >= (UNIX_TIMESTAMP() - 24*3600) * 1000 \n" +
             "    GROUP BY status\n" +
             ") AS grouped_data;",nativeQuery = true)
     public String task_Sum_By_ProfileId_24H(String profile_id);
@@ -158,11 +158,11 @@ public interface TaskSumRepository extends JpaRepository<TaskSum,String> {
 
 
 
-    @Query(value ="SELECT COALESCE(MIN(update_time), 0) FROM Data.task_sum where profile_id=?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<24",nativeQuery = true)
+    @Query(value ="SELECT COALESCE(MIN(update_time), 0) FROM Data.task_sum where profile_id=?1 and update_time >= (UNIX_TIMESTAMP() - 24*3600) * 1000",nativeQuery = true)
     public Long Min_Time_By_ProfileId_24H(String profile_id);
 
     @Modifying
     @Transactional
-    @Query(value = "delete from task_sum where round((UNIX_TIMESTAMP()-update_time/1000)/60/60/24)>15;",nativeQuery = true)
+    @Query(value = "delete from task_sum where update_time < (UNIX_TIMESTAMP() - 15*86400) * 1000;",nativeQuery = true)
     public Integer deleteAllByThan24h();
 }
