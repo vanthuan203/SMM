@@ -1174,6 +1174,13 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 ModeOption modeOption=modeOptionRepository.get_Mode_Option(device.getMode().trim(),profileTask.getPlatform().trim(),task);
+                /* code chưa xong #code
+
+                 */
+                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=modeOption.getDay_true_task()){
+                    while(arrTask.remove(task)) {}
+                    continue;
+                }
                 AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(profileTask.getAccount_id());
                 Long get_time=0L;
                 if(accountTask!=null){
