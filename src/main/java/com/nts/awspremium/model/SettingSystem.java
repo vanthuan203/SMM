@@ -51,6 +51,8 @@ public class SettingSystem {
     private Integer ip_task_24h;
     @Column(columnDefinition = "integer default 0")
     private Integer time_waiting_task=0;
+    @Column(columnDefinition = "integer default 0")
+    private Integer max_time_waiting_task=600;
     public SettingSystem() {
     }
 
