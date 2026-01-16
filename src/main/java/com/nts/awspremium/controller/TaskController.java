@@ -1303,6 +1303,8 @@ public class TaskController {
                 if(!dataJson.get("task").toString().equals("view")){
                     Thread.sleep(300+ran.nextInt(500));
                     if(!orderThreadCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
+                        device.setUpdate_time(System.currentTimeMillis() + settingSystem.getTime_waiting_task() * 1000);
+                        deviceRepository.save(device);
                         resp.put("status",false);
                         data.put("message","Không có nhiệm vụ!");
                         resp.put("data",data);
@@ -1311,6 +1313,8 @@ public class TaskController {
                 }else{
                     Thread.sleep(200+ran.nextInt(200));
                     if(!orderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
+                        device.setUpdate_time(System.currentTimeMillis() + settingSystem.getTime_waiting_task() * 1000);
+                        deviceRepository.save(device);
                         resp.put("status",false);
                         data.put("message","Không có nhiệm vụ!");
                         resp.put("data",data);
