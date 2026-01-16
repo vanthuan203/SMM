@@ -1177,7 +1177,7 @@ public class TaskController {
                 /* code chưa xong #code
 
                  */
-                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24>=modeOption.getDay_true_task()){
+                if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24<modeOption.getDay_true_task()){
                     while(arrTask.remove(task)) {}
                     continue;
                 }
