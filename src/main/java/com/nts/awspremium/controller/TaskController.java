@@ -1308,6 +1308,14 @@ public class TaskController {
                         resp.put("data",data);
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
+                }else{
+                    Thread.sleep(200+ran.nextInt(200));
+                    if(!orderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
+                        resp.put("status",false);
+                        data.put("message","Không có nhiệm vụ!");
+                        resp.put("data",data);
+                        return new ResponseEntity<>(resp, HttpStatus.OK);
+                    }
                 }
                 /* 1 ip không cùng làm cùng nv của 1 order running
                 List<String> ip_List=deviceRepository.get_IP_Running_Task_By_OrderId(Long.parseLong(dataJson.get("order_id").toString()));
