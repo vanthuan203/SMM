@@ -59,7 +59,26 @@ public class TaskController {
     private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private AccountRepository accountRepository;
-
+    @Autowired
+    private TikTokView24hRepository tikTokView24hRepository;
+    @Autowired
+    private TikTokFollower24hRepository tikTokFollower24hRepository;
+    @Autowired
+    private TikTokLike24hRepository tikTokLike24hRepository;
+    @Autowired
+    private TiktokFavorites24hRepository tiktokFavorites24hRepository;
+    @Autowired
+    private TiktokShare24hRepository tiktokShare24hRepository;
+    @Autowired
+    private TikTokComment24hRepository tikTokComment24hRepository;
+    @Autowired
+    private YoutubeLike24hRepository youtubeLike24hRepository;
+    @Autowired
+    private YoutubeView24hRepository youtubeView24hRepository;
+    @Autowired
+    private YoutubeComment24hRepository youtubeComment24hRepository;
+    @Autowired
+    private YoutubeSubscriber24hRepository youtubeSubscribe24hRepository;
     @Autowired
     private AccountCloneRepository accountCloneRepository;
 
@@ -1174,12 +1193,54 @@ public class TaskController {
             while (arrTask.size()>0){
                 String task = arrTask.get(ran.nextInt(arrTask.size())).trim();
                 ModeOption modeOption=modeOptionRepository.get_Mode_Option(device.getMode().trim(),profileTask.getPlatform().trim(),task);
+                if(modeOption==null){
+                    resp.put("status",false);
+                    data.put("message","modeOption không hợp lệ!");
+                    resp.put("data",data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
                 /* code chưa xong #code
 
                  */
                 if(accountProfile_Task!=null&&(System.currentTimeMillis()-accountProfile_Task.getLogin_time())/1000/60/60/24<modeOption.getDay_true_task()){
                     while(arrTask.remove(task)) {}
                     continue;
+                }
+                //check task full 24h theo platfrom
+                if(profileTask.getPlatform().equals("tiktok")){
+                    if(task.equals("follower") && tikTokFollower24hRepository.count_Follower_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("like") && tikTokLike24hRepository.count_Like_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("view") && tikTokView24hRepository.count_View_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("comment") && tikTokComment24hRepository.count_Comment_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("share") && tiktokShare24hRepository.count_Share_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("favorites") && tiktokFavorites24hRepository.count_Favorites_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }
+                } else if(profileTask.getPlatform().equals("youtube")){
+                    if(task.equals("view") && youtubeView24hRepository.count_View_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("like") && youtubeLike24hRepository.count_Like_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("subscriber") && youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }else if(task.equals("comment") && youtubeComment24hRepository.count_Comment_24h_By_Username(profileTask.getAccount_id().trim()+"%")>=modeOption.getMax_task()){
+                        while(arrTask.remove(task)) {}
+                        continue;
+                    }
                 }
                 AccountTask accountTask=accountTaskRepository.get_Acount_Task_By_AccountId(profileTask.getAccount_id());
                 Long get_time=0L;
@@ -1204,12 +1265,7 @@ public class TaskController {
                         get_time=accountTask.getFavorites_time();
                     }
                 }
-                if(modeOption==null){
-                    resp.put("status",false);
-                    data.put("message","modeOption không hợp lệ!");
-                    resp.put("data",data);
-                    return new ResponseEntity<>(resp, HttpStatus.OK);
-                }else if((System.currentTimeMillis()-get_time)/1000/60<modeOption.getTime_get_task()){
+                if((System.currentTimeMillis()-get_time)/1000/60<modeOption.getTime_get_task()){
                     while(arrTask.remove(task)) {}
                     continue;
                 }

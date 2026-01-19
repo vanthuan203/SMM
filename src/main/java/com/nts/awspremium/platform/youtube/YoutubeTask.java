@@ -52,11 +52,7 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","comment");
-            if(youtubeComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -199,11 +195,6 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","view");
-            if(youtubeView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -326,11 +317,6 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","subscriber");
-            if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
@@ -442,11 +428,6 @@ public class YoutubeTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"youtube","like");
-            if(youtubeLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();

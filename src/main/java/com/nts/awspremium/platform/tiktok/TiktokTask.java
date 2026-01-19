@@ -76,19 +76,12 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","comment");
-            if(tikTokComment24hRepository.count_Comment_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                mode="activity";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -190,26 +183,13 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","follower");
-            if(tikTokFollower24hRepository.count_Follower_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
-            /*
-            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
-                resp.put("status", false);
-                return resp;
-            }
-             */
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingTiktok settingTiktok =settingTikTokRepository.get_Setting();
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokAccountHistoryRepository.get_List_TiktokId_By_AccountId(account_id.trim());
 
-            if(accountProfileRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                mode="activity";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 if(orderRunning==null){
@@ -397,21 +377,6 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
-            Integer max_Task=modeOption.getMax_task();
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
-                max_Task=10;
-            }
-            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
-                resp.put("status", false);
-                return resp;
-            }
-            /*
-            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
-                resp.put("status", false);
-                return resp;
-            }
-             */
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingTiktok settingTiktok =settingTikTokRepository.get_Setting();
@@ -567,21 +532,6 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
-            Integer max_Task=modeOption.getMax_task();
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0&&account_id.contains("@")){
-                max_Task=10;
-            }
-            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
-                resp.put("status", false);
-                return resp;
-            }
-            /*
-            if(ipTask24hRepository.count_Task_1h_By_Ip(ip+"%")>=50){
-                resp.put("status", false);
-                return resp;
-            }
-             */
             Random ran = new Random();
             AccountClone orderRunning=null;
             orderRunning = accountCloneRepository.get_Account_Clone_By_Id(accountCloneVideoCheck.getValue().get(ran.nextInt(accountCloneVideoCheck.getValue().size())));
@@ -694,19 +644,12 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","like");
-            if(tikTokLike24hRepository.count_Like_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tikTokLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
-            if(accountProfileRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                mode="activity";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -854,19 +797,12 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","share");
-            if(tiktokShare24hRepository.count_Share_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tiktokShareHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                mode="activity";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","share",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -1015,19 +951,12 @@ public class TiktokTask {
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","favorites");
-            if(tiktokFavorites24hRepository.count_Favorites_24h_By_Username(account_id.trim()+"%")>=modeOption.getMax_task()){
-                resp.put("status", false);
-                return resp;
-            }
+
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
             String list_History=tiktokFavoritesHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
-            if(accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                mode="activity";
-            }
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","favorites",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
@@ -1176,16 +1105,7 @@ public class TiktokTask {
         Map<String, Object> data = new LinkedHashMap<>();
         try{
             String mode_=mode;
-            ModeOption modeOption=modeOptionRepository.get_Mode_Option(mode.trim(),"tiktok","view");
             mode="auto";
-            Integer max_Task=modeOption.getMax_task();
-            if(account_id.startsWith("@") && accountRepository.check_Account_Task_True(modeOption.getDay_true_task(),"tiktok",account_id.trim())==0){
-                max_Task=10;
-            }
-            if(tikTokView24hRepository.count_View_24h_By_Username(account_id.trim()+"%")>=max_Task){
-                resp.put("status", false);
-                return resp;
-            }
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
