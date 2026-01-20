@@ -82,13 +82,20 @@ public class TiktokUpdate {
                             tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
                             tikTokAccountHistoryRepository.save(tikTokAccountHistory);
                         }else if((System.currentTimeMillis()-tikTokAccountHistory.getUpdate_time())/1000/60/60>=6){
+                            tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
                             int following= TikTokApi.getFollowingCount(account_id.trim().replace("|tiktok","").split("@")[1]);
                             if(following>=0){
-                                tikTokAccountHistory.setFollowing_realtime(following);
+                                if(following<tikTokAccountHistory.getFollowing_count()+1){
+                                    tikTokAccountHistory.setFollowing_check(following-(tikTokAccountHistory.getFollowing_count()+1));
+                                    tikTokAccountHistory.setCheck_time(System.currentTimeMillis());
+                                    tikTokAccountHistory.setFollowing_realtime(following);
+                                    tikTokAccountHistory.setFollowing_count(following);
+                                }else{
+                                    tikTokAccountHistory.setFollowing_count(following);
+                                }
                             }
                             tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
                             tikTokAccountHistory.setUpdate_time(System.currentTimeMillis());
-                            tikTokAccountHistory.setFollowing_count(tikTokAccountHistory.getFollowing_count()+1);
                             tikTokAccountHistoryRepository.save(tikTokAccountHistory);
                         }else{
                             tikTokAccountHistory.setList_id(tikTokAccountHistory.getList_id()+task_key.trim()+"|");
