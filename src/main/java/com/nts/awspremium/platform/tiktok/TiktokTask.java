@@ -23,6 +23,8 @@ public class TiktokTask {
     @Autowired
     private OrderThreadFollowerCheck orderThreadFollowerCheck;
     @Autowired
+    private HistorySumRepository historySumRepository;
+    @Autowired
     private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
     @Autowired
     private SettingTikTokRepository settingTikTokRepository;
@@ -193,10 +195,10 @@ public class TiktokTask {
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue(),5);
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue(),5);
             }
             if(orderRunning==null){
                 if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
@@ -212,6 +214,10 @@ public class TiktokTask {
             }
 
             if (orderRunning!=null) {
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),5)>0){
+                    resp.put("status", false);
+                    return resp;
+                }
                 Thread.sleep(300+ran.nextInt(300));
                 if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
