@@ -212,7 +212,10 @@ public class YoutubeTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if (orderRunning!=null) {
-
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),5)>0){
+                    resp.put("status", false);
+                    return resp;
+                }
                 Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
