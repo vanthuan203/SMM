@@ -372,6 +372,7 @@ public class TaskController {
             }
             //changer profile  khi du thoi gian hoạt động
             if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&!mode.getMode().contains("dev")) {
+                accountProfileRepository.update_Running_By_DeviceId(device.getDevice_id()+"%"); //reset running acc by device_id
                 if (profileTaskRepository.get_Count_Profile_Enabled(device_id.trim()) > 1) {
                     profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile(device_id.trim());
                     entityManager.clear();
@@ -398,6 +399,7 @@ public class TaskController {
                     accountProfileRepository.update_Live_Tiktok_By_ProfileId(profileTask.getProfile_id().trim());//check login lại acc tiktok
                 }
             }else if((System.currentTimeMillis()-profileTask.getOnline_time())/1000/60>=mode.getTime_profile() && profileTask.getState()==1 &&mode.getMode().contains("dev")) {
+                accountProfileRepository.update_Running_By_DeviceId(device.getDevice_id()+"%"); //reset running acc by device_id
                 profileTaskRepository.reset_Thread_Index_By_DeviceId_While_ChangerProfile_1_On(device_id.trim());
                 entityManager.clear();
                 profileTask =profileTaskRepository.check_ProfileId(device_id.trim()+"_"+profile_id.trim());
@@ -1002,8 +1004,26 @@ public class TaskController {
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
             }
+            AccountProfile accountProfile_Task=null;
+            if(profileTask.getPlatform().trim().equals("youtube")){
+                accountProfile_Task=accountProfileRepository.get_Account_By_Gmail_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
+                if(accountProfile_Task==null){
+                    profileTask.setTask_index(platformRepository.get_Priority_By_Platform_And_Mode(profileTask.getPlatform(),device.getMode()));
+                    profileTaskRepository.save(profileTask);
+                    resp.put("status", false);
+                    data.put("message", "Không thực hiện nhiệm vụ");
+                    resp.put("data", data);
+                    return new ResponseEntity<>(resp, HttpStatus.OK);
+                }
+            }else{
+                accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
+            }
+            if(accountProfile_Task!=null&&accountProfile_Task.getRunning()==0){ //chọn acc chạy task
+                accountProfile_Task.setRunning(1);
+                accountProfile_Task.setTask_time(System.currentTimeMillis());
+                accountProfileRepository.save(accountProfile_Task);
+            }
 
-            AccountProfile accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
             if((accountProfile_Task==null)&&profileTask.getPlatform().equals("tiktok")){
                 profileTask.setAccount_id(profileTask.getProfile_id().trim());
                 profileTask.setTask_index(profileTask.getTask_index()+1);
