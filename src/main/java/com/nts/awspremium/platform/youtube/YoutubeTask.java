@@ -20,6 +20,9 @@ public class YoutubeTask {
     private OrderThreadCheck orderThreadCheck;
 
     @Autowired
+    private KeywordsRepository keywordsRepository;
+
+    @Autowired
     private HistorySumRepository historySumRepository;
 
     @Autowired
@@ -298,6 +301,61 @@ public class YoutubeTask {
                 resp.put("status", false);
                 return resp;
             }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
+    public Map<String, Object> youtube_farm(String account_id){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran = new Random();
+            resp.put("status", true);
+            data.put("order_id", -1);
+            data.put("account_id", account_id.trim());
+            data.put("platform", "youtube");
+            data.put("task", "farm");
+            data.put("app", "youtube");
+            String list_key = keywordsRepository.getKeyList();
+            if (list_key != null && list_key.length() != 0) {
+                String[] keyArr = list_key.split(",");
+                data.put("keyword",keyArr[ran.nextInt(keyArr.length)]);
+            }else{
+                data.put("keyword","random");
+            }
+            List<String> arrSource = new ArrayList<>();
+            for (int i = 0; i < 30; i++) {
+                arrSource.add("home");
+            }
+            for (int i = 0; i < 15; i++) {
+                arrSource.add("shorts");
+            }
+            for (int i = 0; i < 30; i++) {
+                arrSource.add("search");
+            }
+            data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+            data.put("viewing_time", 1 * 60 + ran.nextInt(30));
+            resp.put("data",data);
+            return resp;
+
         }catch (Exception e){
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
             LogError logError =new LogError();

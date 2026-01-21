@@ -128,6 +128,67 @@ public class Openai {
         }
     }
 
+
+    public static String ListKeywords(String key) {
+
+        try {
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(300, TimeUnit.SECONDS) // Time to establish the connection
+                    .readTimeout(600, TimeUnit.SECONDS)    // Time to read the response
+                    .writeTimeout(600, TimeUnit.SECONDS)   // Time to write data to the server
+                    .build();
+            MediaType mediaType = MediaType.parse("application/json");
+            JsonObject jsonRequest = new JsonObject();
+            jsonRequest.addProperty("model", "gpt-4.1");
+
+            // Create the messages array
+            JsonArray messagesArray = new JsonArray();
+
+            // First message (developer role)
+            JsonObject developerMessage = new JsonObject();
+            developerMessage.addProperty("role", "system");
+            developerMessage.addProperty("content", "Liệt kê 100 từ khóa Youtube đang phổ biến tại Việt Nam 7 ngày qua. Chỉ trả về danh sách từ khóa, ngăn cách bằng dấu phẩy, không giải thích, không xuống dòng, không thêm ký tự khác.");
+            messagesArray.add(developerMessage);
+
+            // Add the messages array to the main JSON object
+            jsonRequest.add("messages", messagesArray);
+
+            RequestBody body = RequestBody.create(mediaType, jsonRequest.toString());
+            Request request = new Request.Builder()
+                    .url("https://api.openai.com/v1/chat/completions")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Bearer "+key)
+                    .build();
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                String resultJson = response.body().string();
+                response.body().close();
+                Object obj = new JsonParser().parse(resultJson);
+                JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+                JsonArray choicesArray = jsonObject.getAsJsonArray("choices");
+                if (choicesArray != null && choicesArray.size() > 0) {
+                    // Lấy phần tử đầu tiên trong mảng "choices"
+                    JsonObject firstChoice = choicesArray.get(0).getAsJsonObject();
+
+                    // Truy cập đối tượng "message"
+                    JsonObject messageObject = firstChoice.getAsJsonObject("message");
+                    if (messageObject != null) {
+                        // Lấy giá trị của trường "content"
+                        String content = messageObject.get("content").getAsString();
+                        return content;
+                    } else {
+                        return null;
+                    }
+                }
+                // Iterate through the table array to find the Like Count
+            }
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public static String IdTiktok(String name,String key) {
 
         try {
