@@ -457,7 +457,7 @@ public class TaskController {
             }
 
 
-            //check acc youtube
+            //#youtube
             AccountProfile accountYoutube=null;
             Platform platform_Youtube_Check=platformRepository.get_Platform_By_Platform_And_Mode("youtube",device.getMode().trim());
             if(platform_Youtube_Check.getLogin_account()==1 &&
@@ -555,6 +555,10 @@ public class TaskController {
                     accountProfile_Live0.setLast_time(System.currentTimeMillis());
                     accountProfileRepository.save(accountProfile_Live0);
 
+                    if(accountProfile_Live0.getLogin_time()>0&&profileTask.getGoogle_time()==0){ // cập nhật lại google_time nếu sai
+                        profileTask.setGoogle_time(accountProfile_Live0.getLogin_time());
+                        profileTaskRepository.save(profileTask);
+                    }
                     //accountProfileRepository.update_SignIn_By_ProfileId(profileTask.getProfile_id().trim());// reset signin profile
 
                     resp.put("status", true);
@@ -588,7 +592,7 @@ public class TaskController {
             }
             if(platform_Youtube_Check.getRegister_account()==1&&platform_Youtube_Check.getState()==1&&profileTask.getRegister_index()==0) {
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform("register_"+profileTask.getProfile_id()+"|youtube","youtube");
-                if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=25){
+                if(accountProfile==null && historyRegisterRepository.count_Register_By_Platform_And_Time("youtube",5)>=55){
                     if(profileTask.getRequest_index()>0){
                         profileTask.setRegister_index(profileTask.getRegister_index()+1);
                     }
