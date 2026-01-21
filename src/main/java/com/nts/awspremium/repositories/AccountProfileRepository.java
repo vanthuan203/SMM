@@ -37,7 +37,7 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and live>=0 order by running desc,task_time asc  limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Platform_And_ProfileId(String profile_id,String platform);
 
-    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and live>=0 and account_id like '%gmail.com' order by running desc,task_time asc  limit 1",nativeQuery = true)
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and live>=0 and account_id like '%gmail.com|youtube' order by running desc,task_time asc  limit 1",nativeQuery = true)
     public AccountProfile get_Account_By_Gmail_And_ProfileId(String profile_id,String platform);
 
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2  and live=1 limit 1",nativeQuery = true)//and account_id not like '%@gmail%'
