@@ -427,12 +427,7 @@ public class YoutubeOrder {
                         return resp;
                     }
                     OrderRunning orderRunning = new OrderRunning();
-                    int thread=(int)(data.getQuantity()/1000)*service.getThread();
-                    if(thread<2){
-                        orderRunning.setThread(5);
-                    }else{
-                        orderRunning.setThread(thread);
-                    }
+                    orderRunning.setThread(service.getThread());
                     orderRunning.setThread_set(0);
                     orderRunning.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                     orderRunning.setInsert_time(System.currentTimeMillis());
@@ -532,8 +527,8 @@ public class YoutubeOrder {
                 return resp;
             }
             List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
-            if(videoList.size()<3){
-                resp.put("error", "The total number of videos in the account must be greater than or equal to 3 videos");
+            if(videoList.size()<1){
+                resp.put("error", "The total number of videos in the account must be greater than or equal to 1 videos");
                 return resp;
             }
             int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
@@ -548,12 +543,7 @@ public class YoutubeOrder {
                 return resp;
             }
             OrderRunning orderRunning = new OrderRunning();
-            int thread=(int)(data.getQuantity()/1000)*service.getThread();
-            if(thread<2){
-                orderRunning.setThread(2);
-            }else{
-                orderRunning.setThread(thread);
-            }
+            orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
             orderRunning.setDuration(0L);
             orderRunning.setInsert_time(System.currentTimeMillis());
