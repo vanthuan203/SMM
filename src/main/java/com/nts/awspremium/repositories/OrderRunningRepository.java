@@ -195,6 +195,149 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
             "group by o.order_id order by o.start_time desc",nativeQuery = true)
     public List<OrderRunningShow> get_Order_Running();
 
+    @Query(
+            value = """
+        SELECT
+            o.order_id,o.order_key,o.order_link,
+            COUNT(a.running) AS total_thread,
+            o.thread,o.priority,o.insert_time,o.start_time,o.note,
+            o.start_count,o.quantity,o.username,o.total,o.current_count,
+            o.update_time,o.update_current_time,o.charge,o.service_id,
+            s.platform,s.check_count,o.check_count_time,s.bonus,
+            s.task,s.mode
+        FROM order_running o
+        LEFT JOIN profile_task a
+            ON a.order_id = o.order_id AND a.running = 1
+        LEFT JOIN service s
+            ON o.service_id = s.service_id
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.start_time > 0
+        GROUP BY o.order_id
+        """,
+            countQuery = """
+        SELECT COUNT(DISTINCT o.order_id)
+        FROM order_running o
+        LEFT JOIN profile_task a
+            ON a.order_id = o.order_id AND a.running = 1
+        LEFT JOIN service s
+            ON o.service_id = s.service_id
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.start_time > 0
+        """,
+            nativeQuery = true
+    )
+    Page<OrderRunningShow> getOrderRunning(Pageable pageable);
+
+
+    @Query(
+            value = """
+        SELECT
+            o.order_id,o.order_key,o.order_link,
+            COUNT(a.running) AS total_thread,
+            o.thread,o.priority,o.insert_time,o.start_time,o.note,
+            o.start_count,o.quantity,o.username,o.total,o.current_count,
+            o.update_time,o.update_current_time,o.charge,o.service_id,
+            s.platform,s.check_count,o.check_count_time,s.bonus,
+            s.task,s.mode
+        FROM order_running o
+        LEFT JOIN profile_task a
+            ON a.order_id = o.order_id AND a.running = 1
+        LEFT JOIN service s
+            ON o.service_id = s.service_id
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.start_time > 0
+          AND (o.order_id IN (:orderIds) OR o.order_key IN (:orderIds))
+        GROUP BY o.order_id
+        """,
+            countQuery = """
+        SELECT COUNT(DISTINCT o.order_id)
+        FROM order_running o
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.start_time > 0
+          AND (o.order_id IN (:orderIds) OR o.order_key IN (:orderIds))
+        """,
+            nativeQuery = true
+    )
+    Page<OrderRunningShow> getOrderRunning(
+            @Param("orderIds") List<String> orderIds,
+            Pageable pageable
+    );
+
+
+    @Query(
+            value = """
+        SELECT
+            o.order_id,o.order_key,o.order_link,
+            COUNT(a.running) AS total_thread,
+            o.thread,o.priority,o.insert_time,o.start_time,o.note,
+            o.start_count,o.quantity,o.username,o.total,o.current_count,
+            o.update_time,o.update_current_time,o.charge,o.service_id,
+            s.platform,s.check_count,o.check_count_time,s.bonus,
+            s.task,s.mode
+        FROM order_running o
+        LEFT JOIN profile_task a
+            ON a.order_id = o.order_id AND a.running = 1
+        LEFT JOIN service s
+            ON o.service_id = s.service_id
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.username = (:user)
+          AND o.start_time > 0
+          AND (o.order_id IN (:orderIds) OR o.order_key IN (:orderIds))
+        GROUP BY o.order_id
+        """,
+            countQuery = """
+        SELECT COUNT(DISTINCT o.order_id)
+        FROM order_running o
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.username = (:user)
+          AND o.start_time > 0
+          AND (o.order_id IN (:orderIds) OR o.order_key IN (:orderIds))
+        """,
+            nativeQuery = true
+    )
+    Page<OrderRunningShow> getOrderRunningUser(
+            @Param("user") String user,
+            @Param("orderIds") List<String> orderIds,
+            Pageable pageable
+    );
+
+
+    @Query(
+            value = """
+        SELECT
+            o.order_id,o.order_key,o.order_link,
+            COUNT(a.running) AS total_thread,
+            o.thread,o.priority,o.insert_time,o.start_time,o.note,
+            o.start_count,o.quantity,o.username,o.total,o.current_count,
+            o.update_time,o.update_current_time,o.charge,o.service_id,
+            s.platform,s.check_count,o.check_count_time,s.bonus,
+            s.task,s.mode
+        FROM order_running o
+        LEFT JOIN profile_task a
+            ON a.order_id = o.order_id AND a.running = 1
+        LEFT JOIN service s
+            ON o.service_id = s.service_id
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.username = (:user)
+          AND o.start_time > 0
+        GROUP BY o.order_id
+        """,
+            countQuery = """
+        SELECT COUNT(DISTINCT o.order_id)
+        FROM order_running o
+        WHERE o.username <> 'refill@gmail.com'
+          AND o.username = (:user)
+          AND o.start_time > 0
+        """,
+            nativeQuery = true
+    )
+    Page<OrderRunningShow> getOrderRunningUser(
+            @Param("user") String user,
+            Pageable pageable
+    );
+
+
+
     @Query(value = "Select o.order_id,o.order_key,o.order_link,count(running) as total_thread\n" +
             ",o.thread,o.priority,o.insert_time,o.start_time,o.note,\n" +
             "o.start_count,o.quantity,o.username,o.total,o.current_count,\n" +

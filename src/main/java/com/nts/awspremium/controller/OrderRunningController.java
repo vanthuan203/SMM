@@ -148,6 +148,103 @@ public class OrderRunningController {
     }
 
 
+    @GetMapping(path = "get_Order_Running_Page", produces = "application/hal+json;charset=utf8")
+    ResponseEntity<String> get_Order_Running_Page(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String user,
+                                                  @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+                                                  @RequestParam(name = "size", required = false, defaultValue = "50") Integer size,
+                                                  @RequestParam(name = "sort_type", required = false, defaultValue = "start_time") String sort_type,
+                                                  @RequestParam(name = "key", required = false, defaultValue = "") String key,
+                                                  @RequestParam(name = "sort", required = false, defaultValue = "DESC") String sort) {
+        JSONObject resp = new JSONObject();
+        //Integer checktoken= adminRepository.FindAdminByToken(Authorization.split(",")[0]);
+        User users=userRepository.find_User_By_Token(Authorization.trim());
+        if(Authorization.length()==0|| users==null){
+            resp.put("status","fail");
+            resp.put("message", "Token expired");
+            return new ResponseEntity<String>(resp.toJSONString(),HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Sort sortable = null;
+            if (sort.equals("ASC")) {
+                sortable = Sort.by(sort_type).ascending();
+            }
+            if (sort.equals("DESC")) {
+                sortable = Sort.by(sort_type).descending();
+            }
+            Pageable pageable = PageRequest.of(page, size, sortable);
+            Page<OrderRunningShow> orderPage;
+            if (user.length() == 0) {
+                if(key.length()==0){
+                    orderPage=orderRunningRepository.getOrderRunning(pageable);
+                }else{
+                    orderPage=orderRunningRepository.getOrderRunning(Arrays.asList(key.split(",")),pageable);
+                }
+
+            } else {
+                if(key.length()==0){
+                    orderPage=orderRunningRepository.getOrderRunningUser(user,pageable);
+                }else{
+                    orderPage=orderRunningRepository.getOrderRunningUser(user,Arrays.asList(key.split(",")),pageable);
+                }
+            }
+            List<OrderRunningShow> orderRunnings=orderPage.getContent();
+            JSONArray jsonArray = new JSONArray();
+
+            for (int i = 0; i < orderRunnings.size(); i++) {
+                JSONObject obj = new JSONObject();
+                obj.put("order_id", orderRunnings.get(i).getOrder_id());
+                obj.put("order_key", orderRunnings.get(i).getOrder_key());
+                obj.put("order_link", orderRunnings.get(i).getOrder_link());
+                obj.put("total_thread", orderRunnings.get(i).getTotal_thread());
+                obj.put("thread", orderRunnings.get(i).getThread());
+                obj.put("insert_time", orderRunnings.get(i).getInsert_time());
+                obj.put("start_time", orderRunnings.get(i).getStart_time());
+                obj.put("update_time", orderRunnings.get(i).getUpdate_time());
+                obj.put("update_current_time", orderRunnings.get(i).getUpdate_current_time());
+                obj.put("start_count", orderRunnings.get(i).getStart_count());
+                obj.put("check_count", orderRunnings.get(i).getCheck_count());
+                obj.put("check_count_time", orderRunnings.get(i).getCheck_count_time());
+                obj.put("current_count", orderRunnings.get(i).getCurrent_count());
+                obj.put("total", orderRunnings.get(i).getTotal());
+                obj.put("quantity", orderRunnings.get(i).getQuantity());
+                obj.put("note", orderRunnings.get(i).getNote());
+                obj.put("service_id", orderRunnings.get(i).getService_id());
+                obj.put("username", orderRunnings.get(i).getUsername());
+                obj.put("charge", orderRunnings.get(i).getCharge());
+                obj.put("task", orderRunnings.get(i).getTask());
+                obj.put("platform", orderRunnings.get(i).getPlatform());
+                obj.put("bonus", orderRunnings.get(i).getBonus());
+                obj.put("mode", orderRunnings.get(i).getMode());
+                obj.put("priority", orderRunnings.get(i).getPriority());
+                jsonArray.add(obj);
+            }
+
+            resp.put("page", orderPage.getTotalPages());
+            resp.put("order_running", jsonArray);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+        } catch (Exception e) {
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
     @GetMapping(path = "update_Priority", produces = "application/hal+json;charset=utf8")
     ResponseEntity<String> update_Priority(@RequestHeader(defaultValue = "") String Authorization, @RequestParam(defaultValue = "") String order_id) {
         JSONObject resp = new JSONObject();

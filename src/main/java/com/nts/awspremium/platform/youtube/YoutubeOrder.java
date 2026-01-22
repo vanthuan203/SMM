@@ -535,7 +535,14 @@ public class YoutubeOrder {
             if(start_Count==-2){
                 resp.put("error", "Can't get SubcriberCurrent");
                 return resp;
+            }else if((start_Count+data.getQuantity()+data.getQuantity()*((float) (service.getBonus()) / 100)>1000*1000)&&(data.getQuantity()<10000 || data.getQuantity() % 10000 != 0)){
+                resp.put("error", "The number of subscribers is greater than 1,000,000 so the order quantity must be a multiple of 10,000.");
+                return resp;
+            }else if((start_Count+data.getQuantity()+data.getQuantity()*((float) (service.getBonus()) / 100)>100*1000)&&(data.getQuantity()<1000 || data.getQuantity() % 1000 != 0)){
+                resp.put("error", "The number of subscribers is greater than 100,000 so the order quantity must be a multiple of 1,000.");
+                return resp;
             }
+
             float priceorder = 0;
             priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
             if (priceorder > (float) user.getBalance()) {
