@@ -50,6 +50,12 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2 ",nativeQuery = true)//and account_id not like '%@gmail%'
     public Integer check_Count_Account_By_ProfileId_And_Platform(String profile_id,String platform);
 
+    @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2 and sign_in=1",nativeQuery = true)//and account_id not like '%@gmail%'
+    public Integer check_Count_Account_By_ProfileId_And_Platform_And_SignIn(String profile_id,String platform);
+
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and sign_in=1",nativeQuery = true)//and account_id not like '%@gmail%'
+    public Integer check_Count_Account_By_ProfileId_And_Platform_OrderBy_SignIn(String profile_id,String platform);
+
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2  and live>=0",nativeQuery = true) //and account_id not like '%@gmail%'
     public Integer check_Count_AccountLive_By_ProfileId_And_Platform(String profile_id,String platform);
 
@@ -72,10 +78,13 @@ public interface AccountProfileRepository extends JpaRepository<AccountProfile,S
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and connection_platform not like ?3  and live=1 limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
     public AccountProfile get_Account_DependentLive_By_ProfileId_And_Platform(String profile_id,String platform,String platform_connection);
 
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 and connection_platform not like ?3 and account_id like '%gmail.com|youtube'  and live=1 limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
+    public AccountProfile get_AccountGmail_Dependent_Live_By_ProfileId_And_Platform(String profile_id,String platform,String platform_connection);
+
     @Query(value = "SELECT count(*) FROM account_profile where profile_id=?1 and platform=?2 and connection_platform not like ?3  and live=1 limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
     public Integer get_Count_Account_DependentLive_By_ProfileId_And_Platform(String profile_id,String platform,String platform_connection);
 
-    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2  and live!=1 order by add_time asc limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
+    @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2  and live=0 order by sign_in desc,add_time asc limit 1",nativeQuery = true) //and account_id not like '%@gmail%'
     public AccountProfile get_AccountLive0_By_ProfileId_And_Platform(String profile_id,String platform);
 
     @Query(value = "SELECT * FROM account_profile where profile_id=?1 and platform=?2 limit 1",nativeQuery = true)
