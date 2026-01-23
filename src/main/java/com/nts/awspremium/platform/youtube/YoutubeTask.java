@@ -63,17 +63,35 @@ public class YoutubeTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
             String list_History=youtubeCommentHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
 
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","comment",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
+            if(orderRunning==null){
+                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                    return youtube_farm(account_id);
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
             }
             if (orderRunning!=null) {
+                Service service=orderRunning.getService();
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
                 Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
@@ -99,7 +117,6 @@ public class YoutubeTask {
                 //String comment=dataCommentRepository.get_Comment_By_OrderId_And_Username(orderRunning.getOrder_id(),account_id.trim());
                 //String comment=dataCommentRepository.update_Running_Comment_PROCEDURE(System.currentTimeMillis(),account_id.trim(),orderRunning.getOrder_id());
                 if(comment!=null){
-                    Service service=orderRunning.getService();
                     if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                         data.put("bonus","");
                     }else{
@@ -205,20 +222,33 @@ public class YoutubeTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
             String list_History=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
                     orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
-            if (orderRunning!=null) {
-                Service service=orderRunning.getService();
-                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+            if(orderRunning==null){
+                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                    return youtube_farm(account_id);
+                }else{
                     resp.put("status", false);
                     return resp;
+                }
+            }
+            if(orderRunning!=null) {
+                Service service=orderRunning.getService();
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
@@ -332,6 +362,7 @@ public class YoutubeTask {
             data.put("account_id", account_id.trim());
             data.put("platform", "youtube");
             data.put("task", "farm");
+            data.put("task_key", "random");
             data.put("app", "youtube");
             String list_key = keywordsRepository.getKeyList();
             if (list_key != null && list_key.length() != 0) {
@@ -384,20 +415,33 @@ public class YoutubeTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
             String list_History=youtubeChannelHistoryRepository.get_List_ChannelId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
                     orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
+            if(orderRunning==null){
+                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                    return youtube_farm(account_id);
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
+            }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
                 if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
-                    resp.put("status", false);
-                    return resp;
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
@@ -498,24 +542,39 @@ public class YoutubeTask {
             Random ran = new Random();
             OrderRunning orderRunning=null;
             SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
             String list_History=youtubeLikeHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","like",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
+            if(orderRunning==null){
+                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                    return youtube_farm(account_id);
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
             }
             if (orderRunning!=null) {
-
+                Service service=orderRunning.getService();
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
                 Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
-
-                Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{

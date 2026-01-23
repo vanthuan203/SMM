@@ -196,6 +196,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+            /*
             if((System.currentTimeMillis()-device.getUpdate_time())/1000<30){ // waiting 30s
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
@@ -206,7 +207,10 @@ public class TaskController {
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
-            }else if(device.getState()==0){
+            }
+
+             */
+            else if(device.getState()==0){
                 device.setUpdate_time(System.currentTimeMillis());
                 deviceRepository.save(device);
                 resp.put("status", false);
@@ -1314,7 +1318,8 @@ public class TaskController {
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
+                        //get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
+                        get_task=youtubeTask.youtube_farm(profileTask.getAccount_id());
                     }else if(task.equals("like")){
                         get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("subscriber")){
@@ -2332,7 +2337,7 @@ public class TaskController {
                 accountProfile_Task=accountProfileRepository.get_Account_By_Platform_And_ProfileId(profileTask.getProfile_id(),profileTask.getPlatform());
             }
             if(accountProfile_Task!=null&&accountProfile_Task.getRunning()==0){ //chọn acc chạy task
-                accountProfile_Task.setRunning(1);
+                accountProfile_Task.setRunning(2);
                 accountProfile_Task.setTask_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
             }
@@ -2742,7 +2747,12 @@ public class TaskController {
                     }
 
                 }
-                dataJson.put("task_index",profileTask.getTask_index());
+                //task_index
+                if(accountProfile_Task!=null&&accountProfile_Task.getRunning()==2){
+                    dataJson.put("task_index",0);
+                }else{
+                    dataJson.put("task_index",profileTask.getTask_index());
+                }
                 Long version_app=platformRepository.get_Version_App_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
                 dataJson.put("version_app",version_app==null?0:version_app);
                 Integer platform_task=platformRepository.get_Activity_Platform_And_Mode(dataJson.get("platform").toString(),device.getMode());
@@ -2954,8 +2964,15 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
+
             try{
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
+                if(accountProfile.getRunning()==2&&updateTaskRequest.getIsLogin()==1&& //check đổi acc thành công
+                        !Set.of("login", "register", "sign_in","add_post","update_info","add_recovery_mail","update_avatar","update_username").contains(updateTaskRequest.getTask().trim())
+                ){
+                    accountProfile.setRunning(1);
+                    accountProfileRepository.save(accountProfile);
+                }
                 String platform_Dependent=platformRepository.get_Dependent_Connection_By_Platform_And_Mode(updateTaskRequest.getPlatform().trim(),accountProfile.getProfileTask().getDevice().getMode());
                 if(updateTaskRequest.getTask().equals("add_post") &&updateTaskRequest.getStatus()==true){
                     AccountClone accountClone=accountCloneRepository.get_Account_Clone_By_Account_id(accountProfile.getAccount_id().trim());
