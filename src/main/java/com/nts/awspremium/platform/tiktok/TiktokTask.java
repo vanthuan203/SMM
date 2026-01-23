@@ -195,10 +195,10 @@ public class TiktokTask {
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
                 orderRunning = orderRunningRepository.get_Order_Running_Priority_By_Task("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue(),5);
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue(),5);
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("tiktok","follower",mode,list_History==null?"":list_History,orderThreadFollowerCheck.getValue());
             }
             if(orderRunning==null){
                 if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
@@ -214,7 +214,8 @@ public class TiktokTask {
             }
 
             if (orderRunning!=null) {
-                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),5)>0){
+                Service service=orderRunning.getService();
+                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
                     resp.put("status", false);
                     return resp;
                 }
@@ -230,7 +231,6 @@ public class TiktokTask {
                     resp.put("status", false);
                     return resp;
                 }
-                Service service=orderRunning.getService();
                 if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
                     data.put("bonus","");
                 }else{
