@@ -1176,7 +1176,7 @@ public class TiktokTask {
                             for(int j=0;j<index;j++){
                                 bonusArr.add(bonus_list[i]);
                             }
-                            index=index/2;
+                            index=index/4;
                         }
                         String bonus=bonusArr.get(ran.nextInt(bonusArr.size())).trim();
                         if(bonus.equals("like")){
