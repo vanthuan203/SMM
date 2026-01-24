@@ -444,7 +444,12 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(100+ran.nextInt(500));
+                Thread.sleep(150+ran.nextInt(250));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
+                Thread.sleep(200+ran.nextInt(200));
                 if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
                     resp.put("status", false);
                     return resp;
