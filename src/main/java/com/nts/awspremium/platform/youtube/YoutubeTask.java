@@ -18,7 +18,8 @@ public class YoutubeTask {
     private OrderRunningRepository orderRunningRepository;
     @Autowired
     private OrderThreadCheck orderThreadCheck;
-
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
     @Autowired
     private KeywordsRepository keywordsRepository;
 
@@ -443,8 +444,11 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(500+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }else if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
                     resp.put("status", false);
                     return resp;
                 }

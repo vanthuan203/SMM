@@ -17,6 +17,8 @@ public class TiktokTask {
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
+    private ProfileTaskRepository profileTaskRepository;
+    @Autowired
     private OrderThreadCheck orderThreadCheck;
     @Autowired
     private AccountCloneVideoCheck accountCloneVideoCheck;
@@ -219,7 +221,7 @@ public class TiktokTask {
                     resp.put("status", false);
                     return resp;
                 }
-                Thread.sleep(300+ran.nextInt(300));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         return tiktok_view_system(account_id,mode,device,1);
@@ -227,6 +229,9 @@ public class TiktokTask {
                         resp.put("status", false);
                         return resp;
                     }
+                }else if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
+                    resp.put("status", false);
+                    return resp;
                 }else if(tikTokFollower24hRepository.check_Follower_24h_By_Username_And_TiktokId(account_id.trim()+orderRunning.getOrder_key().trim())>0){
                     resp.put("status", false);
                     return resp;
