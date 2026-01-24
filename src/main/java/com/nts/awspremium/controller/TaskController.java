@@ -1544,7 +1544,7 @@ public class TaskController {
                 resp.put("data", data);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            if((System.currentTimeMillis()-device.getUpdate_time())/1000<30){ // waiting 30s
+            if((System.currentTimeMillis()-device.getUpdate_time())/1000<10){ // waiting 30s
                 resp.put("status", false);
                 data.put("message", "Không thực hiện nhiệm vụ");
                 resp.put("data", data);
