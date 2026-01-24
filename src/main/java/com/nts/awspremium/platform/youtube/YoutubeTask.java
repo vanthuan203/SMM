@@ -250,7 +250,7 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(500+ran.nextInt(500));
+                Thread.sleep(300+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
@@ -443,7 +443,7 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(500+ran.nextInt(500));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
