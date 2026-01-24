@@ -250,8 +250,8 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(300+ran.nextInt(500));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                Thread.sleep(500+ran.nextInt(500));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
