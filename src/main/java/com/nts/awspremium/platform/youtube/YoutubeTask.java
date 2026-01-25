@@ -443,6 +443,13 @@ public class YoutubeTask {
                         resp.put("status", false);
                         return resp;
                     }
+                }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 Thread.sleep(150+ran.nextInt(250));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
