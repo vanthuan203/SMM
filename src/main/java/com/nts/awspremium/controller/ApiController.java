@@ -190,6 +190,10 @@ public class ApiController {
                 }
                 Boolean pending=false;
                 if(!user.getRole().equals("ROLE_ADMIN")){
+                    if(orderRunningRepository.get_Count_OrderRunning_By_User(user.getUsername().trim())>=user.getMax_order()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                     if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
                         resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -198,12 +202,12 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()&&service.getTask().equals("follower")){
+                    if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()){
                         pending=true;
-                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0&&service.getTask().equals("follower")){
+                    }else if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0){
                         pending=true;
                     }
-                    if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()&&service.getTask().equals("follower")){
+                    if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
@@ -438,6 +442,10 @@ public class ApiController {
                 }
                 Boolean pending=false;
                 if(!user.getRole().equals("ROLE_ADMIN")){
+                    if(orderRunningRepository.get_Count_OrderRunning_By_User(user.getUsername().trim())>=user.getMax_order()){
+                        resp.put("error", "System busy try again");
+                        return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
+                    }
                     if(data.getQuantity() > service.getMax_quantity() || data.getQuantity() < service.getMin_quantity()){
                         resp.put("error", "Min/Max order is: " + service.getMin_quantity() + "/" + service.getMax_quantity());
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
@@ -446,12 +454,12 @@ public class ApiController {
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }
-                    if(orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()&&service.getTask().equals("follower")){
+                    if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Running_By_Mode_Auto()>=settingSystem.getMax_thread()){
                         pending=true;
-                    }else if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0&&service.getTask().equals("follower")){
+                    }else if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>0){
                         pending=true;
                     }
-                    if(orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()&&service.getTask().equals("follower")){
+                    if(service.getTask().equals("follower")&&orderRunningRepository.get_Sum_Thread_Pending_By_Mode_Auto()>=settingSystem.getMax_thread_pending()){
                         resp.put("error", "System busy try again");
                         return new ResponseEntity<String>(resp.toJSONString(), HttpStatus.OK);
                     }

@@ -122,7 +122,15 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     public Integer get_Sum_Thread_Order_Running_By_Mode_Auto();
 
     @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1 and start_time>0;",nativeQuery = true)
+    public Integer get_Count_OrderRunning_By_Service_And_StartTime(Integer service_id);
+
+    @Query(value = "SELECT count(*) FROM Data.order_running where service_id=?1",nativeQuery = true)
     public Integer get_Count_OrderRunning_By_Service(Integer service_id);
+
+    @Query(value = "SELECT count(*) FROM Data.order_running where username=?1",nativeQuery = true)
+    public Integer get_Count_OrderRunning_By_User(String username);
+
+
 
     @Query(value = "select o from OrderRunning o JOIN FETCH o.service where o.start_time=0 ORDER BY o.service.task ASC,o.priority DESC,o.insert_time ASC")
     public List<OrderRunning> get_Order_Pending_ASC();
