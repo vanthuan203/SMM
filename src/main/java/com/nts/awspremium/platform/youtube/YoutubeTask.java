@@ -234,16 +234,8 @@ public class YoutubeTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                    return youtube_farm(account_id);
-                }else{
-                    resp.put("status", false);
-                    return resp;
-                }
-            }
-            if(orderRunning!=null) {
-                Service service=orderRunning.getService();
-                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                if(orderRunning==null){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -251,8 +243,11 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(300+ran.nextInt(500));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+            }
+            if(orderRunning!=null) {
+                Service service=orderRunning.getService();
+                Thread.sleep(150+ran.nextInt(250));
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
@@ -451,12 +446,12 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Thread.sleep(150+ran.nextInt(250));
+                Thread.sleep(200+ran.nextInt(350));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
-                Thread.sleep(200+ran.nextInt(200));
+                Thread.sleep(200+ran.nextInt(350));
                 if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
                     resp.put("status", false);
                     return resp;

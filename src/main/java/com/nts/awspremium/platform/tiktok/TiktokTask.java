@@ -220,8 +220,11 @@ public class TiktokTask {
                 if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
                     resp.put("status", false);
                     return resp;
+                }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
+                    resp.put("status", false);
+                    return resp;
                 }
-                Thread.sleep(150+ran.nextInt(250));
+                Thread.sleep(200+ran.nextInt(350));
                 if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         return tiktok_view_system(account_id,mode,device,1);
@@ -230,7 +233,7 @@ public class TiktokTask {
                         return resp;
                     }
                 }
-                Thread.sleep(200+ran.nextInt(200));
+                Thread.sleep(200+ran.nextInt(350));
                 if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
                     resp.put("status", false);
                     return resp;

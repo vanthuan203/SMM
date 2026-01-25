@@ -2712,7 +2712,7 @@ public class TaskController {
                         return new ResponseEntity<>(resp, HttpStatus.OK);
                     }
                 }else{
-                    Thread.sleep(300+ran.nextInt(500));
+                    Thread.sleep(150+ran.nextInt(250));
                     if(!orderThreadSpeedUpCheck.getValue().contains(dataJson.get("order_id").toString())&&!dataJson.get("order_id").toString().equals("-1")){
                         device.setUpdate_time(System.currentTimeMillis() + settingSystem.getTime_waiting_task() * 1000);
                         deviceRepository.save(device);
