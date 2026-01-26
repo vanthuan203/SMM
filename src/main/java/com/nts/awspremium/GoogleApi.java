@@ -35,14 +35,14 @@ import java.util.stream.Collectors;
 
 public class GoogleApi {
     public static String getYoutubeId(String url) {
-        String pattern = "https?:\\/\\/(?:[0-9A-Z-]+\\.)?(?:youtu\\.be\\/|youtube\\.com\\S*[^\\w\\-\\s])([\\w\\-]{11})(?=[^\\w\\-]|$)(?![?=&+%\\w]*(?:['\"][^<>]*>|<\\/a>))[?=&+%\\w]*";
+        String pattern = "(?:v=|youtu\\.be/)([a-zA-Z0-9_-]{11})";
 
-        Pattern compiledPattern = Pattern.compile(pattern,
-                Pattern.CASE_INSENSITIVE);
+        Pattern compiledPattern = Pattern.compile(pattern);
         Matcher matcher = compiledPattern.matcher(url);
+
         if (matcher.find()) {
             return matcher.group(1);
-        }/*from w  w  w.  j a  va  2 s .c om*/
+        }
         return null;
     }
 
@@ -109,6 +109,42 @@ public class GoogleApi {
         }
 
     }
+
+
+    public static String getUCByVideoId(String videoId,String key){
+        try {
+            OkHttpClient client = new OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS).readTimeout(30, TimeUnit.SECONDS).build();
+            Random ran = new Random();
+            Request request = null;
+            Iterator k = null;
+            request = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key.trim()+"&fields=items(snippet(channelId,channelTitle))&part=snippet&id=" + videoId).get().build();
+            Response response = client.newCall(request).execute();
+            if(response.isSuccessful()){
+                String resultJson1 = response.body().string();
+                response.body().close();
+                Object obj1 = new JSONParser().parse(resultJson1);
+                JSONObject jsonObject1 = (JSONObject) obj1;
+                JSONArray items = (JSONArray) jsonObject1.get("items");
+                if (items == null) {
+                    return null;
+                }
+                k = items.iterator();
+                if (k.hasNext() == false) {
+                    return null;
+                }
+                JSONObject video = (JSONObject) k.next();
+                JSONObject statistics = (JSONObject) video.get("snippet");
+                return statistics.get("channelTitle").toString()+","+statistics.get("channelId").toString();
+            }else{
+                response.body().close();
+                return null;
+            }
+        } catch (IOException | ParseException e) {
+            return null;
+        }
+
+    }
+
 
     public static Integer getCountComment(String order_key,String key){
         try {

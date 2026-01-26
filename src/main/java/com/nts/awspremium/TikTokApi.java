@@ -124,6 +124,29 @@ public class TikTokApi {
         }
     }
 
+
+    public static String convertLinkVideo(String link) {
+        try {
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .build();
+            Request request = new Request.Builder()
+                    .url("https://www.tiktok.com/oembed?url="+link)
+                    .get().build();
+            Response response = client.newCall(request).execute();
+            String resultJson = response.body().string();
+            response.body().close();
+            JsonObject jsonObject = JsonParser.parseString(resultJson).getAsJsonObject();
+            // Kiểm tra nếu msg là "success"
+            if (response.isSuccessful()) {
+                return jsonObject.get("author_url").getAsString()+"/video/"+jsonObject.get("embed_product_id").getAsString();
+            }else{
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static Boolean checkLive(String tiktok_id) {
         try {
             OkHttpClient client = new OkHttpClient().newBuilder()
@@ -143,6 +166,9 @@ public class TikTokApi {
             return true;
         }
     }
+
+
+
 
 
 

@@ -565,7 +565,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") String uuid) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status",Openai.ListKeywords(openAiKeyRepository.get_OpenAI_Key()));
+            resp.put("status",TikTokApi.convertLinkVideo(uuid));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

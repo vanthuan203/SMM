@@ -174,15 +174,21 @@ public class TiktokOrder {
         JSONObject resp = new JSONObject();
         try{
             String video_id= TikTokApi.getVideoId(data.getLink().trim());
-            String link;
+            String link=null;
             if (video_id == null) {
-                   link=data.getLink().trim();
-            }else{
-                if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
-                    resp.put("error", "This ID in process");
+                link=TikTokApi.convertLinkVideo(data.getLink().trim());
+                if(link!=null){
+                    video_id= TikTokApi.getVideoId(link.trim());
+                }else{
+                    resp.put("error", "This video cannot be found");
                     return resp;
                 }
+            }else{
                 link=data.getLink().trim();
+            }
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(video_id.trim(),service.getTask()) > 0) {
+                resp.put("error", "This ID in process");
+                return resp;
             }
 
             if(!TikTokApi.checkGeoBlock(link)){

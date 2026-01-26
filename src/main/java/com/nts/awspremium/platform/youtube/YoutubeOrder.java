@@ -50,7 +50,7 @@ public class YoutubeOrder {
             Random ran = new Random();
             Request request1 = null;
             Iterator k = null;
-            String[] key={"AIzaSyA1mXzdZh1THOmazXeLuU1QNW1GyJqBS_A","AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
+            String[] key={"AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
             request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,channelId,channelTitle,liveBroadcastContent),statistics(viewCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
@@ -515,11 +515,25 @@ public class YoutubeOrder {
     public  JSONObject youtube_subscriber(DataRequest data,Service service,User user)  throws IOException, ParseException{
         JSONObject resp = new JSONObject();
         try{
+            Random ran=new Random();
+            String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyDU89b2Gk7nMVj-SPZh8Waq7TasA6KWoWQ"};
+
             String channelId = GoogleApi.getChannelId(data.getLink());
             if (channelId == null) {
-                resp.put("error", "Cant filter channel from link");
-                return resp;
+                String videoId = GoogleApi.getYoutubeId(data.getLink());
+                if (videoId == null) {
+                    resp.put("error", "Cant filter channel from link");
+                    return resp;
+                }else{
+                    channelId=GoogleApi.getUCByVideoId(videoId,key[ran.nextInt(key.length)]);
+                    if (channelId == null) {
+                        resp.put("error", "Cant filter channel from link");
+                        return resp;
+                    }
+                }
             }
+
+
             String title=channelId.split(",")[0];
             String uId=channelId.split(",")[1];
             if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uId.trim(),service.getTask()) > 0) {
@@ -528,13 +542,12 @@ public class YoutubeOrder {
             }
             List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
             if(videoList.size()<1){
-                resp.put("error", "The total number of videos in the account must be greater than or equal to 1 videos");
+                resp.put("error", "The total number of videos with a duration of at least 90 seconds in the account must be greater than or equal to 1 video.");
                 return resp;
             }
-            Random ran=new Random();
             //int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
             //String[] key={"AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            String[] key={"AIzaSyDU89b2Gk7nMVj-SPZh8Waq7TasA6KWoWQ","AIzaSyDeJlPN5niDYaHVCbaWyB0kE2cf4--dWS8","AIzaSyAlfEOjSy3smUK2_X0bJatd_tzmuj5tbWQ"};
+            //String[] key={"AIzaSyDU89b2Gk7nMVj-SPZh8Waq7TasA6KWoWQ","AIzaSyAlfEOjSy3smUK2_X0bJatd_tzmuj5tbWQ"};
             int start_Count =GoogleApi.getCountSubcriber(uId,key[ran.nextInt(key.length)]);
             if(start_Count==-2){
                 resp.put("error", "Can't get SubcriberCurrent");
