@@ -1319,7 +1319,7 @@ public class TaskController {
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("view")){
                         //get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
-                        get_task=youtubeTask.youtube_farm(profileTask.getAccount_id());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("like")){
                         get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("subscriber")){

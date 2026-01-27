@@ -54,6 +54,8 @@ public class Service implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer youtube_external;
     @Column(columnDefinition = "integer default 0")
+    private Integer youtube_external_google;
+    @Column(columnDefinition = "integer default 0")
     private Integer youtube_playlists;
     @Column(columnDefinition = "integer default 0")
     private Integer min_time;

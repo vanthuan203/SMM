@@ -277,6 +277,9 @@ public class YoutubeTask {
                 for (int i = 0; i < service.getYoutube_external(); i++) {
                     arrSource.add("external");
                 }
+                for (int i = 0; i < service.getYoutube_external_google(); i++) {
+                    arrSource.add("external_google");
+                }
                 for (int i = 0; i < service.getYoutube_search(); i++) {
                     arrSource.add("search");
                 }
@@ -484,6 +487,9 @@ public class YoutubeTask {
                 for (int i = 0; i < service.getYoutube_external(); i++) {
                     arrSource.add("external");
                 }
+                for (int i = 0; i < service.getYoutube_external_google(); i++) {
+                    arrSource.add("external_google");
+                }
                 for (int i = 0; i < service.getYoutube_search(); i++) {
                     arrSource.add("search");
                 }
@@ -609,6 +615,9 @@ public class YoutubeTask {
                 List<String> arrSource = new ArrayList<>();
                 for (int i = 0; i < service.getYoutube_external(); i++) {
                     arrSource.add("external");
+                }
+                for (int i = 0; i < service.getYoutube_external_google(); i++) {
+                    arrSource.add("external_google");
                 }
                 for (int i = 0; i < service.getYoutube_search(); i++) {
                     arrSource.add("search");
