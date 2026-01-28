@@ -217,12 +217,14 @@ public class TiktokTask {
 
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
-                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
-                    resp.put("status", false);
-                    return resp;
-                }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
-                    resp.put("status", false);
-                    return resp;
+                if(service.getLimit_task_time()>0){
+                    if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                        resp.put("status", false);
+                        return resp;
+                    }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 Thread.sleep(200+ran.nextInt(350));
                 if(!orderThreadFollowerCheck.getValue().contains(orderRunning.getOrder_id().toString())){
