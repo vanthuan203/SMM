@@ -545,10 +545,16 @@ public class YoutubeOrder {
                 resp.put("error", "The total number of videos with a duration of at least 90 seconds in the account must be greater than or equal to 1 video.");
                 return resp;
             }
+            int start_Count=-2;
+            if(user.getUsername().trim().equals("refill@gmail.com")){
+                start_Count =GoogleApi.getCountSubcriberCurrent(uId);
+            }else{
+                start_Count =GoogleApi.getCountSubcriber(uId,key[ran.nextInt(key.length)]);
+            }
             //int start_Count =GoogleApi.getCountSubcriberCurrent(uId);
             //String[] key={"AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
             //String[] key={"AIzaSyDU89b2Gk7nMVj-SPZh8Waq7TasA6KWoWQ","AIzaSyAlfEOjSy3smUK2_X0bJatd_tzmuj5tbWQ"};
-            int start_Count =GoogleApi.getCountSubcriber(uId,key[ran.nextInt(key.length)]);
+            //int start_Count =GoogleApi.getCountSubcriber(uId,key[ran.nextInt(key.length)]);
             if(start_Count==-2){
                 resp.put("error", "Can't get SubcriberCurrent");
                 return resp;

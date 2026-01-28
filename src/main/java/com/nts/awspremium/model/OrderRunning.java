@@ -66,6 +66,8 @@ public class OrderRunning implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer total;
     @Column(columnDefinition = "integer default 0")
+    private Integer total_limit_time;
+    @Column(columnDefinition = "integer default 0")
     private Integer time_total;
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;

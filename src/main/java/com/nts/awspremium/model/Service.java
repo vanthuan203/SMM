@@ -113,6 +113,8 @@ public class Service implements Serializable {
     private String app;
     @Column(columnDefinition = "TINYINT default 0")
     private Boolean ai=false;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean bonus_check=false;
     @Column(columnDefinition = "integer default 10")
     private Integer limit_task_time=10;
 
