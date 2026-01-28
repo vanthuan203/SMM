@@ -25,7 +25,7 @@ public interface OrderRunningShow {
     String getTask();
     String getMode();
     Integer getBonus();
-    Boolean getBonus_check();
+    Integer getBonus_check();
     Integer getPriority();
 
 

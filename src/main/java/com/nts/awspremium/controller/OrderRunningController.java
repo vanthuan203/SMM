@@ -208,8 +208,8 @@ public class OrderRunningController {
                 obj.put("check_count_time", orderRunnings.get(i).getCheck_count_time());
                 obj.put("current_count", orderRunnings.get(i).getCurrent_count());
                 obj.put("total", orderRunnings.get(i).getTotal());
-                obj.put("total", orderRunnings.get(i).getTotal());
                 obj.put("total_limit_time", orderRunnings.get(i).getTotal_limit_time());
+                obj.put("bonus_check", orderRunnings.get(i).getBonus_check());
                 obj.put("quantity", orderRunnings.get(i).getQuantity());
                 obj.put("note", orderRunnings.get(i).getNote());
                 obj.put("service_id", orderRunnings.get(i).getService_id());
