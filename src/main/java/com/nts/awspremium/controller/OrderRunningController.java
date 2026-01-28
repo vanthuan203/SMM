@@ -736,7 +736,7 @@ public class OrderRunningController {
             List<String> totalBuffTime=orderRunningRepository.get_Total_Buff_By_AddTime_Cron(48);
             for(int i=0;i<totalBuffTime.size();i++){
                 try {
-                    orderRunningRepository.update_Total_Buff_Limit_Time_By_OrderId(Integer.parseInt(totalBuffTime.get(i).split(",")[1]),Long.parseLong(totalBuff.get(i).split(",")[0]));
+                    orderRunningRepository.update_Total_Buff_Limit_Time_By_OrderId(Integer.parseInt(totalBuffTime.get(i).split(",")[1]),Long.parseLong(totalBuffTime.get(i).split(",")[0]));
                 } catch (Exception e) {
 
                 }
