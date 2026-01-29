@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @RestController
@@ -272,6 +273,7 @@ public class YoutubeTask {
                 //data.put("task_link",orderRunning.getOrder_link()+"&t=0");
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
+                data.put("video_title", orderRunning.getVideo_title());
 
 
                 List<String> arrSource = new ArrayList<>();
@@ -297,19 +299,24 @@ public class YoutubeTask {
                     arrSource.add("embed");
                 }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+                if(data.get("source").toString().equals("search")){
+                    List<String> randomFields = Arrays.asList(
+                            orderRunning.getOrder_key(),
+                            orderRunning.getChannel_title()
+                    );
+                    String randomValue = randomFields.get(
+                            ThreadLocalRandom.current().nextInt(randomFields.size())
+                    );
 
-                if(service.getService_type().trim().equals("Special")){
-                    String list_key = orderRunning.getKeyword_list();
-                    String key = "";
-                    if (list_key != null && list_key.length() != 0) {
-                        String[] keyArr = list_key.split(",");
-                        key = keyArr[ran.nextInt(keyArr.length)];
+                    String result;
+                    if (ThreadLocalRandom.current().nextBoolean()) {
+                        result = randomValue + " - " + orderRunning.getVideo_title();
+                    } else {
+                        result = orderRunning.getVideo_title() + " - " + randomValue;
                     }
-                    data.put("keyword", key.length() == 0 ? orderRunning.getVideo_title() : key);
-
-                }else{
-                    data.put("keyword", orderRunning.getVideo_title());
+                    data.put("keyword",result);
                 }
+
                 if (service.getMin_time() != service.getMax_time()) {
                     if (orderRunning.getDuration() > service.getMax_time() * 60) {
                         data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
@@ -482,33 +489,53 @@ public class YoutubeTask {
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
                 DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
-                data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
+                data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("keyword", dataSubscriber.getVideo_title());
+                data.put("video_title", dataSubscriber.getVideo_title());
 
                 List<String> arrSource = new ArrayList<>();
                 for (int i = 0; i < service.getYoutube_external(); i++) {
-                    arrSource.add("external");
+                    arrSource.add("external_video");
+                }
+                for (int i = 0; i < service.getYoutube_direct(); i++) {
+                    arrSource.add("external_channel");
+                }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("search_channel");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search_video");
                 }
                 for (int i = 0; i < service.getYoutube_external_google(); i++) {
                     arrSource.add("external_google");
                 }
-                for (int i = 0; i < service.getYoutube_search(); i++) {
-                    arrSource.add("search");
-                }
-                for (int i = 0; i < service.getYoutube_direct(); i++) {
-                    arrSource.add("direct");
-                }
-                for (int i = 0; i < service.getYoutube_suggest(); i++) {
-                    arrSource.add("suggest");
-                }
-                for (int i = 0; i < service.getYoutube_dtn(); i++) {
-                    arrSource.add("dtn");
-                }
-                for (int i = 0; i < service.getYoutube_embed(); i++) {
-                    arrSource.add("embed");
-                }
                 data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
+                if(data.get("source").toString().equals("external_video")){
+                    data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
+                }else if(data.get("source").toString().equals("external_channel")){
+                    data.put("task_link","https://www.youtube.com/channel/"+orderRunning.getOrder_key());
+                }else if(data.get("source").toString().equals("search_video")){
+                    List<String> randomFields = Arrays.asList(
+                            dataSubscriber.getVideo_id(),
+                            orderRunning.getChannel_title()
+                    );
+                    String randomValue = randomFields.get(
+                            ThreadLocalRandom.current().nextInt(randomFields.size())
+                    );
+
+                    String result;
+                    if (ThreadLocalRandom.current().nextBoolean()) {
+                        result = randomValue + " - " + dataSubscriber.getVideo_title();
+                    } else {
+                        result = dataSubscriber.getVideo_title() + " - " + randomValue;
+                    }
+                    data.put("keyword",result);
+                    data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
+                }else if(data.get("source").toString().equals("search_channel")){
+                    data.put("task_link","https://www.youtube.com/channel/"+orderRunning.getOrder_key());
+                }
 
                 if (service.getMin_time() != service.getMax_time()) {
                     if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
