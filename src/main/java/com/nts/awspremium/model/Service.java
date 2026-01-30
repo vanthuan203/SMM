@@ -117,6 +117,8 @@ public class Service implements Serializable {
     private Boolean bonus_check=false;
     @Column(columnDefinition = "integer default 10")
     private Integer limit_task_time=10;
+    @Column(columnDefinition = "integer default 0")
+    private Integer pending_task_time=0;
 
     public Service() {
     }

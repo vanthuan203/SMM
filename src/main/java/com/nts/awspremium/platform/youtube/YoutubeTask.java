@@ -239,8 +239,6 @@ public class YoutubeTask {
                 if(orderRunning==null){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
-                    }if(mode.equals("auto-gmail")){
-                        return youtube_subscriber_view(account_id,mode);
                     }else {
                         resp.put("status", false);
                         return resp;
@@ -437,8 +435,6 @@ public class YoutubeTask {
             if(orderRunning==null){
                 if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                     return youtube_farm(account_id);
-                }if(mode.equals("auto-gmail")){
-                    return youtube_subscriber_view(account_id,mode);
                 }else{
                     resp.put("status", false);
                     return resp;
@@ -497,12 +493,13 @@ public class YoutubeTask {
                 if(dataSubscriber.getState()==1&& (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=6){
                     dataSubscriber.setState(0);
                     dataSubscriberRepository.save(dataSubscriber);
-                    dataSubscriber=dataSubscriberRepository.get_Data_Subscriber_By_State(orderRunning.getOrder_id());
+                    resp.put("status", false);
+                    return resp;
                 }else if(dataSubscriber.getState()==0){
                     dataSubscriber.setState(1);
                     dataSubscriber.setTask_time(System.currentTimeMillis());
                     dataSubscriberRepository.save(dataSubscriber);
-                }else if(service.getLimit_task_time()==0&&(System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60>=60){
+                }else if((System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()){
                     resp.put("status", false);
                     return resp;
                 }
