@@ -119,6 +119,8 @@ public class Service implements Serializable {
     private Integer limit_task_time=10;
     @Column(columnDefinition = "integer default 0")
     private Integer pending_task_time=0;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean pending_task=false;
 
     public Service() {
     }
