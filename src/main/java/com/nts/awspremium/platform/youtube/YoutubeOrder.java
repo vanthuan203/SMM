@@ -608,7 +608,7 @@ public class YoutubeOrder {
                 DataSubscriber dataSubscriber=new DataSubscriber();
                 dataSubscriber.setVideo_id(video_Info[0].trim());
                 dataSubscriber.setVideo_title(video_Info[1].trim());
-                dataSubscriber.setState(1);
+                dataSubscriber.setState(0);
                 dataSubscriber.setAdd_time(System.currentTimeMillis());
                 dataSubscriber.setOrderRunning(orderRunning);
                 dataSubscriber.setChannel_id(orderRunning.getOrder_key());

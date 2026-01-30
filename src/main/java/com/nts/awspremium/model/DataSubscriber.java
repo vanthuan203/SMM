@@ -22,9 +22,11 @@ public class DataSubscriber  {
     @Column(columnDefinition = "bigint default 0")
     private Long duration;
     @Column(columnDefinition = "integer default 0")
-    private Integer state;
+    private Integer state=0;
     @Column(columnDefinition = "bigint default 0")
-    private Long add_time;
+    private Long add_time=0L;
+    @Column(columnDefinition = "bigint default 0")
+    private Long task_time=0L;
     public DataSubscriber() {
     }
 }
