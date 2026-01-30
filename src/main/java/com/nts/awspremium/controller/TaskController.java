@@ -2043,6 +2043,9 @@ public class TaskController {
                     entityManager.clear();
 
                     List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
+                    if(profileTask.getProfile_id().startsWith("1")){
+                        string_Task_List.remove("youtube");
+                    }
                     String task_List=String.join(",", string_Task_List);
                     List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -2513,7 +2516,7 @@ public class TaskController {
 
             for(int i=0;i<priorityTasks.size();i++){
                 for (int j = 0; j < priorityTasks.get(i).getPriority(); j++) {
-                    arrTask.add(priorityTasks.get(i).getTask());
+                        arrTask.add(priorityTasks.get(i).getTask());
                 }
             }
             /*
