@@ -239,7 +239,9 @@ public class YoutubeTask {
                 if(orderRunning==null){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
-                    }else{
+                    }if(mode.equals("auto-gmail")){
+                        return youtube_subscriber_view(account_id,mode);
+                    }else {
                         resp.put("status", false);
                         return resp;
                     }
@@ -435,6 +437,8 @@ public class YoutubeTask {
             if(orderRunning==null){
                 if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                     return youtube_farm(account_id);
+                }if(mode.equals("auto-gmail")){
+                    return youtube_subscriber_view(account_id,mode);
                 }else{
                     resp.put("status", false);
                     return resp;
@@ -549,6 +553,141 @@ public class YoutubeTask {
                     data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
                 }else if(data.get("source").toString().equals("search_channel")){
                     data.put("task_link","https://www.youtube.com/channel/"+orderRunning.getOrder_key());
+                }
+
+                if (service.getMin_time() != service.getMax_time()) {
+                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt((service.getMax_time() - service.getMin_time()) * 45));
+                    } else {
+                        data.put("viewing_time", service.getMin_time() * 60 < dataSubscriber.getDuration() ? (service.getMin_time() * 60 + ran.nextInt((int)(dataSubscriber.getDuration() - service.getMin_time() * 60))) : dataSubscriber.getDuration());
+                    }
+                }else {
+                    if (dataSubscriber.getDuration() > service.getMax_time() * 60) {
+                        data.put("viewing_time", service.getMin_time() * 60 + ran.nextInt(30) );
+                    } else {
+                        data.put("viewing_time", dataSubscriber.getDuration());
+                    }
+                }
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
+
+    public Map<String, Object> youtube_subscriber_view(String account_id,String mode){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
+            String list_History=youtubeChannelHistoryRepository.get_List_ChannelId_By_AccountId(account_id.trim());
+            orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","subscriber",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+            if(orderRunning==null){
+                resp.put("status", false);
+                return resp;
+            }
+            if (orderRunning!=null) {
+                Service service=orderRunning.getService();
+                Thread.sleep(200+ran.nextInt(350));
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
+                resp.put("status", true);
+                data.put("order_id", -1);
+                //resp.put("proxy", proxy);
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", "view");
+                data.put("app", service.getApp());
+                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_title", orderRunning.getChannel_title());
+
+                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber_By_State(orderRunning.getOrder_id());
+                if(dataSubscriber.getState()==1&& (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=6){
+                    dataSubscriber.setState(0);
+                    dataSubscriberRepository.save(dataSubscriber);
+                    dataSubscriber=dataSubscriberRepository.get_Data_Subscriber_By_State(orderRunning.getOrder_id());
+                }else if(dataSubscriber.getState()==0){
+                    dataSubscriber.setState(1);
+                    dataSubscriber.setTask_time(System.currentTimeMillis());
+                    dataSubscriberRepository.save(dataSubscriber);
+                }else if(service.getLimit_task_time()==0&&(System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60>=60){
+                    resp.put("status", false);
+                    return resp;
+                }
+
+                data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
+                data.put("task_key", dataSubscriber.getVideo_id());
+                data.put("keyword", dataSubscriber.getVideo_title());
+                data.put("video_title", dataSubscriber.getVideo_title());
+
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external_video");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search_video");
+                }
+                for (int i = 0; i < service.getYoutube_external_google(); i++) {
+                    arrSource.add("external_google");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+
+                if(data.get("source").toString().equals("external_video")){
+                    data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
+                }else if(data.get("source").toString().equals("search_video")){
+                    List<String> randomFields = Arrays.asList(
+                            dataSubscriber.getVideo_id(),
+                            orderRunning.getChannel_title()
+                    );
+                    String randomValue = randomFields.get(
+                            ThreadLocalRandom.current().nextInt(randomFields.size())
+                    );
+
+                    String result;
+                    if (ThreadLocalRandom.current().nextBoolean()) {
+                        result = randomValue + " - " + dataSubscriber.getVideo_title();
+                    } else {
+                        result = dataSubscriber.getVideo_title() + " - " + randomValue;
+                    }
+                    data.put("keyword",result);
+                    data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
                 }
 
                 if (service.getMin_time() != service.getMax_time()) {
