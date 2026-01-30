@@ -498,7 +498,7 @@ public class YoutubeTask {
                     dataSubscriber.setState(1);
                     dataSubscriber.setTask_time(System.currentTimeMillis());
                     dataSubscriberRepository.save(dataSubscriber);
-                }else if(service.getLimit_task_time()>0&&(System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60>=60){
+                }else if(service.getLimit_task_time()==0&&(System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60>=60){
                     resp.put("status", false);
                     return resp;
                 }
