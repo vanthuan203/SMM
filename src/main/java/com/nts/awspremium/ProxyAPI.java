@@ -97,7 +97,7 @@ public class ProxyAPI {
             // Kiểm tra nếu msg là "success"
             if (!jsonObject.get("proxy").isJsonNull()) {
                 String[] proxy= jsonObject.get("proxy").getAsString().split(":");
-                return proxy[2]+":"+proxy[3]+"@"+proxy[0]+":"+proxy[1];
+                return proxy[0]+":"+proxy[1]+":"+proxy[2]+":"+proxy[3];
             }
         } catch (Exception e) {
             return null;

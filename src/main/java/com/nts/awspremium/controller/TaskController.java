@@ -1629,6 +1629,11 @@ public class TaskController {
             }
 
             try{
+
+                if(updateTaskRequest.getTask().equals("add_proxy") &&updateTaskRequest.getStatus()==true){ //add_proxy
+                    profileTaskRepository.reset_Thread_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
+                }
+
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                 if(accountProfile.getRunning()==2&&updateTaskRequest.getIsLogin()==1&& //check đổi acc thành công
                         !Set.of("login", "register", "sign_in","add_post","update_info","add_recovery_mail","update_avatar","update_username").contains(updateTaskRequest.getTask().trim())
