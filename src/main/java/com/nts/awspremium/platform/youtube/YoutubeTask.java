@@ -86,16 +86,30 @@ public class YoutubeTask {
             }
             if (orderRunning!=null) {
                 Service service=orderRunning.getService();
-                if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
-                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                        return youtube_farm(account_id);
-                    }else{
-                        resp.put("status", false);
-                        return resp;
+                if(service.getLimit_task_time()>0){
+                    if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                            return youtube_farm(account_id);
+                        }else{
+                            resp.put("status", false);
+                            return resp;
+                        }
+                    }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
+                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                            return youtube_farm(account_id);
+                        }else{
+                            resp.put("status", false);
+                            return resp;
+                        }
                     }
                 }
-                Thread.sleep(300+ran.nextInt(500));
+                Thread.sleep(200+ran.nextInt(350));
                 if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
+                Thread.sleep(200+ran.nextInt(350));
+                if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
                     resp.put("status", false);
                     return resp;
                 }

@@ -1276,7 +1276,7 @@ public class TaskController {
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
-                    if(task.equals("follower") && (accountProfile_Task.getSign_in()==1 || device.getMode().equals("auto-gmail"))){
+                    if(task.equals("follower") && accountProfile_Task.getSign_in()==0){ //(accountProfile_Task.getSign_in()==1 || device.getMode().equals("auto-gmail"))
                         get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim(),device.getIp_address(),device);
                     }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
@@ -1400,8 +1400,17 @@ public class TaskController {
                 if(profileTask.getPlatform().equals("tiktok")&&profileTask.getProfile_id().equals(profileTask.getAccount_id())){
                     dataJson.put("account_id",profileTask.getAccount_id());
                 }else{
-                    dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
-                    dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
+                    //dataJson.put("name",accountProfileRepository.get_Name_By_AccountId(profileTask.getAccount_id()));
+                    //dataJson.put("avatar",accountProfileRepository.get_Avatar_By_AccountId(profileTask.getAccount_id())==0?false:true);
+                    if(profileTask.getPlatform().equals("youtube")&&accountProfile_Task.getName().trim().length()==0){ //name trống thì tạo name
+                        String name=StringUtils.getName().trim();
+                        accountProfile_Task.setName(name);
+                        accountProfileRepository.save(accountProfile_Task);
+                        dataJson.put("name",name);
+                    }else{
+                        dataJson.put("name",accountProfile_Task.getName().trim());
+                    }
+                    dataJson.put("avatar",accountProfile_Task.getAvatar()==0?false:true);
                     dataJson.put("account_id",dataJson.get("account_id").toString().substring(0,dataJson.get("account_id").toString().indexOf("|")));
                     if(accountProfile_Task.getRecover().trim().contains("|")){
                         dataJson.put("recover_mail",accountProfile_Task.getRecover().trim().substring(0,accountProfile_Task.getRecover().trim().indexOf("|")));
