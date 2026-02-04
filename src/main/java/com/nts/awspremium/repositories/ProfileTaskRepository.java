@@ -122,8 +122,13 @@ public interface ProfileTaskRepository extends JpaRepository<ProfileTask,String>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE profile_task SET reboot=0 where profile_id=?1",nativeQuery = true)
+    @Query(value = "UPDATE profile_task SET reboot=0,add_proxy=0 where profile_id=?1",nativeQuery = true)
     public Integer reset_Reboot_By_ProfileId(String profile_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE profile_task SET add_proxy=0 where profile_id=?1",nativeQuery = true)
+    public Integer reset_Proxy_By_ProfileId(String profile_id);
 
     @Modifying
     @Transactional

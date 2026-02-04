@@ -233,6 +233,7 @@ public class TaskController {
                 device.setUpdate_time(System.currentTimeMillis());
                 device.setReboot_time(System.currentTimeMillis());
                 deviceRepository.save(device);
+                profileTaskRepository.reset_Proxy_By_ProfileId(device_id.trim()+"_"+profile_id.trim()); //reset proxy
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "reboot");
@@ -253,6 +254,7 @@ public class TaskController {
 
 
             if((device.getNum_profile()<mode.getMax_profile() || profileTaskRepository.get_Count_Profile_Valid_0_By_DeviceId(device_id.trim())>0 )&&!profile_id.trim().equals("0")){
+                profileTaskRepository.reset_Proxy_By_ProfileId(device_id.trim()+"_"+profile_id.trim()); //reset proxy
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");
@@ -285,6 +287,7 @@ public class TaskController {
                 }
                 profileTask = profileTaskRepository.get_Profile_Get_Task_By_Enabled(device_id.trim(),profileTask==null?"":profileTask.getProfile_id());
                 if(profileTask!=null){
+                    profileTaskRepository.reset_Proxy_By_ProfileId(device_id.trim()+"_"+profile_id.trim()); //reset proxy
                     resp.put("status", true);
                     data.put("platform", "system");
                     data.put("task", "profile_changer");
@@ -303,6 +306,7 @@ public class TaskController {
                     if(profileTask!=null){
                         if(mode.getProfile_reboot()){
                             profileTask.setReboot(1);
+                            profileTask.setAdd_proxy(0);
                             profileTaskRepository.save(profileTask);
                         }
                         device.setProfile_running(profileTask.getProfile_id().split(device_id.trim()+"_")[1]);
@@ -365,6 +369,9 @@ public class TaskController {
 
             if(device.getProfile_running().length()!=0 && !device.getProfile_running().equals(profile_id.trim()) &&!mode.getMode().contains("dev")&&
                     profileTaskRepository.check_Profile_Exist(device_id.trim()+"_"+device.getProfile_running().trim())>0){
+
+                profileTaskRepository.reset_Proxy_By_ProfileId(device_id.trim()+"_"+profile_id.trim()); //reset proxy
+
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "profile_changer");
