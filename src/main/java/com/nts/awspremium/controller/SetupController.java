@@ -110,6 +110,7 @@ public class SetupController {
             }else if(task.trim().equals("add_proxy")){
                 profileTask.setProxy(task_key.trim());
                 profileTask.setAdd_proxy(1);
+                profileTask.setProxy_time(System.currentTimeMillis());
                 profileTaskRepository.save(profileTask);
             }else if(task.trim().equals("disconnect_proxy")&&profileTask.getAdd_proxy()==1){
                 profileTask.setAdd_proxy(0);

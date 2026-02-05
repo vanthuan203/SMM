@@ -75,6 +75,8 @@ public class ProfileTask implements Serializable {
     @Column(columnDefinition = "varchar(255) default ''")
     private String proxy="";
     @Column(columnDefinition = "bigint default 0")
+    private Long proxy_time=0L;
+    @Column(columnDefinition = "bigint default 0")
     private Long task_time=0L;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "device_id",referencedColumnName = "device_id",updatable = true,insertable = true)

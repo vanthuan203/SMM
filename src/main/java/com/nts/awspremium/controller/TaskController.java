@@ -449,7 +449,7 @@ public class TaskController {
             }
 
 
-            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
+            if(mode.getAdd_proxy()==1&&(profileTask.getAdd_proxy()==0 || (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=15)){
                 String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
                 //String proxy=ProxyAPI.getSock5Luna("id");
                 String proxy=ProxyAPI.getHttpV6(mode.getGeography().trim());
@@ -1645,10 +1645,6 @@ public class TaskController {
             }
 
             try{
-
-                if(updateTaskRequest.getTask().equals("add_proxy") &&updateTaskRequest.getStatus()==true){ //add_proxy
-                    profileTaskRepository.update_Proxy_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
-                }
 
                 AccountProfile accountProfile=accountProfileRepository.get_Account_By_Account_id_And_Platform(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getPlatform().trim());
                 if(accountProfile.getRunning()==2&&updateTaskRequest.getIsLogin()==1&& //check đổi acc thành công
