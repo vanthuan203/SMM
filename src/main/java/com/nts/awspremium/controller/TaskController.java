@@ -448,8 +448,13 @@ public class TaskController {
                 profileTaskRepository.save(profileTask);
             }
 
-
-            if(mode.getAdd_proxy()==1&&(profileTask.getAdd_proxy()==0 || (profileTask.getAdd_proxy()==1 && (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=15))){
+            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==1 && (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=15){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "disconnect_proxy");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==0){
                 String[] geo={"th", "za", "kr", "jp", "id", "bd", "eg", "my"};
                 //String proxy=ProxyAPI.getSock5Luna("id");
                 String proxy=ProxyAPI.getHttpV6(mode.getGeography().trim());
