@@ -73,7 +73,14 @@ public class YoutubeOrder {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     JSONObject snippet = (JSONObject) video.get("snippet");
-
+                    JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
+                    if (regionRestriction != null && regionRestriction.containsKey("blocked")) {
+                        JSONArray blockedArray = (JSONArray) regionRestriction.get("blocked");
+                        String blockedCountries = String.join(",", blockedArray).toLowerCase();
+                        if(blockedCountries.contains("vn")){
+                            resp.put("error", "This video is not available in some countries");
+                        }
+                    }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
                         resp.put("error", "This video is a livestream video");
                         return resp;
@@ -216,7 +223,7 @@ public class YoutubeOrder {
             Request request1 = null;
             Iterator k = null;
             String[] key={"AIzaSyA6m4AmAGSiGANwtO2UtHglFFz9RF3YTwI","AIzaSyA8zA-au4ZLpXTqrv3CFqW2dvN0mMQuWaE","AIzaSyAc3zrvWloLGpDZMmex-Kq0UqrVFqJPRac","AIzaSyAct-_8qIpPxSJJFFLno6BBACZsZeYDmPw"};
-            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,description,channelId,channelTitle,liveBroadcastContent),statistics(commentCount),contentDetails(duration))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
+            request1 = new Request.Builder().url("https://www.googleapis.com/youtube/v3/videos?key="+key[ran.nextInt(key.length)]+"&fields=items(id,snippet(title,description,channelId,channelTitle,liveBroadcastContent),statistics(commentCount),contentDetails(duration,regionRestriction(blocked)))&part=snippet,statistics,contentDetails&id=" + videoId).get().build();
 
             Response response1 = client1.newCall(request1).execute();
 
@@ -238,7 +245,15 @@ public class YoutubeOrder {
                     JSONObject video = (JSONObject) k.next();
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     JSONObject snippet = (JSONObject) video.get("snippet");
-
+                    JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
+                    if (regionRestriction != null && regionRestriction.containsKey("blocked")) {
+                        JSONArray blockedArray = (JSONArray) regionRestriction.get("blocked");
+                        String blockedCountries = String.join(",", blockedArray).toLowerCase();
+                        if(blockedCountries.contains("vn")){
+                            resp.put("error", "This video is not available in some countries");
+                            return resp;
+                        }
+                    }
                     if (!snippet.get("liveBroadcastContent").toString().equals("none")) {
                         resp.put("error", "This video is not eligible for service");
                         return resp;
