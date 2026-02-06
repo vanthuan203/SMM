@@ -150,7 +150,8 @@ public class YoutubeTask {
                     data.put("task", service.getTask());
                     data.put("app", service.getApp());
                     data.put("task_key",orderRunning.getOrder_key());
-                    data.put("task_link",orderRunning.getOrder_link());
+                    //data.put("task_link",orderRunning.getOrder_link());
+                    data.put("task_link","https://www.youtube.com/watch?v="+orderRunning.getOrder_key());
                     data.put("channel_title",orderRunning.getChannel_title());
                     List<String> arrSource = new ArrayList<>();
                     for (int i = 0; i < service.getYoutube_external(); i++) {

@@ -239,20 +239,10 @@ public class YoutubeOrder {
                     JSONObject contentDetails = (JSONObject) video.get("contentDetails");
                     JSONObject snippet = (JSONObject) video.get("snippet");
 
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
-                        resp.put("error", "This video is a livestream video");
+                    if (!snippet.get("liveBroadcastContent").toString().equals("none")) {
+                        resp.put("error", "This video is not eligible for service");
                         return resp;
                     }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 15) {
-                        resp.put("error", "Videos under 15 seconds");
-                        return resp;
-                    }
-                    if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() < 600&&service.getCheck_time()==1&&service.getMax_time()==10) {
-                        resp.put("error", "Video under 10 minutes");
-                        return resp;
-                    }
-
-
                     float priceorder = 0;
                     priceorder = (data.getQuantity() / 1000F) * service.getService_rate() * ((float) (user.getRate()) / 100) * ((float) (100 - user.getDiscount()) / 100);
                     if (priceorder > (float) user.getBalance()) {
@@ -261,7 +251,7 @@ public class YoutubeOrder {
                     }
                     JSONObject statistics = (JSONObject) video.get("statistics");
                     OrderRunning orderRunning = new OrderRunning();
-
+                    /*
                     if (snippet.get("liveBroadcastContent").toString().equals("none")) {
                         if(service.getCheck_time()==1) {
                             orderRunning.setThread(-1);
@@ -274,6 +264,9 @@ public class YoutubeOrder {
                         orderRunning.setThread(0);
                         orderRunning.setStart_time(0L);
                     }
+                     */
+                    orderRunning.setThread(-1);
+                    orderRunning.setThread_set(service.getThread());
                     orderRunning.setStart_time(0L);
                     orderRunning.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
                     orderRunning.setInsert_time(System.currentTimeMillis());
