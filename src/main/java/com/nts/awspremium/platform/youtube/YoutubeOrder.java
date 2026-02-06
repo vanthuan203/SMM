@@ -265,7 +265,7 @@ public class YoutubeOrder {
                         orderRunning.setStart_time(0L);
                     }
                      */
-                    orderRunning.setThread(-1);
+                    orderRunning.setThread(service.getThread());
                     orderRunning.setThread_set(service.getThread());
                     orderRunning.setStart_time(0L);
                     orderRunning.setDuration(Duration.parse(contentDetails.get("duration").toString()).getSeconds());
