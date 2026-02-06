@@ -3,6 +3,7 @@ package com.nts.awspremium.controller;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.nts.awspremium.MailApi;
 import com.nts.awspremium.Openai;
 import com.nts.awspremium.StringUtils;
 import com.nts.awspremium.TikTokApi;
@@ -29,6 +30,8 @@ public class AccountController {
     private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private MicrosoftMailRepository microsoftMailRepository;
     @Autowired
     private AccountSaveRepository accountSaveRepository;
     @Autowired
@@ -280,6 +283,40 @@ public class AccountController {
 
         }
     }
+
+    public void cronHotMail(){
+        try{
+            List<MicrosoftMail> accounts=microsoftMailRepository.get_ALL_Mail_By_AccountId();
+            for (MicrosoftMail account:accounts
+            ) {
+                if(MailApi.getTokenMailMicrosoft(account)!=null){
+                    account.setUpdate_time(System.currentTimeMillis());
+                    microsoftMailRepository.save(account);
+                }
+                Thread.sleep(1000);
+            }
+
+
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+        }
+    }
+
 
     public void updateVideoAccount(){
         try{
