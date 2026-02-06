@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 public class GoogleApi {
     public static String getYoutubeId(String url) {
-        String pattern = "(?:v=|youtu\\.be/)([a-zA-Z0-9_-]{11})";
+        String pattern = "(?:v=|youtu\\.be/|shorts/|embed/|live/)([a-zA-Z0-9_-]{11})";
 
         Pattern compiledPattern = Pattern.compile(pattern);
         Matcher matcher = compiledPattern.matcher(url);
