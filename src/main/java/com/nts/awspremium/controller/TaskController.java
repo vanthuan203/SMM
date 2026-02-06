@@ -448,7 +448,7 @@ public class TaskController {
                 profileTaskRepository.save(profileTask);
             }
 
-            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==1 && (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=15){
+            if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==1 && (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=30){
                 resp.put("status", true);
                 data.put("platform", "system");
                 data.put("task", "disconnect_proxy");
