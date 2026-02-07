@@ -258,7 +258,7 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
-                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device_id+"%")>0){
+                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device_id+orderRunning.getOrder_key())>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -486,7 +486,7 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
-                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId(device_id+"%")>0){
+                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId(device_id+orderRunning.getOrder_key())>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
