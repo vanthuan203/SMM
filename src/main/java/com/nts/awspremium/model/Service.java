@@ -115,6 +115,8 @@ public class Service implements Serializable {
     private Boolean ai=false;
     @Column(columnDefinition = "TINYINT default 0")
     private Boolean bonus_check=false;
+    @Column(columnDefinition = "TINYINT default 1")
+    private Boolean fake_device_app=true;
     @Column(columnDefinition = "integer default 10")
     private Integer limit_task_time=10;
     @Column(columnDefinition = "integer default 0")

@@ -232,7 +232,7 @@ public class YoutubeUpdate {
             return false;
         }
     }
-    public Boolean youtube_like(String account_id,String task_key){
+    public Boolean youtube_like(String account_id,String task_key,String device_id){
         try{
             YoutubeLikeHistory youtubeLikeHistory=youtubeLikeHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeLikeHistory!=null){
@@ -248,6 +248,7 @@ public class YoutubeUpdate {
             }
             YoutubeLike24h youtubeLike24h =new YoutubeLike24h();
             youtubeLike24h.setId(account_id.trim()+task_key.trim());
+            youtubeLike24h.setDevice_id(device_id+task_key.trim());
             youtubeLike24h.setUpdate_time(System.currentTimeMillis());
             youtubeLike24hRepository.save(youtubeLike24h);
 

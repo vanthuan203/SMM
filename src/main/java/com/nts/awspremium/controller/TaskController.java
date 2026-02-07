@@ -1305,7 +1305,7 @@ public class TaskController {
                     if(task.equals("view")){
                         get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim(),device.getDevice_id().trim());
                     }else if(task.equals("like")){
-                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
+                        get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim(),device.getDevice_id().trim());
                     }else if(task.equals("subscriber")){
                         get_task=youtubeTask.youtube_subscriber(profileTask.getAccount_id(),device.getMode().trim(),device.getDevice_id().trim());
                     }else if(task.equals("comment")){
@@ -1556,7 +1556,7 @@ public class TaskController {
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")&&updateTaskRequest.getStatus()==true){
                         youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getDevice_id().trim());
                     } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){
-                        youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                        youtubeUpdate.youtube_like(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getDevice_id().trim());
                     } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("comment")&&updateTaskRequest.getStatus()==true){
                         youtubeUpdate.youtube_comment(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getStatus());
                     }
