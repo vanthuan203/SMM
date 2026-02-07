@@ -364,6 +364,9 @@ public class YoutubeTask {
                         data.put("viewing_time", orderRunning.getDuration());
                     }
                 }
+                if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                    data.put("viewing_time",5+ ran.nextInt(10));
+                }
                 resp.put("data",data);
                 return resp;
 
