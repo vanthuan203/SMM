@@ -1288,7 +1288,7 @@ public class TaskController {
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
-                    if(task.equals("follower") && accountProfile_Task.getSign_in()==0){ //(accountProfile_Task.getSign_in()==1 || device.getMode().equals("auto-gmail"))
+                    if(task.equals("follower")){ //(accountProfile_Task.getSign_in()==1 || device.getMode().equals("auto-gmail"))
                         get_task= tiktokTask.tiktok_follower(profileTask.getAccount_id(),device.getMode().trim(),device.getIp_address(),device);
                     }else if(task.equals("like")){
                         get_task=tiktokTask.tiktok_like(profileTask.getAccount_id(),device.getMode().trim());
