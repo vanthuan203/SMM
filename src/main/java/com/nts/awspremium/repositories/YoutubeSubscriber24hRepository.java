@@ -14,4 +14,7 @@ public interface YoutubeSubscriber24hRepository extends JpaRepository<YoutubeSub
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from youtube_subscriber_24h where id like ?1",nativeQuery = true)
     public Integer count_Subscribe_24h_By_Username(String username);
+
+    @Query(value = "select count(*) from youtube_subscriber_24h where device_id like ?1",nativeQuery = true)
+    public Integer count_Subscribe_24h_By_DeviceId(String device_id);
 }

@@ -178,7 +178,7 @@ public class YoutubeUpdate {
         }
     }
 
-    public Boolean youtube_subscriber(String account_id,String task_key){
+    public Boolean youtube_subscriber(String account_id,String task_key,String device_id){
         try{
             String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
             if(order_Key!=null){
@@ -196,6 +196,7 @@ public class YoutubeUpdate {
                 }
                 YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
                 youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
+                youtubeSubscribe24h.setDevice_id(device_id+task_key.trim());
                 youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                 youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
 
@@ -210,7 +211,6 @@ public class YoutubeUpdate {
                     accountTask.setSubscriber_time(System.currentTimeMillis());
                     accountTaskRepository.save(accountTask);
                 }
-
             }
             return true;
         }catch (Exception e){
