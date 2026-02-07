@@ -1303,7 +1303,7 @@ public class TaskController {
                     }
                 } else if(profileTask.getPlatform().equals("youtube")){
                     if(task.equals("view")){
-                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim());
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim(),device.getDevice_id().trim());
                     }else if(task.equals("like")){
                         get_task=youtubeTask.youtube_like(profileTask.getAccount_id(),device.getMode().trim());
                     }else if(task.equals("subscriber")){
@@ -1552,7 +1552,7 @@ public class TaskController {
                 String platform_Check = updateTaskRequest.getPlatform().toLowerCase().trim();
                 if(platform_Check.equals("youtube")){
                     if(updateTaskRequest.getTask().toLowerCase().trim().equals("view")&&updateTaskRequest.getStatus()==true){
-                        youtubeUpdate.youtube_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
+                        youtubeUpdate.youtube_view(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim(),updateTaskRequest.getDevice_id().trim());
                     }else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("subscriber")&&updateTaskRequest.getStatus()==true){
                         youtubeUpdate.youtube_subscriber(updateTaskRequest.getAccount_id().trim()+"|"+updateTaskRequest.getPlatform().trim(),updateTaskRequest.getTask_key().trim());
                     } else  if(updateTaskRequest.getTask().toLowerCase().trim().equals("like")&&updateTaskRequest.getStatus()==true){

@@ -232,7 +232,7 @@ public class YoutubeTask {
             return resp;
         }
     }
-    public Map<String, Object> youtube_view(String account_id,String mode){
+    public Map<String, Object> youtube_view(String account_id,String mode,String device_id){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -258,6 +258,14 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
+                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device_id+"%")>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
                 Service service=orderRunning.getService();
                 if(service.getLimit_task_time()>0){
                     if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){

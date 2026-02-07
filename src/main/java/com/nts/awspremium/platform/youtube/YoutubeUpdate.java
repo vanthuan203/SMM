@@ -110,7 +110,7 @@ public class YoutubeUpdate {
     }
 
 
-    public Boolean youtube_view(String account_id,String task_key){
+    public Boolean youtube_view(String account_id,String task_key,String device_id){
         try{
             if(orderRunningRepository.check_No_History(task_key.trim())>0){
                 return true;
@@ -140,6 +140,7 @@ public class YoutubeUpdate {
             }
             YoutubeView24h youtubeView24h =new YoutubeView24h();
             youtubeView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
+            youtubeView24h.setDevice_id(device_id+task_key.trim());
             youtubeView24h.setUpdate_time(System.currentTimeMillis());
             youtubeView24hRepository.save(youtubeView24h);
 
