@@ -117,6 +117,7 @@ public class TiktokUpdate {
                     }
                     TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
                     tiktokFollower24h.setId(account_id.trim()+task_key.trim());
+                    tiktokFollower24h.setDevice_id(profile_id.trim().split("_")[0]+task_key.trim());
                     tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
                     tikTokFollower24hRepository.save(tiktokFollower24h);
 

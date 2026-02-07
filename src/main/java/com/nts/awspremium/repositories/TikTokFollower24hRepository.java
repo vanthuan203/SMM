@@ -15,6 +15,8 @@ public interface TikTokFollower24hRepository extends JpaRepository<TiktokFollowe
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from tiktok_follower_24h where id like ?1",nativeQuery = true)
     public Integer count_Follower_24h_By_Username(String username);
+    @Query(value = "select count(*) from tiktok_follower_24h where device_id=?1",nativeQuery = true)
+    public Integer count_Follower_24h_By_DeviceId(String device_id);
     @Query(value = "select count(*) from tiktok_follower_24h where id like ?1 and round((UNIX_TIMESTAMP()-update_time/1000)/60/60)<1",nativeQuery = true)
     public Integer count_Follower_1h_By_Username(String username);
 
