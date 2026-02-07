@@ -816,16 +816,25 @@ public class OrderRunningController {
                             int current_Count=GoogleApi.getCountSubcriberCurrent(orderRunningList.get(i).getOrder_key());
                             if(current_Count>=0){
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=10&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("like")){
                             int current_Count=GoogleApi.getCountLikeCurrent(orderRunningList.get(i).getOrder_key());
                             if(current_Count>=0){
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=10&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }
                         }else if(orderRunningList.get(i).getService().getTask().equals("comment")&&(System.currentTimeMillis()-orderRunningList.get(i).getUpdate_current_time())/1000/60>=5){
                             int current_Count=GoogleApi.getCountCommentCurrent(orderRunningList.get(i).getOrder_key());
                             if(current_Count>=0){
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=5&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }
                         }
                     }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
@@ -833,6 +842,9 @@ public class OrderRunningController {
                             int current_Count = TikTokApi.getFollowerCount(orderRunningList.get(i).getOrder_key().replace("@", ""), 1);
                             if (current_Count >= 0) {
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=10&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }else if(current_Count==-1){
                                 orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
                             }
@@ -840,6 +852,9 @@ public class OrderRunningController {
                             int current_Count = TikTokApi.getCountLike(orderRunningList.get(i).getOrder_key());
                             if (current_Count >= 0) {
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=10&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }else if(current_Count==-1){
                                 orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
                             }
@@ -847,6 +862,9 @@ public class OrderRunningController {
                             int current_Count = TikTokApi.getCountComment(orderRunningList.get(i).getOrder_key());
                             if (current_Count >= 0) {
                                 orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=10&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
                             }else if(current_Count==-1){
                                 orderRunningRepository.update_Valid_By_OrderId(0,orderRunningList.get(i).getOrder_id());
                             }
