@@ -137,6 +137,7 @@ public class TiktokTask {
                     data.put("platform", service.getPlatform().toLowerCase());
                     data.put("task", service.getTask());
                     data.put("app", service.getApp());
+                    data.put("fake_device_app", service.getFake_device_app());
                     data.put("task_key",orderRunning.getOrder_key());
                     data.put("task_link",orderRunning.getOrder_link());
                     if(orderRunning.getChannel_title()==null){
@@ -353,6 +354,7 @@ public class TiktokTask {
                 data.put("channel_id",orderRunning.getOrder_key());
                 data.put("user_id",orderRunning.getChannel_id());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
                 if(dataFollowerTiktok==null){
@@ -502,6 +504,7 @@ public class TiktokTask {
                 data.put("channel_id",orderRunning.getOrder_key());
                 //data.put("user_id",orderRunning.getChannel_id());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 DataFollowerTiktok dataFollowerTiktok=dataFollowerTiktokRepository.get_Data_Follower(orderRunning.getOrder_id());
                 if(dataFollowerTiktok==null){
@@ -765,6 +768,7 @@ public class TiktokTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 if(orderRunning.getChannel_title()==null){
@@ -918,6 +922,7 @@ public class TiktokTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 if(orderRunning.getChannel_title()==null){
@@ -1072,6 +1077,7 @@ public class TiktokTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 if(orderRunning.getChannel_title()==null){
@@ -1256,6 +1262,7 @@ public class TiktokTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key",orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
 

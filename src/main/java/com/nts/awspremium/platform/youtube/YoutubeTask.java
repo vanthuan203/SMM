@@ -149,6 +149,7 @@ public class YoutubeTask {
                     data.put("platform", service.getPlatform().toLowerCase());
                     data.put("task", service.getTask());
                     data.put("app", service.getApp());
+                    data.put("fake_device_app", service.getFake_device_app());
                     data.put("task_key",orderRunning.getOrder_key());
                     //data.put("task_link",orderRunning.getOrder_link());
                     data.put("task_link","https://www.youtube.com/watch?v="+orderRunning.getOrder_key());
@@ -310,6 +311,7 @@ public class YoutubeTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key", orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 //data.put("task_link",orderRunning.getOrder_link()+"&t=0");
@@ -539,6 +541,7 @@ public class YoutubeTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
 
@@ -686,6 +689,7 @@ public class YoutubeTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", "view");
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
 
@@ -862,6 +866,7 @@ public class YoutubeTask {
                 data.put("platform", service.getPlatform().toLowerCase());
                 data.put("task", service.getTask());
                 data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
                 data.put("task_key", orderRunning.getOrder_key());
                 data.put("task_link",orderRunning.getOrder_link());
                 data.put("keyword", orderRunning.getVideo_title());
