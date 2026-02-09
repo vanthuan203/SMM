@@ -141,6 +141,13 @@ public class TiktokUpdate {
                     }
 
                 }else{
+
+                    TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
+                    tiktokFollower24h.setId(account_id.trim()+task_key.trim()+"False");
+                    tiktokFollower24h.setDevice_id(profile_id.trim().split("_")[0]+task_key.trim());
+                    tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
+                    tikTokFollower24hRepository.save(tiktokFollower24h);
+
                     try{
                         TaskSum taskSum =new TaskSum();
                         taskSum.setId(account_id.trim()+task_key.trim());
@@ -191,6 +198,13 @@ public class TiktokUpdate {
                     accountTaskRepository.save(accountTask);
                 }
             }else{
+
+                TiktokFollower24h tiktokFollower24h =new TiktokFollower24h();
+                tiktokFollower24h.setId(account_id.trim()+task_key.trim()+"False");
+                tiktokFollower24h.setDevice_id(profile_id.trim().split("_")[0]+task_key.trim());
+                tiktokFollower24h.setUpdate_time(System.currentTimeMillis());
+                tikTokFollower24hRepository.save(tiktokFollower24h);
+
                 try{
                     TaskSum taskSum =new TaskSum();
                     taskSum.setId(account_id.trim()+task_key.trim());
