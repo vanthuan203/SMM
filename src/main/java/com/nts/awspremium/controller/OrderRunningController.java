@@ -1804,12 +1804,12 @@ public class OrderRunningController {
                             orderComment.setAi_uuid(uuid);
                             orderCommentRepository.save(orderComment);
                         }
-                    }else{
+                    }
+                    if(orderComment.getCount_render()>0 && orderRunningList.get(i).getStart_time()==0){
                         orderRunningList.get(i).setStart_time(System.currentTimeMillis());
                         orderRunningList.get(i).setPriority(0);
                         orderRunningRepository.save(orderRunningList.get(i));
                     }
-
                 }else if(orderRunningList.get(i).getService().getTask().equals("comment")&&!orderRunningList.get(i).getService().getAi()){
                     String [] comments=orderRunningList.get(i).getComment_list().split("\\R");
                     if(comments.length==0)
