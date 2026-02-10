@@ -15,6 +15,9 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory,Long>
     @Query(value = "SELECT * from order_history where order_id=?1",nativeQuery = true)
     public OrderHistory get_Order_By_Id(Long order_id);
 
+    @Query(value = "SELECT end_time from order_history where channel_id=?1 order by end_time desc limit 1",nativeQuery = true)
+    public Long get_EndTime_By_ChannelId_And_Time_Desc(String channel_id);
+
     @Query(value = "SELECT end_time from order_history where order_refill=?1 and cancel!=1 order by end_time desc limit 1",nativeQuery = true)
     public default Long get_End_Time_By_Order_Refill(Long order_refill){
         Long end_time = order_refill.longValue();
