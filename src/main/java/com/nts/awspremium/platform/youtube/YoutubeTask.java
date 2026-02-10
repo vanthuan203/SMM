@@ -200,7 +200,7 @@ public class YoutubeTask {
                             data.put("viewing_time", orderRunning.getDuration());
                         }
                     }
-                    if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                    if(Integer.parseInt(data.get("viewing_time").toString())<5){
                         data.put("viewing_time",5+ ran.nextInt(26));
                     }
                     data.put("comment",comment);
@@ -377,7 +377,7 @@ public class YoutubeTask {
                         data.put("viewing_time", orderRunning.getDuration());
                     }
                 }
-                if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
                 }
                 resp.put("data",data);
@@ -625,7 +625,7 @@ public class YoutubeTask {
                         data.put("viewing_time", dataSubscriber.getDuration());
                     }
                 }
-                if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
                 }
                 resp.put("data",data);
@@ -764,7 +764,7 @@ public class YoutubeTask {
                         data.put("viewing_time", dataSubscriber.getDuration());
                     }
                 }
-                if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
                 }
                 resp.put("data",data);
@@ -919,7 +919,7 @@ public class YoutubeTask {
                         data.put("viewing_time", orderRunning.getDuration());
                     }
                 }
-                if(Integer.parseInt(data.get("viewing_time").toString())==0){
+                if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
                 }
                 resp.put("data",data);
