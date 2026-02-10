@@ -1861,4 +1861,109 @@ public class OrderRunningController {
 
     }
 
+
+    @GetMapping(value = "update_Render_OrderCommentAI_Pending", produces = "application/hal+json;charset=utf8")
+    public ResponseEntity<Map<String, Object>> update_Render_OrderCommentAI_Pending() throws InterruptedException {
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_RenderCommentAI_ASC();
+            for(int i=0;i<orderRunningList.size();i++){
+                    OrderComment orderComment=orderCommentRepository.get_OrderComment_By_OrderId(orderRunningList.get(i).getOrder_id());
+                    String[] comments;
+                    if(orderComment==null){
+                        continue;
+                    }else if(orderComment.getAi_uuid().length()==0){
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                        continue;
+                    }
+
+                    String status=Openai.statusTask(orderComment.getAi_uuid());
+                    if(status!=null&&status.equals("completed")) {
+
+                        String list_Comment = Openai.getTask(orderComment.getAi_uuid());
+                        if (list_Comment == null) {
+                            continue;
+                        } else {
+                            comments = list_Comment.split("\\R");
+                        }
+                        orderComment.setAi_uuid("");
+                        orderCommentRepository.save(orderComment);
+                    }else  if(status!=null&&status.equals("failed"))  {
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                        continue;
+                    }else{
+                        continue;
+                    }
+
+                    for (int j=0;j<comments.length;j++){
+                        if(comments[j].trim().length()==0){
+                            continue;
+                        }
+                        DataComment dataComment=new DataComment();
+                        dataComment.setComment(comments[j].trim());
+                        dataComment.setOrderRunning(orderRunningList.get(i));
+                        dataComment.setGet_time(0L);
+                        dataComment.setAccount_id("");
+                        dataComment.setDevice_id("");
+                        dataComment.setRunning(0);
+                        dataCommentRepository.save(dataComment);
+                    }
+                    orderComment.setCount_render(dataCommentRepository.count_All_By_OrderId(orderRunningList.get(i).getOrder_id()));
+                    if(orderComment.getCount_render()< orderRunningList.get(i).getQuantity()*2){
+                        Integer count_render=(int)(orderRunningList.get(i).getQuantity()*2)-orderComment.getCount_render();
+                        count_render=count_render>=100?100:count_render;
+                        String uuid= Openai.createTask("https://www.youtube.com/watch?v="+ orderRunningList.get(i).getOrder_key(),count_render,"youtube","comment",0,orderRunningList.get(i).getVideo_title(),orderRunningList.get(i).getChannel_title(),orderRunningList.get(i).getVideo_descriptions());
+                        if(uuid!=null){
+                            orderComment.setAi_uuid(uuid);
+                            orderCommentRepository.save(orderComment);
+                        }
+                    }
+                    if(orderComment.getCount_render()>0 && orderRunningList.get(i).getStart_time()==0){
+                        orderRunningList.get(i).setStart_time(System.currentTimeMillis());
+                        orderRunningList.get(i).setPriority(0);
+                        orderRunningRepository.save(orderRunningList.get(i));
+                    }
+            }
+            resp.put("status",true);
+            data.put("message", "update thành công");
+            resp.put("data",data);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+
 }

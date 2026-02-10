@@ -138,6 +138,9 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "select o from OrderRunning o JOIN FETCH o.service where o.start_time=0 ORDER BY o.service.task ASC,o.priority DESC,o.insert_time ASC")
     public List<OrderRunning> get_Order_Pending_ASC();
 
+    @Query(value = "select o from OrderRunning o JOIN FETCH o.service  where o.start_time>0 and o.service.task='comment' and o.service.ai=true and o.order_id in (select c.orderRunning.order_id from OrderComment c where c.count_render<o.quantity*2) ORDER BY o.service.task ASC,o.priority DESC,o.insert_time ASC")
+    public List<OrderRunning> get_Order_RenderCommentAI_ASC();
+
     @Query(value = "SELECT service_id from order_running where order_key=?1 and service_id in(select service_id from service where task='view' and platform='youtube')",nativeQuery = true)
     public Integer get_ServiceId_By_TaskKey(String order_key);
 
