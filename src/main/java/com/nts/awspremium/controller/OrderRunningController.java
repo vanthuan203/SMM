@@ -1931,11 +1931,9 @@ public class OrderRunningController {
                             orderComment.setAi_uuid(uuid);
                             orderCommentRepository.save(orderComment);
                         }
-                    }
-                    if(orderComment.getCount_render()>0 && orderRunningList.get(i).getStart_time()==0){
-                        orderRunningList.get(i).setStart_time(System.currentTimeMillis());
-                        orderRunningList.get(i).setPriority(0);
-                        orderRunningRepository.save(orderRunningList.get(i));
+                    }else{
+                        orderComment.setAi_uuid("");
+                        orderCommentRepository.save(orderComment);
                     }
             }
             resp.put("status",true);
