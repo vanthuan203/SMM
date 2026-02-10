@@ -225,7 +225,7 @@ public class TiktokTask {
                         return resp;
                     }
                 }
-                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",60)>0){
                     if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
                         return tiktok_view_system(account_id,mode,device,1);
                     }else{
