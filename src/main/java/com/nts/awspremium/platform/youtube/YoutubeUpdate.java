@@ -209,7 +209,7 @@ public class YoutubeUpdate {
                 }
                 YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
                 youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
-                youtubeSubscribe24h.setDevice_id(device_id+task_key.trim());
+                youtubeSubscribe24h.setDevice_id(device_id+order_Key.trim());
                 youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                 youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
 
@@ -226,7 +226,7 @@ public class YoutubeUpdate {
                 }
 
                 IpTask24h ipTask24h =new IpTask24h();
-                ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+                ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+order_Key.trim()+System.currentTimeMillis());
                 ipTask24h.setUpdate_time(System.currentTimeMillis());
                 ipTask24hRepository.save(ipTask24h);
             }
