@@ -15,4 +15,7 @@ public interface YoutubeComment24hRepository extends JpaRepository<YoutubeCommen
     public Integer deleteAllByThan24h();
     @Query(value = "select count(*) from youtube_comment_24h where id like ?1",nativeQuery = true)
     public Integer count_Comment_24h_By_Username(String username);
+
+    @Query(value = "select count(*) from youtube_comment_24h where device_id=?1",nativeQuery = true)
+    public Integer count_Comment_24h_By_DeviceId(String username);
 }

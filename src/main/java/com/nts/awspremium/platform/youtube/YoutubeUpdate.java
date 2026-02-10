@@ -28,6 +28,8 @@ public class YoutubeUpdate {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
+    private IpTask24hRepository ipTask24hRepository;
+    @Autowired
     private AccountTaskRepository accountTaskRepository;
     @Autowired
     private OrderRunningRepository orderRunningRepository;
@@ -49,9 +51,10 @@ public class YoutubeUpdate {
     private YoutubeCommentHistoryRepository youtubeCommentHistoryRepository;
     @Autowired
     private AccountProfileRepository accountProfileRepository;
+    @Autowired
+    private ProfileTaskRepository profileTaskRepository;
 
-
-    public Boolean youtube_comment(String account_id,String task_key,Boolean status){
+    public Boolean youtube_comment(String account_id,String task_key,Boolean status,String device_id,String profile_id){
         try{
             if(status==true){
                 YoutubeCommentHistory youtubeCommentHistory=youtubeCommentHistoryRepository.get_By_AccountId(account_id.trim());
@@ -70,6 +73,7 @@ public class YoutubeUpdate {
 
                 YoutubeComment24h youtubeComment24h =new YoutubeComment24h();
                 youtubeComment24h.setId(account_id.trim()+task_key.trim());
+                youtubeComment24h.setDevice_id(device_id+task_key.trim());
                 youtubeComment24h.setUpdate_time(System.currentTimeMillis());
                 youtubeComment24hRepository.save(youtubeComment24h);
             }else {
@@ -87,6 +91,11 @@ public class YoutubeUpdate {
                 accountTask.setComment_time(System.currentTimeMillis());
                 accountTaskRepository.save(accountTask);
             }
+
+            IpTask24h ipTask24h =new IpTask24h();
+            ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+            ipTask24h.setUpdate_time(System.currentTimeMillis());
+            ipTask24hRepository.save(ipTask24h);
 
             return true;
         }catch (Exception e){
@@ -110,7 +119,7 @@ public class YoutubeUpdate {
     }
 
 
-    public Boolean youtube_view(String account_id,String task_key,String device_id){
+    public Boolean youtube_view(String account_id,String task_key,String device_id,String profile_id){
         try{
             if(orderRunningRepository.check_No_History(task_key.trim())>0){
                 return true;
@@ -156,6 +165,10 @@ public class YoutubeUpdate {
                 accountTaskRepository.save(accountTask);
             }
 
+            IpTask24h ipTask24h =new IpTask24h();
+            ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+            ipTask24h.setUpdate_time(System.currentTimeMillis());
+            ipTask24hRepository.save(ipTask24h);
 
             return true;
         }catch (Exception e){
@@ -178,7 +191,7 @@ public class YoutubeUpdate {
         }
     }
 
-    public Boolean youtube_subscriber(String account_id,String task_key,String device_id){
+    public Boolean youtube_subscriber(String account_id,String task_key,String device_id,String profile_id){
         try{
             String order_Key= dataSubscriberRepository.get_ChannelId_By_VideoId(task_key.trim());
             if(order_Key!=null){
@@ -211,6 +224,11 @@ public class YoutubeUpdate {
                     accountTask.setSubscriber_time(System.currentTimeMillis());
                     accountTaskRepository.save(accountTask);
                 }
+
+                IpTask24h ipTask24h =new IpTask24h();
+                ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+                ipTask24h.setUpdate_time(System.currentTimeMillis());
+                ipTask24hRepository.save(ipTask24h);
             }
             return true;
         }catch (Exception e){
@@ -232,7 +250,7 @@ public class YoutubeUpdate {
             return false;
         }
     }
-    public Boolean youtube_like(String account_id,String task_key,String device_id){
+    public Boolean youtube_like(String account_id,String task_key,String device_id,String profile_id){
         try{
             YoutubeLikeHistory youtubeLikeHistory=youtubeLikeHistoryRepository.get_By_AccountId(account_id.trim());
             if(youtubeLikeHistory!=null){
@@ -263,6 +281,11 @@ public class YoutubeUpdate {
                 accountTask.setLike_time(System.currentTimeMillis());
                 accountTaskRepository.save(accountTask);
             }
+
+            IpTask24h ipTask24h =new IpTask24h();
+            ipTask24h.setId(profileTaskRepository.get_Profile_By_ProfileId_JOIN_Device(profile_id.trim()).getDevice().getIp_address()+task_key.trim()+System.currentTimeMillis());
+            ipTask24h.setUpdate_time(System.currentTimeMillis());
+            ipTask24hRepository.save(ipTask24h);
 
             return true;
         }catch (Exception e){

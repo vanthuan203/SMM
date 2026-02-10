@@ -56,8 +56,10 @@ public class YoutubeTask {
     @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
+    private IpTask24hRepository ipTask24hRepository;
+    @Autowired
     private ModeOptionRepository modeOptionRepository;
-    public Map<String, Object> youtube_comment(String account_id,String mode){
+    public Map<String, Object> youtube_comment(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -85,6 +87,22 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
+                if(youtubeComment24hRepository.count_Comment_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
                 Service service=orderRunning.getService();
                 if(service.getLimit_task_time()>0){
                     if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
@@ -236,7 +254,7 @@ public class YoutubeTask {
             return resp;
         }
     }
-    public Map<String, Object> youtube_view(String account_id,String mode,String device_id){
+    public Map<String, Object> youtube_view(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -262,7 +280,15 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
-                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device_id+orderRunning.getOrder_key())>0){
+                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -465,7 +491,7 @@ public class YoutubeTask {
         }
     }
 
-    public Map<String, Object> youtube_subscriber(String account_id,String mode,String device_id){
+    public Map<String, Object> youtube_subscriber(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -491,7 +517,15 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
-                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId(device_id+orderRunning.getOrder_key())>0){
+                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -796,7 +830,7 @@ public class YoutubeTask {
         }
     }
 
-    public Map<String, Object> youtube_like(String account_id,String mode,String device_id){
+    public Map<String, Object> youtube_like(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -822,7 +856,15 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
-                if(youtubeLike24hRepository.count_Like_24h_By_DeviceId(device_id+orderRunning.getOrder_key())>0){
+                if(youtubeLike24hRepository.count_Like_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{

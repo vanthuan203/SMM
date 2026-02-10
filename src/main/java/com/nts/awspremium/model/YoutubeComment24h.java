@@ -15,6 +15,8 @@ import javax.persistence.Table;
 public class YoutubeComment24h {
     @Id
     private String id;
+    @Column(columnDefinition = "varchar(255) default ''")
+    private String device_id="";
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
 }

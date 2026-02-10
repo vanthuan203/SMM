@@ -225,6 +225,14 @@ public class TiktokTask {
                         return resp;
                     }
                 }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",15)>0){
+                    if(ran.nextInt(100)<settingTiktok.getMax_activity_24h()){
+                        return tiktok_view_system(account_id,mode,device,1);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
                 Service service=orderRunning.getService();
                 if(service.getLimit_task_time()>0){
                     if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
