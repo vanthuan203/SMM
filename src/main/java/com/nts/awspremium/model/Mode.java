@@ -30,6 +30,8 @@ public class Mode {
     private Integer time_waiting_task=90;
     @Column(columnDefinition = "TINYINT default 0")
     private Boolean profile_reboot=false;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean fake_network=false;
 
     public Mode() {
     }

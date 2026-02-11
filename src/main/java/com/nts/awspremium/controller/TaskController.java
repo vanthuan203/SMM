@@ -450,6 +450,22 @@ public class TaskController {
                 profileTaskRepository.save(profileTask);
             }
 
+            if(mode.getFake_network()&&!device.getFake_network()){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "fake_network");
+                data.put("task_key","on");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else if(!mode.getFake_network()&&device.getFake_network()){
+                resp.put("status", true);
+                data.put("platform", "system");
+                data.put("task", "fake_network");
+                data.put("task_key","off");
+                resp.put("data",data);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }
+
             if(mode.getAdd_proxy()==1&&profileTask.getAdd_proxy()==1 && (System.currentTimeMillis()-profileTask.getProxy_time())/1000/60>=30){
                 resp.put("status", true);
                 data.put("platform", "system");

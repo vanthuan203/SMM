@@ -117,6 +117,13 @@ public class SetupController {
                 profileTask.setProxy("");
                 profileTask.setProxy_time(0L);
                 profileTaskRepository.save(profileTask);
+            }else if(task.trim().equals("fake_network")&&task_key.trim().equals("on")){
+                profileTask.getDevice().setFake_network(true);
+                profileTask.getDevice().setFake_network_time(System.currentTimeMillis());
+                profileTaskRepository.save(profileTask);
+            }else if(task.trim().equals("fake_network")&&task_key.trim().equals("off")){
+                profileTask.getDevice().setFake_network(false);
+                profileTaskRepository.save(profileTask);
             }
             resp.put("status",true);
             data.put("message", "update thành công");

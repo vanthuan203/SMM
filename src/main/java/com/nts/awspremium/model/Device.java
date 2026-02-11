@@ -71,4 +71,8 @@ public class Device implements Serializable {
     private String note_sum="";
     @Column(columnDefinition = "bigint default 0")
     private Long tiktok_lite_version;
+    @Column(columnDefinition = "TINYINT default 0")
+    private Boolean fake_network=false;
+    @Column(columnDefinition = "bigint default 0")
+    private Long fake_network_time=0L;
 }
