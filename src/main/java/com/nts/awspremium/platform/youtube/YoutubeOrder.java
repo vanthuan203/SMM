@@ -565,11 +565,6 @@ public class YoutubeOrder {
                 resp.put("error", "This ID in process");
                 return resp;
             }
-            List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
-            if(videoList.size()<1){
-                resp.put("error", "The total number of videos with a duration of at least 90 seconds in the account must be greater than or equal to 1 video.");
-                return resp;
-            }
             int start_Count=-2;
             if(user.getUsername().trim().equals("refill@gmail.com")){
                 start_Count =GoogleApi.getCountSubcriberCurrent(uId);
@@ -597,6 +592,13 @@ public class YoutubeOrder {
                 resp.put("error", "Your balance not enough");
                 return resp;
             }
+
+            List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
+            if(videoList.size()<4){
+                resp.put("error", "The total number of videos with a duration of at least 90 seconds in the account must be greater than or equal to 4 video.");
+                return resp;
+            }
+
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);
