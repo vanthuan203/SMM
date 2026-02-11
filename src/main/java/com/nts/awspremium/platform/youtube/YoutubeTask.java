@@ -280,7 +280,7 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
-                if(ipTask24hRepository.count_Task_Hour_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",5)>0){
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",60)>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
