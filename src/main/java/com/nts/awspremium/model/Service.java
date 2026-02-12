@@ -123,6 +123,16 @@ public class Service implements Serializable {
     private Integer pending_task_time=0;
     @Column(columnDefinition = "TINYINT default 0")
     private Boolean pending_task=false;
+    @Column(columnDefinition = "integer default 4")
+    private Integer account_limit_24h=4;
+    @Column(columnDefinition = "integer default 300")
+    private Integer device_limit=300;
+    @Column(columnDefinition = "integer default 24")
+    private Integer device_limit_time=24;
+    @Column(columnDefinition = "integer default 1")
+    private Integer device_task_time=1;
+    @Column(columnDefinition = "integer default 30")
+    private Integer ip_limit_time=30;
 
     public Service() {
     }
