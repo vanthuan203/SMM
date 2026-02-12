@@ -17,7 +17,18 @@ public interface YoutubeSubscriber24hRepository extends JpaRepository<YoutubeSub
 
     @Query(value = "select count(*) from youtube_subscriber_24h where device_id=?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
     public Integer count_Subscribe_By_DeviceId_And_OrderKey_And_Time(String device_id,Integer hour);
-    @Query(value = "SELECT COUNT(DISTINCT device_id) FROM youtube_subscriber_24h WHERE order_key = ?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
+
+   // @Query(value = "SELECT COUNT(DISTINCT device_id) FROM youtube_subscriber_24h WHERE order_key = ?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
+    //public Integer count_Subscribe_DeviceId_By_OrderKey(String order_key,Integer hour);
+
+    @Query(value = "SELECT COUNT(*)\n" +
+            "FROM (\n" +
+            "    SELECT device_id\n" +
+            "    FROM youtube_subscriber_24h\n" +
+            "    WHERE order_key = ?1\n" +
+            "    GROUP BY device_id\n" +
+            "    HAVING MIN(update_time) >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000\n" +
+            ") t",nativeQuery = true)
     public Integer count_Subscribe_DeviceId_By_OrderKey(String order_key,Integer hour);
 
     @Query(value = "select count(*) from youtube_subscriber_24h where device_id=?1",nativeQuery = true)
