@@ -150,6 +150,7 @@ public class YoutubeUpdate {
             YoutubeView24h youtubeView24h =new YoutubeView24h();
             youtubeView24h.setId(account_id.trim()+task_key.trim()+System.currentTimeMillis());
             youtubeView24h.setDevice_id(device_id+task_key.trim());
+            youtubeView24h.setOrder_key(task_key.trim());
             youtubeView24h.setUpdate_time(System.currentTimeMillis());
             youtubeView24hRepository.save(youtubeView24h);
 
@@ -210,6 +211,7 @@ public class YoutubeUpdate {
                 YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
                 youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
                 youtubeSubscribe24h.setDevice_id(device_id+order_Key.trim());
+                youtubeSubscribe24h.setOrder_key(order_Key.trim());
                 youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                 youtubeSubscribe24hRepository.save(youtubeSubscribe24h);
 

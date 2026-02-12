@@ -280,7 +280,7 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
-                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",30)>0){
+                if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -288,7 +288,15 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                if(youtubeView24hRepository.count_View_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>3){
+                if(youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())>3){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",30)>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -525,7 +533,15 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
-                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
+                if(youtubeSubscribe24hRepository.count_Subscribe_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())>0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
