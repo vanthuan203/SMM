@@ -58,7 +58,7 @@ public class YoutubeTask {
     @Autowired
     private IpTask24hRepository ipTask24hRepository;
     @Autowired
-    private ModeOptionRepository modeOptionRepository;
+    private ModeRepository modeRepository;
     public Map<String, Object> youtube_comment(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
@@ -280,7 +280,8 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
-                if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300){
+                if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300
+                &&youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())==0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -288,7 +289,8 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                if(youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())>3){
+                Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
+                if(youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())>modeInfo.getAccount_youtube_limit_24h()){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -533,7 +535,8 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
-                if(youtubeSubscribe24hRepository.count_Subscribe_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300){
+                if(youtubeSubscribe24hRepository.count_Subscribe_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300
+                &&youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())==0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{

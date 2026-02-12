@@ -32,6 +32,8 @@ public class Mode {
     private Boolean profile_reboot=false;
     @Column(columnDefinition = "TINYINT default 0")
     private Boolean fake_network=false;
+    @Column(columnDefinition = "integer default 3")
+    private Integer account_youtube_limit_24h=3;
 
     public Mode() {
     }
