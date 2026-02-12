@@ -16,8 +16,7 @@ public interface YoutubeView24hRepository extends JpaRepository<YoutubeView24h,S
     @Query(value = "select count(*) from youtube_view_24h where id like ?1",nativeQuery = true)
     public Integer count_View_24h_By_Username(String username);
     @Query(value = "select count(*) from youtube_view_24h where device_id=?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
-    public Integer count_View_24h_By_DeviceId_And_OrderKey(String device_id,Integer hour);
-
+    public Integer count_View_By_DeviceId_And_OrderKey_And_Time(String device_id,Integer hour);
     @Query(value = "SELECT COUNT(DISTINCT device_id) FROM youtube_view_24h WHERE order_key = ?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
     public Integer count_View_DeviceId_By_OrderKey(String order_key,Integer hour);
 

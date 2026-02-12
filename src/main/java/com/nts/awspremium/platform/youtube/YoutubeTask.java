@@ -282,7 +282,7 @@ public class YoutubeTask {
             if(orderRunning!=null) {
                 Service service=orderRunning.getService();
                 if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim(),service.getDevice_limit_time())>service.getDevice_limit()
-                &&youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_limit_time())==0){
+                &&youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_limit_time())==0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -291,7 +291,7 @@ public class YoutubeTask {
                     }
                 }
                 Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
-                if(youtubeView24hRepository.count_View_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_limit_time())>=service.getAccount_limit_24h()){
+                if(youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),24)>=service.getAccount_limit_24h()){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{
@@ -535,6 +535,7 @@ public class YoutubeTask {
                 }
             }
             if (orderRunning!=null) {
+                Service service=orderRunning.getService();
                 if(youtubeSubscribe24hRepository.count_Subscribe_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim())>300
                 &&youtubeSubscribe24hRepository.count_Subscribe_24h_By_DeviceId_And_OrderKey(device.getDevice_id().trim()+orderRunning.getOrder_key())==0){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
@@ -560,7 +561,6 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                Service service=orderRunning.getService();
                 if(service.getLimit_task_time()>0){
                     if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
                         if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
