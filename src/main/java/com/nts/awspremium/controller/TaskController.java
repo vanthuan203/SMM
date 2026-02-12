@@ -421,11 +421,9 @@ public class TaskController {
                 entityManager.clear();
 
                 List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
-                /*
                 if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                     string_Task_List.remove("youtube");
                 }
-                 */
                 String task_List=String.join(",", string_Task_List);
                 List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -711,11 +709,9 @@ public class TaskController {
                 entityManager.clear();
 
                 List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
-                /*
                 if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                     string_Task_List.remove("youtube");
                 }
-                 */
                 String task_List=String.join(",", string_Task_List);
                 List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -735,11 +731,9 @@ public class TaskController {
                     entityManager.clear();
 
                     List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
-                    /*
                     if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                         string_Task_List.remove("youtube");
                     }
-                     */
                     String task_List=String.join(",", string_Task_List);
                     List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
