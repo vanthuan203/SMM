@@ -15,9 +15,14 @@ public interface YoutubeSubscriber24hRepository extends JpaRepository<YoutubeSub
     @Query(value = "select count(*) from youtube_subscriber_24h where id like ?1 and update_time <= (UNIX_TIMESTAMP() - 24*60*60) * 1000",nativeQuery = true)
     public Integer count_Subscribe_24h_By_Username(String username);
 
-    @Query(value = "SELECT COUNT(DISTINCT device_id) FROM youtube_subscriber_24h WHERE order_key = ?1",nativeQuery = true)
-    public Integer count_Subscribe_DeviceId_By_OrderKey(String order_key);
+    @Query(value = "select count(*) from youtube_subscriber_24h where device_id=?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
+    public Integer count_Subscribe_By_DeviceId_And_OrderKey_And_Time(String device_id,Integer hour);
+    @Query(value = "SELECT COUNT(DISTINCT device_id) FROM youtube_subscriber_24h WHERE order_key = ?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
+    public Integer count_Subscribe_DeviceId_By_OrderKey(String order_key,Integer hour);
 
     @Query(value = "select count(*) from youtube_subscriber_24h where device_id=?1",nativeQuery = true)
     public Integer count_Subscribe_24h_By_DeviceId_And_OrderKey(String device_id);
+
+    @Query(value = "select count(*) from youtube_subscriber_24h where device_id=?1 and update_time >= (UNIX_TIMESTAMP() - ?2*60*60) * 1000",nativeQuery = true)
+    public Integer count_Subscribe_By_DeviceId_And_Hour(String device_id,Integer hour);
 }
