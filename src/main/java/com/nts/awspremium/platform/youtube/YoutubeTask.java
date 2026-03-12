@@ -545,7 +545,7 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                if(youtubeSubscribe24hRepository.count_Subscribe_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),24)>=service.getAccount_limit_24h()){
+                if(youtubeSubscribe24hRepository.count_Subscribe_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),48)>=service.getAccount_limit_24h()){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
                     }else{

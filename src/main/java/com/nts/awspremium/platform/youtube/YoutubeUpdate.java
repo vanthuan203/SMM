@@ -211,6 +211,7 @@ public class YoutubeUpdate {
                 YoutubeSubscriber24h youtubeSubscribe24h =new YoutubeSubscriber24h();
                 youtubeSubscribe24h.setId(account_id.trim()+order_Key.trim());
                 youtubeSubscribe24h.setDevice_id(device_id+order_Key.trim());
+                youtubeSubscribe24h.setProfile_id(profile_id);
                 youtubeSubscribe24h.setOrder_key(order_Key.trim());
                 youtubeSubscribe24h.setUpdate_time(System.currentTimeMillis());
                 youtubeSubscribe24hRepository.save(youtubeSubscribe24h);

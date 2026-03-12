@@ -18,6 +18,8 @@ public class YoutubeSubscriber24h {
     @Column(columnDefinition = "varchar(255) default ''")
     private String device_id="";
     @Column(columnDefinition = "varchar(255) default ''")
+    private String profile_id="";
+    @Column(columnDefinition = "varchar(255) default ''")
     private String order_key="";
     @Column(columnDefinition = "bigint default 0")
     private Long update_time;
