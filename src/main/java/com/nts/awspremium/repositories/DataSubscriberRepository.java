@@ -4,14 +4,21 @@ import com.nts.awspremium.model.DataComment;
 import com.nts.awspremium.model.DataSubscriber;
 import com.nts.awspremium.model.Device;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface DataSubscriberRepository extends JpaRepository<DataSubscriber,String> {
 
     @Query(value = "Select * from data_subscriber where order_id=?1 order by rand() limit 1",nativeQuery = true)
     public DataSubscriber get_Data_Subscriber(Long order_id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "delete from data_subscriber where order_id=?1",nativeQuery = true)
+    public Integer delete_Data_Subscriber_By_OrderId(Long order_id);
 
     @Query(value = "Select * from data_subscriber where order_id=?1  order by state desc,task_time asc limit 1",nativeQuery = true)
     public DataSubscriber get_Data_Subscriber_By_State(Long order_id);

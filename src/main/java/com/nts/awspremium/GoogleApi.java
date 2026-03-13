@@ -539,7 +539,7 @@ public class GoogleApi {
                                     break;
                                 }
                             }catch (Exception e){
-
+                                return null;
                             }
 
                         }
@@ -548,9 +548,8 @@ public class GoogleApi {
             }
             return videoList;
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
 
-        return videoList;
     }
 }

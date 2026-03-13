@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/order_running")
 public class OrderRunningController {
-
+    @Autowired
+    private DataSubscriberRepository dataSubscriberRepository;
     @Autowired
     private OrderRunningRepository orderRunningRepository;
     @Autowired
@@ -945,10 +946,10 @@ public class OrderRunningController {
             List<OrderRunning> orderRunningList=orderRunningRepository.get_Order_Check_Valid(currentTime,threshold);
             for(int i=0;i<orderRunningList.size();i++){
                 try {
-                    if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunningList.get(i).getOrder_id())<=0){
-                        continue;
-                    }
                     if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")){
+                        if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunningList.get(i).getOrder_id())<=0){
+                            continue;
+                        }
                         if(orderRunningList.get(i).getService().getTask().equals("follower")){
                             JsonObject tiktok_account= TikTokApi.getInfoFullChannel(orderRunningList.get(i).getOrder_key().trim().split("@")[1]);
                             if(tiktok_account==null){
@@ -1015,6 +1016,40 @@ public class OrderRunningController {
                                     delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This video isn’t available in your country or region");
                                 }
                                  */
+                            }
+                        }
+                    }else if(orderRunningList.get(i).getService().getPlatform().equals("youtube")){
+                        if(orderRunningList.get(i).getService().getTask().equals("subscriber")){
+                            if((System.currentTimeMillis()-orderRunningList.get(i).getUpdate_time())/1000/60>90){
+                                List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+orderRunningList.get(i).getChannel_id().trim()+"/videos");
+                                if(videoList==null){
+                                    Random ran=new Random();
+                                    String[] key={"AIzaSyANGR4QQn8T3K9V-9TU5Z1i4eOfPg0vEvY","AIzaSyClOKa8qUz3MJD1RKBsjlIDR5KstE2NmMY","AIzaSyCp0GVPdewYRK1fOazk-1UwqdPphzQqn98=","AIzaSyCzYRvwOcNniz3WPYyLQSBCsT2U05_mmmQ","AIzaSyDU89b2Gk7nMVj-SPZh8Waq7TasA6KWoWQ"};
+                                    if(GoogleApi.getCountSubcriber(orderRunningList.get(i).getChannel_id().trim(),key[ran.nextInt(key.length)])==-1){
+                                        delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"This YouTube channel does not exist.");
+                                    }
+                                    continue;
+                                }else if(videoList.size()<4){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"The account must have at least 4 videos with a duration of 90 seconds or more.");
+                                }
+                                dataSubscriberRepository.delete_Data_Subscriber_By_OrderId(orderRunningList.get(i).getOrder_id());
+                                for (int j=0;j<videoList.size();j++){
+                                    String [] video_Info =videoList.get(j).split("~#");
+                                    DataSubscriber dataSubscriber=new DataSubscriber();
+                                    dataSubscriber.setVideo_id(video_Info[0].trim());
+                                    dataSubscriber.setVideo_title(video_Info[1].trim());
+                                    dataSubscriber.setState(0);
+                                    dataSubscriber.setAdd_time(System.currentTimeMillis());
+                                    dataSubscriber.setOrderRunning(orderRunningList.get(i));
+                                    dataSubscriber.setChannel_id(orderRunningList.get(i).getOrder_key());
+                                    dataSubscriber.setDuration(Long.parseLong(video_Info[2]));
+                                    dataSubscriberRepository.save(dataSubscriber);
+                                }
+
+                                String channelId = GoogleApi.getChannelId("https://www.youtube.com/channel/"+orderRunningList.get(i).getChannel_id().trim());
+                                if (channelId != null) {
+                                    orderRunningRepository.update_ChannelTitle_And_Valid_By_OrderId(1,channelId.split(",")[0],orderRunningList.get(i).getOrder_id());
+                                }
                             }
                         }
                     }

@@ -594,8 +594,8 @@ public class YoutubeOrder {
             }
 
             List<String> videoList =GoogleApi.getVideoLinks("https://www.youtube.com/channel/"+uId+"/videos");
-            if(videoList.size()<4){
-                resp.put("error", "The total number of videos with a duration of at least 90 seconds in the account must be greater than or equal to 4 video.");
+            if(videoList==null || videoList.size()<4){
+                resp.put("error", "The account must have at least 4 videos with a duration of 90 seconds or more.");
                 return resp;
             }
 
