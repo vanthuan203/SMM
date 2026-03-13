@@ -599,6 +599,11 @@ public class YoutubeOrder {
                 return resp;
             }
 
+            if (orderRunningRepository.get_Order_By_Order_Key_And_Task(uId.trim(),service.getTask()) > 0) {
+                resp.put("error", "This ID in process");
+                return resp;
+            }
+
             OrderRunning orderRunning = new OrderRunning();
             orderRunning.setThread(service.getThread());
             orderRunning.setThread_set(0);

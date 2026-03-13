@@ -80,6 +80,9 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     @Query(value = "SELECT o from OrderRunning o JOIN FETCH o.service WHERE o.check_count=?1 ORDER BY o.update_current_time ASC")
     public List<OrderRunning> get_Order_By_Check_Count_Num(Integer check_count);
     @Query(value = "SELECT count(*) from order_running where order_key=?1 and service_id in(select service_id from service where task=?2)",nativeQuery = true)
+    public Integer get_Order_By_Order_Key_And_Task_OFF(String order_id,String task);
+
+    @Query(value = "SELECT count(o) from OrderRunning o JOIN FETCH o.service where o.order_key=?1 and  o.service.task=?2")
     public Integer get_Order_By_Order_Key_And_Task(String order_id,String task);
 
     @Query(value = "SELECT count(*) from order_running where channel_id=?1",nativeQuery = true)
