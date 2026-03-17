@@ -182,8 +182,10 @@ public class UserController {
                     resp.put("data",data);
                     return new ResponseEntity<>(resp, HttpStatus.OK);
                 }
-            }else{
+            }else if(account.get("email").toString().contains("@tiffincrane")){
                 code= MailApi.getCode(account.get("email").toString().trim(),account.get("password").toString().trim());
+            }else{
+                code=MailApi.getTokenMailFake(account.get("email").toString().trim());
             }
             if(code!=null){
                 if(code.matches("\\d+")){

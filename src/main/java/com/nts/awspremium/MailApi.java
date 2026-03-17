@@ -10,6 +10,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -126,6 +130,64 @@ public class MailApi {
             return null;
         } catch (ParseException e) {
             throw new RuntimeException(e);
+        }
+
+    }
+
+
+    public static String getTokenMailFake(String email){
+        try {
+            String[] parts = email.split("@");
+            if (parts.length < 2) return "invalid_email";
+
+            String username = parts[0];
+            String domain = parts[1];
+
+            // 1. Lấy danh sách mail
+            String url = "https://emailfake.com/" + domain + "/" + username;
+            Document doc = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0")
+                    .timeout(10000)
+                    .get();
+
+            // 2. Lấy list mail
+            Elements mails = doc.select("#email-table a");
+
+            if (mails.isEmpty()) return null;
+
+            // duyệt từ mail mới nhất
+            for (int i = mails.size() - 1; i >= 0; i--) {
+                Element mail = mails.get(i);
+
+                String from = mail.selectXpath("//*[contains(@class, 'from')]").text().toLowerCase();
+                if (!from.contains("tiktok")) continue;
+
+                String href = mail.attr("href");
+                String id = href.substring(href.lastIndexOf("/") + 1);
+
+                // 3. đọc mail chi tiết
+                String mailUrl = "https://emailfake.com/" + domain + "/" + username + "/" + id;
+
+                Document mailDoc = Jsoup.connect(mailUrl)
+                        .userAgent("Mozilla/5.0")
+                        .timeout(10000)
+                        .get();
+
+                String body = mailDoc.select(".mess_bodiyy").text();
+
+                // 4. regex lấy OTP
+                Pattern pattern = Pattern.compile("\\b\\d{" + 6 + "}\\b");
+                Matcher matcher = pattern.matcher(body);
+
+                if (matcher.find()) {
+                    return matcher.group();
+                }
+            }
+
+            return null;
+
+        } catch (Exception e) {
+            return null;
         }
 
     }
