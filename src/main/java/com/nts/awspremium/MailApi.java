@@ -150,6 +150,23 @@ public class MailApi {
                     .timeout(10000)
                     .get();
 
+            String countText = doc.select("#mess_number").text();
+            int count = countText.isEmpty() ? 0 : Integer.parseInt(countText);
+
+            if (count == 0) return null;
+
+            // 🔥 2. Nếu chỉ có 1 mail → lấy luôn body
+            if (count == 1) {
+                String body = doc.select(".mess_bodiyy").text();
+
+                // 4. regex lấy OTP
+                Pattern pattern = Pattern.compile("\\b\\d{" + 6 + "}\\b");
+                Matcher matcher = pattern.matcher(body);
+
+                if (matcher.find()) {
+                    return matcher.group();
+                }
+            }
             // 2. Lấy list mail
             Elements mails = doc.select("#email-table a");
 
