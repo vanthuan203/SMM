@@ -430,7 +430,7 @@ public class MailApi {
 
                         Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
                         Matcher matcher = pattern.matcher(msg.get("intro").toString());
-                        if (matcher.find()) {
+                        if (matcher.find() || msg.get("intro").toString().contains("6-digit")) {
                             return msg.get("id").toString();
                         }else{
                             continue;
@@ -469,7 +469,7 @@ public class MailApi {
                         Object obj = new JSONParser().parse(resultJson);
                         JSONObject jsonObject = (JSONObject) obj;
                         Pattern pattern = Pattern.compile("\\b\\d{6}\\b");
-                        Matcher matcher = pattern.matcher(jsonObject.get("intro").toString());
+                        Matcher matcher = pattern.matcher(jsonObject.get("text").toString());
                         if (matcher.find()) {
                             return matcher.group();  // trả về mã ví dụ "851752"
                         }
