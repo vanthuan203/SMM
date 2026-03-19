@@ -1755,6 +1755,11 @@ public class TaskController {
                     //.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"|"+updateTaskRequest.getPlatform().trim());
                     if(accountProfile!=null){
                         if(updateTaskRequest.getAccount_id().trim().startsWith("@")&&updateTaskRequest.getPlatform().equals("tiktok")){
+                            Boolean check_Die=!TikTokApi.checkLive(accountProfile.getAccount_id().substring(0,accountProfile.getAccount_id().lastIndexOf("|")).replace("@",""));
+                            if(check_Die){
+                                updateTaskRequest.setIsLogin(2);
+                                updateTask("api@gmail.com",updateTaskRequest);
+                            }
                             accountProfile.setLive(0);
                             accountProfile.setUpdate_time(System.currentTimeMillis());
                             accountProfileRepository.save(accountProfile);
@@ -2078,6 +2083,9 @@ public class TaskController {
                         }
                         if(accountProfile!=null){
                             accountProfileRepository.delete(accountProfile);
+                        }
+                        if(accountProfile.getPlatform().equals("tiktok")){
+                            profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                         }
                     }
 
