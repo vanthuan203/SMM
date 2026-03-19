@@ -1039,11 +1039,44 @@ public class TaskController {
                 profileTaskRepository.save(profileTask);
             }else if ((accountProfile_Task.getLive() == 0) && (System.currentTimeMillis() - accountProfile_Task.getLast_time()) / 1000 / 60 / 60 >= 6) {
 
+                if(accountProfile_Task.getPlatform().equals("tiktok")&&accountProfile_Task.getAccount_id().startsWith("@")){
+                    Boolean check_Die=!TikTokApi.checkLive(accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")).replace("@",""));
+                    if(check_Die){
+                        Account accountPlatform=accountRepository.get_Account_By_Account_id(accountProfile_Task.getAccount_id().trim());
+                        if(accountPlatform!=null){
+                            if(accountProfile_Task.getLogin_time()!=0){
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setDie_time(System.currentTimeMillis());
+                                accountPlatform.setLive(2);
+                                accountRepository.save(accountPlatform);
+                            }else{
+                                accountPlatform.setRunning(0);
+                                accountPlatform.setUpdate_time(System.currentTimeMillis());
+                                accountPlatform.setDie_time(System.currentTimeMillis());
+                                accountPlatform.setDevice_id("");
+                                accountPlatform.setProfile_id("");
+                                accountPlatform.setLive(2);
+                                accountRepository.save(accountPlatform);
+                            }
+                            accountProfileRepository.delete(accountProfile_Task);
+                            profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(profileTask.getProfile_id().trim());
+
+                            resp.put("status", false);
+                            data.put("message", "Không thực hiện nhiệm vụ");
+                            resp.put("data", data);
+                            return new ResponseEntity<>(resp, HttpStatus.OK);
+                        }
+                    }
+                }
+
+
                 accountProfile_Task.setLast_time(System.currentTimeMillis());
                 accountProfileRepository.save(accountProfile_Task);
-
+                //checkCode
                 Boolean check_Login=true;
                 if(profileTask.getPlatform().equals("tiktok")&&accountProfile_Task.getSign_in()==0){
+
                     AccountProfile accountRecover= accountProfileRepository.get_Account_By_Account_id(accountProfile_Task.getRecover().trim()); // cần thiết check theo cả profile_id nữa!!!
                     if(accountRecover!=null&&accountRecover.getLive()!=1){
                         check_Login=false;
@@ -2045,6 +2078,9 @@ public class TaskController {
                         }
                         if(accountProfile!=null){
                             accountProfileRepository.delete(accountProfile);
+                        }
+                        if(accountProfile.getPlatform().equals("tiktok")){
+                            profileTaskRepository.update_Clear_Data_Profile_By_ProfileId(updateTaskRequest.getDevice_id().trim()+"_"+updateTaskRequest.getProfile_id().trim());
                         }
                     }
                     //profileTaskRepository.update_Than_Task_Index_By_AccountId(updateTaskRequest.getPlatform().trim(),updateTaskRequest.getAccount_id()+"%");
