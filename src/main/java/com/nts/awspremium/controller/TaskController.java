@@ -900,7 +900,7 @@ public class TaskController {
                             }
                         }else if(platform_Check.getLogin_account()==1&&
                                 (System.currentTimeMillis()-profileTask.getGet_account_time())/1000/60>=30&&
-                                accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&&
+                                //accountRepository.check_Count_AccountDie24H_By_Platform_And_DeviceId(device.getDevice_id().trim(),profileTask.getPlatform().trim())==0&& bỏ tạm check acc die 24h
                                 accountProfileRepository.count_Login_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%",platform_Check.getLogin_time())==0&&
                                 accountProfileRepository.count_Login_Time_Null_By_Platform_And_DeviceId(profileTask.getPlatform().trim(),device.getDevice_id().trim()+"%")==0
                         ){
