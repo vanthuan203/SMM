@@ -173,7 +173,7 @@ public class MailApi {
             if (mails.isEmpty()) return null;
 
             // duyệt từ mail mới nhất
-            for (int i = mails.size() - 1; i >= 0; i--) {
+            for (int i = 0; i <mails.size(); i++) {
                 Element mail = mails.get(i);
 
                 String from = mail.selectXpath("//*[contains(@class, 'from')]").text().toLowerCase();
