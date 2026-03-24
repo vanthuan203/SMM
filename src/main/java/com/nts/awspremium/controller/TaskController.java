@@ -1037,7 +1037,7 @@ public class TaskController {
                 profileTask.setAccount_id(profileTask.getProfile_id().trim());
                 profileTask.setTask_index(profileTask.getTask_index()+1);
                 profileTaskRepository.save(profileTask);
-            }else if ((accountProfile_Task.getLive() == 0) && (System.currentTimeMillis() - accountProfile_Task.getLast_time()) / 1000 / 60 / 60 >= 24) {
+            }else if ((accountProfile_Task.getLive() == 0) && (System.currentTimeMillis() - accountProfile_Task.getLast_time()) / 1000 / 60 / 60 >= 6) {
 
                 if(accountProfile_Task.getPlatform().equals("tiktok")&&accountProfile_Task.getAccount_id().startsWith("@")){
                     Boolean check_Die=!TikTokApi.checkLive(accountProfile_Task.getAccount_id().substring(0,accountProfile_Task.getAccount_id().lastIndexOf("|")).replace("@",""));
