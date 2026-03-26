@@ -813,13 +813,15 @@ public class YoutubeTask {
                     dataSubscriberRepository.save(dataSubscriber);
                     resp.put("status", false);
                     return resp;
-                }else if(dataSubscriber.getState()==0 && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=24){
-                    dataSubscriber.setState(1);
-                    dataSubscriber.setTask_time(System.currentTimeMillis());
-                    dataSubscriberRepository.save(dataSubscriber);
-                }else{
-                    resp.put("status", false);
-                    return resp;
+                }else if(dataSubscriber.getState()==0){
+                    if((System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=24){
+                        dataSubscriber.setState(1);
+                        dataSubscriber.setTask_time(System.currentTimeMillis());
+                        dataSubscriberRepository.save(dataSubscriber);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
                 }
                 /*else if(service.getPending_task() && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()/2){
                     resp.put("status", false);
