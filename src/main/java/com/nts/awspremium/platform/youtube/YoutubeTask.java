@@ -807,18 +807,21 @@ public class YoutubeTask {
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
 
-                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber(orderRunning.getOrder_id());
-                /*
+                DataSubscriber dataSubscriber=dataSubscriberRepository.get_Data_Subscriber_By_State(orderRunning.getOrder_id());
                 if(dataSubscriber.getState()==1&& (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()){
                     dataSubscriber.setState(0);
                     dataSubscriberRepository.save(dataSubscriber);
                     resp.put("status", false);
                     return resp;
-                }else if(dataSubscriber.getState()==0){
+                }else if(dataSubscriber.getState()==0 && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=24){
                     dataSubscriber.setState(1);
                     dataSubscriber.setTask_time(System.currentTimeMillis());
                     dataSubscriberRepository.save(dataSubscriber);
-                }else if(service.getPending_task() && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()/2){
+                }else{
+                    resp.put("status", false);
+                    return resp;
+                }
+                /*else if(service.getPending_task() && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()/2){
                     resp.put("status", false);
                     return resp;
                 }
