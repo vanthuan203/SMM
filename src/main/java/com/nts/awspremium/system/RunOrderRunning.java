@@ -72,7 +72,7 @@ public class RunOrderRunning {
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             }
-                            orderRunningController.update_Order_Running_Done_Check_Bonus();
+                            //orderRunningController.update_Order_Running_Done_Check_Bonus();
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException e) {
