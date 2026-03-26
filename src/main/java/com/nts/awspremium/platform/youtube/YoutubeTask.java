@@ -254,7 +254,7 @@ public class YoutubeTask {
             return resp;
         }
     }
-    public Map<String, Object> youtube_view(String account_id,String mode,Device device){
+    public Map<String, Object> youtube_viewOFF(String account_id,String mode,Device device){
         Map<String, Object> resp = new LinkedHashMap<>();
         Map<String, Object> data = new LinkedHashMap<>();
         try{
@@ -423,6 +423,195 @@ public class YoutubeTask {
                 }
                 if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
+                }
+                resp.put("data",data);
+                return resp;
+
+            } else {
+                resp.put("status", false);
+                return resp;
+            }
+        }catch (Exception e){
+            StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
+            LogError logError =new LogError();
+            logError.setMethod_name(stackTraceElement.getMethodName());
+            logError.setLine_number(stackTraceElement.getLineNumber());
+            logError.setClass_name(stackTraceElement.getClassName());
+            logError.setFile_name(stackTraceElement.getFileName());
+            logError.setMessage(e.getMessage());
+            logError.setAdd_time(System.currentTimeMillis());
+            Date date_time = new Date(System.currentTimeMillis());
+            // Tạo SimpleDateFormat với múi giờ GMT+7
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            sdf.setTimeZone(TimeZone.getTimeZone("GMT+7"));
+            String formattedDate = sdf.format(date_time);
+            logError.setDate_time(formattedDate);
+            logErrorRepository.save(logError);
+
+            resp.put("status", false);
+            return resp;
+        }
+    }
+
+
+    public Map<String, Object> youtube_view(String account_id,String mode,Device device){
+        Map<String, Object> resp = new LinkedHashMap<>();
+        Map<String, Object> data = new LinkedHashMap<>();
+        try{
+            Random ran = new Random();
+            OrderRunning orderRunning=null;
+            SettingSystem settingSystem =settingSystemRepository.get_Setting_System();
+            SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
+            String list_History=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
+            if(ran.nextInt(100)<settingSystem.getMax_priority()){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                if(orderRunning==null){
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                }
+            }else{
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+            }
+            if(orderRunning==null){
+                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                    return youtube_farm(account_id);
+                }else {
+                    resp.put("status", false);
+                    return resp;
+                }
+            }
+            if(orderRunning!=null) {
+                Service service=orderRunning.getService();
+                if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim(),service.getDevice_limit_time())>service.getDevice_limit()
+                        &&youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_limit_time())==0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
+                if(youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),24)>=service.getAccount_limit_24h()){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(modeInfo.getAdd_proxy()==0&&ipTask24hRepository.count_Task_Minute_By_Ip(device.getIp_address().trim()+orderRunning.getOrder_key()+"%",service.getIp_limit_time())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(youtubeView24hRepository.count_View_By_DeviceId_And_Hour(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_task_time())>0){
+                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                        return youtube_farm(account_id);
+                    }else{
+                        resp.put("status", false);
+                        return resp;
+                    }
+                }
+                if(service.getLimit_task_time()>0){
+                    if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
+                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                            return youtube_farm(account_id);
+                        }else{
+                            resp.put("status", false);
+                            return resp;
+                        }
+                    }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
+                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                            return youtube_farm(account_id);
+                        }else{
+                            resp.put("status", false);
+                            return resp;
+                        }
+                    }
+                }
+                Thread.sleep(200+ran.nextInt(350));
+                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                    resp.put("status", false);
+                    return resp;
+                }
+                Thread.sleep(200+ran.nextInt(350));
+                if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
+                    resp.put("status", false);
+                    return resp;
+                }
+                if(service.getBonus_type()==0 || service.getBonus_list().length()==0 || service.getBonus_list_percent()==0){
+                    data.put("bonus","");
+                }else{
+                    if(ran.nextInt(100)<service.getBonus_list_percent()){
+                        String [] bonus_list=service.getBonus_list().split(",");
+                        data.put("bonus",bonus_list[ran.nextInt(bonus_list.length)]);
+                    }else{
+                        data.put("bonus","");
+                    }
+                }
+                resp.put("status", true);
+                data.put("order_id", orderRunning.getOrder_id());
+                data.put("account_id", account_id.trim());
+                data.put("platform", service.getPlatform().toLowerCase());
+                data.put("task", service.getTask());
+                data.put("app", service.getApp());
+                data.put("fake_device_app", service.getFake_device_app());
+                data.put("task_key", orderRunning.getOrder_key());
+                data.put("task_link",orderRunning.getOrder_link());
+                //data.put("task_link",orderRunning.getOrder_link()+"&t=0");
+                data.put("channel_id", orderRunning.getChannel_id());
+                data.put("channel_title", orderRunning.getChannel_title());
+                data.put("video_title", orderRunning.getVideo_title());
+
+
+                List<String> arrSource = new ArrayList<>();
+                for (int i = 0; i < service.getYoutube_external(); i++) {
+                    arrSource.add("external");
+                }
+                for (int i = 0; i < service.getYoutube_external_google(); i++) {
+                    arrSource.add("external_google");
+                }
+                for (int i = 0; i < service.getYoutube_search(); i++) {
+                    arrSource.add("search");
+                }
+                for (int i = 0; i < service.getYoutube_direct(); i++) {
+                    arrSource.add("direct");
+                }
+                for (int i = 0; i < service.getYoutube_suggest(); i++) {
+                    arrSource.add("suggest");
+                }
+                for (int i = 0; i < service.getYoutube_dtn(); i++) {
+                    arrSource.add("dtn");
+                }
+                for (int i = 0; i < service.getYoutube_embed(); i++) {
+                    arrSource.add("embed");
+                }
+                data.put("source", arrSource.get(ran.nextInt(arrSource.size())).trim());
+                if(data.get("source").toString().equals("search")){
+                    List<String> randomFields = Arrays.asList(
+                            orderRunning.getOrder_key(),
+                            orderRunning.getChannel_title()
+                    );
+                    String randomValue = randomFields.get(
+                            ThreadLocalRandom.current().nextInt(randomFields.size())
+                    );
+
+                    String result;
+                    if (ThreadLocalRandom.current().nextBoolean()) {
+                        result = randomValue + " - " + orderRunning.getVideo_title();
+                    } else {
+                        result = orderRunning.getVideo_title() + " - " + randomValue;
+                    }
+                    data.put("keyword",result);
+                }
+
+                if(orderRunning.getDuration()>service.getLimit_time()){
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
+                }else{
+                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
                 }
                 resp.put("data",data);
                 return resp;
