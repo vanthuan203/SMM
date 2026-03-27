@@ -77,6 +77,7 @@ public class YoutubeOrder {
                     JSONObject snippet = (JSONObject) video.get("snippet");
                     JSONObject regionRestriction = (JSONObject) contentDetails.get("regionRestriction");
                     if(user.getRole().equals("ROLE_USER")){
+                        /*
                         //1 kênh chỉ chạy 1 video cùng lúc
                         if (orderRunningRepository.get_Order_By_ChannelId(snippet.get("channelId").toString()) > 0) {
                             resp.put("error", "Only one active video allowed per channel");
@@ -84,6 +85,15 @@ public class YoutubeOrder {
                         }
                         //1 kênh order sau 24h khi đơn gần nhất hoàn thành
                         Long last_Order_Done=orderHistoryRepository.get_EndTime_By_ChannelId_And_Time_Desc(snippet.get("channelId").toString());
+                        if(last_Order_Done!=null && (System.currentTimeMillis()-last_Order_Done)/1000/60/60<24){
+                            Date date = new Date(last_Order_Done);
+                            SimpleDateFormat format = new SimpleDateFormat("HH:mm yyyy/MM/dd");
+                            format.setTimeZone(TimeZone.getTimeZone("Asia/Bangkok"));
+                            resp.put("error", "Please order or schedule after "+ format.format(date)+ " GMT+7");
+                            return resp;
+                        }
+                         */
+                        Long last_Order_Done=orderHistoryRepository.get_EndTime_By_OrderKey_And_Time_Desc(videoId.trim());
                         if(last_Order_Done!=null && (System.currentTimeMillis()-last_Order_Done)/1000/60/60<24){
                             Date date = new Date(last_Order_Done);
                             SimpleDateFormat format = new SimpleDateFormat("HH:mm yyyy/MM/dd");
