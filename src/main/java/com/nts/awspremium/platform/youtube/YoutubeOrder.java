@@ -136,7 +136,7 @@ public class YoutubeOrder {
                             orderRunning.setThread(-1);
                             orderRunning.setStart_time(0L);
                         }else {
-                            orderRunning.setThread(service.getThread());
+                            orderRunning.setThread(((data.getQuantity() + 500) / 1000)<1?1:((data.getQuantity() + 500) / 1000));
                             orderRunning.setStart_time(System.currentTimeMillis());
                         }
                     }else{
