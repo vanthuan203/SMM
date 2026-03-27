@@ -464,32 +464,26 @@ public class YoutubeTask {
             SettingYoutube settingYoutube =settingYoutubeRepository.get_Setting();
             String list_History=youtubeVideoHistoryRepository.get_List_VideoId_By_AccountId(account_id.trim());
             if(ran.nextInt(100)<settingSystem.getMax_priority()){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task_Priority_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 if(orderRunning==null){
-                    orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
                 }
             }else{
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task_And_Limit_Time("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                    return youtube_farm(account_id);
-                }else {
-                    resp.put("status", false);
-                    return resp;
-                }
-            }
-            if(orderRunning!=null) {
-                Service service=orderRunning.getService();
-                if(youtubeView24hRepository.count_View_DeviceId_By_OrderKey(orderRunning.getOrder_key().trim(),service.getDevice_limit_time())>service.getDevice_limit()
-                        &&youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),service.getDevice_limit_time())==0){
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                if(orderRunning==null){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
-                    }else{
+                    }else {
                         resp.put("status", false);
                         return resp;
                     }
                 }
+            }
+            if(orderRunning!=null) {
+                Service service=orderRunning.getService();
                 Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
                 if(youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),24)>=service.getAccount_limit_24h()){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
@@ -515,30 +509,8 @@ public class YoutubeTask {
                         return resp;
                     }
                 }
-                if(service.getLimit_task_time()>0){
-                    if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),service.getLimit_task_time())>0){
-                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                            return youtube_farm(account_id);
-                        }else{
-                            resp.put("status", false);
-                            return resp;
-                        }
-                    }else if(historySumRepository.get_Count_By_OrderId(orderRunning.getOrder_id(),60)>=(60/service.getLimit_task_time())*service.getThread()){
-                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                            return youtube_farm(account_id);
-                        }else{
-                            resp.put("status", false);
-                            return resp;
-                        }
-                    }
-                }
                 Thread.sleep(200+ran.nextInt(350));
-                if(!orderThreadCheck.getValue().contains(orderRunning.getOrder_id().toString())){
-                    resp.put("status", false);
-                    return resp;
-                }
-                Thread.sleep(200+ran.nextInt(350));
-                if(profileTaskRepository.get_Count_Thread_By_OrderId(orderRunning.getOrder_id())>=orderRunning.getThread()){
+                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }
