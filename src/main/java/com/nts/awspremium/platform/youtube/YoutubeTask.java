@@ -822,12 +822,10 @@ public class YoutubeTask {
                         resp.put("status", false);
                         return resp;
                     }
-                }
-                /*else if(service.getPending_task() && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()/2){
+                }else if(service.getPending_task() && (System.currentTimeMillis()-dataSubscriber.getTask_time())/1000/60/60>=service.getPending_task_time()-1){
                     resp.put("status", false);
                     return resp;
                 }
-                 */
                 data.put("task_link","https://www.youtube.com/watch?v="+dataSubscriber.getVideo_id());
                 data.put("task_key", dataSubscriber.getVideo_id());
                 data.put("keyword", dataSubscriber.getVideo_title());
