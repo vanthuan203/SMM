@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class RetentionUtils {
     private static double easeInOut(double t) {
@@ -90,7 +92,7 @@ public class RetentionUtils {
         return percent;
     }
 
-    public static int getSpeedLevel(int currentView, int totalView,
+    public static int getSpeedLevelOFF(int currentView, int totalView,
                                      int minThread, int maxThread) {
 
         if (totalView <= 0) return minThread;
@@ -130,4 +132,84 @@ public class RetentionUtils {
 
         return (int) Math.round(thread);
     }
+
+    public static class ThreadResult {
+        public int thread;
+        public int momentum;
+
+        public ThreadResult(int thread, int momentum) {
+            this.thread = thread;
+            this.momentum = momentum;
+        }
+    }
+
+
+    public static ThreadResult getSpeedLevel(
+            long orderId,
+            int currentView,
+            int totalView,
+            int minThread,
+            int maxThread,
+            int currentThread,
+            int momentum
+    ) {
+
+        if (totalView <= 0) {
+            return new ThreadResult(minThread, 0);
+        }
+
+        // 🔥 1. Chuẩn hóa tiến trình (0 → 1)
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // 🔥 2. Smooth U-shape (giống hàm percent)
+        double t = (x <= 0.5) ? (x / 0.5) : ((x - 0.5) / 0.5);
+        double smooth = t * t * (3 - 2 * t);
+
+        double base = (x <= 0.5)
+                ? minThread + smooth * (maxThread - minThread)
+                : maxThread - smooth * (maxThread - minThread);
+
+        int target = (int) Math.round(base);
+
+        // 🔥 3. Seed theo block để không nhảy liên tục
+        int blockSize = Math.max(1, totalView / 10); // chia 10 đoạn
+        int block = currentView / blockSize;
+
+        long seed = 31 * orderId + block;
+        Random rand = new Random(seed);
+
+        // 🔥 4. Force kéo về target (QUAN TRỌNG)
+        if (currentThread < target) {
+            momentum += 2;
+        } else if (currentThread > target) {
+            momentum -= 2;
+        }
+
+        // 🔥 5. Random nhẹ (có hướng)
+        if (rand.nextInt(100) < 30) {
+            if (x < 0.5) {
+                momentum += 1; // đang tăng
+            } else {
+                momentum -= 1; // đang giảm
+            }
+        }
+
+        // 🔥 6. Threshold (điều chỉnh độ mượt)
+        int threshold = 1;
+
+        if (momentum >= threshold && currentThread < maxThread) {
+            currentThread += 1;
+            momentum = 0;
+        } else if (momentum <= -threshold && currentThread > minThread) {
+            currentThread -= 1;
+            momentum = 0;
+        }
+
+        // 🔥 7. Clamp
+        currentThread = Math.max(minThread, Math.min(maxThread, currentThread));
+
+        return new ThreadResult(currentThread, momentum);
+    }
+
 }

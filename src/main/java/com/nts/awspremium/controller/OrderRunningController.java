@@ -730,8 +730,8 @@ public class OrderRunningController {
             List<String> totalBuff=orderRunningRepository.get_Total_Buff_Cron();
             for(int i=0;i<totalBuff.size();i++){
                 try {
-                    Integer speedUp= RetentionUtils.getSpeedLevel(Integer.parseInt(totalBuff.get(i).split(",")[1]),Integer.parseInt(totalBuff.get(i).split(",")[2]),1,4);
-                    orderRunningRepository.update_Total_Buff_By_OrderId(Integer.parseInt(totalBuff.get(i).split(",")[1]),System.currentTimeMillis(),speedUp,Long.parseLong(totalBuff.get(i).split(",")[0]));
+                    RetentionUtils.ThreadResult result= RetentionUtils.getSpeedLevel(Long.parseLong(totalBuff.get(i).split(",")[0]),Integer.parseInt(totalBuff.get(i).split(",")[1]),Integer.parseInt(totalBuff.get(i).split(",")[2]),1,4,Integer.parseInt(totalBuff.get(i).split(",")[3]),Integer.parseInt(totalBuff.get(i).split(",")[4]));
+                    orderRunningRepository.update_Total_Buff_By_OrderId(Integer.parseInt(totalBuff.get(i).split(",")[1]),System.currentTimeMillis(),result.thread,result.momentum,Long.parseLong(totalBuff.get(i).split(",")[0]));
                 } catch (Exception e) {
 
                 }

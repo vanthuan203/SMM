@@ -48,7 +48,7 @@ public class OrderRunning implements Serializable {
     @Column(columnDefinition = "integer default 0")
     private Integer check_count;
     @Column(columnDefinition = "integer default 0")
-    private Integer thread_set;
+    private Integer thread_set=0;
     @Column(columnDefinition = "bigint default 0")
     private Long duration;
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,10 +79,12 @@ public class OrderRunning implements Serializable {
     private Integer valid;
     @Column(columnDefinition = "integer default 0")
     private Integer priority;
-    @Column(columnDefinition = "integer default 0")
-    private Integer speed_up;
+    @Column(columnDefinition = "integer default 1")
+    private Integer speed_up=1;
     @Column(columnDefinition = "bigint default 0")
     private Long order_refill;
+    @Column(columnDefinition = "integer default 0")
+    private Integer momentum=0;
     public OrderRunning() {
     }
 
