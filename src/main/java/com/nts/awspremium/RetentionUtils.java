@@ -170,21 +170,22 @@ public class RetentionUtils {
         int target = (int) Math.round(base);
 
         // 3️⃣ Block nhỏ để random mượt
-        int blockSize = Math.max(1, totalView / 200); // mỗi ~0.5% totalView
+        int blockSize = Math.max(1, totalView / 200);
         int block = currentView / blockSize;
+
+        // 4️⃣ Random deterministic ±1 theo orderId + block
         long seed = 31 * orderId + block;
         Random rand = new Random(seed);
+        int randomStep = rand.nextBoolean() ? 1 : -1;
 
-        // 4️⃣ Force momentum về target
-        if (currentThread < target) momentum += 3;
-        else if (currentThread > target) momentum -= 3;
+        // 5️⃣ Force momentum hướng về target + randomStep
+        if (currentThread < target) momentum += randomStep;  // đang tăng
+        else if (currentThread > target) momentum -= randomStep; // đang giảm
 
-        // 5️⃣ Random nhẹ ±1
-        if (rand.nextInt(100) < 80) {
-            momentum += (currentThread < target) ? 1 : -1;
-        }
+        // 6️⃣ Clamp momentum trong [-5, 5]
+        momentum = Math.max(-5, Math.min(5, momentum));
 
-        // 6️⃣ Threshold → nhảy thread
+        // 7️⃣ Threshold → nhảy thread ±1
         int threshold = 1;
         if (momentum >= threshold && currentThread < maxThread) {
             currentThread += 1;
@@ -194,7 +195,7 @@ public class RetentionUtils {
             momentum -= -threshold; // giữ phần dư
         }
 
-        // 7️⃣ Clamp thread
+        // 8️⃣ Clamp thread
         currentThread = Math.max(minThread, Math.min(maxThread, currentThread));
 
         return new ThreadResult(currentThread, momentum);
