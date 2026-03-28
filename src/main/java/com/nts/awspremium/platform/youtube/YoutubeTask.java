@@ -1,5 +1,6 @@
 package com.nts.awspremium.platform.youtube;
 
+import com.nts.awspremium.RetentionUtils;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
@@ -579,11 +580,15 @@ public class YoutubeTask {
                     }
                     data.put("keyword",result);
                 }
-
-                if(orderRunning.getDuration()>service.getLimit_time()){
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
+                if(service.getPending_task()){
+                    int viewing_time= (int) (RetentionUtils.getRetentionPercent(orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,service.getMax_time()/100)*service.getLimit_time());
+                    data.put("viewing_time", viewing_time);
                 }else{
-                    data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
+                    if(orderRunning.getDuration()>service.getLimit_time()){
+                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
+                    }else{
+                        data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*orderRunning.getDuration()));
+                    }
                 }
                 resp.put("data",data);
                 return resp;
