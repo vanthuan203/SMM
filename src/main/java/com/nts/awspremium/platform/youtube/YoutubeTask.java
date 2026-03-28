@@ -581,8 +581,31 @@ public class YoutubeTask {
                     data.put("keyword",result);
                 }
                 if(service.getPending_task()){
-                    int viewing_time= (int) (RetentionUtils.getRetentionPercent(orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,service.getMax_time()/100)*service.getLimit_time());
-                    data.put("viewing_time", viewing_time);
+                    if(ThreadLocalRandom.current().nextInt(100)<=3){
+                        int limit = service.getLimit_time();
+
+                        int duration = Math.toIntExact(orderRunning.getDuration());
+                        if (duration > limit * 2) {
+                            duration = limit * 2;
+                        }
+
+                        int range = duration - limit;
+
+                        int viewingTime;
+
+                        if (range > 0) {
+                            //  random có bias (thiên về thấp)
+                            double r = Math.pow(ThreadLocalRandom.current().nextDouble(), 0.7);
+                            viewingTime = limit + (int)(r * range);
+                        } else {
+                            viewingTime = limit;
+                        }
+                        data.put("viewing_time", viewingTime);
+
+                    }else{
+                        int viewing_time= (int) (RetentionUtils.getRetentionPercent(orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,service.getMax_time()/100)*service.getLimit_time());
+                        data.put("viewing_time", viewing_time);
+                    }
                 }else{
                     if(orderRunning.getDuration()>service.getLimit_time()){
                         data.put("viewing_time",(int)(((ran.nextInt(service.getMax_time() - service.getMin_time() + 1) + service.getMin_time())/100F)*service.getLimit_time()));
