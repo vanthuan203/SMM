@@ -4,6 +4,7 @@ import com.nts.awspremium.RetentionUtils;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
 import com.nts.awspremium.model_system.OrderThreadCheck;
+import com.nts.awspremium.model_system.OrderThreadSpeedLevelCheck;
 import com.nts.awspremium.model_system.OrderThreadSpeedUpCheck;
 import com.nts.awspremium.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ public class YoutubeTask {
 
     @Autowired
     private OrderThreadSpeedUpCheck orderThreadSpeedUpCheck;
+    @Autowired
+    private OrderThreadSpeedLevelCheck orderThreadSpeedLevelCheck;
     @Autowired
     private YoutubeViewHistoryRepository youtubeVideoHistoryRepository;
     @Autowired
@@ -473,7 +476,7 @@ public class YoutubeTask {
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadCheck.getValue());
             }
             if(orderRunning==null){
-                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedLevelCheck.getValue());
                 if(orderRunning==null){
                     if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
                         return youtube_farm(account_id);
@@ -511,7 +514,7 @@ public class YoutubeTask {
                     }
                 }
                 Thread.sleep(200+ran.nextInt(350));
-                if(!orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(!orderThreadSpeedLevelCheck.getValue().contains(orderRunning.getOrder_id().toString())){
                     resp.put("status", false);
                     return resp;
                 }

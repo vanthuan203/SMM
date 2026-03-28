@@ -50,6 +50,11 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
     public OrderRunning get_Order_Running_Priority_By_Task_No_Mode(String platform,String task,String list_tiktok_id, List<String> order_id);
 
 
+    @Query(value = "select order_id from (select order_running.order_id,count(running) as total,thread,speed_up\n" +
+            "                      from order_running left join profile_task on profile_task.order_id=order_running.order_id and running=1\n" +
+            "                       group by order_id having total<speed_up*thread) as t",nativeQuery = true)
+    public List<String> get_List_Order_Thread_SpeedLevel_True();
+
     @Query(value = "select order_id from (select order_running.order_id,count(running) as total,thread\n" +
             "                      from order_running left join profile_task on profile_task.order_id=order_running.order_id and running=1\n" +
             "                       group by order_id having total<thread) as t",nativeQuery = true)
