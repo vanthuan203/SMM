@@ -109,6 +109,10 @@ public class YoutubeOrder {
                             resp.put("error", "This video is not available in some countries");
                         }
                     }
+                    if (!snippet.get("liveBroadcastContent").toString().equals("none")) {
+                        resp.put("error", "This video is not eligible for service");
+                        return resp;
+                    }
                     if (Duration.parse(contentDetails.get("duration").toString()).getSeconds() == 0) {
                         resp.put("error", "This video is a livestream video");
                         return resp;
@@ -136,7 +140,9 @@ public class YoutubeOrder {
                             orderRunning.setThread(-1);
                             orderRunning.setStart_time(0L);
                         }else {
-                            orderRunning.setThread(service.getThread()*(((data.getQuantity() + 500) / 1000)<1?1:((data.getQuantity() + 500) / 1000)));
+                            int threads=service.getThread()*(((data.getQuantity() + 500) / 1000)<1?1:((data.getQuantity() + 500) / 1000));
+                            threads=threads>=10?10:threads;
+                            orderRunning.setThread(threads);
                             orderRunning.setStart_time(System.currentTimeMillis());
                         }
                     }else{
