@@ -168,7 +168,7 @@ public class YoutubeOrder {
                     orderRunning.setCurrent_count(0);
                     orderRunning.setNote(data.getNote()==null?"":data.getNote());
                     orderRunning.setService(service);
-                    orderRunning.setSpeed_up(0);
+                    orderRunning.setSpeed_up(1);
                     orderRunning.setValid(1);
                     orderRunning.setOrder_refill(data.getOrder_refill());
                     orderRunning.setPriority(0);
