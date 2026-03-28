@@ -537,7 +537,7 @@ public class YoutubeTask {
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
                 data.put("video_title", orderRunning.getVideo_title());
-
+                data.put("video_duration", orderRunning.getDuration()*1000);
 
                 List<String> arrSource = new ArrayList<>();
                 for (int i = 0; i < service.getYoutube_external(); i++) {
@@ -862,6 +862,7 @@ public class YoutubeTask {
                 if(Integer.parseInt(data.get("viewing_time").toString())<5){
                     data.put("viewing_time",5+ ran.nextInt(26));
                 }
+                data.put("video_duration", dataSubscriber.getDuration()*1000);
                 resp.put("data",data);
                 return resp;
 
@@ -1123,7 +1124,7 @@ public class YoutubeTask {
                 data.put("keyword", orderRunning.getVideo_title());
                 data.put("channel_id", orderRunning.getChannel_id());
                 data.put("channel_title", orderRunning.getChannel_title());
-
+                data.put("video_duration", orderRunning.getDuration()*1000);
                 List<String> arrSource = new ArrayList<>();
                 for (int i = 0; i < service.getYoutube_external(); i++) {
                     arrSource.add("external");
