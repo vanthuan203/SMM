@@ -837,6 +837,14 @@ public class OrderRunningController {
                                     delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
                                 }
                             }
+                        }else if(orderRunningList.get(i).getService().getTask().equals("view")&&(System.currentTimeMillis()-orderRunningList.get(i).getUpdate_current_time())/1000/60>=5){
+                            int current_Count=GoogleApi.getCountViewCurrent(orderRunningList.get(i).getOrder_key());
+                            if(current_Count>=0){
+                                orderRunningRepository.update_Current_Count(current_Count,System.currentTimeMillis(),orderRunningList.get(i).getOrder_id());
+                                if(orderRunningList.get(i).getTotal()>=5&&current_Count<orderRunningList.get(i).getStart_count()&&orderRunningList.get(i).getOrder_refill()==-1){
+                                    delete_Order_Running("api@gmail.com",orderRunningList.get(i).getOrder_id().toString(),1,"Current quantity is less than Starting quantity");
+                                }
+                            }
                         }
                     }else  if(orderRunningList.get(i).getService().getPlatform().equals("tiktok")) {
                         if (orderRunningList.get(i).getService().getTask().equals("follower")) {
