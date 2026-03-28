@@ -153,16 +153,13 @@ public class RetentionUtils {
             int currentThread,
             int momentum
     ) {
+        if (totalView <= 0) return new ThreadResult(minThread, 0);
 
-        if (totalView <= 0) {
-            return new ThreadResult(minThread, 0);
-        }
-
-        // 🔥 1. Chuẩn hóa tiến trình (0 → 1)
+        // 1️⃣ Chuẩn hóa progress 0 → 1
         double x = (double) currentView / totalView;
         x = Math.max(0, Math.min(1, x));
 
-        // 🔥 2. Smooth U-shape (giống hàm percent)
+        // 2️⃣ Smooth U-shape
         double t = (x <= 0.5) ? (x / 0.5) : ((x - 0.5) / 0.5);
         double smooth = t * t * (3 - 2 * t);
 
@@ -172,41 +169,32 @@ public class RetentionUtils {
 
         int target = (int) Math.round(base);
 
-        // 🔥 3. Seed theo block để không nhảy liên tục
-        int blockSize = Math.max(1, totalView / 100); // chia 100 đoạn
+        // 3️⃣ Block nhỏ để random mượt
+        int blockSize = Math.max(1, totalView / 200); // mỗi ~0.5% totalView
         int block = currentView / blockSize;
-
         long seed = 31 * orderId + block;
         Random rand = new Random(seed);
 
-        // 🔥 4. Force kéo về target (QUAN TRỌNG)
-        if (currentThread < target) {
-            momentum += 2;
-        } else if (currentThread > target) {
-            momentum -= 2;
+        // 4️⃣ Force momentum về target
+        if (currentThread < target) momentum += 3;
+        else if (currentThread > target) momentum -= 3;
+
+        // 5️⃣ Random nhẹ ±1
+        if (rand.nextInt(100) < 80) {
+            momentum += (currentThread < target) ? 1 : -1;
         }
 
-        // 🔥 5. Random nhẹ (có hướng)
-        if (rand.nextInt(100) < 30) {
-            if (x < 0.5) {
-                momentum += 1; // đang tăng
-            } else {
-                momentum -= 1; // đang giảm
-            }
-        }
-
-        // 🔥 6. Threshold (điều chỉnh độ mượt)
+        // 6️⃣ Threshold → nhảy thread
         int threshold = 1;
-
         if (momentum >= threshold && currentThread < maxThread) {
             currentThread += 1;
-            momentum = 0;
+            momentum -= threshold; // giữ phần dư
         } else if (momentum <= -threshold && currentThread > minThread) {
             currentThread -= 1;
-            momentum = 0;
+            momentum -= -threshold; // giữ phần dư
         }
 
-        // 🔥 7. Clamp
+        // 7️⃣ Clamp thread
         currentThread = Math.max(minThread, Math.min(maxThread, currentThread));
 
         return new ThreadResult(currentThread, momentum);
