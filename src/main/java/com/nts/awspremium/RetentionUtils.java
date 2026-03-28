@@ -173,7 +173,7 @@ public class RetentionUtils {
         int target = (int) Math.round(base);
 
         // 🔥 3. Seed theo block để không nhảy liên tục
-        int blockSize = Math.max(1, totalView / 10); // chia 10 đoạn
+        int blockSize = Math.max(1, totalView / 100); // chia 100 đoạn
         int block = currentView / blockSize;
 
         long seed = 31 * orderId + block;
