@@ -149,7 +149,7 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Query(value = "SELECT count(*) from order_running where order_key=?1 and service_id in(select service_id from service where history=0)",nativeQuery = true)
     public Integer check_No_History(String order_key);
-    @Query(value = "SELECT order_running.order_id,count(*) as total FROM history_sum join order_running  on history_sum.order_id=order_running.order_id where order_running.start_time>0 group by order_running.order_id order by start_time desc",nativeQuery = true)
+    @Query(value = "SELECT order_running.order_id,count(*),order_running.quantity as total FROM history_sum join order_running  on history_sum.order_id=order_running.order_id where order_running.start_time>0 group by order_running.order_id order by start_time desc",nativeQuery = true)
     public List<String> get_Total_Buff_Cron();
 
     @Query(value = "SELECT order_running.order_id,count(*) as total FROM history_sum join order_running  on history_sum.order_id=order_running.order_id where order_running.start_time>0 and history_sum.add_time >= (UNIX_TIMESTAMP() - ?1*60*60) * 1000 group by order_running.order_id order by start_time desc",nativeQuery = true)
@@ -163,8 +163,8 @@ public interface OrderRunningRepository extends JpaRepository<OrderRunning,Long>
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE order_running set update_time=IF(total<?1,?2,update_time),total=?1 where order_id=?3",nativeQuery = true)
-    public void update_Total_Buff_By_OrderId(Integer total,Long update_time,Long order_id);
+    @Query(value = "UPDATE order_running set update_time=IF(total<?1,?2,update_time),total=?1,speed_up=?3 where order_id=?4",nativeQuery = true)
+    public void update_Total_Buff_By_OrderId(Integer total,Long update_time,Integer speed_up,Long order_id);
 
     @Modifying
     @Transactional

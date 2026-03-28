@@ -46,6 +46,9 @@ public class RetentionUtils {
         return percent;
     }
 
+
+
+
     public static double getRetentionPercent(int currentView, int totalView,
                                              double minPercent, double maxPercent) {
 
@@ -85,5 +88,46 @@ public class RetentionUtils {
         percent = Math.max(minPercent, Math.min(maxPercent, percent));
 
         return percent;
+    }
+
+    public static int getSpeedLevel(int currentView, int totalView,
+                                     int minThread, int maxThread) {
+
+        if (totalView <= 0) return minThread;
+
+        // 0 → 1
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // U-shape NGƯỢC với percent
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = minThread + (t * t * (3 - 2 * t)) * (maxThread - minThread);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = maxThread - (t * t * (3 - 2 * t)) * (maxThread - minThread);
+        }
+
+        // 🔥 dao động ±10% giống hệt percent
+        double variation = (maxThread - minThread) * 0.1;
+
+        double thread;
+
+        if (base >= maxThread) {
+            // chỉ giảm
+            thread = base - Math.random() * variation;
+        } else if (base <= minThread) {
+            // chỉ tăng
+            thread = base + Math.random() * variation;
+        } else {
+            // dao động quanh base
+            thread = base + (Math.random() * 2 - 1) * variation;
+        }
+
+        // clamp
+        thread = Math.max(minThread, Math.min(maxThread, thread));
+
+        return (int) Math.round(thread);
     }
 }

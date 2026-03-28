@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.nts.awspremium.GoogleApi;
 import com.nts.awspremium.Openai;
+import com.nts.awspremium.RetentionUtils;
 import com.nts.awspremium.TikTokApi;
 import com.nts.awspremium.model.*;
 import com.nts.awspremium.model_system.MySQLCheck;
@@ -729,7 +730,8 @@ public class OrderRunningController {
             List<String> totalBuff=orderRunningRepository.get_Total_Buff_Cron();
             for(int i=0;i<totalBuff.size();i++){
                 try {
-                    orderRunningRepository.update_Total_Buff_By_OrderId(Integer.parseInt(totalBuff.get(i).split(",")[1]),System.currentTimeMillis(),Long.parseLong(totalBuff.get(i).split(",")[0]));
+                    Integer speedUp= RetentionUtils.getSpeedLevel(Integer.parseInt(totalBuff.get(i).split(",")[1]),Integer.parseInt(totalBuff.get(i).split(",")[2]),1,4);
+                    orderRunningRepository.update_Total_Buff_By_OrderId(Integer.parseInt(totalBuff.get(i).split(",")[1]),System.currentTimeMillis(),speedUp,Long.parseLong(totalBuff.get(i).split(",")[0]));
                 } catch (Exception e) {
 
                 }
