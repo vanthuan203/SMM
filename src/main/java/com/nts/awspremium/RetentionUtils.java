@@ -12,7 +12,7 @@ public class RetentionUtils {
         return t * t * (3 - 2 * t);
     }
 
-    public static double getRetentionPercent(int currentView, int totalView,
+    public static double getRetentionPercentOFF(int currentView, int totalView,
                                              double minPercent, double maxPercent) {
 
         if (totalView <= 0) return maxPercent;
@@ -41,6 +41,47 @@ public class RetentionUtils {
         percent += (Math.random() - 0.5) * 0.05;
 
         // clamp lại
+        percent = Math.max(minPercent, Math.min(maxPercent, percent));
+
+        return percent;
+    }
+
+    public static double getRetentionPercent(int currentView, int totalView,
+                                             double minPercent, double maxPercent) {
+
+        if (totalView <= 0) return maxPercent;
+
+        // 0 → 1
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // U-shape base
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = maxPercent - (t * t * (3 - 2 * t)) * (maxPercent - minPercent);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = minPercent + (t * t * (3 - 2 * t)) * (maxPercent - minPercent);
+        }
+
+        // 🔥 dao động ±10% nhưng KHÔNG phá shape
+        double variation = (maxPercent - minPercent) * 0.1;
+
+        double percent;
+
+        if (base >= maxPercent) {
+            // chỉ giảm
+            percent = base - Math.random() * variation;
+        } else if (base <= minPercent) {
+            // chỉ tăng
+            percent = base + Math.random() * variation;
+        } else {
+            // dao động quanh base
+            percent = base + (Math.random() * 2 - 1) * variation;
+        }
+
+        // clamp
         percent = Math.max(minPercent, Math.min(maxPercent, percent));
 
         return percent;
