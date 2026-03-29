@@ -92,6 +92,112 @@ public class RetentionUtils {
         return percent;
     }
 
+
+    public static double getRetentionPercentUShape(
+            int currentView,
+            int totalView,
+            double minPercent,   // ví dụ 0.5
+            double maxPercent    // ví dụ 1.0
+    ) {
+        if (totalView <= 0) return maxPercent;
+
+        // chuẩn hóa 0 → 1
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // Giảm cả min và max tới midpoint (giảm 40%)
+        double midMin = minPercent * 0.6; // giảm 40% ở midpoint
+        double midMax = maxPercent * 0.6;
+
+        double currentMin, currentMax;
+
+        if (x <= 0.5) {
+            // từ 0 → 0.5 giảm từ minPercent/maxPercent xuống midMin/midMax
+            double t = x / 0.5; // 0 → 1
+            currentMin = minPercent - (minPercent - midMin) * t;
+            currentMax = maxPercent - (maxPercent - midMax) * t;
+        } else {
+            // từ 0.5 → 1 tăng từ midMin/midMax lên lại minPercent/maxPercent
+            double t = (x - 0.5) / 0.5; // 0 → 1
+            currentMin = midMin + (minPercent - midMin) * t;
+            currentMax = midMax + (maxPercent - midMax) * t;
+        }
+
+        // U-shape base percent (giống trước)
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        }
+
+        // 🔥 dao động ±10% nhưng KHÔNG phá shape
+        double variation = (currentMax - currentMin) * 0.1;
+        double percent;
+        if (base >= currentMax) {
+            percent = base - Math.random() * variation;
+        } else if (base <= currentMin) {
+            percent = base + Math.random() * variation;
+        } else {
+            percent = base + (Math.random() * 2 - 1) * variation;
+        }
+
+        // clamp
+        percent = Math.max(currentMin, Math.min(currentMax, percent));
+
+        return percent;
+    }
+
+
+    public static double getRetentionPercentDynamic(
+            int currentView,
+            int totalView,
+            double minPercent,    // minPercent gốc
+            double maxPercent    // maxPercent gốc
+    ) {
+        if (totalView <= 0) return maxPercent;
+
+        // 🔹 chuẩn hóa tiến trình 0 → 1
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // 🔹 Giảm min/max dần về cuối tiến trình (tối đa giảm 40%)
+        double dropFactor = 1.0 - 0.4 * x;
+        double currentMin = Math.max(0.05, minPercent * dropFactor); // minPercent ≥0.05
+        double currentMax = Math.max(currentMin, maxPercent * dropFactor); // maxPercent ≥ currentMin
+
+        // 🔹 Base U-shape
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        }
+
+        // 🔹 Dao động ±10% dựa trên khoảng gốc để có thể xuống thấp
+        double variation = (maxPercent - minPercent) * 0.1;
+
+        double percent;
+        if (base >= currentMax) {
+            percent = base - Math.random() * variation;
+        } else if (base <= currentMin) {
+            percent = base + Math.random() * variation;
+        } else {
+            percent = base + (Math.random() * 2 - 1) * variation;
+        }
+
+        // 🔹 Clamp vào min/max hiện tại
+        percent = Math.max(currentMin, Math.min(currentMax, percent));
+
+        // 🔹 Đảm bảo percent ≥0.05
+        percent = Math.max(percent, 0.05);
+
+        return percent;
+    }
     public static int getSpeedLevelOFF(int currentView, int totalView,
                                      int minThread, int maxThread) {
 
