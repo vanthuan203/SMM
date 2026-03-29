@@ -198,6 +198,88 @@ public class RetentionUtils {
 
         return percent;
     }
+
+    public static double getRetentionPercentUltraHuman(
+            long orderId,
+            int currentView,
+            int totalView,
+            double minPercent,
+            double maxPercent,
+            int currentThread,
+            int maxThread
+    ) {
+        if (totalView <= 0) return maxPercent;
+
+        // 🔹 tiến trình
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // 🔹 giảm 40% tại 50%
+        double dropFactor = (x <= 0.5)
+                ? (1.0 - 0.4 * (x / 0.5))
+                : 0.6;
+
+        double currentMin = Math.max(0.05, minPercent * dropFactor);
+        double currentMax = Math.max(currentMin, maxPercent * dropFactor);
+
+        // 🔹 U-shape base
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        }
+
+        // 🔥 CLUSTER (rất quan trọng)
+        int blockSize = Math.max(1, totalView / 50);
+        int block = currentView / blockSize;
+
+        long seed = 31 * orderId + block;
+        Random rand = new Random(seed);
+
+        // 🔥 HOOK đầu video (giữ cao)
+        if (x < 0.05) {
+            base = Math.max(base, currentMax * (0.85 + rand.nextDouble() * 0.15));
+        }
+
+        // 🔥 noise theo hành vi người
+        double noise;
+        if (x < 0.2) {
+            noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+        } else if (x < 0.8) {
+            noise = (rand.nextDouble() - 0.5) * 0.1;
+        } else {
+            if (rand.nextDouble() < 0.5) {
+                noise = Math.pow(rand.nextDouble(), 2) * 0.25;
+            } else {
+                noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+            }
+        }
+
+        // 🔥 variation gốc
+        double variation = (maxPercent - minPercent) * 0.1;
+        double percent = base + noise * variation;
+
+        // 🔥 THREAD SYNC (thread cao → giảm time)
+        if (maxThread > 1) {
+            double threadRatio = (double) currentThread / maxThread;
+            percent *= (1.0 - 0.15 * threadRatio); // giảm tối đa 15%
+        }
+
+        // 🔥 FAKE REWATCH (rất nhẹ, tránh lộ)
+        if (x > 0.85 && rand.nextDouble() < 0.08) {
+            percent *= (1.0 + rand.nextDouble() * 0.2); // max ~1.2
+        }
+
+        // 🔹 clamp
+        percent = Math.max(currentMin, Math.min(currentMax * 1.2, percent));
+        percent = Math.max(percent, 0.05);
+
+        return percent;
+    }
+
     public static int getSpeedLevelOFF(int currentView, int totalView,
                                      int minThread, int maxThread) {
 

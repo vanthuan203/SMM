@@ -574,7 +574,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") Integer uuid) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status",RetentionUtils.getRetentionPercentDynamic(uuid,1000,0.5,1));
+            //resp.put("status",RetentionUtils.getRetentionPercentUltraHuman(uuid,1000,0.5,1));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);
