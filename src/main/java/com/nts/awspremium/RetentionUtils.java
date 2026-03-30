@@ -652,6 +652,117 @@ public class RetentionUtils {
         }
     }
 
+    public static ThreadResult getSpeedLevelOFF(
+            long orderId,
+            int currentView,
+            int totalView,
+            int minThread,
+            int maxThread,
+            int currentThread,
+            int momentum
+    ) {
+        if (totalView <= 0) {
+            return new ThreadResult(minThread, 0);
+        }
+
+        // =========================
+        // 🔥 COPY Y NGUYÊN BLOCK LOGIC
+        // =========================
+        int numBlocks = Math.max(2, Math.min(10, totalView / 1500));
+        Random globalRand = new Random(orderId);
+
+        int[] blockSizes = new int[numBlocks];
+        int remaining = totalView;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int blocksLeft = numBlocks - i;
+            int avg = remaining / blocksLeft;
+
+            int min = (int) (avg * 0.7);
+            int max = (int) (avg * 1.3);
+
+            int size;
+            if (i == numBlocks - 1) {
+                size = remaining;
+            } else {
+                size = min + globalRand.nextInt(Math.max(1, max - min));
+            }
+
+            blockSizes[i] = size;
+            remaining -= size;
+        }
+
+        int tempView = currentView;
+        int block = 0;
+
+        while (block < numBlocks - 1 && tempView >= blockSizes[block]) {
+            tempView -= blockSizes[block];
+            block++;
+        }
+
+        int localCurrent = tempView;
+        int localTotal = blockSizes[block];
+
+        // ⚠️ thay bằng local (GIỐNG HÀM PERCENT)
+        currentView = localCurrent;
+        totalView = localTotal;
+
+        // =========================
+        // 🔻 GIỮ NGUYÊN LOGIC THREAD CỦA BẠN
+        // =========================
+
+        // 1️⃣ Progress
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        // 2️⃣ U-shape
+        double t = (x <= 0.5) ? (x / 0.5) : ((x - 0.5) / 0.5);
+        double smooth = t * t * (3 - 2 * t);
+
+        double base = (x <= 0.5)
+                ? minThread + smooth * (maxThread - minThread)
+                : maxThread - smooth * (maxThread - minThread);
+
+        int target = (int) Math.round(base);
+
+        // 3️⃣ Random theo block (QUAN TRỌNG)
+        long seed = 31 * orderId + block;
+        Random rand = new Random(seed);
+
+        // 4️⃣ Momentum
+        int delta = target - currentThread;
+        if (delta > 0) momentum += 1;
+        else if (delta < 0) momentum -= 1;
+
+        // 5️⃣ Random ±1
+        if (rand.nextBoolean()) {
+            momentum += (delta >= 0) ? 1 : -1;
+        }
+
+        // 6️⃣ Clamp momentum
+        momentum = Math.max(-5, Math.min(5, momentum));
+
+        // 7️⃣ Jump
+        int threshold = 2;
+        if (momentum >= threshold && currentThread < maxThread) {
+            currentThread += 1;
+            momentum = 0;
+        } else if (momentum <= -threshold && currentThread > minThread) {
+            currentThread -= 1;
+            momentum = 0;
+        }
+
+        // 8️⃣ Force về target
+        if (Math.abs(target - currentThread) > 1) {
+            currentThread += (target > currentThread) ? 1 : -1;
+            momentum = 0;
+        }
+
+        // 9️⃣ Clamp
+        currentThread = Math.max(minThread, Math.min(maxThread, currentThread));
+
+        return new ThreadResult(currentThread, momentum);
+    }
 
     public static ThreadResult getSpeedLevel(
             long orderId,
@@ -665,6 +776,51 @@ public class RetentionUtils {
         if (totalView <= 0) {
             return new ThreadResult(minThread, 0);
         }
+
+        int numBlocks = Math.max(2, Math.min(10, totalView / 1500));
+        Random globalRand = new Random(orderId);
+
+        int[] blockSizes = new int[numBlocks];
+        int remaining = totalView;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int blocksLeft = numBlocks - i;
+            int avg = remaining / blocksLeft;
+
+            int min = (int) (avg * 0.7);
+            int max = (int) (avg * 1.3);
+
+            int size;
+            if (i == numBlocks - 1) {
+                size = remaining;
+            } else {
+                size = min + globalRand.nextInt(Math.max(1, max - min));
+            }
+
+            blockSizes[i] = size;
+            //System.out.println(blockSizes[i]);
+            remaining -= size;
+        }
+
+        int tempView = currentView;
+        int blocks = 0;
+
+        while (blocks < numBlocks - 1 && tempView >= blockSizes[blocks]) {
+            tempView -= blockSizes[blocks];
+            blocks++;
+        }
+
+        int localCurrent = tempView;
+        int localTotal = blockSizes[blocks];
+
+        // ⚠️ thay bằng local (GIỐNG HÀM PERCENT)
+        currentView = localCurrent;
+        totalView = localTotal;
+        //System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
+        // =========================
+        // 🔻 GIỮ NGUYÊN LOGIC THREAD CỦA BẠN
+        // =========================
+
 
         // 1️⃣ Chuẩn hóa tiến độ 0 → 1
         double x = (double) currentView / totalView;
