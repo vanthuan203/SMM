@@ -606,8 +606,8 @@ public class YoutubeTask {
                         data.put("viewing_time", viewingTime);
 
                     }else{
-                        int viewing_time= (int) (RetentionUtils.getRetentionPercentUltraHuman(orderRunning.getOrder_id(),orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,
-                                service.getMax_time()/100,orderRunning.getThread()*orderRunning.getSpeed_up(),orderRunning.getThread()*4));
+                        int viewing_time= (int) (RetentionUtils.getRetentionPercentV4(orderRunning.getOrder_id(),orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,
+                                service.getMax_time()/100,orderRunning.getSpeed_up(),4));
                         data.put("viewing_time", viewing_time);
                     }
                 }else{
