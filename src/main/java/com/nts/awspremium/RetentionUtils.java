@@ -274,6 +274,147 @@ public class RetentionUtils {
         return percent;
     }
 
+
+    public static double getRetentionPercentV4Block(
+            long orderId,
+            int currentView,
+            int totalView,
+            double minPercent,
+            double maxPercent,
+            int currentThread,
+            int maxThread
+    ) {
+        if (totalView <= 0) return maxPercent;
+
+        // =========================
+        // 🔥 AUTO SCALE BLOCK (CHỈ THÊM MỚI)
+        // =========================
+        int numBlocks = Math.max(2, Math.min(10, totalView / 1500));
+        Random globalRand = new Random(orderId);
+
+        int[] blockSizes = new int[numBlocks];
+        int remaining = totalView;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int blocksLeft = numBlocks - i;
+            int avg = remaining / blocksLeft;
+
+            int min = (int) (avg * 0.7);
+            int max = (int) (avg * 1.3);
+
+            int size;
+            if (i == numBlocks - 1) {
+                size = remaining;
+            } else {
+                size = min + globalRand.nextInt(Math.max(1, max - min));
+            }
+
+            blockSizes[i] = size;
+            //System.out.println(blockSizes[i]);
+            remaining -= size;
+        }
+
+        // =========================
+        // 🔥 MAP currentView → LOCAL VIEW
+        // =========================
+        int tempView = currentView;
+        int block = 0;
+
+        while (block < numBlocks - 1 && tempView >= blockSizes[block]) {
+            tempView -= blockSizes[block];
+            block++;
+        }
+
+        int localCurrent = tempView;
+        int localTotal = blockSizes[block];
+        //System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
+
+        // ⚠️ QUAN TRỌNG: thay currentView + totalView bằng LOCAL
+        currentView = localCurrent;
+        totalView = localTotal;
+
+        // =========================
+        // 🔹 TỪ ĐÂY GIỮ NGUYÊN LOGIC CŨ
+        // =========================
+
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        double dropFactor = (x <= 0.5)
+                ? (1.0 - 0.4 * (x / 0.5))
+                : 0.6;
+
+        double currentMin = Math.max(0.05, minPercent * dropFactor);
+        double currentMax = Math.max(currentMin, maxPercent * dropFactor);
+
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        }
+
+        Random rand = new Random(orderId * 31 + block);
+
+        if (x < 0.05) {
+            base = Math.max(base, currentMax * (0.85 + rand.nextDouble() * 0.15));
+        }
+
+        double noise;
+        if (x < 0.2) {
+            noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+        } else if (x < 0.8) {
+            noise = (rand.nextDouble() - 0.5) * 0.1;
+        } else {
+            if (rand.nextDouble() < 0.5) {
+                noise = Math.pow(rand.nextDouble(), 2) * 0.25;
+            } else {
+                noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+            }
+        }
+
+        double variation = (maxPercent - minPercent) * 0.1;
+        double percent = base + noise * variation;
+
+        // =========================
+        // 🔥 THREAD (GIỮ NGUYÊN)
+        // =========================
+        if (maxThread > 1) {
+            double threadRatio = (double) currentThread / maxThread;
+
+            double timeScale = 1.0 - 0.3 * Math.pow(threadRatio, 0.8);
+            double threadRand = 0.9 + rand.nextDouble() * 0.2;
+
+            percent *= timeScale * threadRand;
+
+            if (x > 0.2 && x < 0.6) {
+                percent *= (1.0 - 0.2 * threadRatio);
+            }
+
+            if (x < 0.05) {
+                percent /= timeScale;
+            }
+        }
+
+        // =========================
+        // 🔹 CLAMP
+        // =========================
+        percent = Math.max(currentMin, Math.min(currentMax * 1.2, percent));
+        percent = Math.max(percent, 0.05);
+
+        // =========================
+        // 🔥 JITTER ±10%
+        // =========================
+        double jitter = percent * 0.1;
+        percent += (Math.random() - 0.5) * 2 * jitter;
+
+        percent = Math.max(percent, 0.05);
+
+        return percent;
+    }
+
     public static double getRetentionPercentUltraHumanV2(
             long orderId,
             int currentView,
