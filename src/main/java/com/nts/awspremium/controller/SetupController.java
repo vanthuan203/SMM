@@ -571,10 +571,10 @@ public class SetupController {
     }
 
     @GetMapping(value = "/x", produces = "application/json;charset=utf8")
-    ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") Integer uuid,@RequestParam(defaultValue = "") Integer curent) {
+    ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") Integer orderid,@RequestParam(defaultValue = "") Integer view,@RequestParam(defaultValue = "") Integer curent) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status",RetentionUtils.getRetentionPercentV4(12011,uuid,1000,0.5,1,curent,6));
+            resp.put("status",RetentionUtils.getRetentionPercentV4(orderid,view,1150,0.5,1,curent,4));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

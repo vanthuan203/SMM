@@ -607,7 +607,7 @@ public class YoutubeTask {
 
                     }else{
                         int viewing_time= (int) (RetentionUtils.getRetentionPercentV4(orderRunning.getOrder_id(),orderRunning.getTotal(),orderRunning.getQuantity()*(1+service.getBonus()/100),service.getMin_time()/100,
-                                service.getMax_time()/100,orderRunning.getSpeed_up(),4));
+                                service.getMax_time()/100,orderRunning.getSpeed_up(),4)*service.getLimit_time());
                         data.put("viewing_time", viewing_time);
                     }
                 }else{
