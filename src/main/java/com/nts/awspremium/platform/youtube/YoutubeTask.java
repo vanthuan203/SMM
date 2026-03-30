@@ -478,11 +478,14 @@ public class YoutubeTask {
             if(orderRunning==null){
                 orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedLevelCheck.getValue());
                 if(orderRunning==null){
-                    if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
-                        return youtube_farm(account_id);
-                    }else {
-                        resp.put("status", false);
-                        return resp;
+                    orderRunning = orderRunningRepository.get_Order_Running_By_Task("youtube","view",mode,list_History==null?"":list_History,orderThreadSpeedUpCheck.getValue());
+                    if(orderRunning==null){
+                        if(ran.nextInt(100)<settingYoutube.getMax_activity_24h()){
+                            return youtube_farm(account_id);
+                        }else {
+                            resp.put("status", false);
+                            return resp;
+                        }
                     }
                 }
             }
@@ -514,7 +517,11 @@ public class YoutubeTask {
                     }
                 }
                 Thread.sleep(200+ran.nextInt(350));
-                if(!orderThreadSpeedLevelCheck.getValue().contains(orderRunning.getOrder_id().toString())){
+                if(service.getPending_task() && !orderThreadSpeedLevelCheck.getValue().contains(orderRunning.getOrder_id().toString())) {
+                    resp.put("status", false);
+                    return resp;
+                }
+                if(!service.getPending_task() && !orderThreadSpeedUpCheck.getValue().contains(orderRunning.getOrder_id().toString())) {
                     resp.put("status", false);
                     return resp;
                 }
