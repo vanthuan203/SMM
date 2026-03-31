@@ -14,83 +14,6 @@ public class RetentionUtils {
         return t * t * (3 - 2 * t);
     }
 
-    public static double getRetentionPercentOFF(int currentView, int totalView,
-                                             double minPercent, double maxPercent) {
-
-        if (totalView <= 0) return maxPercent;
-
-        // chuẩn hóa 0 → 1
-        double x = (double) currentView / totalView;
-        x = Math.max(0, Math.min(1, x));
-
-        double percent;
-
-        if (x <= 0.5) {
-            // giảm: max → min
-            double t = x / 0.5;
-            percent = maxPercent - easeInOut(t) * (maxPercent - minPercent);
-        } else {
-            // tăng: min → max
-            double t = (x - 0.5) / 0.5;
-            percent = minPercent + easeInOut(t) * (maxPercent - minPercent);
-        }
-
-        // 🔥 random bias (thiên về cao)
-        double randomFactor = 0.6 + Math.pow(Math.random(), 0.7) * 0.4;
-        percent *= randomFactor;
-
-        // 🔥 noise nhẹ
-        percent += (Math.random() - 0.5) * 0.05;
-
-        // clamp lại
-        percent = Math.max(minPercent, Math.min(maxPercent, percent));
-
-        return percent;
-    }
-
-
-
-
-    public static double getRetentionPercent(int currentView, int totalView,
-                                             double minPercent, double maxPercent) {
-
-        if (totalView <= 0) return maxPercent;
-
-        // 0 → 1
-        double x = (double) currentView / totalView;
-        x = Math.max(0, Math.min(1, x));
-
-        // U-shape base
-        double base;
-        if (x <= 0.5) {
-            double t = x / 0.5;
-            base = maxPercent - (t * t * (3 - 2 * t)) * (maxPercent - minPercent);
-        } else {
-            double t = (x - 0.5) / 0.5;
-            base = minPercent + (t * t * (3 - 2 * t)) * (maxPercent - minPercent);
-        }
-
-        // 🔥 dao động ±10% nhưng KHÔNG phá shape
-        double variation = (maxPercent - minPercent) * 0.1;
-
-        double percent;
-
-        if (base >= maxPercent) {
-            // chỉ giảm
-            percent = base - Math.random() * variation;
-        } else if (base <= minPercent) {
-            // chỉ tăng
-            percent = base + Math.random() * variation;
-        } else {
-            // dao động quanh base
-            percent = base + (Math.random() * 2 - 1) * variation;
-        }
-
-        // clamp
-        percent = Math.max(minPercent, Math.min(maxPercent, percent));
-
-        return percent;
-    }
 
 
     public static double getRetentionPercentUShape(
@@ -151,128 +74,7 @@ public class RetentionUtils {
     }
 
 
-    public static double getRetentionPercentV4(
-            long orderId,
-            int currentView,
-            int totalView,
-            double minPercent,
-            double maxPercent,
-            int currentThread,
-            int maxThread
-    ) {
-        if (totalView <= 0) return maxPercent;
 
-        // =========================
-        // 🔹 Progress
-        // =========================
-        double x = (double) currentView / totalView;
-        x = Math.max(0, Math.min(1, x));
-
-        // =========================
-        // 🔹 Random theo ORDER + BLOCK (tránh bị lặp)
-        // =========================
-        int blockSize = Math.max(1, totalView / 50);
-        int block = currentView / blockSize;
-        Random rand = new Random(orderId * 31 + block);
-
-        // =========================
-        // 🔹 Giảm dần theo progress (REAL)
-        // =========================
-        double decay = 1.0 - 0.5 * Math.pow(x, 0.7); // mượt hơn tuyến tính
-
-        double currentMin = Math.max(0.05, minPercent * decay);
-        double currentMax = Math.max(currentMin, maxPercent * decay);
-
-        // =========================
-        // 🔹 Base curve (U-shape nhẹ)
-        // =========================
-        double base;
-        if (x < 0.5) {
-            double t = x / 0.5;
-            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
-        } else {
-            double t = (x - 0.5) / 0.5;
-            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
-        }
-
-        // =========================
-        // 🔥 HOOK đầu video (rất quan trọng)
-        // =========================
-        if (x < 0.05) {
-            base = Math.max(base, currentMax * (0.85 + rand.nextDouble() * 0.15));
-        }
-
-        // =========================
-        // 🔥 Noise hành vi người
-        // =========================
-        double noise;
-        if (x < 0.2) {
-            noise = -Math.pow(rand.nextDouble(), 2) * 0.2;
-        } else if (x < 0.8) {
-            noise = (rand.nextDouble() - 0.5) * 0.15;
-        } else {
-            noise = (rand.nextBoolean() ? 1 : -1) * Math.pow(rand.nextDouble(), 2) * 0.25;
-        }
-
-        double percent = base + noise * (currentMax - currentMin);
-
-        // =========================
-        // 🔥 Spike (real user hay có)
-        // =========================
-        if (rand.nextDouble() < 0.05) {
-            percent *= (1.05 + rand.nextDouble() * 0.15);
-        }
-
-        // =========================
-        // 🔥 Rewatch cuối video
-        // =========================
-        if (x > 0.85 && rand.nextDouble() < 0.1) {
-            percent *= (1.05 + rand.nextDouble() * 0.25);
-        }
-
-        // =========================
-        // 🔥 THREAD SCALE (QUAN TRỌNG)
-        // =========================
-        if (maxThread > 1) {
-            double threadRatio = (double) currentThread / maxThread;
-
-            // scale thời gian xem
-            double timeScale = 1.0 - 0.3 * Math.pow(threadRatio, 0.8);
-
-            // random mỗi user
-            double threadRand = 0.9 + rand.nextDouble() * 0.2;
-
-            percent *= timeScale * threadRand;
-
-            // mid drop mạnh hơn
-            if (x > 0.2 && x < 0.6) {
-                percent *= (1.0 - 0.2 * threadRatio);
-            }
-
-            // giữ hook đầu
-            if (x < 0.05) {
-                percent /= timeScale;
-            }
-        }
-
-        // =========================
-        // 🔹 Clamp mềm (trước jitter)
-        // =========================
-        percent = Math.max(currentMin, Math.min(currentMax * 1.3, percent));
-
-        // =========================
-        // 🔥 JITTER ±10% (KHÔNG bị cứng)
-        // =========================
-        double jitter = percent * 0.1;
-        percent += (Math.random() - 0.5) * 2 * jitter;
-
-        // =========================
-        // 🔹 Final clamp nhẹ
-        // =========================
-        percent = Math.max(0.05, percent);
-
-        return percent;
-    }
 
 
     public static double getRetentionPercentV4Block(
@@ -415,14 +217,111 @@ public class RetentionUtils {
         return percent;
     }
 
+    public static double getRetentionPercentV4Block(
+            long orderId,
+            int currentView,
+            int totalView,
+            double minPercent,
+            double maxPercent
+    ) {
+        if (totalView <= 0) return maxPercent;
+
+        int numBlocks = Math.max(2, Math.min(10, totalView / 1500));
+        Random globalRand = new Random(orderId);
+
+        int[] blockSizes = new int[numBlocks];
+        int remaining = totalView;
+
+        for (int i = 0; i < numBlocks; i++) {
+            int blocksLeft = numBlocks - i;
+            int avg = remaining / blocksLeft;
+
+            int min = (int) (avg * 0.7);
+            int max = (int) (avg * 1.3);
+
+            int size;
+            if (i == numBlocks - 1) {
+                size = remaining;
+            } else {
+                size = min + globalRand.nextInt(Math.max(1, max - min));
+            }
+
+            blockSizes[i] = size;
+            remaining -= size;
+        }
+
+        int tempView = currentView;
+        int block = 0;
+
+        while (block < numBlocks - 1 && tempView >= blockSizes[block]) {
+            tempView -= blockSizes[block];
+            block++;
+        }
+
+        int localCurrent = tempView;
+        int localTotal = blockSizes[block];
+
+        currentView = localCurrent;
+        totalView = localTotal;
+
+        double x = (double) currentView / totalView;
+        x = Math.max(0, Math.min(1, x));
+
+        double dropFactor = (x <= 0.5)
+                ? (1.0 - 0.4 * (x / 0.5))
+                : 0.6;
+
+        double currentMin = Math.max(0.05, minPercent * dropFactor);
+        double currentMax = Math.max(currentMin, maxPercent * dropFactor);
+
+        double base;
+        if (x <= 0.5) {
+            double t = x / 0.5;
+            base = currentMax - (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        } else {
+            double t = (x - 0.5) / 0.5;
+            base = currentMin + (t * t * (3 - 2 * t)) * (currentMax - currentMin);
+        }
+
+        Random rand = new Random(orderId * 31 + block);
+
+        if (x < 0.05) {
+            base = Math.max(base, currentMax * (0.85 + rand.nextDouble() * 0.15));
+        }
+
+        double noise;
+        if (x < 0.2) {
+            noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+        } else if (x < 0.8) {
+            noise = (rand.nextDouble() - 0.5) * 0.1;
+        } else {
+            if (rand.nextDouble() < 0.5) {
+                noise = Math.pow(rand.nextDouble(), 2) * 0.25;
+            } else {
+                noise = -Math.pow(rand.nextDouble(), 2) * 0.25;
+            }
+        }
+
+        double variation = (maxPercent - minPercent) * 0.1;
+        double percent = base + noise * variation;
+
+        // ❌ ĐÃ XÓA THREAD EFFECT
+
+        percent = Math.max(currentMin, Math.min(currentMax * 1.2, percent));
+        percent = Math.max(percent, 0.05);
+
+        double jitter = percent * 0.1;
+        percent += (Math.random() - 0.5) * 2 * jitter;
+
+        return Math.max(percent, 0.05);
+    }
+
     public static double getRetentionPercentUltraHumanV2(
             long orderId,
             int currentView,
             int totalView,
             double minPercent,
-            double maxPercent,
-            int currentThread,
-            int maxThread
+            double maxPercent
     ) {
         if (totalView <= 0) return maxPercent;
 
@@ -450,7 +349,7 @@ public class RetentionUtils {
         }
 
         // =========================
-        // PHASE 3: MID (20 → 60%) ❗ FIX CHÍNH
+        // PHASE 3: MID (20 → 60%)
         // =========================
         else if (x < 0.6) {
             double t = (x - 0.2) / 0.4;
@@ -488,13 +387,7 @@ public class RetentionUtils {
             percent += (liveRand.nextDouble() - 0.5) * 0.3;
         }
 
-        // =========================
-        // 🔥 THREAD EFFECT
-        // =========================
-        if (maxThread > 1 && x > 0.1) {
-            double threadRatio = (double) currentThread / maxThread;
-            percent *= (1.0 - 0.08 * threadRatio);
-        }
+        // ❌ ĐÃ LOẠI BỎ THREAD EFFECT
 
         // =========================
         // 🔹 CLAMP MỀM
@@ -505,100 +398,11 @@ public class RetentionUtils {
         percent = Math.max(floor, Math.min(ceil, percent));
 
         // =========================
-        // 🔥 JITTER ±10% (QUAN TRỌNG)
+        // 🔥 JITTER ±10%
         // =========================
         percent += percent * (Math.random() - 0.5) * 0.2;
 
-        // hard floor
-        percent = Math.max(0.05, percent);
-
-        return percent;
-    }
-
-    public static double getRetentionPercentUltraHuman(
-            long orderId,
-            int currentView,
-            int totalView,
-            double minPercent,
-            double maxPercent,
-            int currentThread,
-            int maxThread
-    ) {
-        if (totalView <= 0) return maxPercent;
-
-        double x = (double) currentView / totalView;
-        x = Math.max(0, Math.min(1, x));
-
-        // 🔥 CLUSTER (giữ hành vi)
-        int blockSize = Math.max(1, totalView / 70);
-        int block = currentView / blockSize;
-        Random rand = new Random(31 * orderId + block);
-
-        double percent;
-
-        // =========================
-        // 🔥 PHASE 1: HOOK (0–3%)
-        // =========================
-        if (x < 0.03) {
-            percent = maxPercent * (0.95 + rand.nextDouble() * 0.3); // 0.95 → 1.25
-        }
-
-        // =========================
-        // 🔥 PHASE 2: DROP NHANH (3–15%)
-        // =========================
-        else if (x < 0.15) {
-            double t = (x - 0.03) / 0.12;
-            percent = maxPercent * (1.0 - 0.6 * t); // drop mạnh
-        }
-
-        // =========================
-        // 🔥 PHASE 3: DECAY CHẬM (15–60%)
-        // =========================
-        else if (x < 0.6) {
-            double t = (x - 0.15) / 0.45;
-            percent = maxPercent * (0.4 - 0.2 * t); // giảm từ 0.4 → 0.2
-        }
-
-        // =========================
-        // 🔥 PHASE 4: ỔN ĐỊNH (60–85%)
-        // =========================
-        else if (x < 0.85) {
-            percent = maxPercent * (0.2 + rand.nextDouble() * 0.05);
-        }
-
-        // =========================
-        // 🔥 PHASE 5: END SPIKE (85–100%)
-        // =========================
-        else {
-            percent = maxPercent * (0.2 + rand.nextDouble() * 0.3);
-        }
-
-        // 🔥 MICRO BEHAVIOR (quan trọng)
-        // spike nhỏ ngẫu nhiên giống user tua / chú ý
-        if (rand.nextDouble() < 0.08) {
-            percent *= (1.05 + rand.nextDouble() * 0.25);
-        }
-
-        // 🔥 NOISE theo phase (đã cân bằng)
-        double noise = (rand.nextDouble() - 0.5) * 0.15;
-        percent += noise * (maxPercent - minPercent);
-
-        // 🔥 THREAD (giảm nhẹ thôi)
-        if (maxThread > 1 && x > 0.1) {
-            double threadRatio = (double) currentThread / maxThread;
-            percent *= (1.0 - 0.08 * threadRatio);
-        }
-
-        // 🔥 GLOBAL JITTER (phá pattern)
-        percent += (Math.random() - 0.5) * 0.2;
-
-        // 🔥 CLAMP thông minh
-        double floor = Math.max(0.05, minPercent * 0.8);
-        double ceil = maxPercent * 1.3;
-
-        percent = Math.max(floor, Math.min(ceil, percent));
-
-        return percent;
+        return Math.max(0.05, percent);
     }
 
     public static int getSpeedLevelOFF(int currentView, int totalView,
@@ -798,7 +602,7 @@ public class RetentionUtils {
             }
 
             blockSizes[i] = size;
-            //System.out.println(blockSizes[i]);
+            System.out.println(blockSizes[i]);
             remaining -= size;
         }
 
@@ -816,7 +620,7 @@ public class RetentionUtils {
         // ⚠️ thay bằng local (GIỐNG HÀM PERCENT)
         currentView = localCurrent;
         totalView = localTotal;
-        //System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
+        System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
         // =========================
         // 🔻 GIỮ NGUYÊN LOGIC THREAD CỦA BẠN
         // =========================
