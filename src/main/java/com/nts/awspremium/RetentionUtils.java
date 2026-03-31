@@ -602,7 +602,7 @@ public class RetentionUtils {
             }
 
             blockSizes[i] = size;
-            System.out.println(blockSizes[i]);
+            //System.out.println(blockSizes[i]);
             remaining -= size;
         }
 
@@ -620,7 +620,7 @@ public class RetentionUtils {
         // ⚠️ thay bằng local (GIỐNG HÀM PERCENT)
         currentView = localCurrent;
         totalView = localTotal;
-        System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
+        //System.out.println("Local Tottal" + localTotal+ " Local Current "+localCurrent);
         // =========================
         // 🔻 GIỮ NGUYÊN LOGIC THREAD CỦA BẠN
         // =========================
