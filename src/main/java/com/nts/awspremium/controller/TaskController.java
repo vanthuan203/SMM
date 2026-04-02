@@ -1342,7 +1342,7 @@ public class TaskController {
                     if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
                     }
-                }if(profileTask.getPlatform().equals("youtube") && device.getDevice_id().startsWith("1")){
+                }else if(profileTask.getPlatform().equals("youtube") && device.getDevice_id().startsWith("1")){
                     if(task.equals("view")){
                         get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim(),device);
                     }
