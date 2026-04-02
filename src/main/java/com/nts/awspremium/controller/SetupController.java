@@ -574,7 +574,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") Integer orderid,@RequestParam(defaultValue = "") Integer view,@RequestParam(defaultValue = "") Integer total,@RequestParam(defaultValue = "") Integer curent) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status",RetentionUtils.getRetentionPercentV4Block(orderid,view,total,0.5,0.75));
+            resp.put("status",MailApi.getCodeTmailor("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlIjoicHprS1pUOGxNM3lpTEhIMXBTRVZxeFcySTN5aUZ5QXdvMU9KTXlNNkZKcVpGYXl6Rm1XR3JSMUlJM3lqWjFjMkRhTUtxS1czREoxaklVeWJHUnVDWlIxWFpKY1pyemdjR1FXYXEyNUhIMkFpcXdJM29tVmpxeXlESW1BQUZ5cWJHUmJrckhmbEVKeWlGeUF3bzNNSkF5TXVFSnFaRmF5em9tQUpuUmpsQkpxSnF6YzJHSUVXWno1WERLeUpxMlcycEdXV3F5TTJuYU1BRndTMW94Y2VuUjFZcEtBaEZ4RTJEYXFGb1NjVXJRV25ISGtmSmFNZHFhU1lES3lqckd5d0dJT0pBeWNJWkd1am9LdDBEeGduQ0Q9PSJ9.magcvEBvTjCcc45EYQsFfRn1xWpwWSgbNSW617NxzkA"));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

@@ -26,6 +26,8 @@ public class UserController {
     @Autowired
     private MicrosoftMailRepository microsoftMailRepository;
     @Autowired
+    private TmailorMailRepository tmailorMailRepository;
+    @Autowired
     private LogErrorRepository logErrorRepository;
     @Autowired
     private BalanceRepository balanceRepository;
@@ -185,7 +187,12 @@ public class UserController {
             }else if(account.get("email").toString().contains("@tiffincrane")){
                 code= MailApi.getCode(account.get("email").toString().trim(),account.get("password").toString().trim());
             }else{
-                code=MailApi.getTokenMailFake(account.get("email").toString().trim());
+                TmailorMail tmailorMail=tmailorMailRepository.get_Mail_By_Username(account.get("email").toString());
+                if(tmailorMail!=null){
+                    code=MailApi.getCodeTmailor(tmailorMail.getAccess_token());
+                }else{
+                    code=MailApi.getTokenMailFake(account.get("email").toString().trim());
+                }
             }
             if(code!=null){
                 if(code.matches("\\d+")){
