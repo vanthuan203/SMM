@@ -490,6 +490,11 @@ public class YoutubeTask {
                 }
             }
             if(orderRunning!=null) {
+                //check tx68
+                if(device.getDevice_id().startsWith("1") && !orderRunning.getUser().getUsername().contains("bas")){
+                    resp.put("status", false);
+                    return resp;
+                }
                 Service service=orderRunning.getService();
                 Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
                 if(youtubeView24hRepository.count_View_By_DeviceId_And_OrderKey_And_Time(device.getDevice_id().trim()+orderRunning.getOrder_key(),24)>=service.getAccount_limit_24h()){

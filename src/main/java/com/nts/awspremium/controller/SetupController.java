@@ -574,7 +574,7 @@ public class SetupController {
     ResponseEntity<Map<String, Object>> x(@RequestParam(defaultValue = "") Integer orderid,@RequestParam(defaultValue = "") Integer view,@RequestParam(defaultValue = "") Integer total,@RequestParam(defaultValue = "") Integer curent) {
         Map<String, Object> resp = new LinkedHashMap<>();
         try {
-            resp.put("status",RetentionUtils.getRetentionPercentV4Block(orderid,view,total,0.5,1));
+            resp.put("status",RetentionUtils.getRetentionPercentV4Block(orderid,view,total,0.5,0.75));
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             StackTraceElement stackTraceElement = Arrays.stream(e.getStackTrace()).filter(ste -> ste.getClassName().equals(this.getClass().getName())).collect(Collectors.toList()).get(0);

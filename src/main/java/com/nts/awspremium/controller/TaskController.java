@@ -421,9 +421,11 @@ public class TaskController {
                 entityManager.clear();
 
                 List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
+                /*
                 if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                     string_Task_List.remove("youtube");
                 }
+                 */
                 String task_List=String.join(",", string_Task_List);
                 List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -709,9 +711,11 @@ public class TaskController {
                 entityManager.clear();
 
                 List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
+                /*
                 if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                     string_Task_List.remove("youtube");
                 }
+                 */
                 String task_List=String.join(",", string_Task_List);
                 List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -731,9 +735,11 @@ public class TaskController {
                     entityManager.clear();
 
                     List<String> string_Task_List=platformRepository.get_All_Platform_True(device.getMode());
+                    /*
                     if(profileTask.getProfile_id().startsWith("1")){ // TX68 no youtube
                         string_Task_List.remove("youtube");
                     }
+                     */
                     String task_List=String.join(",", string_Task_List);
                     List<String> arrPlatform=new ArrayList<>(Arrays.asList(task_List.split(",")));
 
@@ -1335,6 +1341,10 @@ public class TaskController {
                 if(profileTask.getPlatform().equals("tiktok") && (accountProfile_Task==null || accountProfile_Task.getLive()<1)){
                     if(task.equals("view")){
                         get_task=tiktokTask.tiktok_view(profileTask.getAccount_id(),device.getMode().trim(),device,0);
+                    }
+                }if(profileTask.getPlatform().equals("youtube") && device.getDevice_id().startsWith("1")){
+                    if(task.equals("view")){
+                        get_task=youtubeTask.youtube_view(profileTask.getAccount_id(),device.getMode().trim(),device);
                     }
                 } else if(profileTask.getPlatform().equals("tiktok")){
                     if(task.equals("follower")){ //(accountProfile_Task.getSign_in()==1 || device.getMode().equals("auto-gmail"))

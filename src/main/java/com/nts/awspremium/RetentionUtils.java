@@ -247,6 +247,7 @@ public class RetentionUtils {
             }
 
             blockSizes[i] = size;
+            System.out.println(blockSizes[i]);
             remaining -= size;
         }
 
