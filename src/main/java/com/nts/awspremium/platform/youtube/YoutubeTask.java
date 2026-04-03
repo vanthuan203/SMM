@@ -494,6 +494,9 @@ public class YoutubeTask {
                 if(device.getDevice_id().startsWith("1") && !orderRunning.getUser().getUsername().contains("bas")){
                     resp.put("status", false);
                     return resp;
+                }else if(device.getDevice_id().startsWith("P") && orderRunning.getUser().getUsername().contains("bas")){
+                    resp.put("status", false);
+                    return resp;
                 }
                 Service service=orderRunning.getService();
                 Mode modeInfo =modeRepository.get_Mode_Info(mode.trim());
